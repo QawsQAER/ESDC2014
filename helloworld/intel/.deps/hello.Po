@@ -1,0 +1,54 @@
+hello.o: hello.c /home/edward/test-yocto/x86_64/usr/include/stdio.h \
+ /home/edward/test-yocto/x86_64/usr/include/features.h \
+ /home/edward/test-yocto/x86_64/usr/include/stdc-predef.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/predefs.h \
+ /home/edward/test-yocto/x86_64/usr/include/sys/cdefs.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/wordsize.h \
+ /home/edward/test-yocto/x86_64/usr/include/gnu/stubs.h \
+ /home/edward/test-yocto/x86_64/usr/include/gnu/stubs-64.h \
+ /opt/poky/1.4.3/sysroots/x86_64-pokysdk-linux/usr/lib/x86_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stddef.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/types.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/typesizes.h \
+ /home/edward/test-yocto/x86_64/usr/include/libio.h \
+ /home/edward/test-yocto/x86_64/usr/include/_G_config.h \
+ /home/edward/test-yocto/x86_64/usr/include/wchar.h \
+ /opt/poky/1.4.3/sysroots/x86_64-pokysdk-linux/usr/lib/x86_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stdarg.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/stdio_lim.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/sys_errlist.h \
+ /home/edward/test-yocto/x86_64/usr/include/bits/stdio.h
+
+/home/edward/test-yocto/x86_64/usr/include/stdio.h:
+
+/home/edward/test-yocto/x86_64/usr/include/features.h:
+
+/home/edward/test-yocto/x86_64/usr/include/stdc-predef.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/predefs.h:
+
+/home/edward/test-yocto/x86_64/usr/include/sys/cdefs.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/wordsize.h:
+
+/home/edward/test-yocto/x86_64/usr/include/gnu/stubs.h:
+
+/home/edward/test-yocto/x86_64/usr/include/gnu/stubs-64.h:
+
+/opt/poky/1.4.3/sysroots/x86_64-pokysdk-linux/usr/lib/x86_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stddef.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/types.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/typesizes.h:
+
+/home/edward/test-yocto/x86_64/usr/include/libio.h:
+
+/home/edward/test-yocto/x86_64/usr/include/_G_config.h:
+
+/home/edward/test-yocto/x86_64/usr/include/wchar.h:
+
+/opt/poky/1.4.3/sysroots/x86_64-pokysdk-linux/usr/lib/x86_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stdarg.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/stdio_lim.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/sys_errlist.h:
+
+/home/edward/test-yocto/x86_64/usr/include/bits/stdio.h:

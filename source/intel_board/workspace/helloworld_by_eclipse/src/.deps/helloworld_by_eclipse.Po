@@ -1,0 +1,280 @@
+helloworld_by_eclipse.o: helloworld_by_eclipse.cpp \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/iostream \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++config.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/os_defines.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/features.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/stdc-predef.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/predefs.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/sys/cdefs.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/wordsize.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/gnu/stubs.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/gnu/stubs-64.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/cpu_defines.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ostream \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ios \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/iosfwd \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stringfwd.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/postypes.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cwchar \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/wchar.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/stdio.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/x86_64-linux/usr/lib/core2_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stdarg.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/wchar.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/x86_64-linux/usr/lib/core2_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stddef.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/xlocale.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/exception \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/atomic_lockfree_defines.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/char_traits.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_algobase.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/functexcept.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/exception_defines.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/cpp_type_traits.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/type_traits.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/numeric_traits.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_pair.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/move.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/concept_check.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator_base_types.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator_base_funcs.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/debug/debug.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/localefwd.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++locale.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/clocale \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/locale.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/locale.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cctype \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/ctype.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/types.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/typesizes.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/endian.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/endian.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/byteswap.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/byteswap-16.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ios_base.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/atomicity.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/gthr.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/gthr-default.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/pthread.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/sched.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/time.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/sched.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/time.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/timex.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/pthreadtypes.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/setjmp.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/atomic_word.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_classes.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/string \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/allocator.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++allocator.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/new_allocator.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/new \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ostream_insert.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/cxxabi_forced.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_function.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/backward/binders.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/range_access.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_string.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_string.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_classes.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/streambuf \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/streambuf.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_ios.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_facets.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cwctype \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/wctype.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/ctype_base.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/streambuf_iterator.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/ctype_inline.h \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_facets.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_ios.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ostream.tcc \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/istream \
+ /home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/istream.tcc
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/iostream:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++config.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/os_defines.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/features.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/stdc-predef.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/predefs.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/sys/cdefs.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/wordsize.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/gnu/stubs.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/gnu/stubs-64.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/cpu_defines.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ostream:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ios:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/iosfwd:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stringfwd.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/postypes.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cwchar:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/wchar.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/stdio.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/x86_64-linux/usr/lib/core2_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stdarg.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/wchar.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/x86_64-linux/usr/lib/core2_64-poky-linux/gcc/x86_64-poky-linux/4.7.2/include/stddef.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/xlocale.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/exception:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/atomic_lockfree_defines.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/char_traits.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_algobase.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/functexcept.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/exception_defines.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/cpp_type_traits.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/type_traits.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/numeric_traits.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_pair.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/move.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/concept_check.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator_base_types.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator_base_funcs.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_iterator.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/debug/debug.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/localefwd.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++locale.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/clocale:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/locale.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/locale.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cctype:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/ctype.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/types.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/typesizes.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/endian.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/endian.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/byteswap.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/byteswap-16.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ios_base.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/atomicity.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/gthr.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/gthr-default.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/pthread.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/sched.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/time.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/sched.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/time.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/timex.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/pthreadtypes.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/bits/setjmp.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/atomic_word.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_classes.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/string:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/allocator.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/c++allocator.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/ext/new_allocator.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/new:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ostream_insert.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/cxxabi_forced.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/stl_function.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/backward/binders.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/range_access.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_string.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_string.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_classes.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/streambuf:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/streambuf.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_ios.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_facets.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/cwctype:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/wctype.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/ctype_base.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/streambuf_iterator.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/x86_64-poky-linux/bits/ctype_inline.h:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/locale_facets.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/basic_ios.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/ostream.tcc:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/istream:
+
+/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64/usr/include/c++/bits/istream.tcc:
