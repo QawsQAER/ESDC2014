@@ -50,14 +50,14 @@ public:
 	int setCarRotateLeft(int speedMMPS=0);
 	int setCarRotateRight(int speedMMPS=0);
     
-    /*********************************************/
-    /*********************************************/
-    /*********************************************/
-    int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS);
-    int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS);
-    /*********************************************/
-    /*********************************************/
-    /*********************************************/
+	/*********************************************/
+	/*********************************************/
+    	/*********************************************/
+    	int setCarRotateLeftDegree(float degree, int speedMMPS);
+    	int setCarRotateRightDegree(float degree, int speedMMPS);
+    	/*********************************************/
+    	/*********************************************/
+    	/*********************************************/
     
 	int setCarUpperLeft(int speedMMPS=0);
 	int setCarLowerLeft(int speedMMPS=0);
