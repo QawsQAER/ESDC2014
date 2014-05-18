@@ -52,12 +52,12 @@ public:
     
 	/*********************************************/
 	/*********************************************/
-    	/*********************************************/
-    	int setCarRotateLeftDegree(float degree, int speedMMPS);
-    	int setCarRotateRightDegree(float degree, int speedMMPS);
-    	/*********************************************/
-    	/*********************************************/
-    	/*********************************************/
+    /*********************************************/
+    int setCarRotateLeftDegree(float degree, int speedMMPS);
+    int setCarRotateRightDegree(float degree, int speedMMPS);
+    /*********************************************/
+    /*********************************************/
+    /*********************************************/
     
 	int setCarUpperLeft(int speedMMPS=0);
 	int setCarLowerLeft(int speedMMPS=0);

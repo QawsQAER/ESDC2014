@@ -194,7 +194,6 @@ int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
 /***************************************************/
 /***************************************************/
 
-
 /*
 unsigned int Omni4WD::getCarSpeedMMPS() const {
 	unsigned int speedMMPS=wheelULGetSpeedMMPS();
