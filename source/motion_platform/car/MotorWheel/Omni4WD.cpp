@@ -1,8 +1,5 @@
 #include <Omni4WD.h>
 
-
-
-
 Omni4WD::Omni4WD(MotorWheel* wheelUL,MotorWheel* wheelLL,
 			MotorWheel* wheelLR,MotorWheel* wheelUR,unsigned int wheelspan):
 			_wheelUL(wheelUL),_wheelLL(wheelLL),
@@ -154,45 +151,6 @@ int Omni4WD::setCarRotateRight(int speedMMPS) {
 	setCarStat(STAT_ROTATERIGHT);
 	return setCarRotate(-speedMMPS/(sqrt(pow(getWheelspan()/2,2)*2)));
 }
-
-/***************************************************/
-/***************************************************/
-/***************************************************/
-int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS)
-{
-	setCarStat(STAT_ROTATELEFT);
-    
-	float pi = 3.1415926;
-	int d = 355; //mm
-    int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
-    
-	wheelULSetSpeedMMPS(-speedMMPS);
-	wheelLLSetSpeedMMPS(-speedMMPS);
-	wheelLRSetSpeedMMPS(-speedMMPS);
-	wheelURSetSpeedMMPS(-speedMMPS);
-    
-	delayMS(ms);
-	setCarStop();
-}
-int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
-{
-	setCarStat(STAT_ROTATERIGHT);
-    
-	float pi = 3.1415926;
-	int d = 355; //mm
-    int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
-    
-	wheelULSetSpeedMMPS(speedMMPS);
-	wheelLLSetSpeedMMPS(speedMMPS);
-	wheelLRSetSpeedMMPS(speedMMPS);
-	wheelURSetSpeedMMPS(speedMMPS);
-    
-	delayMS(ms);
-	setCarStop();
-}
-/***************************************************/
-/***************************************************/
-/***************************************************/
 
 /*
 unsigned int Omni4WD::getCarSpeedMMPS() const {
@@ -465,6 +423,54 @@ void Omni4WD::debugger(bool wheelULDebug,bool wheelLLDebug,bool wheelLRDebug,boo
 	if(wheelURDebug) _wheelUR->debugger();
 }
 
+
+/**********************************************************
+This part is added by project ESDC2014 of CUHK team.
+All the code with this header are under GPL open source license.
+**********************************************************/
+int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS)
+{
+	setCarStat(STAT_ROTATELEFT);
+    
+	float pi = 3.1415926;
+	int d = 355; //mm
+    int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
+    
+	wheelULSetSpeedMMPS(-speedMMPS);
+	wheelLLSetSpeedMMPS(-speedMMPS);
+	wheelLRSetSpeedMMPS(-speedMMPS);
+	wheelURSetSpeedMMPS(-speedMMPS);
+    
+	delayMS(ms);
+	setCarStop();
+}
+int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
+{
+	setCarStat(STAT_ROTATERIGHT);
+    
+	float pi = 3.1415926;
+	int d = 355; //mm
+    int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
+    
+	wheelULSetSpeedMMPS(speedMMPS);
+	wheelLLSetSpeedMMPS(speedMMPS);
+	wheelLRSetSpeedMMPS(speedMMPS);
+	wheelURSetSpeedMMPS(speedMMPS);
+    
+	delayMS(ms);
+	setCarStop();
+}
+
+car::car()
+{
+
+}
+
+car::~car()
+{
+	
+}
+/*********************************************************/
 
 
 

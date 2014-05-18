@@ -7,6 +7,8 @@
 #include <MotorWheel.h>
 #include <Omni4WD.h>
 
+#include <communication.h>
+
 /*
 
             \                    /
@@ -50,6 +52,7 @@ MotorWheel wheel4(10,7,18,19,&irq4);
 
 
 Omni4WD Omni(&wheel1,&wheel2,&wheel3,&wheel4);
+communication com();
 
 void setup()
 {

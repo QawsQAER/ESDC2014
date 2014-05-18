@@ -50,14 +50,13 @@ public:
 	int setCarRotateLeft(int speedMMPS=0);
 	int setCarRotateRight(int speedMMPS=0);
     
-	/*********************************************/
-	/*********************************************/
-    /*********************************************/
+	/**********************************************************
+	This part is added by project ESDC2014 of CUHK team.
+	All the code with this header are under GPL open source license.
+	**********************************************************/
     int setCarRotateLeftDegree(float degree, int speedMMPS);
     int setCarRotateRightDegree(float degree, int speedMMPS);
-    /*********************************************/
-    /*********************************************/
-    /*********************************************/
+    /*********************************************************/
     
 	int setCarUpperLeft(int speedMMPS=0);
 	int setCarLowerLeft(int speedMMPS=0);
@@ -134,6 +133,19 @@ private:
 	Omni4WD();	
 
 };
+
+/**********************************************************
+This part is added by project ESDC2014 of CUHK team.
+All the code with this header are under GPL open source license.
+**********************************************************/
+class car
+{
+public:
+	car();
+	~car();
+private:
+};
+/*********************************************************/
 
 #endif
 
