@@ -8,10 +8,10 @@
 class Controller_Com
 {
 private:
-	static uint32_t Controller_Com_write(void *buff,uint32_t length);
-	static uint32_t Controller_Com_read(void *buff,uint32_t length);
+	static uint32_t write(void *buff,uint32_t length);
+	static uint32_t read(void *buff,uint32_t length);
 public:
-	
+	static uint8_t send_cmd(struct * IntelCarCmd);
 };
 
 #endif

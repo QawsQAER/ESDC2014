@@ -4,7 +4,8 @@
 #define CAR_ACTION_DISPLACEMENT 0
 #define CAR_ACTION_ROTATION 1
 #define CAR_ACTION_CAM_MOVEMENT 2
-struct IntelCarCommand
+
+struct IntelCarCmd
 {
 	/*
 	0 indicates car movement, without rotation
@@ -33,4 +34,20 @@ struct IntelCarCommand
 	uint8_t rotate_dir;
 };
 
+
+//position
+struct pos
+{
+	uint8_t x; //cm, forward
+	uint8_t y; //cm, rightward
+	uint8_t z; //cm, upward
+};
+
+//orientation
+struct ori 
+{
+	uint8_t roll; //degree * 100 (0-->36000), along x axis
+	uint8_t pitch; //degree * 100 (0-->36000), along y axis
+	uint8_t yaw; //degree * 100 (0-->36000), along z axis
+};
 #endif
