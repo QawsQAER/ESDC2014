@@ -461,14 +461,72 @@ int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
 	setCarStop();
 }
 
-car::car()
+Car::Car(Omni4WD* Omni)
 {
-
+	this->Omni = Omni;
 }
 
-car::~car()
+void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint8_t rotate_dir)
 {
+	if(move_dis != 0)
+	{
+		//Arduino's int is 32 bits but unsigned int is 16 bits
+		//SUCKS
+		uint32_t uint_move_dis = move_dis;
+		unsigned int ms = uint_move_dis * 1000 / moveSpeedMMPS;
+
+		switch(move_dir)
+		{
+			case 0: //up
+			Omni->setCarAdvance(moveSpeedMMPS);
+			Omni->delayMS(ms);
+			Omni->setCarStop();
+			break;
+
+			case 1: //right
+			Omni->setCarRight(moveSpeedMMPS);
+			Omni->delayMS(ms);
+			Omni->setCarStop();
+			break;
+			
+			case 2: //down
+			Omni->setCarBackoff(moveSpeedMMPS);
+			Omni->delayMS(ms);
+			Omni->setCarStop();
+			break;
+			
+			case 3: //left
+			Omni->setCarLeft(moveSpeedMMPS);
+			Omni->delayMS(ms);
+			Omni->setCarStop();
+			break;
+			
+			default:
+			Omni->setCarStop();
+			break;
+		}
+	}
 	
+	if(rotate_dis != 0)
+	{
+		unsigned int degree = rotate_dis / 100;
+		switch(rotate_dir)
+		{
+			case 8: //1000 left
+			Omni->setCarRotateLeftDegree(degree, rotateSpeedMMPS);
+			break;
+
+			case 9: //1001 right
+			Omni->setCarRotateRightDegree(degree, rotateSpeedMMPS);
+			break;
+
+			default:
+			Omni->setCarStop();
+			break;
+		}
+	}
+
+	Omni->delayMS(500); //i don't know why we need this. Otherwise, the car will not stop
 }
 /*********************************************************/
 

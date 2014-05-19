@@ -138,12 +138,15 @@ private:
 This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
 **********************************************************/
-class car
+#define moveSpeedMMPS 150
+#define rotateSpeedMMPS 200
+class Car
 {
 public:
-	car();
-	~car();
+	Car(Omni4WD* Omni);
+	void carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint8_t rotate_dir);
 private:
+	Omni4WD* Omni;
 };
 /*********************************************************/
 

@@ -12,7 +12,7 @@ struct IntelCarCmd
 	/*
 	starter indicates the start of the message
 	*/
-	uint16_t starter;
+	uint8_t starter;
 
 	/*
 	0 indicates car movement, with rotation
@@ -56,7 +56,7 @@ struct IntelCarCmd
 	uint8_t rotate_dir;
 
 	/*
-	check_sum = action_type + (move_dis >> 8) + (move_dis | 0x07) + move_dir + (rotate_dis >> 8) + (rotate_dis | 0x07) + rotate_dir
+	check_sum = action_type + (move_dis >> 8) + (move_dis & 0xff) + move_dir + (rotate_dis >> 8) + (rotate_dis & 0xff) + rotate_dir
 	*/
 	uint8_t check_sum;
 };

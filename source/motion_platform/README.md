@@ -10,4 +10,4 @@
 
 6. (For OSX)The source code of the communication is inside ./communication. You should copy the folder to Arduino/Resource/Java/libraries
 
-7. Folder car_main stores the sketch file.
+7. Folder motion_platform_main stores the sketch file.

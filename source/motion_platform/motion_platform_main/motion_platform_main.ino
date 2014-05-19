@@ -8,6 +8,8 @@
 #include <Omni4WD.h>
 
 #include <communication.h>
+#include <lifter.h>
+#include <camera_platform.h>
 
 /*
 
@@ -52,7 +54,10 @@ MotorWheel wheel4(10,7,18,19,&irq4);
 
 
 Omni4WD Omni(&wheel1,&wheel2,&wheel3,&wheel4);
-communication com();
+Car car(&Omni);
+Lifter lifter;
+Camera_platform camera_platform;
+Communication com;
 
 void setup()
 {
@@ -61,8 +66,45 @@ void setup()
   TCCR2B=TCCR2B&0xf8|0x01;    // Pin3,Pin11 PWM 31250Hz
     
   Omni.PIDEnable(0.31,0.01,0,10);
+  Serial.begin(9600);
 }
 
+void loop()
+{
+  com.parseMessage();
+  
+  switch(com.getInfoOK())
+  {
+    case 1: //car motion
+    car.carMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
+    com.resetInfoOK();
+    Serial.write(0x7e);
+    break;
+    
+    case 2: //lifter motion
+    com.resetInfoOK();
+    break;
+    
+    case 3: //camera platform motion
+    com.resetInfoOK();
+    break;
+    
+    default:
+    Omni.setCarStop();
+    break;
+  }
+}
+
+void serialEvent() //called between loops
+{
+  while(Serial.available())
+  {
+    char ch = Serial.read();
+    com.putToBuffer(ch);
+  }
+}
+
+/*
 void loop()
 {
   Omni.setCarAdvance(250);
@@ -76,4 +118,4 @@ void loop()
   Omni.delayMS(1000);
   Omni.setCarRotateRightDegree(180, 250);
 }
-
+*/
