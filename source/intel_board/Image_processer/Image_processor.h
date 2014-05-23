@@ -5,6 +5,8 @@
 #ifndef _IMAGE_PROCESSOR_H
 #define _IMAGE_PROCESSOR_H
 
+typedef image;
+
 class Image_processor
 {
 private:
