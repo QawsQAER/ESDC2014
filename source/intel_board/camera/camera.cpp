@@ -66,9 +66,11 @@ void Camera::setip(string ip_address)
 string Camera::photo()
 {
 
-        int temp = count_temp_photo;
+        int temp_count = count_temp_photo;
+        string temp;
         count_temp_photo++;
-        my_itoa(temp);
+        temp=to_string(temp_count);
+
         string path_temp = path_temp+temp+".jpg";
 
         string command="wget  -O "+path_temp+"http://"+ip+"/photo.jpg";
@@ -88,9 +90,12 @@ string Camera::photo()
 
 string Camera::photo_af()
 {
-    int temp = count_temp_photo;
+
+        int temp_count = count_temp_photo;
+        string temp;
         count_temp_photo++;
-        itoa(temp);
+        temp=to_string(temp_count);
+
         string path_temp = path_temp+temp+".jpg";
 
         string command="wget  -O "+path_temp+"http://"+ip+"/photoaf.jpg";
@@ -111,9 +116,13 @@ string Camera::photo_af()
 string Camera::photo_JPEG()
 {
 
-         int temp = count_temp_photo;
+        int temp_count = count_temp_photo;
+        string temp;
         count_temp_photo++;
-        my_itoa(temp);
+        temp=to_string(temp_count);
+
+
+
         string path_temp = path_temp+temp+".jpg";
 
         string command="wget  -O "+path_temp+"http://"+ip+"/shot.jpg";
@@ -134,9 +143,14 @@ string Camera::photo_JPEG()
 
 string Camera::take_photo_af()
 {
-        int temp = count_capture_photo;
+      
+        int temp_count = count_capture_photo;
+        string temp;
         count_capture_photo++;
-        my_itoa(temp);
+        temp=to_string(temp_count);
+
+
+
         string path_capture = path_capture+temp+".jpg";
 
         string command="wget  -O "+count_capture_photo+"http://"+ip+"/photoaf.jpg";
