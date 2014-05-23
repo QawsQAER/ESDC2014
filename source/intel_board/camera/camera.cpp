@@ -1,8 +1,9 @@
  
  
 
-#include <camera.h>
-
+#include "camera.h"
+#include "stdio.h"
+#include "stdlib.h"
 
 //convert int to string
 int my_itoa(int val, char* buf)
@@ -89,7 +90,7 @@ string Camera::photo_af()
 {
     int temp = count_temp_photo;
         count_temp_photo++;
-        my_itoa(temp);
+        itoa(temp);
         string path_temp = path_temp+temp+".jpg";
 
         string command="wget  -O "+path_temp+"http://"+ip+"/photoaf.jpg";

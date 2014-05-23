@@ -33,10 +33,12 @@ intel_board::~intel_board()
 uint8_t intel_board::main_function()
 {
 	printf("Intel board is going to execute its main functionality\n");
-	
+	char key;
 	while(1)
 	{
-		
+		key = getchar();
+		if(key == 'n')
+		this->image_processor.hello_get_image_and_show();
 	}
 	return 1;
 }

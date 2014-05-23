@@ -8,11 +8,14 @@ All the code with this header are under GPL open source license.
 #ifndef _CAMERA_H
 #define _CAMERA_H
 
+#include <string>
 #include <string.h>
 #include <stdio.h>
 
-#define PATH_TEMP ../../Photos/Temp
-#define PATH_CAPTURE ../../Photos/Capture
+#define PATH_TEMP "../../Photos/Temp"
+#define PATH_CAPTURE "../../Photos/Capture"
+
+using namespace std;
 
 class Camera
 {
