@@ -9,13 +9,12 @@ All the code with this header are under GPL open source license.
 #define _CAMERA_H
 
 #include <string>
-#include <string.h>
-#include <stdio.h>
+#include <iostream>
+#include <cstdio>
 
 #define PATH_TEMP "../../Photos/Temp"
 #define PATH_CAPTURE "../../Photos/Capture"
 
-using namespace std;
 
 class Camera
 {
@@ -23,33 +22,37 @@ public:
 	Camera();
 	~Camera();
 
-	void setip(string ip_address);
+	void setip(std::string ip_address);
 
-	string photo();
-	string photo_af();
-	string photo_JPEG();
+	std::string photo();
+	std::string photo_af();
+	std::string photo_JPEG();
 
-	string take_photo_af();
+	std::string take_photo_af();
 
-	void zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
+	/*void zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
 
 	void flash_open();
 	void flash_close();
 
 	void af_open();
-	void af_close();
-	
+	void af_close();*/
+
 
 private:
 	FILE *fp;
 
-	string ip;
+	std::string ip;
 
-	string path_temp;
-	static int count_temp_photo;
+	std::string path_temp;
+	
 
-	string path_capture;
-	static int count_capture_photo;
+	std::string path_capture;
+
+	int count_temp_photo;
+	int count_capture_photo;
+
+	
 };
 
 #endif
