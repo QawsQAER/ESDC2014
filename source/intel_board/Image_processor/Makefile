@@ -1,4 +1,4 @@
-
+#$(CC),$(MV) are inherited from the parent Makefile
 all:
 	$(CC) -o Image_processor.o -c Image_processor.cpp
 	echo "Image_processor.o: moving to parent directory intel_board"

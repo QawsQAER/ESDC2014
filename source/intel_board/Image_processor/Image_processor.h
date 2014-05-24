@@ -10,7 +10,7 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
-#include "../camera/camera.h"
+//#include "../camera/camera.h"
 
 #define WINNAME_LENGTH 32
 enum IMAGE_PROCESS_STATE

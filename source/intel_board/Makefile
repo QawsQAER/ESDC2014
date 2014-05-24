@@ -1,5 +1,5 @@
 INTEL_BOARD_LD = -l Image_processor/Image_processor.o
-INTEL_BOARD_DEPEND = intel_board.cpp intel_board.h Image_processor.o camera.o
+INTEL_BOARD_DEPEND = intel_board.cpp intel_board.h Image_processor.o #camera.o
 INTEL_BOARD_DEPEND_OBJECT = Image_processor.o
 
 export RM=rm
