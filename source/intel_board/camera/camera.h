@@ -12,7 +12,7 @@ All the code with this header are under GPL open source license.
 #include <iostream>
 #include <cstdio>
 
-#define PATH_TEMP "../../Photos/Temp"
+#define PATH_TEMP "~/Desktop/"
 #define PATH_CAPTURE "../../Photos/Capture"
 
 
@@ -30,13 +30,13 @@ public:
 
 	std::string take_photo_af();
 
-	/*void zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
+	void zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
 
 	void flash_open();
 	void flash_close();
 
 	void af_open();
-	void af_close();*/
+	void af_close();
 
 
 private:
