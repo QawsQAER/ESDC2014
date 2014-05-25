@@ -1,7 +1,9 @@
 #include "intel_board.h"
 
-intel_board::intel_board(uint8_t mode)
+intel_board::intel_board(uint8_t mode,uint8_t img_source)
 {
+	//1 for WEBCAM MODE
+	this->image_processor = new Image_processor(img_source);
 	switch(mode)
 	{
 	case(0):
@@ -36,9 +38,8 @@ uint8_t intel_board::main_function()
 	char key;
 	while(1)
 	{
-		key = getchar();
-		if(key == 'n')
-		this->image_processor.hello_get_image_and_show();
+		//running image_processor->test()
+		this->image_processor->test();
 	}
 	return 1;
 }
