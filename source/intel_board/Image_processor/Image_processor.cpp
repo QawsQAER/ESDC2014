@@ -28,5 +28,6 @@ uint8_t Image_processor::hello_get_image_and_show()
 		this->win_exist = 1;
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	cv::imshow(this->winname,image);
+	cv::waitKey(0);
 	return 1;
 }

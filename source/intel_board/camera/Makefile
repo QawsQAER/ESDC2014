@@ -1,3 +1,4 @@
+#$(CPP) are inherited from the Elipse generated Makefile
 MV=mv
 all:
 	$(CPP) -o camera.o -c camera.cpp
