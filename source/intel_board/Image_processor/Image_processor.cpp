@@ -28,6 +28,9 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 	return this->state;
 }
 
+/*
+ * Implementation of capture_image()
+ */
 uint8_t Image_processor::capture_image()
 {
 	if(this->img_source == IMG_SOURCE_CELLPHONE)
@@ -46,6 +49,9 @@ uint8_t Image_processor::capture_image()
 	return 1;
 }
 
+/*
+ * Implementation of get_image_and_show()
+ */
 
 uint8_t Image_processor::get_image_and_show()
 {
@@ -60,7 +66,33 @@ uint8_t Image_processor::get_image_and_show()
 	cv::waitKey(0);
 	return 1;
 }
-
+/*
+ *	Implementation of stored_current_image()
+ *
+ */
+uint8_t Image_processor::save_current_image()
+{
+	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	time_t timestamp = time(NULL);
+	struct tm *current_time = gmtime(&timestamp);
+	//get the filename in format of month-day_hour:minute:second
+	sprintf(filename,"%d-%d_%d:%d:%d.png",
+			current_time->tm_mon,
+			current_time->tm_mday,
+			current_time->tm_hour,
+			current_time->tm_min,
+			current_time->tm_sec);
+	//specify the compression parameters
+	std::vector<int> compression_params;
+	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
+	compression_params.push_back(9);
+	//write the data into the file
+	cv::imwrite(filename,this->current_img,compression_params);
+	free(filename);
+}
+/*
+ * Implementation of test()
+ */
 void Image_processor::test()
 {
 	//create a window named as this->winname
@@ -73,9 +105,10 @@ void Image_processor::test()
 			continue;
 		}
 		//if image is capture, show it to the window
+		this->save_current_image();
 		cv::imshow(this->winname,this->current_img);
-		//wait for 50ms to capture the next frame
-		cv::waitKey(50);
+		//wait for 5000ms to capture the next frame
+		cv::waitKey(5000);
 	}
 	return ;
 }

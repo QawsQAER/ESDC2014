@@ -11,6 +11,8 @@
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
 #include "../macro.h"
+#include <vector>
+#include <time.h>
 //#include "../camera/camera.h"
 
 #define WINNAME_LENGTH 32
@@ -49,9 +51,12 @@ public:
 
 	//this function will return a Mat variable.
 	uint8_t capture_image();
-	void show_image();
+
+	//this function will stored the image into the hard disk,
+	//naming it according to the time since Epoch
+	uint8_t save_current_image();
+
 	uint8_t analyze_image();
-	uint8_t show_image(char *filename);
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 	void test();
