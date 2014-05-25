@@ -10,9 +10,19 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui/highgui.hpp>
 #include <opencv2/core/core.hpp>
+#include "../macro.h"
 //#include "../camera/camera.h"
 
 #define WINNAME_LENGTH 32
+
+#ifndef IMG_SOURCE_CELLPHONE
+#define IMG_SOURCE_CELLPHONE 0
+#endif
+
+#ifndef IMG_SOURCE_WEBCAM
+#define IMG_SOURCE_WEBCAM 1
+#endif
+
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -26,14 +36,25 @@ private:
 	IMAGE_PROCESS_STATE state;
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
+
+	//this variable indicates where the frame for analysis comes from
+	uint8_t img_source;
+
+	cv::VideoCapture *cap;
+	//this variable stores the current image that is being processed
+	cv::Mat current_img;
 public:	
-	Image_processor();
+	Image_processor(uint8_t img_source);
 	~Image_processor();
+
+	//this function will return a Mat variable.
 	uint8_t capture_image();
+	void show_image();
 	uint8_t analyze_image();
 	uint8_t show_image(char *filename);
-	uint8_t hello_get_image_and_show();
+	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
+	void test();
 };
 
 #endif

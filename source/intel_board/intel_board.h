@@ -31,7 +31,7 @@ enum ROBOT_MODE{
 class intel_board
 {
 private:
-	Image_processor image_processor;
+	Image_processor *image_processor;
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
 	uint8_t robot_init();
@@ -43,7 +43,7 @@ private:
 	uint8_t robot_approach_ref();
 	*/
 public:
-	intel_board(uint8_t mode);
+	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();
 	uint8_t main_function();
 };
