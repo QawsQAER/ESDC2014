@@ -8,8 +8,6 @@
 #include <Omni4WD.h>
 
 #include <communication.h>
-#include <lifter.h>
-#include <camera_platform.h>
 
 /*
 
@@ -55,8 +53,6 @@ MotorWheel wheel4(10,7,18,19,&irq4);
 
 Omni4WD Omni(&wheel1,&wheel2,&wheel3,&wheel4);
 Car car(&Omni);
-Lifter lifter;
-Camera_platform camera_platform;
 Communication com;
 
 void setup()

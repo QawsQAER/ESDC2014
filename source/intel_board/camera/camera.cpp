@@ -7,6 +7,8 @@
 #include <cstdio>
 #include <string>
 
+#define DEBUG_MODE 1
+
 using namespace std;
 
 int my_itoa(int val, char* buf);
@@ -23,7 +25,7 @@ Camera::Camera()
 
 Camera::~Camera()
 {
-    delete fp;
+     cout<<"camera instance destroyed"<<endl;
 }
 
 void Camera::setip(string ip_address)
@@ -33,42 +35,30 @@ void Camera::setip(string ip_address)
 
 string Camera::photo()
 {
+     if(DEBUG_MODE) cout<<"Function:photo()"<<endl;
+
         int temp_count = count_temp_photo;
           char buffer[20];   
         count_temp_photo++;
         my_itoa(temp_count,buffer);
+
         string temp(buffer);
 
-        string path_temp = path_temp+temp+".jpg";
+        cout << temp<<endl;
 
-    string str_command="wget  -O "+path_temp+"http://"+ip+"/photoaf.jpg";
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string path_temp_function = path_temp+temp+".jpg";
+
+             if(DEBUG_MODE) cout<<"set path finished"<<endl;
+
+       string str_command="wget  -O "+path_temp_function+" http://"+ip+"/photo.jpg";
+
+     if(DEBUG_MODE) cout<<"convert command"<<endl;
+
       const char* command=str_command.c_str();
 
-        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
-                perror("popen failed");
-                // return 0;
-            }
-          
-            if (pclose(fp) == -1) {
-                perror("pclose failed");
-                // return 0;
-            }
-
-        return path_temp;
-}
-
-string Camera::photo_af()
-{
-        int temp_count = count_temp_photo;
-          char buffer[20];   
-        count_temp_photo++;
-        my_itoa(temp_count,buffer);
-        string temp(buffer);
-
-        string path_temp = path_temp+temp+".jpg";
-
-       string str_command="wget  -O "+path_temp+"http://"+ip+"/photoaf.jpg";
-      const char* command=str_command.c_str();
+      if(DEBUG_MODE) cout<<"wget command"<<" "<<command<<endl;
 
         if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
                 perror("popen failed");
@@ -80,25 +70,76 @@ string Camera::photo_af()
                 // return -2;
             }
 
-        return path_temp;
+        return path_temp_function;
+}
+
+string Camera::photo_af()
+{
+    if(DEBUG_MODE) cout<<"Function:photoaf()"<<endl;
+
+        int temp_count = count_temp_photo;
+          char buffer[20];   
+        count_temp_photo++;
+        my_itoa(temp_count,buffer);
+
+        string temp(buffer);
+
+        cout << temp<<endl;
+
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string path_temp_function = path_temp+temp+".jpg";
+
+             if(DEBUG_MODE) cout<<"set path finished"<<endl;
+
+       string str_command="wget  -O "+path_temp_function+" http://"+ip+"/photoaf.jpg";
+
+     if(DEBUG_MODE) cout<<"convert command"<<endl;
+
+      const char* command=str_command.c_str();
+
+      if(DEBUG_MODE) cout<<"wget command"<<" "<<command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+        return path_temp_function;
 }
 
 string Camera::photo_JPEG()
 {
 
+        if(DEBUG_MODE) cout<<"Function:photo_JPEG()"<<endl;
+
         int temp_count = count_temp_photo;
           char buffer[20];   
         count_temp_photo++;
         my_itoa(temp_count,buffer);
+
         string temp(buffer);
 
+        cout << temp<<endl;
 
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
 
-        string path_temp = path_temp+temp+".jpg";
+        string path_temp_function = path_temp+temp+".jpg";
 
- string str_command="wget  -O "+path_temp+"http://"+ip+"/photoaf.jpg";
+             if(DEBUG_MODE) cout<<"set path finished"<<endl;
+
+       string str_command="wget  -O "+path_temp_function+" http://"+ip+"/shoot.jpg";
+
+     if(DEBUG_MODE) cout<<"convert command"<<endl;
+
       const char* command=str_command.c_str();
 
+      if(DEBUG_MODE) cout<<"wget command"<<" "<<command<<endl;
 
         if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
                 perror("popen failed");
@@ -110,26 +151,31 @@ string Camera::photo_JPEG()
                 // return -2;
             }
 
-        return path_temp;
+        return path_temp_function;
 }
 
 
 string Camera::take_photo_af()
 {
-      
+              if(DEBUG_MODE) cout<<"Function:take_photo_af()"<<endl;
+
        int temp_count = count_capture_photo;
           char buffer[20];   
         count_capture_photo++;
         my_itoa(temp_count,buffer);
+
+        if(DEBUG_MODE) cout<<"After my_itoa()"<<endl;
         string temp(buffer);
 
 
 
         string path_capture = path_capture+temp+".jpg";
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
 
         string str_command="wget  -O "+path_capture+"http://"+ip+"/photoaf.jpg";
       const char* command=str_command.c_str();
 
+   if(DEBUG_MODE) cout<<"wget command"<<endl;
         if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
                 perror("popen failed");
                 // return -1;
@@ -144,11 +190,172 @@ string Camera::take_photo_af()
 }
 
 
-/*void Camera::zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
-    void Camera::flash_open();
-    void Camera::flash_close();
-    void Camera::af_open();
-    void Camera::af_close();*/
+void Camera::zoom(float scaler){
+// (scaler>1 in) (scaler< 1 out)
+
+//conver scaler to index
+    int index=0;
+    
+        if(scaler-1<0.1) index=0;  
+       else if(scaler-1.02<0.1) index=1;  
+       else  if(scaler-1.04<0.1) index=2;  
+        else if(scaler-1.09<0.1) index=3;  
+         else if(scaler-1.11<0.1) index=4;  
+         else if(scaler-1.13<0.1) index=5;  
+         else if(scaler-1.19<0.1) index=6;  
+          else if(scaler-1.21<0.1) index=7;  
+         else if(scaler-1.24<0.1) index=8;  
+         else if(scaler-1.31<0.1) index=9;  
+         else if(scaler-1.34<0.1) index=10;  
+         else if(scaler-1.38<0.1) index=11;  
+         else if(scaler-1.46<0.1) index=12;  
+          else if(scaler-1.5<0.1) index=13;  
+         else if(scaler-1.55<0.1) index=14;  
+         else if(scaler-1.59<0.1) index=15;  
+         else if(scaler-1.65<0.1) index=16;  
+         else if(scaler-1.7<0.1) index=17;  
+         else if(scaler-1.82<0.1) index=18;  
+          else if(scaler-1.89<0.1) index=19;  
+         else if(scaler-2<0.1) index=20;  
+         else if(scaler-2.13<0.1) index=21;  
+         else if(scaler-2.22<0.1) index=22;  
+         else if(scaler-2.32<0.1) index=23;  
+         else if(scaler-2.43<0.1) index=24;  
+             else if(scaler-2.55<0.1) index=25;  
+         else if(scaler-2.83<0.1) index=26;  
+         else if(scaler-3<0.1) index=27;  
+         else if(scaler-3.19<0.1) index=28;  
+         else if(scaler-3.64<0.1) index=29;  
+         else if(scaler-4<0.1) index=30;  
+         else {cout<< "Error:scaler error"<<endl;
+                 exit(0);}
+
+
+
+  if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+     char buffer[20];   
+        count_capture_photo++;
+        my_itoa(index,buffer);
+
+        string temp(buffer);
+
+        string str_command="wget http://"+ip+"/ptz?zoom="+temp;
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+
+
+}
+    void Camera::flash_open()
+    {
+
+
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/enabletorch";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+
+
+
+    }
+
+    void Camera::flash_close()
+    {
+
+
+
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/disabletorch";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+    }
+
+    void Camera::af_open()
+    {
+
+
+ if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/focus";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+    }
+
+
+    void Camera::af_close()
+    {
+
+if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/nofocus";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+
+
+
+
+    }
 
 
 
@@ -157,6 +364,8 @@ string Camera::take_photo_af()
 
 int my_itoa(int val, char* buf)
 {
+        // if(DEBUG_MODE) cout<<"Function:my_itoa()"<<endl;
+
         const unsigned int radix = 10;
         char* p;
         unsigned int a; //every digit
@@ -189,6 +398,7 @@ int my_itoa(int val, char* buf)
         --p;
         ++b;
         } while (b < p);
+        // if(DEBUG_MODE) cout<<"finished my_itoa()"<<endl;
         return len;
 }
 

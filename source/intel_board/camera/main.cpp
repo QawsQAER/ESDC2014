@@ -8,10 +8,23 @@ int main()
 {
 
 Camera camera;
+cout<<"input ip"<<endl;
 string ip;
-cin>>ip;
+ip="192.168.43.1:8080";
+// cin>>ip;
 camera.setip(ip);
-camera.photo_af();
+cout<<"setip finished"<<endl;
+
+
+while(1)
+{
+	float scaler;
+	cout<<"waiting:";
+	cin>>scaler;
+	camera.zoom(scaler);
+	cout<<endl;
+
+}
 
 
 
