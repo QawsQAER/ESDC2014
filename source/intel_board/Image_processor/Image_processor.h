@@ -45,6 +45,7 @@ private:
 	cv::VideoCapture *cap;
 	//this variable stores the current image that is being processed
 	cv::Mat current_img;
+	cv::Mat analyzed_img;
 public:	
 	Image_processor(uint8_t img_source);
 	~Image_processor();
@@ -57,6 +58,10 @@ public:
 	uint8_t save_current_image();
 
 	uint8_t analyze_image();
+	
+	/*this function will use current_img as image source and gives out analyzed result*/
+	uint8_t basic_pedestrain_detection();
+	
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 	void test();
