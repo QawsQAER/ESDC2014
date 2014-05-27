@@ -43,9 +43,13 @@ int main(int argc, char ** argv) {
         uint8_t img_source = 1;
         if(argc >= 2)
         {
+        	//the user has set the mode
         	mode = atoi(argv[1]);
         	if(argc >= 3)
+        	{
+        		//the user has set the image source
         		img_source = atoi(argv[2]);
+        	}
         }
 
 

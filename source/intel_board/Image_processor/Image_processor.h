@@ -46,6 +46,12 @@ private:
 	//this variable stores the current image that is being processed
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
+
+	//this function will get image from cell phone, and load the image into the current_img
+	uint8_t get_image_from_cellphone();
+	//this function will get image from camera, and load the image into the current_img
+	uint8_t get_image_from_webcam();
+
 public:	
 	Image_processor(uint8_t img_source);
 	~Image_processor();
@@ -62,6 +68,7 @@ public:
 	/*this function will use current_img as image source and gives out analyzed result*/
 	uint8_t basic_pedestrain_detection();
 	
+	uint8_t show_analyzed_img();
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 	void test();

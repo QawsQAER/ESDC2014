@@ -28,6 +28,10 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 	return this->state;
 }
 
+uint8_t Image_processor::get_image_from_cellphone()
+{
+
+}
 /*
  * Implementation of capture_image()
  */
@@ -35,16 +39,11 @@ uint8_t Image_processor::capture_image()
 {
 	if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
-		return 1;
+		return this->get_image_from_cellphone();
 	}
 	else if(this->img_source == IMG_SOURCE_WEBCAM)
 	{
-		(*this->cap)>>(this->current_img);
-		//Check whether valid frame data is captured
-		if(this->current_img.data)
-			return 1;
-		else
-			return -1;
+		return this->get_image_from_webcam();
 	}
 	return 1;
 }
@@ -107,10 +106,7 @@ uint8_t Image_processor::analyze_image()
 	//use the default People Detector
 	printf("Imaga_processor: Setting the default people detector\n");
 	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
-	printf("Imaga_processor: Setting done\n");
-	printf("Imaga_processor: Creatting a Window\n");
-	cv::namedWindow("Pedestrian Detection",CV_WINDOW_AUTOSIZE);
-	printf("Imaga_processor: Creation done\n");
+
 	if(!this->analyzed_img.data)
 	{
 		printf("Imaga_processor Error: Currently no valid data\n");
@@ -118,15 +114,10 @@ uint8_t Image_processor::analyze_image()
 	}
 	printf("Capture valid frame\n");
 	std::vector<cv::Rect> found, found_filtered;
-	/*
-	 *
-	 *void HOGDescriptor::detectMultiScale(
-	 *						const Mat& img, vector<Rect>& foundLocations,
-	 *						double hitThreshold, Size winStride, Size padding,
-	 *						double scale0, double finalThreshold, bool useMeanshiftGrouping) const
-	 *
-	 */
+
+	//the main detection algorithm is run here
 	hog.detectMultiScale(this->analyzed_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
+
 	size_t i,j;
 	//first for loop
 	printf("Entering first for loop\n");
@@ -153,19 +144,24 @@ uint8_t Image_processor::analyze_image()
 		r.height = cvRound(r.height * 0.9);
 		cv::rectangle(this->analyzed_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
-	cv::imshow("Pedestrian Detection",this->analyzed_img);
-	if(cv::waitKey(5000) >= 0)
-		return 1;
-	else
-		return 1;
+	this->show_analyzed_img();
  }
+/*
+ *
+ */
+uint8_t Image_processor::show_analyzed_img()
+{
+	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	cv::imshow(this->winname,this->analyzed_img);
+	cv::waitKey(5000);
+	return 1;
+}
 /*
  * Implementation of test()
  */
 void Image_processor::test()
 {
 	//create a window named as this->winname
-	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	while(true)
 	{
 		if(!this->capture_image())
@@ -175,9 +171,7 @@ void Image_processor::test()
 		}
 		//if image is capture, show it to the window
 		this->save_current_image();
-		cv::imshow(this->winname,this->current_img);
-		//wait for 5000ms to capture the next frame
-		cv::waitKey(5000);
+		this->basic_pedestrain_detection();
 	}
 	return ;
 }
