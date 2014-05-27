@@ -225,6 +225,7 @@ int Camera::test_connection()
     server_addr.sin_port=htons(atoi(port.c_str())); 
     if(connect(sd,(struct sockaddr *)&server_addr,sizeof(server_addr))<0){ 
         printf("connection error: %s (Errno:%d)\n",strerror(errno),errno); 
+        close(sd);
        return -1;
     } 
     printf("connect success \n"); 
@@ -238,6 +239,7 @@ int Camera::test_connection()
     if (ret < 0) 
     { 
         printf("send error %d，Error message'%s'\n",errno, strerror(errno)); 
+         close(sd);
         return -1;
        
     }
@@ -246,7 +248,7 @@ int Camera::test_connection()
         printf("send success ,total send %d \n", ret); 
     } 
     
-
+         close(sd);
         return 1;
 }
 
