@@ -8,8 +8,6 @@ The communication protocol is inside source/intel_board/lib/message.h
 */
 #include <Arduino.h> //Arduino sucks
 #include <Omni4WD.h>
-#include <lifter.h>
-#include <camera_platform.h>
 
 #ifndef _COMMUNICATION_H
 #define _COMMUNICATION_H
@@ -51,10 +49,6 @@ private:
 	uint8_t move_dir;
 	uint16_t rotate_dis;
 	uint8_t rotate_dir;
-
-	Car* car;
-	Lifter* lifter;
-	Camera_platform* camera_platform;
 };
 
 #endif

@@ -2,7 +2,7 @@
 
 intel_board::intel_board(uint8_t mode,uint8_t img_source)
 {
-	//1 for WEBCAM MODE
+	//1 for WEBCAM MODE, 0 for cellphone mode
 	this->image_processor = new Image_processor(img_source);
 	switch(mode)
 	{

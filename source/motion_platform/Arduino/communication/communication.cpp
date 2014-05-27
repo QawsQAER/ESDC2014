@@ -1,8 +1,6 @@
 #include <Arduino.h> //Arduino sucks
 #include <communication.h>
 #include <Omni4WD.h>
-#include <lifter.h>
-#include <camera_platform.h>
 
 Communication::Communication()
 {
