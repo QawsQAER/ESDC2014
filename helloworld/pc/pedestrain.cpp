@@ -47,6 +47,10 @@ int main(int argc, char ** argv)
 		printf("Openning %s\n",filename);
 
 		Mat img = imread(filename,CV_LOAD_IMAGE_COLOR);
+		
+		Mat people_detect_img = img.clone();
+		Mat face_detect_img = img.clone();
+
 		HOGDescriptor hog;
 		//use the default People Detector
 		cout<<"Setting the default people detector"<<endl;
@@ -71,7 +75,7 @@ int main(int argc, char ** argv)
 		 *
 		 */
 
-		hog.detectMultiScale(img,found,0,Size(8,8),Size(32,32),1.05,2);
+		hog.detectMultiScale(people_detect_img,found,0,Size(8,8),Size(32,32),1.05,2);
 
 		size_t i,j;
 		//first for loop
@@ -94,12 +98,23 @@ int main(int argc, char ** argv)
 			r.width = cvRound(r.width * 0.8);
 			r.y += cvRound(r.height * 0.06);
 			r.height = cvRound(r.height * 0.9);
-			rectangle(img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
+			//draw a rectangle for every detected region
+			rectangle(people_detect_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 		}
-		detectAndDisplay(img);
-		//imshow("Pedestrian Detection",img);
-		if(waitKey(5000) == 'n')
+
+		imshow("Pedestrian Detection",people_detect_img);
+		if(waitKey(0) == 'n')
+		{
+			destroyWindow("Pedestrian Detection");
+		}
+
+		namedWindow("Pedestrian Detection",CV_WINDOW_AUTOSIZE);
+		detectAndDisplay(face_detect_img);
+		if(waitKey(0) == 'n')
+		{
 			continue;
+			destroyWindow("Pedestrian Detection");
+		}
 		else
 			break;
 	}
@@ -113,6 +128,7 @@ int faceDetectInit()
 	if( !eyes_cascade.load( eyes_cascade_name ) ){ printf("--(!)Error loading eyes cascade\n"); return -1; };
 	return 1;
 }
+
 /**
  * @function detectAndDisplay
  */
@@ -139,13 +155,13 @@ void detectAndDisplay( Mat frame )
             //-- Draw the face
             Point center( faces[i].x + faces[i].width/2, faces[i].y + faces[i].height/2 );
             ellipse( frame, center, Size( faces[i].width/2, faces[i].height/2 ), 0, 0, 360, Scalar( 255, 0, 0 ), 2, 8, 0 );
-		/*
+
             for( size_t j = 0; j < eyes.size(); j++ )
             { //-- Draw the eyes
                 Point eye_center( faces[i].x + eyes[j].x + eyes[j].width/2, faces[i].y + eyes[j].y + eyes[j].height/2 );
                 int radius = cvRound( (eyes[j].width + eyes[j].height)*0.25 );
                 circle( frame, eye_center, radius, Scalar( 255, 0, 255 ), 3, 8, 0 );
-            }*/
+            }
         }
     }
     //-- Show what you got
