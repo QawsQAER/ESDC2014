@@ -12,7 +12,7 @@ All the code with this header are under GPL open source license.
 #include <iostream>
 #include <cstdio>
 
-#define PATH_TEMP "~/Desktop/"
+#define PATH_TEMP "Desktop/"
 #define PATH_CAPTURE "../../Photos/Capture"
 
 

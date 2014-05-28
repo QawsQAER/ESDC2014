@@ -13,7 +13,8 @@
 #include "../macro.h"
 #include <vector>
 #include <time.h>
-//#include "../camera/camera.h"
+#include "../camera/camera.h"
+#include <string>
 
 #define WINNAME_LENGTH 32
 
@@ -47,6 +48,7 @@ private:
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
 
+	Camera *cam;
 	//this function will get image from cell phone, and load the image into the current_img
 	uint8_t get_image_from_cellphone();
 	//this function will get image from camera, and load the image into the current_img
