@@ -28,16 +28,16 @@ echo "PASSWORD is $3"
 config_file=tmp
 
 echo "Generating configuration file..."
-wpa_passphrase $2 $3 > $config_file
+#wpa_passphrase $2 $3 > $config_file
 echo "Done"
 
 echo "Setting up wpa_supplicant daemon..."
-wpa_supplicant -B -i $1 -c $config_file
+wpa_supplicant -B -i $1 -c $config_file -Dath9k
 echo "Done"
 
 
-rm $config_file
+#rm $config_file
 echo "Runing dhclient for DHCP"
-dhclient $1
+dhclient -v $1
 echo "Done"
 echo "You have connected to $2, though $1"
