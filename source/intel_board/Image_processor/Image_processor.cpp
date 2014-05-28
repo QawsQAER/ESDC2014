@@ -16,11 +16,18 @@ Image_processor::Image_processor(uint8_t img_source)
 			exit(-1);
 		}
 	}
+	if(this->img_source == IMG_SOURCE_CELLPHONE)
+	{
+		this->cam = new Camera();
+		std::string ip("192.168.43.1:8080");
+		this->cam->setip(ip);
+	}
 }
 
 Image_processor::~Image_processor()
 {
 	printf("Destructing Image processor\n");
+	delete this->cam;
 }
 
 IMAGE_PROCESS_STATE Image_processor::get_state()
@@ -30,7 +37,21 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 
 uint8_t Image_processor::get_image_from_cellphone()
 {
+	char *filename = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	strcpy(filename,this->cam->photo_af().c_str());
+	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",filename);
+	this->current_img = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
+	if(!this->current_img.data)
+	{
+		printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");
+		getchar();
+	}
+	return 1;
+}
 
+uint8_t Image_processor::get_image_from_webcam()
+{
+	return 1;
 }
 /*
  * Implementation of capture_image()
@@ -144,7 +165,6 @@ uint8_t Image_processor::analyze_image()
 		r.height = cvRound(r.height * 0.9);
 		cv::rectangle(this->analyzed_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
-	this->show_analyzed_img();
  }
 /*
  *
@@ -153,7 +173,7 @@ uint8_t Image_processor::show_analyzed_img()
 {
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	cv::imshow(this->winname,this->analyzed_img);
-	cv::waitKey(5000);
+	cv::waitKey(0);
 	return 1;
 }
 /*
@@ -172,6 +192,9 @@ void Image_processor::test()
 		//if image is capture, show it to the window
 		this->save_current_image();
 		this->basic_pedestrain_detection();
+		this->show_analyzed_img();
+		printf("PRESS ANY KEY TO CONTINUE\n");
+		getchar();
 	}
 	return ;
 }

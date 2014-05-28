@@ -7,6 +7,25 @@
 #include <cstdio>
 #include <string>
 
+
+#include <stdio.h>
+#include <sys/socket.h> 
+#include <sys/types.h> 
+#include <time.h> 
+#include <netdb.h>
+#include <errno.h> 
+#include <signal.h> 
+#include <stdlib.h> 
+#include <string.h> 
+#include <unistd.h> 
+#include <sys/wait.h> 
+#include <sys/time.h> 
+#include <netinet/in.h> 
+#include <arpa/inet.h> 
+
+
+
+
 #define DEBUG_MODE 1
 
 using namespace std;
@@ -21,6 +40,7 @@ Camera::Camera()
     path_capture = PATH_CAPTURE;
     count_temp_photo=0;
     count_capture_photo=0;
+    ip=IP_PORT;
 }
 
 Camera::~Camera()
@@ -187,6 +207,49 @@ string Camera::take_photo_af()
             }
 
         return path_capture;
+}
+
+
+
+int Camera::test_connection()
+{
+
+
+    int sd=socket(AF_INET,SOCK_STREAM,0); 
+    struct sockaddr_in server_addr; 
+    memset(&server_addr,0,sizeof(server_addr)); 
+    server_addr.sin_family=AF_INET; 
+    string ip=IP;
+    string port=PORT;
+    server_addr.sin_addr.s_addr=inet_addr(ip.c_str()); 
+    server_addr.sin_port=htons(atoi(port.c_str())); 
+    if(connect(sd,(struct sockaddr *)&server_addr,sizeof(server_addr))<0){ 
+        printf("connection error: %s (Errno:%d)\n",strerror(errno),errno); 
+        close(sd);
+       return -1;
+    } 
+    printf("connect success \n"); 
+
+
+    char str1[4096];
+    memset(str1, 0, 4096); 
+    int ret;
+    sprintf(str1,"GET / HTTP/1.0\r\nHost:%s\r\nContent-Type=text/plain\r\nConnection:Close\r\n\r\n",ip.c_str());   
+    ret = send(sd,(void *)str1,strlen(str1),0); 
+    if (ret < 0) 
+    { 
+        printf("send error %d，Error message'%s'\n",errno, strerror(errno)); 
+         close(sd);
+        return -1;
+       
+    }
+    else
+    { 
+        printf("send success ,total send %d \n", ret); 
+    } 
+    
+         close(sd);
+        return 1;
 }
 
 

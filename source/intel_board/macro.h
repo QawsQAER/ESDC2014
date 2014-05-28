@@ -4,6 +4,6 @@
 #define IMG_SOURCE_CELLPHONE 0
 #define IMG_SOURCE_WEBCAM 1
 
-#define FILENAME_LENGTH 64
+#define FILENAME_LENGTH 128
 
 #endif
