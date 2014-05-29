@@ -54,13 +54,13 @@ private:
 
 //-----------------body DETECTION RELATED VARIABLE--------------------------------------------
 	//body_detect stores the rectangle of the body detected in the current_img
-	std::vector<cv::Rect> body_detect;
+
 	//the HOG for body detection
 	cv::HOGDescriptor hog;
 
 //------------------FACE DETECTION RELATED VARIABLE------------------------------------------
 	//face_detect stores the rectangle of the face detected in the current_img
-	std::vector<cv::Rect> face_detect;
+
 	std::vector<cv::Rect> eyes_detect;
 	cv::CascadeClassifier face_cascade;
 	cv::CascadeClassifier eyes_cascade;
@@ -69,7 +69,7 @@ private:
 	std::string eyes_cascade_name;
 //-------------------------------------------------------------------------------------------------------------------
 
-	std::vector<cv::Rect> final_detect;
+
 
 	//this function will get image from cell phone, and load the image into the current_img
 	uint8_t get_image_from_cellphone();
@@ -83,9 +83,15 @@ public:
 	Image_processor(uint8_t img_source);
 	~Image_processor();
 
-	//this variable stores the current image that is being processed
+	//these variables stores the detection results
+	std::vector<cv::Rect> body_detect;
+	std::vector<cv::Rect> face_detect;
+	std::vector<cv::Rect> final_body_detect;
+	std::vector<cv::Rect> final_face_detect;
+	//these variables stores the current image that is being processed
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
+
 	//load the Cascade Classifier for face detection, and the HOG SVM for body detection
 	uint8_t init();
 
@@ -102,14 +108,15 @@ public:
 	/*this function will use current_img as image source and gives out analyzed result*/
 	uint8_t basic_pedestrain_detection();
 	uint8_t run_body_detection();
-	cv::Mat mark_detected_body(cv::Mat source_img);
+	cv::Mat mark_detected_body(const cv::Mat &source_img,const std::vector<cv::Rect> &body_detect);
+
 	/*this function will use current_img as image source and gives out analyzed result in analyzed img and face_detect*/
 	uint8_t basic_face_detection();
 	uint8_t run_face_detection();
-	cv::Mat mark_detected_face(cv::Mat source_img);
+	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
 
 	/**/
-	//this function will do basic filtering, eliminate body detected result without face detection 
+	//this function will do basic filtering, eliminate body detected result without face detection
 	uint8_t basic_filter();
 
 	uint8_t face_body_related(const cv::Rect &body,const cv::Rect &face);
