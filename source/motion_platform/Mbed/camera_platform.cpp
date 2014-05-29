@@ -5,7 +5,16 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 **********************************************************/
 #include "camera_platform.h"
 
-Camera_platform::Camera_platform()
+Camera_platform::Camera_platform(MyPwmOut* _pwmRoll, MyPwmOut* _pwmPitch, MyPwmOut* _pwmYaw)
 {
+    this->_pwmRoll = _pwmRoll;
+    this->_pwmPitch = _pwmPitch;
+    this->_pwmYaw = _pwmYaw;
+}
 
+Camera_platform::~Camera_platform()
+{
+    delete _pwmRoll;
+    delete _pwmPitch;
+    delete _pwmYaw;
 }
