@@ -1,8 +1,7 @@
 CC=gcc
 LDFLAG=`pkg-config --libs --cflags opencv`  -lstdc++
 
-TARGETS=hello hello_videocapture hello_objectdetect videocapture object_detect pedestrain_detect facerec_eignfaces
-
+TARGETS=hello hello_videocapture hello_objectdetect videocapture object_detect pedestrain_detect facerec_eigenfaces face_detect
 
 all: $(TARGETS)
 
@@ -29,3 +28,6 @@ highgui: highgui.cpp Makefile
 
 facerec_eigenfaces: facerec_eigenfaces.cpp Makefile
 	$(CC) -o facerec_eigenface facerec_eigenfaces.cpp $(LDFLAG)
+
+face_detect: face_detect.cpp Makefile
+	$(CC) -o face_detect face_detect.cpp $(LDFLAG)

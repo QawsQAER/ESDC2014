@@ -11,9 +11,7 @@ All the code with this header are under GPL open source license.
 #include <string>
 #include <iostream>
 #include <cstdio>
-
-#define PATH_TEMP "Desktop/"
-#define PATH_CAPTURE "../../Photos/Capture"
+#include "../macro.h"
 
 #define IP "192.168.43.1"
 #define PORT "8080"

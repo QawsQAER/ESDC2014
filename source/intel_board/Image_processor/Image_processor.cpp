@@ -16,12 +16,13 @@ Image_processor::Image_processor(uint8_t img_source)
 			exit(-1);
 		}
 	}
-	if(this->img_source == IMG_SOURCE_CELLPHONE)
+	else if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
 		this->cam = new Camera();
 		std::string ip("192.168.43.1:8080");
 		this->cam->setip(ip);
 	}
+	//check the existence of the directory for storing the capture image
 }
 
 Image_processor::~Image_processor()
@@ -30,6 +31,22 @@ Image_processor::~Image_processor()
 	delete this->cam;
 }
 
+uint8_t Image_processor::init()
+{
+	printf("Image_processor init(): Setting the default people detector\n");
+	//setting the SVM for people detection
+	this->hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
+
+	//setting the path to the cascade classifier
+	this->face_cascade_name = PATH_TO_FACE_CASCADE;
+	this->eyes_cascade_name = PATH_TO_EYES_CASCADE;
+	//setting the cascade classifier for face detection
+	printf("Image_processor init(): setting the default face detector");
+	if( !this->face_cascade.load(this->face_cascade_name) ){ printf("--(!)Error loading face cascade\n"); exit(-1); };
+	if( !this->eyes_cascade.load(this->eyes_cascade_name) ){ printf("--(!)Error loading eyes cascade\n"); exit(-1); };
+
+	return 1;
+}
 IMAGE_PROCESS_STATE Image_processor::get_state()
 {
 	return this->state;
@@ -120,60 +137,97 @@ uint8_t Image_processor::analyze_image()
 /*
  * Implementation of basic pedestrain detection algorithm
  */
+ uint8_t Image_processor::run_people_detection()
+ {
+ 	this->people_detect.clear();
+ 	std::vector<cv::Rect> found;
+ 	this->hog.detectMultiScale(this->current_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
+ 	size_t count1, count2;
+ 	for(count1 = 0;count1 < found.size();count1++)
+ 	{
+ 		cv::Rect r = found[count1];
+ 		for(count2 = 0;count2 < found.size();count2++)
+ 		{
+ 			if(count2 != count1 && ((r & found[count2]) == r))
+ 				break;
+ 		}
+ 		if(count2 == found.size())
+ 			this->people_detect.push_back(r);
+ 	}
+ 	return 1;
+ }
+
  uint8_t Image_processor::basic_pedestrain_detection()
  {
- 	this->analyzed_img = this->current_img;
-	cv::HOGDescriptor hog;
-	//use the default People Detector
-	printf("Imaga_processor: Setting the default people detector\n");
-	hog.setSVMDetector(cv::HOGDescriptor::getDefaultPeopleDetector());
-
-	if(!this->analyzed_img.data)
+ 	this->analyzed_img = this->current_img.clone();
+ 	this->run_people_detection();
+ 	printf("basic_pedestrain_detection: %d people detected\n",this->people_detect.size());
+ 	//circle all the pedestain
+ 	size_t count1 = 0;
+	for(count1 = 0; count1 < this->people_detect.size();count1++)
 	{
-		printf("Imaga_processor Error: Currently no valid data\n");
-		return -1;
-	}
-	printf("Capture valid frame\n");
-	std::vector<cv::Rect> found, found_filtered;
-
-	//the main detection algorithm is run here
-	hog.detectMultiScale(this->analyzed_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
-
-	size_t i,j;
-	//first for loop
-	printf("Entering first for loop\n");
-	for(i = 0; i < found.size();i++)
-	{
-		cv::Rect r = found[i];
-		for (j=0; j<found.size(); j++)
-		{	
-			if (j!=i && (r & found[j])==r)
-				break;
-		}
-
-		if (j==found.size())
-			found_filtered.push_back(r);
-	}
-	printf("Entering second for loop\n");
-	//second for loop
-	for(i = 0; i < found_filtered.size();i++)
-	{
-		cv::Rect r = found_filtered[i];
+		cv::Rect r = this->people_detect[count1];
 		r.x += cvRound(r.width * 0.1);
 		r.width = cvRound(r.width * 0.8);
 		r.y += cvRound(r.height * 0.06);
 		r.height = cvRound(r.height * 0.9);
+		//draw the rectangle on the analyzed_img
 		cv::rectangle(this->analyzed_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
  }
+/*
+ * Implementation of basic face detection
+ */
+uint8_t Image_processor::run_face_detection()
+{
+	this->face_detect.clear();
+	this->eyes_detect.clear();
+
+	//use gray image for face detection
+	cv::Mat frame_gray;
+	cv::cvtColor(this->current_img, frame_gray,cv::COLOR_BGR2GRAY );
+	cv::equalizeHist(frame_gray, frame_gray);
+	//doing face detection
+	this->face_cascade.detectMultiScale(frame_gray, this->face_detect, 1.1, 2, 0, cv::Size(10, 10));
+	printf("run_face_detection: detect %d faces\n",this->face_detect.size());
+	return 1;
+}
+
+uint8_t Image_processor::basic_face_detection()
+{
+	printf("Entering basic_face_detection\n");
+	this->analyzed_img = this->current_img.clone();
+	if(!this->run_face_detection())
+	{
+		printf("Image_processor basic_face_detection ERROR\n");
+		return -1;
+	}
+	//draw every detected faces
+	for( size_t i = 0; i < this->face_detect.size(); i++ )
+    	{
+    		cv::Point center(this->face_detect[i].x + this->face_detect[i].width/2, this->face_detect[i].y + this->face_detect[i].height/2 );
+    		cv::ellipse(this->analyzed_img, center, 
+    			cv::Size( this->face_detect[i].width/2, this->face_detect[i].height/2 ), 
+    			0, 0, 360, cv::Scalar( 255, 0, 0 ), 2, 8, 0 );
+    	}
+	return 1;
+}
 /*
  *
  */
 uint8_t Image_processor::show_analyzed_img()
 {
+	cv::destroyWindow(this->winname);
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	cv::imshow(this->winname,this->analyzed_img);
-	cv::waitKey(0);
+	char k = cv::waitKey(0);
+	if( k == 'e')
+		exit(0);
+	else if(k == 'n')
+		;
+	else
+		printf("You have pressed %c %d\n",k,k);
+
 	return 1;
 }
 /*
@@ -190,11 +244,17 @@ void Image_processor::test()
 			continue;
 		}
 		//if image is capture, show it to the window
-		this->save_current_image();
-		this->basic_pedestrain_detection();
+		//this->save_current_image();
+		//this->basic_pedestrain_detection();
+		//this->show_analyzed_img();
+		this->basic_face_detection();
 		this->show_analyzed_img();
-		printf("PRESS ANY KEY TO CONTINUE\n");
-		getchar();
 	}
 	return ;
+}
+
+uint8_t Image_processor::read_image(const char* filename)
+{
+	this->current_img = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
+	return 1;
 }

@@ -18,7 +18,7 @@ String face_cascade_name = "lbpcascade_frontalface.xml";
 String eyes_cascade_name = "haarcascade_eye_tree_eyeglasses.xml";
 CascadeClassifier face_cascade;
 CascadeClassifier eyes_cascade;
-String window_name = "Pedestrian Detection";
+String window_name = "Face Detection";
 /*-------------------------------*/
 
 
@@ -38,6 +38,7 @@ int main(int argc, char ** argv)
 		printf("Cannot Init face detector\n");
 		return -1;
 	}
+
 	while((ent = readdir(dir)) != NULL)
 	{
 		if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
@@ -49,73 +50,12 @@ int main(int argc, char ** argv)
 		printf("Openning %s\n",filename);
 
 		Mat img = imread(filename,CV_LOAD_IMAGE_COLOR);
-		
-		Mat people_detect_img = img.clone();
-		Mat face_detect_img = img.clone();
-
-		HOGDescriptor hog;
-		//use the default People Detector
-		cout<<"Setting the default people detector"<<endl;
-		hog.setSVMDetector(HOGDescriptor::getDefaultPeopleDetector());
-		cout<<"Setting done"<<endl;
-		cout<<"Creatting a Window"<<endl;
-		namedWindow("Pedestrian Detection",CV_WINDOW_AUTOSIZE);
-		cout<<"Creation done"<<endl;
-		if(!img.data)
-		{
-			cout<<"Currently no valid data"<<endl;
-			continue;
-		}
-		cout<<"Capture valid frame"<<endl;
-		vector<Rect> found, found_filtered;
-		/*
-		 *
-		 *void HOGDescriptor::detectMultiScale(
-		 *						const Mat& img, vector<Rect>& foundLocations,
-		 *						double hitThreshold, Size winStride, Size padding,
-		 *						double scale0, double finalThreshold, bool useMeanshiftGrouping) const
-		 *
-		 */
-
-		hog.detectMultiScale(people_detect_img,found,0,Size(8,8),Size(32,32),1.05,2);
-
-		size_t i,j;
-		//first for loop
-
-		for(i = 0; i < found.size();i++)
-		{
-			Rect r = found[i];
-			for (j=0; j<found.size(); j++)
-				if (j!=i && (r & found[j])==r)
-					break;
-			if (j==found.size())
-				found_filtered.push_back(r);
-		}
-
-		//second for loop
-		for(i = 0; i < found_filtered.size();i++)
-		{
-			Rect r = found_filtered[i];
-			r.x += cvRound(r.width * 0.1);
-			r.width = cvRound(r.width * 0.8);
-			r.y += cvRound(r.height * 0.06);
-			r.height = cvRound(r.height * 0.9);
-			//draw a rectangle for every detected region
-			rectangle(people_detect_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
-		}
-
-		imshow("Pedestrian Detection",people_detect_img);
-		if(waitKey(0) == 'n')
-		{
-			destroyWindow("Pedestrian Detection");
-		}
-
-		namedWindow("Pedestrian Detection",CV_WINDOW_AUTOSIZE);
-		detectAndDisplay(face_detect_img);
+		namedWindow("Face Detection",CV_WINDOW_AUTOSIZE);
+		detectAndDisplay(img);
 		if(waitKey(0) == 'n')
 		{
 			continue;
-			destroyWindow("Pedestrian Detection");
+			destroyWindow("Face Detection");
 		}
 		else
 			break;

@@ -18,6 +18,10 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			printf("RUNNING in DEBUG MODE\n");
 			this->mode = DEBUG_MODE;
 			break;
+	case(3):
+			printf("RUNNING IN IMG_ANALYSIS_MODE\n");
+			this->mode = IMG_ANALYSIS_MODE;
+			break;
 	default:
 			printf("Invalid Mode\nExiting program\n");
 			exit(1);
@@ -32,20 +36,48 @@ intel_board::~intel_board()
 	printf("Bye bye intel board\n");
 }
 
+uint8_t intel_board::init()
+{
+	if(!this->image_processor->init())
+		return -1;
+
+	return 1;
+}
 uint8_t intel_board::main_function()
 {
 	printf("Intel board is going to execute its main functionality\n");
 	char key;
-	while(1)
+	if(this->mode == IMG_ANALYSIS_MODE)
 	{
-		//running image_processor->test()
-		this->image_processor->test();
+		DIR *dir;
+		struct dirent *ent;
+		if((dir = opendir(PATH_TEMP)) == NULL)
+		{
+			perror("");
+			return EXIT_FAILURE;
+		}
+		while((ent = readdir(dir)) != NULL)
+		{
+			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
+				continue;
+			char filename[64];
+			strcpy(filename,PATH_TEMP);
+			strcat(filename,"/");
+			strcat(filename,ent->d_name);
+			printf("Openning %s\n",filename);
+			this->image_processor->read_image(filename);
+			this->image_processor->basic_face_detection();
+			this->image_processor->show_analyzed_img();
+		}
+	}
+	else
+	{
+		while(1)
+		{
+			//running image_processor->test()
+			this->image_processor->test();
+		}
 	}
 	return 1;
 }
 
-uint8_t intel_board::robot_init()
-{
-	printf("Initilizing the robot\n");
-	return 1;
-}
