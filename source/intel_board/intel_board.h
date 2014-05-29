@@ -17,6 +17,9 @@
 #include <sys/types.h>
 #include <dirent.h>
 
+//this is defined, declared and allocated space in ESDC.cpp
+extern char *dir_path;
+
 enum ROBOT_STATE {
 	ROBOT_INIT,
 	ROBOT_READY,
@@ -29,7 +32,6 @@ enum ROBOT_STATE {
 enum ROBOT_MODE{
 	AUTO_MODE,
 	MANUAL_MODE,
-	DEBUG_MODE,
 	IMG_ANALYSIS_MODE
 };
 
