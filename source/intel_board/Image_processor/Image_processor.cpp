@@ -159,7 +159,6 @@ uint8_t Image_processor::analyze_image()
 
  uint8_t Image_processor::basic_pedestrain_detection()
  {
- 	this->analyzed_img = this->current_img.clone();
  	this->run_people_detection();
  	printf("basic_pedestrain_detection: %d people detected\n",this->people_detect.size());
  	//circle all the pedestain
@@ -192,11 +191,9 @@ uint8_t Image_processor::run_face_detection()
 	printf("run_face_detection: detect %d faces\n",this->face_detect.size());
 	return 1;
 }
-
 uint8_t Image_processor::basic_face_detection()
 {
 	printf("Entering basic_face_detection\n");
-	this->analyzed_img = this->current_img.clone();
 	if(!this->run_face_detection())
 	{
 		printf("Image_processor basic_face_detection ERROR\n");
@@ -245,8 +242,9 @@ void Image_processor::test()
 		}
 		//if image is capture, show it to the window
 		//this->save_current_image();
-		//this->basic_pedestrain_detection();
+		
 		//this->show_analyzed_img();
+		this->basic_pedestrain_detection();
 		this->basic_face_detection();
 		this->show_analyzed_img();
 	}
@@ -256,5 +254,11 @@ void Image_processor::test()
 uint8_t Image_processor::read_image(const char* filename)
 {
 	this->current_img = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
+	return 1;
+}
+
+uint8_t Image_processor::load_current_img_to_analyzed_img()
+{
+	this->analyzed_img = this->current_img.clone();
 	return 1;
 }

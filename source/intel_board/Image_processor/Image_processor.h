@@ -88,7 +88,7 @@ public:
 
 	//this function will get an image from either cam or cap, and store the image into the current_img
 	uint8_t capture_image();
-
+	uint8_t load_current_img_to_analyzed_img();
 	//this function will stored the image into the hard disk,
 	//naming it according to the time since Epoch
 	uint8_t save_current_image();

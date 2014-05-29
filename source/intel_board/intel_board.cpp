@@ -66,6 +66,8 @@ uint8_t intel_board::main_function()
 			strcat(filename,ent->d_name);
 			printf("Openning %s\n",filename);
 			this->image_processor->read_image(filename);
+			this->image_processor->load_current_img_to_analyzed_img();
+			this->image_processor->basic_pedestrain_detection();
 			this->image_processor->basic_face_detection();
 			this->image_processor->show_analyzed_img();
 		}
