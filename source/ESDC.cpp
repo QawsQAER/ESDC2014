@@ -54,6 +54,7 @@ int main(int argc, char ** argv) {
 
 
         intel_board robot(mode,img_source);
+        robot.init();
         robot.main_function();
         return 0;
 }
