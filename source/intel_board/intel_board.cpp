@@ -68,6 +68,7 @@ uint8_t intel_board::main_function()
 			Image_processor *ptr = this->image_processor;
 			ptr->read_image(filename);
 			ptr->load_current_img_to_analyzed_img();
+			
 			//run the basic body detection algorithm
 			ptr->run_body_detection();
 			//run the basic face detection algorithm

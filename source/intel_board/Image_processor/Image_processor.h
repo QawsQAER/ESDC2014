@@ -49,9 +49,6 @@ private:
 	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
 	Camera *cam;
 
-
-
-
 //-----------------body DETECTION RELATED VARIABLE--------------------------------------------
 	//body_detect stores the rectangle of the body detected in the current_img
 

@@ -139,6 +139,8 @@ uint8_t Image_processor::analyze_image()
  * Implementation of basic pedestrain detection algorithm
  *
  */
+
+ //TODO: understand this function
  uint8_t Image_processor::run_body_detection()
  {
  	this->body_detect.clear();
@@ -154,7 +156,18 @@ uint8_t Image_processor::analyze_image()
  				break;
  		}
  		if(count2 == found.size())
+ 		{
+ 			//move the top left bottom right a bit
+ 			r.x += cvRound(r.width * 0.1);
+ 			//shrink the width
+ 			r.width = cvRound(r.width * 0.8);
+ 			//move the top left bottom lower a bit 
+ 			r.y += cvRound(r.height * 0.06);
+ 			//shrink the height
+ 			r.height = cvRound(r.height * 0.9);
+ 			//push it into the storage of body detection result
  			this->body_detect.push_back(r);
+ 		}
  	}
  	return 1;
  }
@@ -167,15 +180,6 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 	{
 		cv::Rect r = body_detect[count];
 		cv::rectangle(marked_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
-		/*
-		cv::Rect r = body_detect[count];
-		r.x += cvRound(r.width * 0.1);
-		r.width = cvRound(r.width * 0.8);
-		r.y += cvRound(r.height * 0.06);
-		r.height = cvRound(r.height * 0.9);
-		//draw the rectangle on the analyzed_img
-		cv::rectangle(marked_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
-		*/
 	}
 	return marked_img;
 }
@@ -264,12 +268,21 @@ void Image_processor::test()
 			printf("Image_processor Error: cannot capture valid image\n");
 			continue;
 		}
-		//if image is capture, show it to the window
-		//this->save_current_image();
-		
-		//this->show_analyzed_img();
-		this->basic_pedestrain_detection();
-		this->basic_face_detection();
+		//if image is capture, run basic analysis
+		this->run_body_detection();
+		this->run_face_detection();
+
+		//mark the detected results
+		this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
+		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+		this->show_analyzed_img();
+
+		//run basic filter;
+		this->basic_filter();
+
+		//mark the detected results
+		this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
+		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
 		this->show_analyzed_img();
 	}
 	return ;
@@ -309,6 +322,7 @@ uint8_t Image_processor::basic_filter()
 
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
 {
+	double face_hori_threshold = 0.5;
 	//x, y are the coordinate of the top left corner.
 	cv::Point body_center(body.x + body.width / 2,
 					body.y + body.height / 2);
@@ -321,8 +335,9 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 	*/
 	if(face_center.y < body_center.y)
 	{
-		//check whether the face_center is within the width of the body
-		if(body_center.x - body.width / 2 < face_center.x && face_center.x < body_center.x + body.width/2)
+		//check whether the face is within the width of the body horizontally
+		if( (body_center.x - (body.width / 2)) < (face_center.x - face.width / 2)
+			&& (face_center.x + face.width / 2) < (body_center.x + (body.width / 2)) )
 		{	
 			//body is related to this face
 			printf("Image_processor face_body_related(): the face_center (%d,%d) the body_center (%d,%d)\n",face_center.x,face_center.y,body_center.x,body_center.y);
