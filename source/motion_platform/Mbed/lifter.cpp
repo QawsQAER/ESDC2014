@@ -5,32 +5,41 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 **********************************************************/
 #include "lifter.h"
 
-Lifter::Lifter(DigitalOut* _enable, PwmOut* _pwm1, PwmOut* _pwm2, InterruptIn* _encoder_A, DigitalIn* _encoder_B)
+Lifter::Lifter(MyDigitalOut* _enable, MyPwmOut* _pwmUp, MyPwmOut* _pwmDown, MyInterruptIn* _encoder_A, MyDigitalIn* _encoder_B)
 {
-    plusCount = 0;
-    targetPlusCount = 0;
+    pulseCount = 0;
+    targetPulseCount = 0;
     _dir = 0;
     
     this->_enable = _enable;
-    this->_pwm1 = _pwm1;
-    this->_pwm2 = _pwm2;
+    this->_pwmUp = _pwmUp;
+    this->_pwmDown = _pwmDown;
     this->_encoder_A = _encoder_A;
     this->_encoder_B = _encoder_B;
     
     setLifterStop();
 }
 
+Lifter::~Lifter()
+{
+    delete _enable;
+    delete _pwmUp;
+    delete _pwmDown;
+    delete _encoder_A; //6 pulse per round
+    delete _encoder_B; //5v is up, 0v is down. looks like no use
+}
+
 void Lifter::lifterUp(uint16_t mm)
 {
-    targetPlusCount = mm * RPMM;
-    //targetPlusCount = mm;
+    targetPulseCount = mm * RPMM;
+    //targetPulseCount = mm;
     setLifterUp();
 }
 
 void Lifter::lifterDown(uint16_t mm)
 {
-    targetPlusCount = mm * RPMM;
-    //targetPlusCount = mm;
+    targetPulseCount = mm * RPMM;
+    //targetPulseCount = mm;
     setLifterDown();
 }
 
@@ -51,7 +60,7 @@ uint8_t Lifter::getDir()
 
 void Lifter::lifterMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint8_t rotate_dir)
 {
-    plusCount = targetPlusCount = 0;
+    pulseCount = targetPulseCount = 0;
     
     if(_dir = move_dir == 0x00) //up
     {
@@ -66,18 +75,18 @@ void Lifter::lifterMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis
 void Lifter::setLifterStop()
 {
     *_enable = 0;
-    *_pwm1 = 1.0f;
-    *_pwm2 = 1.0f;
+    *_pwmUp = 1.0f;
+    *_pwmDown = 1.0f;
 }
 void Lifter::setLifterUp()
 {
     *_enable = 0;
-    *_pwm1 = 1.0f;
-    *_pwm2 = 0.0f;
+    *_pwmUp = 1.0f;
+    *_pwmDown = 0.0f;
 }
 void Lifter::setLifterDown()
 {
     *_enable = 0;
-    *_pwm1 = 0.0f;
-    *_pwm2 = 1.0f;
+    *_pwmUp = 0.0f;
+    *_pwmDown = 1.0f;
 }
