@@ -1,5 +1,5 @@
 
-ESDC_LDOBJECT = intel_board/intel_board.o intel_board/Image_processor.o #intel_board/camera.o
+ESDC_LDOBJECT = intel_board/intel_board.o intel_board/Image_processor.o intel_board/camera.o
 ESDC_LDLIB = -lopencv_highgui -lopencv_imgproc -lopencv_core -lopencv_objdetect
 
 SUBDIRS = intel_board

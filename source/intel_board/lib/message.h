@@ -46,12 +46,13 @@ struct IntelCarCmd
 	/*
 	rotate direction
 	this field only meaningful when action_type = 0 or action_type = 2.
-	ratate_dir = (MSB)XXXX(LSB).
-	when action_type = 1, first bit(MSB) is 0.
-	when action_type = 0 or 2, first bit(MSB) is 1.
-	when second bit is 0, means roll left. when second bit is 1, means roll right.
-	when third bit is 0, means pitch down. when second bit is 1, means pitch up.
-	when last bit is 0, means yaw counterclockwise. when second bit is 1, means yaw clockwise.
+	ratate_dir = (MSB)XXXXXXXX(LSB).
+	when action_type = 1, all bits are 0s.
+	when action_type = 0 or 2, first 2 bits are 1s.
+
+	when third bit is 1 and fourth bit is 0, means roll left. when second bit is 1, means roll right.
+	when fiveth bit is 1 and sixth bit is 0, means pitch down. when second bit is 1, means pitch up.
+	when sixth bit is 1 and last bit is 0, means yaw counterclockwise. when second bit is 1, means yaw clockwise.
 	*/
 	uint8_t rotate_dir;
 
@@ -61,20 +62,40 @@ struct IntelCarCmd
 	uint8_t check_sum;
 };
 
-
-//position
-struct pos
+class Message
 {
-	uint8_t x; //mm, forward
-	uint8_t y; //mm, rightward
-	uint8_t z; //mm, upward
+public:
+	Message(struct _IntelCarCmd* cmd);
+	~Message();
+	void CarMoveUpMM(uint16_t _mm);
+	void CarMoveDownMM(uint16_t _mm);
+	void CarMoveLeftMM(uint16_t _mm);
+	void CarMoveRightMM(uint16_t _mm);
+
+	void CarRotateLeftDegree(uint16_t _degree);
+	void CarRotateRightDegree(uint16_t _degree);
+
+	void LifterMoveUpMM(uint16_t _mm);
+	void LifterMoveDowmMM(uint16_t _mm);
+
+	void CameraPlatformRollLeft(uint16_t _degree);
+	void CameraPlatformRollRight(uint16_t _degree);
+	void CameraPlatformPitchUp(uint16_t _degree);
+	void CameraPlatformPitchDown(uint16_t _degree);
+	void CameraPlatformYawClk(uint16_t _degree);
+	void CameraPlatformYawCounterClk(uint16_t _degree);
+
+private:
+	struct _IntelCarCmd* cmd;
+
+	void setCarMove(uint8_t move_dir, uint16_t move_dis);
+	void setCarRotate(uint8_t rotate_dir, uint16_t rotate_dis);
+	void setLifterMove(uint8_t move_dir, uint16_t move_dis);
+	void setCameraPlatformRotate(uint8_t rotate_dir, uint16_t rotate_dis);
+
+	void sendMessage();
+	void calCheckSum(uint8_t action_type, uint8_t _dir, uint16_t _dis);
+	void resetStruct();
 };
 
-//orientation
-struct ori 
-{
-	uint8_t roll; //degree * 100 (0-->36000), along x axis
-	uint8_t pitch; //degree * 100 (0-->36000), along y axis
-	uint8_t yaw; //degree * 100 (0-->36000), along z axis
-};
 #endif

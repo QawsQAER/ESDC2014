@@ -26,6 +26,7 @@
 #define IMG_SOURCE_WEBCAM 1
 #endif
 
+extern char *dir_path;
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -41,35 +42,99 @@ private:
 	bool win_exist;
 
 	//this variable indicates where the frame for analysis comes from
+	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
 	uint8_t img_source;
 
+	//cap is useful when img_source == IMG_SOURCE_WEBCAM
 	cv::VideoCapture *cap;
-	//this variable stores the current image that is being processed
-	cv::Mat current_img;
-	cv::Mat analyzed_img;
-
+	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
 	Camera *cam;
+
+//-----------------body DETECTION RELATED VARIABLE--------------------------------------------
+	//body_detect stores the rectangle of the body detected in the current_img
+
+	//the HOG for body detection
+	cv::HOGDescriptor hog;
+
+//------------------FACE DETECTION RELATED VARIABLE------------------------------------------
+	//face_detect stores the rectangle of the face detected in the current_img
+
+	std::vector<cv::Rect> eyes_detect;
+	cv::CascadeClassifier face_cascade;
+	cv::CascadeClassifier eyes_cascade;
+	//indicates the path to the Cascade 
+	std::string face_cascade_name;
+	std::string eyes_cascade_name;
+//-------------------------------------------------------------------------------------------------------------------
+
+
+
 	//this function will get image from cell phone, and load the image into the current_img
 	uint8_t get_image_from_cellphone();
 	//this function will get image from camera, and load the image into the current_img
 	uint8_t get_image_from_webcam();
 
+	//this function will run analysis on the current_img
+	
+
 public:	
 	Image_processor(uint8_t img_source);
 	~Image_processor();
 
-	//this function will return a Mat variable.
-	uint8_t capture_image();
+	//these variables stores the detection results
+	std::vector<cv::Rect> body_detect;
+	std::vector<cv::Rect> face_detect;
+	std::vector<cv::Rect> final_body_detect;
+	std::vector<cv::Rect> final_face_detect;
+	//these variables stores the current image that is being processed
+	cv::Mat current_img;
+	cv::Mat analyzed_img;
 
+	//load the Cascade Classifier for face detection, and the HOG SVM for body detection
+	uint8_t init();
+
+	//this function will get an image from either cam or cap, and store the image into the current_img
+	uint8_t capture_image();
+	uint8_t load_current_img_to_analyzed_img();
 	//this function will stored the image into the hard disk,
 	//naming it according to the time since Epoch
 	uint8_t save_current_image();
-
+	//this function simplily read the image from file to current_img
+	uint8_t read_image(const char* filename);
 	uint8_t analyze_image();
 	
-	/*this function will use current_img as image source and gives out analyzed result*/
-	uint8_t basic_pedestrain_detection();
+
+	/*
 	
+		body detection related functions
+	
+	*/
+	uint8_t basic_pedestrain_detection();
+	uint8_t run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect);
+	cv::Mat mark_detected_body(const cv::Mat &source_img,const std::vector<cv::Rect> &body_detect);
+
+	/*
+	
+		face detection related functions
+	
+	*/
+	uint8_t basic_face_detection();
+	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
+	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
+
+	/*
+	
+		filtering related functions
+	
+	*/
+	//this function will do basic filtering, eliminate body detected result without face detection
+	uint8_t basic_filter();
+
+	uint8_t find_body_according_to_face(const cv::Mat &source_img,
+		const std::vector<cv::Rect> &face_detect);
+	uint8_t find_body_in_roi(const cv::Mat &source_img,const cv::Rect roi,std::vector<cv::Rect> &body_detect);
+	uint8_t face_body_related(const cv::Rect &body,const cv::Rect &face);
+	/**/
 	uint8_t show_analyzed_img();
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();

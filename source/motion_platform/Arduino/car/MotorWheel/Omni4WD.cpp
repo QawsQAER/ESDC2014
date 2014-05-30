@@ -512,11 +512,11 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 		unsigned int degree = rotate_dis / 100;
 		switch(rotate_dir)
 		{
-			case 8: //1000 left
+			case 0xc2: //1000 left
 			Omni->setCarRotateLeftDegree(degree, rotateSpeedMMPS);
 			break;
 
-			case 9: //1001 right
+			case 0xc3: //1001 right
 			Omni->setCarRotateRightDegree(degree, rotateSpeedMMPS);
 			break;
 

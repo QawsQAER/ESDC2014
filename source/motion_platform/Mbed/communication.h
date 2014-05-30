@@ -19,7 +19,7 @@ The communication protocol is inside source/intel_board/lib/message.h
 class Communication
 {
 public:
-    Communication(Serial* _DEBUG, Serial *_IntelToMbed, Serial *_MbedToArduino);
+    Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino);
     ~Communication();
 
     void putToBuffer(uint8_t _x);
@@ -52,9 +52,9 @@ private:
     uint16_t rotate_dis;
     uint8_t rotate_dir;
     
-    Serial *_DEBUG;
-    Serial *_IntelToMbed;
-    Serial *_MbedToArduino;
+    MySerial *_DEBUG;
+    MySerial *_IntelToMbed;
+    MySerial *_MbedToArduino;
 };
 
 #endif

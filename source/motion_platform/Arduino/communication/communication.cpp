@@ -147,7 +147,14 @@ void Communication::parseMessage()
 			{
 				check_sum += _x;
 				rotate_dir = _x;
-				state++;
+				if((action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
+				{
+					state++;
+				}
+				else
+				{
+					state = 0;
+				}
 				break;
 			}
 
