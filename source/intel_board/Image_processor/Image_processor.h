@@ -41,6 +41,7 @@ private:
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
 
+	char* current_img_path;
 	//this variable indicates where the frame for analysis comes from
 	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
 	uint8_t img_source;
@@ -90,6 +91,16 @@ public:
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
 
+	//these variables stores the expected image parameters
+	
+	float exp_w,exp_h; //expected width and height
+	float exp_x,exp_y; //expected x and y
+	cv::Point point;
+	cv::Rect expected_region; //
+
+	int32_t diff_x;
+	int32_t diff_y;
+	
 	//load the Cascade Classifier for face detection, and the HOG SVM for body detection
 	uint8_t init();
 
@@ -139,6 +150,15 @@ public:
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 	void test();
+
+	/*
+	
+		Interface for intel board to use
+
+	*/
+	//this function will take a picture of the current scope,
+	//and analyze whether there is a person/target in the picture.
+	uint8_t target_in_scope();
 };
 
 #endif

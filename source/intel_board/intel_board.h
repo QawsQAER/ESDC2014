@@ -22,11 +22,13 @@ extern char *dir_path;
 
 enum ROBOT_STATE {
 	ROBOT_INIT,
-	ROBOT_READY,
+	ROBOT_READY, //actually waiting for command
 	ROBOT_NO_TARGET,
-	ROBOT_FOUND_TARGET,
+	ROBOT_FIND_TARGET,
+	ROBOT_EVALUATE_IMAGE,
 	ROBOT_ANALYZE_IMAGE,
-	ROBOT_APPROACH_REF
+	ROBOT_APPROACH_REF,
+	ROBOT_WAIT_FOR_ADJUSTMENT,
 };
 
 enum ROBOT_MODE{
@@ -41,19 +43,27 @@ private:
 	Image_processor *image_processor;
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
-	/*
-	uint8_t robot_ready();
-	uint8_t robot_no_target();
-	uint8_t robot_found_target();
-	uint8_t robot_analyze_image();
-	uint8_t robot_approach_ref();
-	*/
+	
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();
-	//this function will call the init functions of all its components
-	uint8_t init();
+
 	uint8_t main_function();
+
+	//this function will initilize the whole system
+	uint8_t robot_init();
+	//this function will be called after init,
+	//it shall be waiting command from the user
+	uint8_t robot_ready();
+
+	uint8_t robot_no_target();
+	
+	//this function will be called to find a target 
+	uint8_t robot_find_target();
+	uint8_t robot_evaluate_image();
+	uint8_t robot_analyze_image();
+	uint8_t robot_approach_ref();
+	uint8_t robot_wait_for_adjustment();
 };
 
 #endif
