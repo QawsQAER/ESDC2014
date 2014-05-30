@@ -130,6 +130,10 @@ public:
 	//this function will do basic filtering, eliminate body detected result without face detection
 	uint8_t basic_filter();
 
+	uint8_t find_body_according_to_face(const cv::Mat &source_img,
+		const std::vector<cv::Rect> &face_detect,
+		std::vector<cv::Rect> &body_detect);
+
 	uint8_t face_body_related(const cv::Rect &body,const cv::Rect &face);
 	/**/
 	uint8_t show_analyzed_img();

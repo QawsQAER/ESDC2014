@@ -350,3 +350,20 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 	//body is not related to this face
 	return 0;
 }
+
+uint8_t Image_processor::face_body_related(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect,std::vector<cv::Rect> &body_detect)
+{
+	//for every detected face recorded in face_detect
+	for(size_t count_face;count_face < face_detect.size();count_face++)
+	{
+		cv::Rect rect = face_detect[count_face];
+		//make rect a larger rectangle
+		//move the left top to the top
+		rect.y = 1;
+		//move the left top to lefter position
+		rect.x = std::max(rect.x - face_detect[count].width,0);
+		//
+	}
+	return 1;
+}
+		
