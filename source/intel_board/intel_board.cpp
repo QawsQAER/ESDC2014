@@ -66,9 +66,9 @@ uint8_t intel_board::main_function()
 			ptr->load_current_img_to_analyzed_img();
 
 			//run the basic body detection algorithm
-			ptr->run_body_detection();
+			ptr->run_body_detection(ptr->current_img,ptr->body_detect);
 			//run the basic face detection algorithm
-			ptr->run_face_detection();
+			ptr->run_face_detection(ptr->current_img,ptr->face_detect);
 
 			//mark the face and body after basic detection algorithm
 			ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->body_detect);

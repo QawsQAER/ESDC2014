@@ -1,7 +1,10 @@
 CC=gcc
 LDFLAG=`pkg-config --libs --cflags opencv`  -lstdc++
+DEBUG_FLAG=-g
+TARGETS=hello hello_videocapture hello_objectdetect videocapture object_detect 
+TARGETS:=pedestrain_detect facerec_eigenfaces face_detect
+TARGETS:=sub_image
 
-TARGETS=hello hello_videocapture hello_objectdetect videocapture object_detect pedestrain_detect facerec_eigenfaces face_detect
 
 all: $(TARGETS)
 
@@ -31,3 +34,5 @@ facerec_eigenfaces: facerec_eigenfaces.cpp Makefile
 
 face_detect: face_detect.cpp Makefile
 	$(CC) -o face_detect face_detect.cpp $(LDFLAG)
+sub_image: sub_image.cpp Makefile
+	$(CC) -o sub_image sub_image.cpp $(LDFLAG) $(DEBUG_FLAG)

@@ -104,17 +104,29 @@ public:
 	uint8_t analyze_image();
 	
 
-	/*this function will use current_img as image source and gives out analyzed result*/
+	/*
+	
+		body detection related functions
+	
+	*/
 	uint8_t basic_pedestrain_detection();
-	uint8_t run_body_detection();
+	uint8_t run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect);
 	cv::Mat mark_detected_body(const cv::Mat &source_img,const std::vector<cv::Rect> &body_detect);
 
-	/*this function will use current_img as image source and gives out analyzed result in analyzed img and face_detect*/
+	/*
+	
+		face detection related functions
+	
+	*/
 	uint8_t basic_face_detection();
-	uint8_t run_face_detection();
+	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
 	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
 
-	/**/
+	/*
+	
+		filtering related functions
+	
+	*/
 	//this function will do basic filtering, eliminate body detected result without face detection
 	uint8_t basic_filter();
 

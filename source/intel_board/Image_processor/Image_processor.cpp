@@ -141,11 +141,11 @@ uint8_t Image_processor::analyze_image()
  */
 
  //TODO: understand this function
- uint8_t Image_processor::run_body_detection()
+ uint8_t Image_processor::run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect)
  {
- 	this->body_detect.clear();
+ 	body_detect.clear();
  	std::vector<cv::Rect> found;
- 	this->hog.detectMultiScale(this->current_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
+ 	this->hog.detectMultiScale(source_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
  	size_t count1, count2;
  	for(count1 = 0;count1 < found.size();count1++)
  	{
@@ -166,7 +166,7 @@ uint8_t Image_processor::analyze_image()
  			//shrink the height
  			r.height = cvRound(r.height * 0.9);
  			//push it into the storage of body detection result
- 			this->body_detect.push_back(r);
+ 			body_detect.push_back(r);
  		}
  	}
  	return 1;
@@ -185,7 +185,7 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 }
  uint8_t Image_processor::basic_pedestrain_detection()
  {
- 	this->run_body_detection();
+ 	this->run_body_detection(this->current_img,this->body_detect);
  	printf("basic_pedestrain_detection: %d body detected\n",this->body_detect.size());
  	this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
  	return 1;
@@ -195,18 +195,19 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
  * Implementation of basic face detection
  *
  */
-uint8_t Image_processor::run_face_detection()
+uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect)
 {
-	this->face_detect.clear();
-	this->eyes_detect.clear();
+	face_detect.clear();
+	
+	//this->eyes_detect.clear();
 
 	//use gray image for face detection
 	cv::Mat frame_gray;
-	cv::cvtColor(this->current_img, frame_gray,cv::COLOR_BGR2GRAY );
+	cv::cvtColor(source_img, frame_gray,cv::COLOR_BGR2GRAY );
 	cv::equalizeHist(frame_gray, frame_gray);
 	//doing face detection
-	this->face_cascade.detectMultiScale(frame_gray, this->face_detect, 1.1, 2, 0, cv::Size(10, 10));
-	printf("run_face_detection: detect %d faces\n",this->face_detect.size());
+	this->face_cascade.detectMultiScale(frame_gray, face_detect, 1.1, 2, 0, cv::Size(10, 10));
+	printf("run_face_detection: detect %d faces\n",face_detect.size());
 	return 1;
 }
 
@@ -229,7 +230,7 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 uint8_t Image_processor::basic_face_detection()
 {
 	printf("Entering basic_face_detection\n");
-	if(!this->run_face_detection())
+	if(!this->run_face_detection(this->current_img,this->face_detect))
 	{
 		printf("Image_processor basic_face_detection ERROR\n");
 		return -1;
@@ -269,8 +270,8 @@ void Image_processor::test()
 			continue;
 		}
 		//if image is capture, run basic analysis
-		this->run_body_detection();
-		this->run_face_detection();
+		this->run_body_detection(this->current_img,this->body_detect);
+		this->run_face_detection(this->current_img,this->face_detect);
 
 		//mark the detected results
 		this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
