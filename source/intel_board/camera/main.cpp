@@ -20,7 +20,8 @@ while(1)
 {
 	int choice;
 	cout<<"waiting:";
-	cin>>choice;
+	// cin>>choice;
+	choice=2;
 	switch (choice){
 		case 1: if(camera.test_connection()==-1)
 					cout<<"error"<<endl;

@@ -12,7 +12,7 @@ All the code with this header are under GPL open source license.
 #include <iostream>
 #include <cstdio>
 
-#define PATH_TEMP "Desktop/"
+#define PATH_TEMP "/home/terry/Desktop/esdc2014/source/intel_board/camera/Photos/"
 #define PATH_CAPTURE "../../Photos/Capture"
 
 #define IP "192.168.43.1"
