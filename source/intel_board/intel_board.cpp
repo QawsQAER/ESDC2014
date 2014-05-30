@@ -65,11 +65,14 @@ uint8_t intel_board::main_function()
 			strcat(filename,"/");
 			strcat(filename,ent->d_name);
 			printf("Openning %s\n",filename);
-			this->image_processor->read_image(filename);
-			this->image_processor->load_current_img_to_analyzed_img();
-			this->image_processor->basic_pedestrain_detection();
-			this->image_processor->basic_face_detection();
-			this->image_processor->show_analyzed_img();
+			Image_processor *ptr = this->image_processor;
+			ptr->read_image(filename);
+			ptr->load_current_img_to_analyzed_img();
+			ptr->run_body_detection();
+			ptr->run_face_detection();
+			ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img);
+			ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img);
+			ptr->show_analyzed_img();
 		}
 	}
 	else
