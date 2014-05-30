@@ -26,6 +26,7 @@
 #define IMG_SOURCE_WEBCAM 1
 #endif
 
+extern char *dir_path;
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -102,6 +103,7 @@ public:
 	uint8_t read_image(const char* filename);
 	uint8_t analyze_image();
 	
+
 	/*this function will use current_img as image source and gives out analyzed result*/
 	uint8_t basic_pedestrain_detection();
 	uint8_t run_body_detection();

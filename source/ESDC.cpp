@@ -35,27 +35,57 @@
 
 using namespace std;
 
-int main(int argc, char ** argv) {
-        cout << "Hello World" << endl; /* prints Hello World */
+char *dir_path;
+int main(int argc, char ** argv) 
+{
+        /* prints Hello World */
+        cout << "Hello Intel ESDC" << endl; 
         //mode default value MANUAL MODE
         uint8_t mode = 1;
-        //img_source default using WebCam
-        uint8_t img_source = 1;
+        //img_source default using Cellphone
+        uint8_t img_source = 0;
+        
         if(argc >= 2)
         {
         	//the user has set the mode
         	mode = atoi(argv[1]);
-        	if(argc >= 3)
-        	{
-        		//the user has set the image source
-        		img_source = atoi(argv[2]);
-        	}
+                //if the mode is image processing mode
+                switch(mode)
+                {
+                        case 0://case for auto mode
+                                printf("The robot is going to initiate in default mode\n");
+                        break;
+                        
+                        case 1://case for manual mode
+                                //if the user has specify the img_source
+                                if(argc >= 3)
+                                        img_source = atoi(argv[2]);
+
+                        break;
+
+                        case 2://case for image processing mode
+                                if(argc != 3)
+                                {
+                                        printf("Please specify the directory for image processing\n");
+                                        exit(-1);
+                                }
+                                else
+                                {
+                                        dir_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+                                        strcpy(dir_path,argv[2]);
+                                }
+                        break;
+                }
         }
+        else
+                printf("The robot is going to initiate in default mode\n");
 
 
         intel_board robot(mode,img_source);
         robot.init();
         robot.main_function();
+
+        free(dir_path);
         return 0;
 }
 

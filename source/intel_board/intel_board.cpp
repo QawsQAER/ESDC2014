@@ -15,10 +15,6 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			this->mode = MANUAL_MODE;
 			break;
 	case(2):
-			printf("RUNNING in DEBUG MODE\n");
-			this->mode = DEBUG_MODE;
-			break;
-	case(3):
 			printf("RUNNING IN IMG_ANALYSIS_MODE\n");
 			this->mode = IMG_ANALYSIS_MODE;
 			break;
@@ -51,7 +47,7 @@ uint8_t intel_board::main_function()
 	{
 		DIR *dir;
 		struct dirent *ent;
-		if((dir = opendir(PATH_TEMP)) == NULL)
+		if((dir = opendir(dir_path)) == NULL)
 		{
 			perror("");
 			return EXIT_FAILURE;
@@ -61,14 +57,14 @@ uint8_t intel_board::main_function()
 			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
 				continue;
 			char filename[64];
-			strcpy(filename,PATH_TEMP);
+			strcpy(filename,dir_path);
 			strcat(filename,"/");
 			strcat(filename,ent->d_name);
 			printf("Openning %s\n",filename);
 			Image_processor *ptr = this->image_processor;
 			ptr->read_image(filename);
 			ptr->load_current_img_to_analyzed_img();
-			
+
 			//run the basic body detection algorithm
 			ptr->run_body_detection();
 			//run the basic face detection algorithm
