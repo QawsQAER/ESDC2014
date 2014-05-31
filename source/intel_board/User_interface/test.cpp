@@ -9,7 +9,6 @@ int main()
 
 UI ui;
 
-ui.contention();
 ui.wait_command();
 
 

@@ -39,7 +39,7 @@ car
 forward  fw	 8
 backward bw	 9
 left     lw	 10
-right    rw 0x04   11 
+right    rw    11 
 
 
 camera 				 
@@ -90,12 +90,7 @@ finish  0x00 0x04
 
 UI::UI()
 {
-
-
-
-
-
-
+	contention();
 }
 
 
@@ -155,69 +150,85 @@ int UI::wait_command()
 
 			case 2:
 			printf("Command: start movement\n");
+			send_start_ack();
 			break;
 
 			case 3:
 			printf("Command: confirm picture\n");
+			send_comfrim_ack();
 			break;
 
 
 			case 4:
 			//use pattern1
 			printf("Command:  pattern1\n");
+			send_pattern1_ack();
 			break;
 
 
 			case 5:
 			printf("Command: pattern 2\n");
+			send_pattern2_ack();
 			break;
 
 			case 6:
 			printf("Command: pattern3\n");
+			send_pattern3_ack();
 			break;
 
 			case 7:
 			printf("Command: pattern4\n");
+			send_pattern4_ack();
 			break;
 
 			case 8:
 			printf("Command: car forward\n");
+			send_car_forward_ack();
 			break;
 
 			case 9:
 			printf("Command: car backward\n");
+			send_car_backward_ack();
 			break;
 
 			case 10:
 			printf("Command: car left\n");
+			send_car_left_ack();
 			break;
 
 			case 11:
 			printf("Command: car right\n");
+			send_car_right_ack();
 			break;
 
 			case 12:
 			printf("Command: camera up\n");
+			send_camera_forward_ack();
 			break;
 
 			case 13:
 			printf("Command: camera down\n");
+			send_camera_backward_ack();
 			break;
 
 			case 14:
 			printf("Command: camera left\n");
+			send_camera_left_ack();
 			break;
 
 			case 15:
 			printf("Command: camera right\n");
+			send_camera_right_ack();
 			break;
 
 			case 16:
 			printf("Command: lift up\n");
+			send_lift_up_ack();
 			break;
 
 			case 17:
 			printf("Command: lift down\n");
+			send_lift_down_ack();
 			break;
 
 
@@ -257,6 +268,15 @@ void UI::send_msg()
 }
 
 
+void UI::send_finished_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="fa";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
 
 
 void UI::send_established()
@@ -269,37 +289,53 @@ void UI::send_established()
 	send_msg();
 }
 
-void UI::send_finished_ack()
+
+void UI::send_start_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	char temp[]="fa";
+	char temp[]="sm";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
 
 	send_msg();
 }
 
 
+void UI::send_comfrim_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cp";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+
+
 void UI::send_pattern1_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x01;
+	char temp[]="p1";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_pattern2_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x02;
+	char temp[]="p2";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_pattern3_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x03;
+	char temp[]="p3";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
@@ -307,32 +343,36 @@ void UI::send_pattern3_ack()
 void UI::send_pattern4_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x04;
+	char temp[]="p4";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_car_forward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x05;
+	char temp[]="Up";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_car_backward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x06;
+	char temp[]="Do";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_car_left_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x07;
+	char temp[]="Le";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
@@ -340,8 +380,9 @@ void UI::send_car_left_ack()
 void UI::send_car_right_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x08;
+	char temp[]="Ri";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
@@ -349,24 +390,27 @@ void UI::send_car_right_ack()
 void UI::send_camera_forward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x09;
+	char temp[]="cU";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_camera_backward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x0a;
+	char temp[]="cD";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_camera_left_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x0b;
+	char temp[]="cL";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
@@ -374,16 +418,18 @@ void UI::send_camera_left_ack()
 void UI::send_camera_right_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x0c;
+	char temp[]="cR";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
 void UI::send_lift_up_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x0d;
+	char temp[]="lu";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
@@ -391,8 +437,9 @@ void UI::send_lift_up_ack()
 void UI::send_lift_down_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x05;
-	msg_code[1]=0x0e;
+	char temp[]="ld";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 
