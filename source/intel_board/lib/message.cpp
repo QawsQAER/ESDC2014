@@ -1,12 +1,10 @@
 #include "message.h"
 
-#include <stdio.h>
-#include <stdint.h>
 
 //public
-Message::Message(struct *_IntelCarCmd)
+Message::Message()
 {
-	this->_IntelCarCmd = _IntelCarCmd;
+	this->_IntelCarCmd = (struct IntelCarCmd *) malloc(sizeof(struct IntelCarCmd));
 }
 
 Message::~Message()

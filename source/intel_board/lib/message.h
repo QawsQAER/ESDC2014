@@ -7,6 +7,9 @@
 
 #define STARTER 0x7E
 
+#include <stdio.h>
+#include <stdint.h>
+
 struct IntelCarCmd
 {
 	/*
@@ -65,7 +68,7 @@ struct IntelCarCmd
 class Message
 {
 public:
-	Message(struct _IntelCarCmd* cmd);
+	Message();
 	~Message();
 	void CarMoveUpMM(uint16_t _mm);
 	void CarMoveDownMM(uint16_t _mm);
@@ -86,7 +89,7 @@ public:
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
 private:
-	struct _IntelCarCmd* cmd;
+	struct IntelCarCmd* _IntelCarCmd;
 
 	void setCarMove(uint8_t move_dir, uint16_t move_dis);
 	void setCarRotate(uint8_t rotate_dir, uint16_t rotate_dis);
