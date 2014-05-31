@@ -8,6 +8,7 @@
 #define STARTER 0x7E
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdint.h>
 
 struct IntelCarCmd
