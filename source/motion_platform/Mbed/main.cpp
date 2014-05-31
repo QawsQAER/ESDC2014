@@ -14,19 +14,25 @@ int main()
     while(1)
     {
         com.parseMessage();
-        if(com.getInfoOK() == 1) //car
+        if(com.getInfoOK(0) == 1) //car
         {
-            com.resetInfoOK();
             com.forwardMessage();
+            com.ACK();
+            com.resetInfoOK(0);
+            com.resetInfoOK(1);
         }
-        else if(com.getInfoOK() == 2) //lifter
+        else if(com.getInfoOK(0) == 2) //lifter
         {
-            com.resetInfoOK();
             lifter.lifterMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
+            com.ACK();
+            com.resetInfoOK(0);
+            com.resetInfoOK(1);
         }
-        else if(com.getInfoOK() == 3) //camera_platform
+        else if(com.getInfoOK(0) == 3) //camera_platform
         {
-            com.resetInfoOK();
+            com.ACK();
+            com.resetInfoOK(0);
+            com.resetInfoOK(1);
         }
     }
 }
