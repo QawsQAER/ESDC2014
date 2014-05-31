@@ -22,12 +22,13 @@ extern char *dir_path;
 
 enum ROBOT_STATE {
 	ROBOT_INIT,
-	ROBOT_READY,
+	ROBOT_READY, //actually waiting for command
 	ROBOT_NO_TARGET,
 	ROBOT_FIND_TARGET,
 	ROBOT_EVALUATE_IMAGE,
 	ROBOT_ANALYZE_IMAGE,
-	ROBOT_APPROACH_REF
+	ROBOT_APPROACH_REF,
+	ROBOT_WAIT_FOR_ADJUSTMENT,
 };
 
 enum ROBOT_MODE{
@@ -62,6 +63,7 @@ public:
 	uint8_t robot_evaluate_image();
 	uint8_t robot_analyze_image();
 	uint8_t robot_approach_ref();
+	uint8_t robot_wait_for_adjustment();
 };
 
 #endif

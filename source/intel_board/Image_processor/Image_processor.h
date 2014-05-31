@@ -91,6 +91,16 @@ public:
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
 
+	//these variables stores the expected image parameters
+	
+	float exp_w,exp_h; //expected width and height
+	float exp_x,exp_y; //expected x and y
+	cv::Point point;
+	cv::Rect expected_region; //
+
+	int32_t diff_x;
+	int32_t diff_y;
+	
 	//load the Cascade Classifier for face detection, and the HOG SVM for body detection
 	uint8_t init();
 

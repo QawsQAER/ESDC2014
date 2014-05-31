@@ -11,13 +11,8 @@ All the code with this header are under GPL open source license.
 #include <string>
 #include <iostream>
 #include <cstdio>
-<<<<<<< HEAD
 
-#define PATH_TEMP "/home/terry/Desktop/esdc2014/source/intel_board/camera/Photos/"
-#define PATH_CAPTURE "../../Photos/Capture"
-=======
 #include "../macro.h"
->>>>>>> 683093f1d90c7d619c5a28d85843ed3bf3ec8e36
 
 #define IP "192.168.43.1"
 #define PORT "8080"

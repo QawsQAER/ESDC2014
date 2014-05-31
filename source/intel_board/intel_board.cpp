@@ -47,6 +47,7 @@ uint8_t intel_board::main_function()
 		}
 		while((ent = readdir(dir)) != NULL)
 		{
+			this->image_processor->init();
 			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
 				continue;
 			char filename[64];
@@ -108,7 +109,7 @@ uint8_t intel_board::main_function()
 					//if the image is good enough
 					if(this->robot_evaluate_image())
 						//store the image and go back wait for the next command
-						this->state = ROBOT_READY;
+						this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
 					else
 						//let the system analyze the image and find out possible method to make it better
 						this->state = ROBOT_ANALYZE_IMAGE;
@@ -122,6 +123,10 @@ uint8_t intel_board::main_function()
 				case ROBOT_APPROACH_REF:
 					this->robot_approach_ref();
 					this->state = ROBOT_EVALUATE_IMAGE;
+					break;
+				case ROBOT_WAIT_FOR_ADJUSTMENT:
+					this->robot_wait_for_adjustment();
+					this->state = ROBOT_READY;
 					break;
 			}
 		}
@@ -159,3 +164,17 @@ uint8_t intel_board::robot_evaluate_image()
 	return 0;
 }
 
+uint8_t intel_board::robot_analyze_image()
+{
+	return 1;
+}
+
+uint8_t intel_board::robot_approach_ref()
+{
+	return 1;
+}
+
+uint8_t intel_board::robot_wait_for_adjustment()
+{
+	return 1;
+}

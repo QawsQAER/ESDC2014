@@ -2,6 +2,10 @@
 
 Image_processor::Image_processor(uint8_t img_source)
 {
+	//the default target should be at 0.5
+	this->exp_x = 0.5;
+	this->exp_y = 0.2;
+
 	printf("Constructing Image processor\n");
 	this->state = IMAGE_PROCESS_INIT;
 	strcpy(this->winname,"hello, world");
@@ -66,6 +70,10 @@ uint8_t Image_processor::get_image_from_cellphone()
 		printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");
 		exit(-1);
 	}
+
+	point.x = floor(this->current_img.cols * this->exp_x);
+	point.y = floor(this->current_img.rows * this->exp_y);
+	printf("Image_processor::get_image_from_cellphone: expected x %d expected y %d\n",point.x,point.y);
 	return 1;
 }
 
@@ -324,6 +332,10 @@ uint8_t Image_processor::basic_filter()
 			if(this->face_body_related(body_detect[count_body],face_detect[count_face]))
 			{
 				printf("Image_processor basic_filter():a person is detected\n");
+				//adjust the body_detect to better match the face
+				body_detect[count_body].height+=body_detect[count_body].y - face_detect[count_face].y;
+				body_detect[count_body].y = face_detect[count_face].y;
+
 				this->final_body_detect.push_back(body_detect[count_body]);
 				this->final_face_detect.push_back(face_detect[count_face]);
 			}
@@ -333,7 +345,8 @@ uint8_t Image_processor::basic_filter()
 
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
 {
-	double face_hori_threshold = 0.5;
+	float face_body_height_ratio = 0.20;
+	float face_hori_threshold = 0.5;
 	//x, y are the coordinate of the top left corner.
 	cv::Point body_center(body.x + body.width / 2,
 					body.y + body.height / 2);
@@ -344,7 +357,7 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 		check whether the face_center is higher than the body_center
 		because the person's head must be at a higher position than than body, right?
 	*/
-	if(face_center.y < body_center.y)
+	if(face_center.y + face.height < body_center.y)
 	{
 		//check whether the face is within the width of the body horizontally
 		if( (body_center.x - (body.width / 2)) < (face_center.x - face.width / 2)
@@ -353,8 +366,19 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 			//body is related to this face
 			printf("Image_processor face_body_related(): the face_center (%d,%d) the body_center (%d,%d)\n",face_center.x,face_center.y,body_center.x,body_center.y);
 			printf("body_center.x - body.width / 2 is %d, body_center.x + body.width/2 is %d\n",body_center.x - body.width / 2,body_center.x + body.width/2);
-			return 1;
 		}
+		else
+			return 0;
+
+		//check whether the body is much longer than the face
+		printf("Image_processor face_body_related(): face height %d body height %d\n",face.height,body.height);
+		printf("Image_processor face_body_related(): face height / body height %f\n",(float)face.height/(float)body.height);
+		printf("Image_processor face_body_related(): threshold %f\n",face_body_height_ratio);
+		if(((float)face.height / (float)body.height) > face_body_height_ratio)
+			return 0;
+
+		return 1;
+
 	}
 
 	//body is not related to this face
@@ -453,7 +477,7 @@ uint8_t Image_processor::target_in_scope()
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
-		return 1;
+		return this->final_body_detect.size();
 	else 
 	{
 		//delete the current image if no target is found in the scope
