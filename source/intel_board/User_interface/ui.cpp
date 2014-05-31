@@ -1,3 +1,10 @@
+#include "ui.h"
+
+#include <string>
+#include <iostream>
+#include <cstdio>
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,9 +17,8 @@
 #include <pthread.h>
 
 
-#define PORT 60000
-#define MAX_MESSAGE_SIZE 255
-#define MESSAGELENGTH 2
+
+
 
 /*
 
@@ -81,52 +87,30 @@ finish  0x00 0x04
 
 */
 
-char msg_code[MESSAGELENGTH];
-char content[MESSAGELENGTH];
-char tempBuffer[MAX_MESSAGE_SIZE];
 
-int client_sd;
-struct sockaddr_in client_addr;
-
-
-int init_server_socket();
-void send_msg();
-int read_msg();
+UI::UI()
+{
 
 
 
 
 
 
-
-void send_established();
-void send_finished_ack();
-void send_pattern1_ack();
-void send_pattern2_ack();
-void send_pattern3_ack();
-void send_pattern4_ack();
-void send_car_forward_ack();
-void send_car_backward_ack();
-void send_car_left_ack();
-void send_car_right_ack();
-void send_camera_forward_ack();
-void send_camera_backward_ack();
-void send_camera_left_ack();
-void send_camera_right_ack();
-void send_lift_up_ack();
-void send_lift_down_ack();
+}
 
 
 
+UI::~UI()
+{
+	close(server_socket);
+}
 
 
 
-
-
-
-int main(int argc, char** argv){
+void UI::contention()
+{
 	
-	int server_socket = init_server_socket();
+	 server_socket = init_server_socket();
 
 	int val=1;
 	if(setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
@@ -137,9 +121,9 @@ int main(int argc, char** argv){
 				
 
 
+	struct sockaddr_in client_addr;
 	
-
-		socklen_t addr_len=sizeof(client_addr);
+		socklen_t addr_len=sizeof(struct sockaddr_in);
 
 				printf("before accept client\n");
 
@@ -152,13 +136,11 @@ int main(int argc, char** argv){
 
 		printf("after accept client\n");
 	
-				
+}			
 
 
-		while(1)
-		{
-
-
+int UI::wait_command()
+{
 		int read_type=read_msg();
 
 		switch(read_type){
@@ -246,17 +228,17 @@ int main(int argc, char** argv){
 
 		}
 
-		}
-
-
-	close(server_socket);
-	return 0;
+			return read_type;
 }
 
 
+	
 
 
-void send_msg()
+
+
+
+void UI::send_msg()
 {
 			printf("Send msg to client\n");
 					
@@ -277,7 +259,7 @@ void send_msg()
 
 
 
-void send_established()
+void UI::send_established()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cr";
@@ -289,7 +271,7 @@ void send_established()
 	send_msg();
 }
 
-void send_finished_ack()
+void UI::send_finished_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x00;
@@ -298,7 +280,7 @@ void send_finished_ack()
 }
 
 
-void send_pattern1_ack()
+void UI::send_pattern1_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -306,7 +288,7 @@ void send_pattern1_ack()
 	send_msg();
 }
 
-void send_pattern2_ack()
+void UI::send_pattern2_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -314,7 +296,7 @@ void send_pattern2_ack()
 	send_msg();
 }
 
-void send_pattern3_ack()
+void UI::send_pattern3_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -323,7 +305,7 @@ void send_pattern3_ack()
 }
 
 
-void send_pattern4_ack()
+void UI::send_pattern4_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -331,7 +313,7 @@ void send_pattern4_ack()
 	send_msg();
 }
 
-void send_car_forward_ack()
+void UI::send_car_forward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -339,7 +321,7 @@ void send_car_forward_ack()
 	send_msg();
 }
 
-void send_car_backward_ack()
+void UI::send_car_backward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -347,7 +329,7 @@ void send_car_backward_ack()
 	send_msg();
 }
 
-void send_car_left_ack()
+void UI::send_car_left_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -356,7 +338,7 @@ void send_car_left_ack()
 }
 
 
-void send_car_right_ack()
+void UI::send_car_right_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -365,7 +347,7 @@ void send_car_right_ack()
 }
 
 
-void send_camera_forward_ack()
+void UI::send_camera_forward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -373,7 +355,7 @@ void send_camera_forward_ack()
 	send_msg();
 }
 
-void send_camera_backward_ack()
+void UI::send_camera_backward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -381,7 +363,7 @@ void send_camera_backward_ack()
 	send_msg();
 }
 
-void send_camera_left_ack()
+void UI::send_camera_left_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -390,7 +372,7 @@ void send_camera_left_ack()
 }
 
 
-void send_camera_right_ack()
+void UI::send_camera_right_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -398,7 +380,7 @@ void send_camera_right_ack()
 	send_msg();
 }
 
-void send_lift_up_ack()
+void UI::send_lift_up_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -407,7 +389,7 @@ void send_lift_up_ack()
 }
 
 
-void send_lift_down_ack()
+void UI::send_lift_down_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	msg_code[0]=0x05;
@@ -425,7 +407,7 @@ void send_lift_down_ack()
 
 
 
-int read_msg()
+int UI::read_msg()
 {
 	printf("Receive msg from client\n");
 
@@ -584,7 +566,7 @@ int read_msg()
 
 
 
-int init_server_socket(){
+int UI::	init_server_socket(){
 
 	int sd=socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_addr;
@@ -598,7 +580,7 @@ int init_server_socket(){
 
 	server_addr.sin_family=AF_INET;
 	server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-	server_addr.sin_port=htons(PORT);
+	server_addr.sin_port=htons(UI_PORT);
 	
 	if(bind(sd,(struct sockaddr *) &server_addr,sizeof(server_addr))<0){
 		printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
@@ -612,7 +594,7 @@ int init_server_socket(){
 		
 
 
-	printf("**Server Standby** PORT:%d\n",PORT);
+	printf("**Server Standby** PORT:%d\n",UI_PORT);
 	return sd;
 
 }
