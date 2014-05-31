@@ -468,13 +468,17 @@ uint8_t Image_processor::target_in_scope()
 	//if an image is captured, run basic analysis
 	this->run_body_detection(this->current_img,this->body_detect);
 	this->run_face_detection(this->current_img,this->face_detect);
-
+	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
+	this->show_analyzed_img();
+	
 	//run basic filter;
 	this->basic_filter();
 
 	//mark the detected results
 	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
+
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
