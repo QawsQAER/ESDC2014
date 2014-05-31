@@ -9,7 +9,7 @@ Message::Message()
 
 Message::~Message()
 {
-	delete _IntelCarCmd;
+	free(_IntelCarCmd);
 }
 
 void CarMoveUpMM(uint16_t _mm)
