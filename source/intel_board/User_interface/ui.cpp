@@ -122,7 +122,7 @@ void UI::contention()
 
 
 	struct sockaddr_in client_addr;
-	
+
 		socklen_t addr_len=sizeof(struct sockaddr_in);
 
 				printf("before accept client\n");
@@ -264,18 +264,17 @@ void UI::send_established()
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cr";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
-		/*msg_code[0]="c";
-		msg_code[1]="r"*/
-	// if(strcmp(msg_code,"cr")==0)
-	printf("send content:%s\n",msg_code);
+	 
+	// printf("send content:%s\n",msg_code);
 	send_msg();
 }
 
 void UI::send_finished_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	msg_code[0]=0x00;
-	msg_code[1]=0x04;
+	char temp[]="fa";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
 	send_msg();
 }
 

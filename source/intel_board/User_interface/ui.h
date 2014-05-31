@@ -19,26 +19,7 @@ public:
 
 
 void contention();
-void send_msg();
 int wait_command();
-
-
-
-
-
-
-
-
-private:
-
-
-char msg_code[MESSAGELENGTH];
-char content[MESSAGELENGTH];
-char tempBuffer[MAX_MESSAGE_SIZE];
-
-
-int server_socket;
-int client_sd;
 
 
 void send_established();
@@ -57,9 +38,26 @@ void send_camera_left_ack();
 void send_camera_right_ack();
 void send_lift_up_ack();
 void send_lift_down_ack();
+
+
+
+private:
+
+
+char msg_code[MESSAGELENGTH];
+char content[MESSAGELENGTH];
+char tempBuffer[MAX_MESSAGE_SIZE];
+
+
+int server_socket;
+int client_sd;
+
+
+
+
 int init_server_socket();
 int read_msg();
-
+void send_msg();
 
 };
 
