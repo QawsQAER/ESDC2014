@@ -175,9 +175,16 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 {
 	//note that the body_detect is the parameter of the function, not the body_detect of the instance
 	cv::Mat marked_img = source_img.clone();
+	printf("mark_detected_body(): source_img (%d,%d)\n",source_img.cols,source_img.rows);
 	//for every detected face
 	for(size_t count = 0;count < body_detect.size();count++)
 	{
+		printf("mark_detected_body() [%d] body: (%d,%d,%d,%d)\n",
+			count + 1,
+			body_detect[count].x,
+			body_detect[count].y,
+			body_detect[count].width,
+			body_detect[count].height);
 		cv::Rect r = body_detect[count];
 		cv::rectangle(marked_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
@@ -351,19 +358,74 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 	return 0;
 }
 
-uint8_t Image_processor::face_body_related(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect,std::vector<cv::Rect> &body_detect)
+
+uint8_t Image_processor::find_body_according_to_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
+	uint8_t factor = 2;
+	printf("find_body_according_to_face(): There are %d faces\n",face_detect.size());
+	std::vector<cv::Rect> body_detect;
 	//for every detected face recorded in face_detect
-	for(size_t count_face;count_face < face_detect.size();count_face++)
+	for(size_t count_face = 0;count_face < face_detect.size();count_face++)
 	{
+		cv::Mat resulted_img;
 		cv::Rect rect = face_detect[count_face];
-		//make rect a larger rectangle
-		//move the left top to the top
+		//make rect a larger rectangle based on the face detection result
+
+		//1. move the left top to the top
 		rect.y = 1;
-		//move the left top to lefter position
-		rect.x = std::max(rect.x - face_detect[count].width,0);
-		//
+		//2. move the left top to lefter position
+		rect.x = std::max(rect.x - factor * face_detect[count_face].width,0);
+		//3. make the width larger
+		rect.width*=(factor * 2 + 1);
+		if(rect.x + rect.width > source_img.cols)
+		{
+			rect.width = source_img.cols - rect.x;
+		}
+		//4. make the height larger
+		rect.height = source_img.rows - rect.y;
+
+		this->find_body_in_roi(source_img,rect,body_detect);
+		for(size_t count_body = 0;count_body < body_detect.size();count_body++)
+		{
+			body_detect[count_body].x+=rect.x; 
+			body_detect[count_body].y+=rect.y;
+		}
+
+		resulted_img = this->mark_detected_body(source_img,body_detect);
+		cv::rectangle(resulted_img,rect.tl(),rect.br(),cv::Scalar(0,0,255),2);
+		resulted_img = this->mark_detected_face(resulted_img,face_detect);
+		cv::destroyWindow(this->winname);
+		cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+		cv::imshow(this->winname,resulted_img);
+		char key;
+		while((key = cv::waitKey(0)) != 'n')
+		{
+			if(key == 'e')
+				exit(-1);
+		}
 	}
+	return 1;
+}
+
+uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Rect roi,std::vector<cv::Rect> &body_detect)
+{
+	body_detect.clear();
+	cv::Mat subImage = source_img(roi);
+	cv::Mat resulted_img;
+	this->run_body_detection(subImage,body_detect);
+	printf("find_body_in_roi(): find %d body\n",body_detect.size());
+	resulted_img = this->mark_detected_body(subImage,body_detect);
+
+	cv::destroyWindow(this->winname);
+	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	cv::imshow(this->winname,resulted_img);
+	char key;
+	while((key = cv::waitKey(0)) != 'n')
+	{
+		if(key == 'e')
+			exit(-1);
+	}
+	
 	return 1;
 }
 		
