@@ -11,8 +11,6 @@
 
 
 #define PORT 60000
-#define false 0
-#define true 1
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
 
@@ -22,31 +20,32 @@ protacal from phone to board
 
 type operation
 
-connect request 0x00 0x00  1
-start movement  0x00 0x02  2 
-confirm picture 0x00 0x03  3 
+connect request cr  1
+start movement  sm  2 
+confirm picture cp  3 
 
-pattern 1 0x01 0x01  4
-pattern 2 0x01 0x02  5
-pattern 3 0x01 0x03  6
-pattern 4 0x01 0x04  7
+pattern 1 p1  4
+pattern 2 p2  5
+pattern 3 p3  6
+pattern 4 p4  7
 
 car 				 
-forward 0x02 0x01	 8
-backward 0x02 0x02	 9
-left     0x02 0x03	 10
-right    0x02 0x04   11 
+forward  fw	 8
+backward bw	 9
+left     lw	 10
+right    rw 0x04   11 
 
 
 camera 				 
-forward 0x03 0x01	 12
-backward 0x03 0x02	 13
-left     0x03 0x03	 14
-right    0x03 0x04	 15
+forward   up	 12
+backward  do	 13
+left      le	 14
+right     ri	 15
+
 
 lift 				
-up 0x04 0x01         16
-down 0x04 0x02		 17
+up li         16
+down ld		 17
 
 -------------------------------------
 
@@ -166,19 +165,92 @@ int main(int argc, char** argv){
 
 
 		int read_type=read_msg();
-		if(read_type==-1)
-		{
+
+		switch(read_type){
+			case -1: 			
 			printf("Error: Received undefined message from other client.\n");
-			// exit(0);
-		}
-				 
+			break;
+
+			case 1:
+			printf("Command: connect request\n");
+			break;
+
+			case 2:
+			printf("Command: start movement\n");
+			break
+
+			case 3:
+			printf("Command: confirm picture\n");
+			break
+
+
+			case 4:
+			//use pattern1
+			printf("Command:  pattern1\n");
+			break;
+
+
+			case 5:
+			printf("Command: pattern 2\n");
+			break;
+
+			case 6:
+			printf("Command: pattern3\n");
+			break;
+
+			case 7:
+			printf("Command: pattern4\n");
+			break;
+
+			case 8:
+			printf("Command: car forward\n");
+			break;
+
+			case 9:
+			printf("Command: car backward\n");
+			break;
+
+			case 10:
+			printf("Command: car left\n");
+			break;
+
+			case 11:
+			printf("Command: car right\n");
+			break;
+
+			case 12:
+			printf("Command: camera up\n");
+			break;
+
+			case 13:
+			printf("Command: camera down\n");
+			break;
+
+			case 14:
+			printf("Command: camera left\n");
+			break;
+
+			case 15:
+			printf("Command: camera right\n");
+			break;
+
+			case 16:
+			printf("Command: lift up\n");
+			break;
+
+			case 17:
+			printf("Command: lift down\n");
+			break;
+
+
+			default:
+			printf("Error: undefined read_type.\n");
+			break;
 
 
 		}
 
-		 			 
-
-				
+		}
 
 
 	close(server_socket);
@@ -386,7 +458,45 @@ int read_msg()
 				 
 
 
-				switch (content[0]){
+				if(strcmp(content,"cr")==0)
+					return 1;
+				else if (strcmp(content,"sm")==0)
+					return 2;
+				else if (strcmp(content,"cp")==0)
+					return 3;
+				else if (strcmp(content,"p1")==0)
+					return 4;
+				else if (strcmp(content,"p2")==0)
+					return 5;
+				else if (strcmp(content,"p3")==0)
+					return 6;
+				else if (strcmp(content,"p4")==0)
+					return 7;
+				else if (strcmp(content,"Up")==0)
+					return 8;
+				else if (strcmp(content,"Do")==0)
+					return 9;
+				else if (strcmp(content,"Le")==0)
+					return 10;
+				else if (strcmp(content,"Ri")==0)
+					return 11;
+				else if (strcmp(content,"cU")==0)
+					return 12;
+				else if (strcmp(content,"cD")==0)
+					return 13;
+				else if (strcmp(content,"cL")==0)
+					return 14;
+				else if (strcmp(content,"cR")==0)
+					return 15;
+				else if (strcmp(content,"li")==0)
+					return 16;
+				else if (strcmp(content,"ld")==0)
+					return 17;
+				else
+					return -1;
+
+
+				/*switch (content[0]){
 
 				case 0x00:
 				if(content[1]==0x00)
@@ -455,7 +565,7 @@ int read_msg()
 				return -1;
 
 
-				}
+				}*/
 
 			}
 			else{continue;}
