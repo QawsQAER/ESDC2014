@@ -11,10 +11,6 @@
 
 
 #define PORT 60000
-<<<<<<< HEAD
-unsigned short PROT_USED;
-=======
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
 #define false 0
 #define true 1
 #define MAX_MESSAGE_SIZE 255
@@ -26,7 +22,6 @@ protacal from phone to board
 
 type operation
 
-<<<<<<< HEAD
 connect request 0x00 0x00
 start movement  0x00 0x02
 confirm picture 0x00 0x03
@@ -53,40 +48,6 @@ lift
 up 0x04 0x01
 down 0x04 0x02
 
-
-protacal from board to  phone
-=======
-connect request 0x00 0x00  1
-start movement  0x00 0x02  2 
-confirm picture 0x00 0x03  3 
-
-pattern 1 0x01 0x01  4
-pattern 2 0x01 0x02  5
-pattern 3 0x01 0x03  6
-pattern 4 0x01 0x04  7
-
-car 				 
-forward 0x02 0x01	 8
-backward 0x02 0x02	 9
-left     0x02 0x03	 10
-right    0x02 0x04   11 
-
-
-camera 				 
-forward 0x03 0x01	 12
-backward 0x03 0x02	 13
-left     0x03 0x03	 14
-right    0x03 0x04	 15
-
-lift 				
-up 0x04 0x01         16
-down 0x04 0x02		 17
-
--------------------------------------
-
-protacal from board to  phone
-
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
 connect established 0x00 0x01
 
 
@@ -113,25 +74,25 @@ lift
 up ack		  0x05 0x0d
 down ack      0x05 0x0e
 
-<<<<<<< HEAD
-finish
-=======
-finish  0x00 0x04
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
 
 */
 
 char msg_code[MESSAGELENGTH];
 char content[MESSAGELENGTH];
 <<<<<<< HEAD
+<<<<<<< HEAD
 char tempBuffer[MESSAGELENGTH];
 =======
 char tempBuffer[MAX_MESSAGE_SIZE];
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+char tempBuffer[MAX_MESSAGE_SIZE];
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 int client_sd;
 struct sockaddr_in client_addr;
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 typedef struct Client {
 	unsigned int IP_addr;
@@ -148,6 +109,8 @@ int init_server_socket();
 void send_msg();
 void read_msg();
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 int init_server_socket();
 void send_msg();
@@ -182,11 +145,15 @@ void send_lift_down_ack();
 
 
 
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 
 int main(int argc, char** argv){
 	
+<<<<<<< HEAD
 <<<<<<< HEAD
 	 //use usr provided prot or not
 		
@@ -199,6 +166,8 @@ int main(int argc, char** argv){
 		
 =======
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	int server_socket = init_server_socket();
 
 	int val=1;
@@ -213,10 +182,14 @@ int main(int argc, char** argv){
 	
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		int addr_len=sizeof(client_addr);
 =======
 		socklen_t addr_len=sizeof(client_addr);
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+		socklen_t addr_len=sizeof(client_addr);
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 				printf("before accept client\n");
 
@@ -226,6 +199,7 @@ int main(int argc, char** argv){
 			printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
 			exit(0);
 		}
+<<<<<<< HEAD
 <<<<<<< HEAD
 		printf("after accept client\n");
 	
@@ -239,12 +213,17 @@ int main(int argc, char** argv){
 					msg_code[6]=0x03;
 					msg_code[7]=0x00;  			
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 		printf("after accept client\n");
 	
 				
 	  			 
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 					int i ;
 					for (i= 0; i < 10; ++i)
 					{
@@ -252,9 +231,12 @@ int main(int argc, char** argv){
 					}
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 					read_msg();
 				  			 
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 		while(1)
 		{
 
@@ -271,7 +253,10 @@ int main(int argc, char** argv){
 		}
 
 		 			 
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 				
 
@@ -281,6 +266,7 @@ int main(int argc, char** argv){
 }
 
 
+<<<<<<< HEAD
 <<<<<<< HEAD
 void send_msg()
 {
@@ -293,6 +279,13 @@ void send_msg()
 {
 			printf("Send msg to client\n");
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+
+
+void send_msg()
+{
+			printf("Send msg to client\n");
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 					
 					int already_sent=0;
 					while(1){
@@ -312,12 +305,15 @@ void send_msg()
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 void read_msg()
 {
 			printf("Receive msg from client\n");
 
 	memset(tempBuffer,0,MESSAGELENGTH);
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 void send_established()
 {
 memset(msg_code,0,MESSAGELENGTH);
@@ -467,7 +463,10 @@ int read_msg()
 	printf("Receive msg from client\n");
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	memset(content,0,MESSAGELENGTH);
 	
 	int receiveByte=0;
@@ -478,15 +477,21 @@ int read_msg()
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	while(1){
 		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0){
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	while(alreadyReceiveByte<MESSAGELENGTH){
 
 
 		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
 		{
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 			 printf("Error: Couldn't receive\n");
 			// exit(0);
 		}
@@ -494,15 +499,20 @@ int read_msg()
 		alreadyReceiveByte+=receiveByte;
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 		if(1)
 		{/*! = 0x21*/
 =======
 		
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+		
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 			if(alreadyReceiveByte>=MESSAGELENGTH)
 			{
 				memcpy(&content,tempBuffer,sizeof(char)*MESSAGELENGTH);
 				printf("%s\n",content);
+<<<<<<< HEAD
 <<<<<<< HEAD
 				 receiveByte=0;
 				alreadyReceiveByte = 0;
@@ -517,6 +527,8 @@ int read_msg()
 			exit(0);
 		}
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 				 
 
 
@@ -593,7 +605,10 @@ int read_msg()
 
 			}
 			else{continue;}
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	}
 
 
@@ -603,7 +618,10 @@ int read_msg()
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 
 
@@ -611,7 +629,10 @@ int read_msg()
 
 
 
+<<<<<<< HEAD
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 int init_server_socket(){
 
 	int sd=socket(AF_INET,SOCK_STREAM,0);
@@ -627,10 +648,14 @@ int init_server_socket(){
 	server_addr.sin_family=AF_INET;
 	server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
 <<<<<<< HEAD
+<<<<<<< HEAD
 	server_addr.sin_port=htons(PROT_USED);
 =======
 	server_addr.sin_port=htons(PORT);
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+	server_addr.sin_port=htons(PORT);
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	
 	if(bind(sd,(struct sockaddr *) &server_addr,sizeof(server_addr))<0){
 		printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
@@ -645,10 +670,14 @@ int init_server_socket(){
 
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 	printf("**Server Standby** PORT:%d\n",PROT_USED);
 =======
 	printf("**Server Standby** PORT:%d\n",PORT);
 >>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
+=======
+	printf("**Server Standby** PORT:%d\n",PORT);
+>>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	return sd;
 
 }
