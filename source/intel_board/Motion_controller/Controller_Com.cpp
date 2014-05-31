@@ -7,10 +7,16 @@ Controller_Com::Controller_Com(char *devname)
 		printf("Controller_Com() Constructor Error: Cannot open device\n");
 		exit(-1);
 	}
+        else
+                
 	set_interface_attribs(this->fd,B9600,0);
 	set_blocking(this->fd,0);
 }
 
+Controller_Com::~Controller_Com()
+{
+        close(this->fd);
+}
 int set_interface_attribs (int fd, int speed, int parity)
 {
         struct termios tty;
