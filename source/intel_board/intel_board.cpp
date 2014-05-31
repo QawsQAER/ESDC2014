@@ -141,6 +141,8 @@ uint8_t intel_board::robot_init()
 	printf("intel_board: the robot is in init state\n");
 	if(!this->image_processor->init())
 		return 0;
+	if(!this->motion_controller->init())
+		return 0;
 	return 1;
 }
 
@@ -157,9 +159,6 @@ uint8_t intel_board::robot_find_target()
 	printf("intel_board::robot_find_target() running\n");
 	while(!this->image_processor->target_in_scope())
 	{
-		Message k;
-		k.CarMoveDownMM(256);
-		k.sendMessage(this->motion_controller->Com->fd);
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
 	}

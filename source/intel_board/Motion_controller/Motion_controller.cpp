@@ -12,6 +12,13 @@ Motion_controller::~Motion_controller()
 	delete this->Com;
 }
 
+uint8_t Motion_controller::init()
+{
+	Message msg;
+	msg.CarRotateLeftDegree(360);
+	msg.sendMessage(this->Com->fd);
+	return 1;
+}
 uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref)
 {
 	if(this->eval_state == EVAL_COMPLETE)
@@ -71,12 +78,20 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 			//should move left
 			move_x = ceil(abs(diff_x) * p);
 			printf("Motion_controller centering(): moving left %d mm\n",move_x);
+			Message msg;
+			msg.CarMoveLeftMM(move_x);
+			msg.sendMessage(this->Com->fd);
+			//cmd_queue.push(msg);
 		}
 		else
 		{
 			//should move right
 			move_x = ceil(abs(diff_x) * p);
 			printf("Motion_controller centering(): moving right %d mm\n",move_x);
+			Message msg;
+			msg.CarMoveRightMM(move_x);
+			msg.sendMessage(this->Com->fd);
+			//cmd_queue.push(msg);
 		}
 	}
 	if(abs(diff_y) > threshold_y)
@@ -87,18 +102,24 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	return okay_image;
 }
 
-uint8_t zoom_in_out(const cv::Rect &detect)
+uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect)
 {
+	return 1;
+}
 
+uint8_t Motion_controller::adjusting(const cv::Rect &detect)
+{
+	return 1;
 }
 
 void Motion_controller::send_cmd()
 {
-	/*
+	printf("Motion_controller::send_cmd(): sending messages to the car\n");
 	while(!this->cmd_queue.empty())
 	{
-		this->Com->send_cmd(cmd_queue.front());
-		cmd_queue.pop();
+		//this->Com->send_cmd(cmd_queue.front());
+		//cmd_queue.front().sendMessage(this->Com->fd);
+		//cmd_queue.pop();
 	}
-	*/
+	
 }
