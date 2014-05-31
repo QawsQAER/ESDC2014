@@ -14,9 +14,7 @@ All the code with this header are under GPL open source license.
 
 #include "../macro.h"
 
-#define IP "192.168.43.1"
-#define PORT "8080"
-#define IP_PORT "192.168.43.1:8080"
+
 
 class Camera
 {
