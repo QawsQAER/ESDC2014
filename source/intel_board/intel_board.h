@@ -6,6 +6,7 @@
 
 
 #include "Image_processor/Image_processor.h"
+#include "Motion_controller/Motion_controller.h"
 //#include "Motion_controller/Motion_controller.h"
 #include "lib/message.h"
 

@@ -458,13 +458,14 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 		
 uint8_t Image_processor::target_in_scope()
 {
+	printf("Image_processor::target_in_scope() running\n");
 	if(!this->capture_image())
 	{
 		printf("Image_processor Error: cannot capture valid image\n");
 		return 0;
 	}
 	
-	//if image is capture, run basic analysis
+	//if an image is captured, run basic analysis
 	this->run_body_detection(this->current_img,this->body_detect);
 	this->run_face_detection(this->current_img,this->face_detect);
 
@@ -484,4 +485,9 @@ uint8_t Image_processor::target_in_scope()
 		remove(this->current_img_path);
 		return 0;
 	}
+}
+
+cv::Rect Image_processor::get_detection_result()
+{
+	return this->final_body_detect[0];
 }

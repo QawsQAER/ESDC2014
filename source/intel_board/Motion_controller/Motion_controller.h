@@ -9,6 +9,7 @@
 #include <queue>
 //for standard int type
 #include <stdint.h>
+#include <stdio.h>
 #include "Controller_Com.h"
 #include <opencv2/opencv.hpp>
 #include "../lib/message.h"

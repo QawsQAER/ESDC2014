@@ -77,10 +77,8 @@ uint8_t intel_board::main_function()
 			ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->final_body_detect);
 			ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);
 			//show the analyzed img after basic filter
+			this->robot_evaluate_image();
 			ptr->show_analyzed_img();
-
-			//printf("Using another methodology\n");
-			//ptr->find_body_according_to_face(ptr->current_img,ptr->face_detect);
 
 		}
 	}
@@ -103,7 +101,8 @@ uint8_t intel_board::main_function()
 				
 				case ROBOT_FIND_TARGET:
 					//working on finding the target
-					this->robot_find_target();
+					if(this->robot_find_target())
+						this->state = ROBOT_EVALUATE_IMAGE;
 					break;
 
 				case ROBOT_EVALUATE_IMAGE:
@@ -123,7 +122,8 @@ uint8_t intel_board::main_function()
 				
 				case ROBOT_APPROACH_REF:
 					this->robot_approach_ref();
-					this->state = ROBOT_EVALUATE_IMAGE;
+					//take another picture and check whether the target is in scope
+					this->state = ROBOT_FIND_TARGET;
 					break;
 				case ROBOT_WAIT_FOR_ADJUSTMENT:
 					this->robot_wait_for_adjustment();
@@ -146,27 +146,37 @@ uint8_t intel_board::robot_init()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
-	printf("intel_board: the robot is going to find target\n");
+	printf("intel_board: the robot is going to find target\n\n\n");
 	this->state = ROBOT_FIND_TARGET;
 	return 1;
 }
 
 uint8_t intel_board::robot_find_target()
 {
+	printf("intel_board::robot_find_target() running\n");
 	while(!this->image_processor->target_in_scope())
 	{
 		//rotate 30 degree every time if no target is detected
-
+		printf("intel_board::robot_find_target(): finding target again\n");
 	}
+	printf("intel_board::robot_find_target(): TARGET FOUND!\n\n\n");
+	return 1;
 }
 
 uint8_t intel_board::robot_evaluate_image()
 {
-	return this->motion_controller->evaluate_image();
+	printf("intel_board: robot_evaluate_image() running\n");
+	cv::Rect dummy;
+	if(this->image_processor->final_face_detect.size() != 0)
+		return this->motion_controller->evaluate_image(this->image_processor->get_detection_result(),dummy);
+	else
+		printf("intel_board::robot_evaluate_image() error: evaluating an image without detection result!\n");
+		return 0;
 }
 
 uint8_t intel_board::robot_analyze_image()
 {
+	printf("intel_board::robot_analyze_image() running\n");
 	//analyze the image and get the expected movement to take
 	//currently it is done in robot_evaluate_image()
 	return 1;
@@ -174,6 +184,7 @@ uint8_t intel_board::robot_analyze_image()
 
 uint8_t intel_board::robot_approach_ref()
 {
+	printf("intel_board::robot_approach_ref() running\n");
 	//have the motion_controller send the command to the car
 	this->motion_controller->send_cmd();
 	return 1;
@@ -181,5 +192,6 @@ uint8_t intel_board::robot_approach_ref()
 
 uint8_t intel_board::robot_wait_for_adjustment()
 {
+	printf("intel_board::robot_wait_for_adjustment() running\n");
 	return 1;
 }
