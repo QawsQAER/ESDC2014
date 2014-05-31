@@ -41,6 +41,7 @@ private:
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
 
+	char* current_img_path;
 	//this variable indicates where the frame for analysis comes from
 	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
 	uint8_t img_source;
@@ -139,6 +140,15 @@ public:
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 	void test();
+
+	/*
+	
+		Interface for intel board to use
+
+	*/
+	//this function will take a picture of the current scope,
+	//and analyze whether there is a person/target in the picture.
+	uint8_t target_in_scope();
 };
 
 #endif

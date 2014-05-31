@@ -23,11 +23,14 @@ Image_processor::Image_processor(uint8_t img_source)
 		this->cam->setip(ip);
 	}
 	//check the existence of the directory for storing the capture image
+	this->current_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	memset(this->current_img_path,0,sizeof(char) * FILENAME_LENGTH);
 }
 
 Image_processor::~Image_processor()
 {
 	printf("Destructing Image processor\n");
+	free(current_img_path);
 	delete this->cam;
 }
 
@@ -41,7 +44,7 @@ uint8_t Image_processor::init()
 	this->face_cascade_name = PATH_TO_FACE_CASCADE;
 	this->eyes_cascade_name = PATH_TO_EYES_CASCADE;
 	//setting the cascade classifier for face detection
-	printf("Image_processor init(): setting the default face detector");
+	printf("Image_processor init(): setting the default face detector\n");
 	if( !this->face_cascade.load(this->face_cascade_name) ){ printf("--(!)Error loading face cascade\n"); exit(-1); };
 	if( !this->eyes_cascade.load(this->eyes_cascade_name) ){ printf("--(!)Error loading eyes cascade\n"); exit(-1); };
 
@@ -54,14 +57,14 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 
 uint8_t Image_processor::get_image_from_cellphone()
 {
-	char *filename = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
-	strcpy(filename,this->cam->photo_af().c_str());
-	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",filename);
-	this->current_img = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
+	//TODO: maybe check the length of the c_str() return value
+	strcpy(this->current_img_path,this->cam->photo_af().c_str());
+	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
+	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	if(!this->current_img.data)
 	{
 		printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");
-		getchar();
+		exit(-1);
 	}
 	return 1;
 }
@@ -429,3 +432,32 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	return 1;
 }
 		
+uint8_t Image_processor::target_in_scope()
+{
+	if(!this->capture_image())
+	{
+		printf("Image_processor Error: cannot capture valid image\n");
+		return 0;
+	}
+	
+	//if image is capture, run basic analysis
+	this->run_body_detection(this->current_img,this->body_detect);
+	this->run_face_detection(this->current_img,this->face_detect);
+
+	//run basic filter;
+	this->basic_filter();
+
+	//mark the detected results
+	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
+	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
+	this->show_analyzed_img();
+	
+	if(this->final_body_detect.size() >= 1)
+		return 1;
+	else 
+	{
+		//delete the current image if no target is found in the scope
+		remove(this->current_img_path);
+		return 0;
+	}
+}
