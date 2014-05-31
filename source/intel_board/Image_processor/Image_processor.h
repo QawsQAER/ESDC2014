@@ -161,6 +161,7 @@ public:
 	//this function will take a picture of the current scope,
 	//and analyze whether there is a person/target in the picture.
 	uint8_t target_in_scope();
+	cv::Rect get_detection_result();
 };
 
 #endif

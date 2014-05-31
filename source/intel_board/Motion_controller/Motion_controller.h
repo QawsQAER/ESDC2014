@@ -9,6 +9,7 @@
 #include <queue>
 //for standard int type
 #include <stdint.h>
+#include <stdio.h>
 #include "Controller_Com.h"
 #include <opencv2/opencv.hpp>
 #include "../lib/message.h"
@@ -19,7 +20,8 @@ private:
 	//this is the reference rectangle, where the person should be
 	cv::Rect *ref;
 	std::queue<Message> cmd_queue;
-	Controller_Com *Com; 
+	Controller_Com *Com;
+	uint8_t centering(const cv::Rect &detect);
 public:
 	Motion_controller();
 	~Motion_controller();
