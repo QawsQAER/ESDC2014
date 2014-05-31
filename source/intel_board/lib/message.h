@@ -69,6 +69,7 @@ struct IntelCarCmd
 class Message
 {
 public:
+	struct IntelCarCmd* _IntelCarCmd;
 	Message();
 	~Message();
 	void CarMoveUpMM(uint16_t _mm);
@@ -90,7 +91,7 @@ public:
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
 private:
-	struct IntelCarCmd* _IntelCarCmd;
+	
 
 	void setCarMove(uint8_t move_dir, uint16_t move_dis);
 	void setCarRotate(uint8_t rotate_dir, uint16_t rotate_dis);

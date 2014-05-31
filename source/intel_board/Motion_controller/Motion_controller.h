@@ -20,9 +20,11 @@ private:
 	//this is the reference rectangle, where the person should be
 	cv::Rect *ref;
 	std::queue<Message> cmd_queue;
-	Controller_Com *Com;
+	
 	uint8_t centering(const cv::Rect &detect);
 public:
+	Controller_Com *Com;
+	
 	Motion_controller();
 	~Motion_controller();
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref);
