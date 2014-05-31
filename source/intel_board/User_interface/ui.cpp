@@ -44,7 +44,7 @@ right     ri	 15
 
 
 lift 				
-up li         16
+up lu         16
 down ld		 17
 
 -------------------------------------
@@ -153,12 +153,7 @@ int main(int argc, char** argv){
 		printf("after accept client\n");
 	
 				
-	  			 
-					int i ;
-					for (i= 0; i < 10; ++i)
-					{
-							send_msg();
-					}
+
 
 		while(1)
 		{
@@ -173,15 +168,16 @@ int main(int argc, char** argv){
 
 			case 1:
 			printf("Command: connect request\n");
+			send_established();
 			break;
 
 			case 2:
 			printf("Command: start movement\n");
-			break
+			break;
 
 			case 3:
 			printf("Command: confirm picture\n");
-			break
+			break;
 
 
 			case 4:
@@ -265,7 +261,7 @@ void send_msg()
 			printf("Send msg to client\n");
 					
 					int already_sent=0;
-					while(1){
+					while(already_sent<MESSAGELENGTH){
 						int len=send(client_sd,msg_code+already_sent,MESSAGELENGTH-already_sent,0);
 						if(len<=0){
 							perror("send()");
@@ -283,136 +279,140 @@ void send_msg()
 
 void send_established()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x00;
-msg_code[1]=0x01;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cr";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+		/*msg_code[0]="c";
+		msg_code[1]="r"*/
+	// if(strcmp(msg_code,"cr")==0)
+	printf("send content:%s\n",msg_code);
+	send_msg();
 }
 
 void send_finished_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x00;
-msg_code[1]=0x04;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x00;
+	msg_code[1]=0x04;
+	send_msg();
 }
 
 
 void send_pattern1_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x01;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x01;
+	send_msg();
 }
 
 void send_pattern2_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x02;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x02;
+	send_msg();
 }
 
 void send_pattern3_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x03;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x03;
+	send_msg();
 }
 
 
 void send_pattern4_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x04;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x04;
+	send_msg();
 }
 
 void send_car_forward_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x05;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x05;
+	send_msg();
 }
 
 void send_car_backward_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x06;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x06;
+	send_msg();
 }
 
 void send_car_left_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x07;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x07;
+	send_msg();
 }
 
 
 void send_car_right_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x08;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x08;
+	send_msg();
 }
 
 
 void send_camera_forward_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x09;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x09;
+	send_msg();
 }
 
 void send_camera_backward_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0a;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x0a;
+	send_msg();
 }
 
 void send_camera_left_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0b;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x0b;
+	send_msg();
 }
 
 
 void send_camera_right_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0c;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x0c;
+	send_msg();
 }
 
 void send_lift_up_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0d;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x0d;
+	send_msg();
 }
 
 
 void send_lift_down_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0e;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	msg_code[0]=0x05;
+	msg_code[1]=0x0e;
+	send_msg();
 }
 
 
@@ -488,7 +488,7 @@ int read_msg()
 					return 14;
 				else if (strcmp(content,"cR")==0)
 					return 15;
-				else if (strcmp(content,"li")==0)
+				else if (strcmp(content,"lu")==0)
 					return 16;
 				else if (strcmp(content,"ld")==0)
 					return 17;
