@@ -162,17 +162,20 @@ uint8_t intel_board::robot_find_target()
 
 uint8_t intel_board::robot_evaluate_image()
 {
-	this->motion_controller->
-	return 0;
+	return this->motion_controller->evaluate_image();
 }
 
 uint8_t intel_board::robot_analyze_image()
 {
+	//analyze the image and get the expected movement to take
+	//currently it is done in robot_evaluate_image()
 	return 1;
 }
 
 uint8_t intel_board::robot_approach_ref()
 {
+	//have the motion_controller send the command to the car
+	this->motion_controller->send_cmd();
 	return 1;
 }
 
