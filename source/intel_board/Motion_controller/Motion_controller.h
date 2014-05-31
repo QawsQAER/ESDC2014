@@ -27,11 +27,14 @@ public:
 	void calculate_cmd(const cv::Rect &detect);
 	void send_cmd();
 
-	void move_forward(const uint16_t &mm);
+	void move_forward(const uint16_t &mm);&
 	void move_backward(const uint16_t &mm);
 	void move_left(const uint16_t &mm);
 	void move_right(const uint16_t &mm);
 	void rotate(const uint8_t &dir,const uint16_t &degree);
+
+	//this function will compute the distance of the target to the camera
+	double compute_distance(const cv::Rect &ref,const cv::Rect &detect, uint16_t actual_height,uint16_t focus_length);
 };
 
 #endif
