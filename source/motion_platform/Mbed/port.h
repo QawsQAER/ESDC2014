@@ -31,7 +31,14 @@ void IntelToMbedRxHandler()
 {
     //__disable_irq();//disable interupt when receiving data from XBEE_UART
     uint8_t _x = IntelToMbed.getc();
-    com.putToBuffer(_x); //function inside Communication::
+    com.putToBuffer(_x, 0); //function inside Communication::
+    //__enable_irq();
+}
+void MbedToArduinoRxHandler()
+{
+    //__disable_irq();//disable interupt when receiving data from XBEE_UART
+    uint8_t _x = MbedToArduino.getc();
+    com.putToBuffer(_x, 1); //function inside Communication::
     //__enable_irq();
 }
 
@@ -65,6 +72,7 @@ void init_PORT() //used in main() function
     IntelToMbed.attach(&IntelToMbedRxHandler); //serial interrupt function
     
     MbedToArduino.baud(9600);
+    MbedToArduino.attach(&MbedToArduinoRxHandler); //serial interrupt function
     
     lifter_encoder_A.fall(&LifterPulseHandler); //interrupt
     
