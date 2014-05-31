@@ -14,7 +14,27 @@ Motion_controller::~Motion_controller()
 
 uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref)
 {
-		return this->centering(detect);
+	if(this->eval_state == EVAL_COMPLETE)
+		return 1;
+	else
+		switch(this->eval_state)
+		{
+			case EVAL_CENTERING:
+				if(this->centering(detect))
+					this->eval_state = EVAL_ZOOMING;
+			break;
+			case EVAL_ZOOMING:
+				if(this->zoom_in_out(detect))
+					this->eval_state = EVAL_ADJUSTING;
+			break;
+			case EVAL_ADJUSTING:
+				if(this->adjusting(detect))
+					this->eval_state = EVAL_COMPLETE;
+			break;
+			default:
+			break;
+
+		}
 }
 
 uint8_t Motion_controller::centering(const cv::Rect &detect)
@@ -66,6 +86,12 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 
 	return okay_image;
 }
+
+uint8_t zoom_in_out(const cv::Rect &detect)
+{
+
+}
+
 void Motion_controller::send_cmd()
 {
 	/*
