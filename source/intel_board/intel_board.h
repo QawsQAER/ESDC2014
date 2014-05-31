@@ -43,7 +43,7 @@ private:
 	Image_processor *image_processor;
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
-	
+	Motion_controller *motion_controller;
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();

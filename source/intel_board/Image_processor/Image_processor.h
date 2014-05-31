@@ -31,6 +31,8 @@ enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
 };
+
+
 class Image_processor
 {
 private:

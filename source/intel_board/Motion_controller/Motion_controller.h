@@ -17,17 +17,18 @@ class Motion_controller
 {
 private:
 	//this is the reference rectangle, where the person should be
-	cv::Rect ref;
-	std::queue<struct IntelCarCmd> cmd_queue;
-	Controller_Com *Com;
+	cv::Rect *ref;
+	std::queue<Message> cmd_queue;
+	Controller_Com *Com; 
 public:
 	Motion_controller();
 	~Motion_controller();
+	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref);
 	//this function will read the detection result and then try to get a command such that the next detect result will be closer to the reference
 	void calculate_cmd(const cv::Rect &detect);
 	void send_cmd();
 
-	void move_forward(const uint16_t &mm);&
+	void move_forward(const uint16_t &mm);
 	void move_backward(const uint16_t &mm);
 	void move_left(const uint16_t &mm);
 	void move_right(const uint16_t &mm);

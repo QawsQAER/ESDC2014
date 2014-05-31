@@ -27,10 +27,12 @@ private:
 	int fd;
 	uint32_t write(void *buff,uint32_t length);
 	uint32_t read(void *buff,uint32_t length);
+	char *write_buff;
+	char *read_buff;
 public:
 	Controller_Com(char *devname);
 	~Controller_Com();
-	uint8_t send_cmd(struct IntelCarCmd* cmd);
+	uint8_t send_cmd(const Message &cmd);
 };
 
 #endif

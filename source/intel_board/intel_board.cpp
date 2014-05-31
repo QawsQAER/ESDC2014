@@ -2,7 +2,7 @@
 
 intel_board::intel_board(uint8_t mode,uint8_t img_source)
 {
-	//1 for WEBCAM MODE, 0 for cellphone mode
+	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
 	this->image_processor = new Image_processor(img_source);
 	switch(mode)
 	{
@@ -23,6 +23,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			exit(1);
 	}
 
+	this->motion_controller = new Motion_controller();
 	printf("hello intel board\n");
 	state = ROBOT_INIT;
 }
@@ -161,6 +162,7 @@ uint8_t intel_board::robot_find_target()
 
 uint8_t intel_board::robot_evaluate_image()
 {
+	this->motion_controller->
 	return 0;
 }
 
