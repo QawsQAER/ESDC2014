@@ -11,6 +11,10 @@ Controller_Com::Controller_Com(char *devname)
 	set_blocking(this->fd,0);
 }
 
+Controller_Com::~Controller_Com()
+{
+        close(this->fd);
+}
 int set_interface_attribs (int fd, int speed, int parity)
 {
         struct termios tty;

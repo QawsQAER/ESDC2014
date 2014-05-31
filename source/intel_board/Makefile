@@ -1,5 +1,5 @@
 INTEL_BOARD_LD = -l Image_processor/Image_processor.o
-INTEL_BOARD_DEPEND = intel_board.cpp intel_board.h Image_processor.o camera.o Motion_controller.o Makefile 
+INTEL_BOARD_DEPEND = intel_board.cpp intel_board.h Image_processor.o camera.o Motion_controller.o message.o Makefile 
 INTEL_BOARD_DEPEND_OBJECT = Image_processor.o camera.o Motion_controller.o
 
 export RM=rm
@@ -24,6 +24,9 @@ camera.o: camera/camera.cpp camera/camera.h camera/Makefile
 Motion_controller.o: Motion_controller/Motion_controller.cpp Motion_controller/Motion_controller.h Motion_controller/Makefile
 	echo "Motion_controller.o: Compiling"
 	cd Motion_controller;make all
+message.o: lib/message.h lib/message.cpp lib/Makefile
+	echo "message.o: Compiling"
+	cd lib;make all
 
 clean:
 	rm *.o

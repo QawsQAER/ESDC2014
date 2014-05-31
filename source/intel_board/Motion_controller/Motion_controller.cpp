@@ -31,8 +31,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 		//set command move backward 300mm
 		uint16_t distance = 300;
 		Message m;
-		m.CarMoveDown(distance);
-		this->cmd_queue.push_back(m);
+		m.CarMoveDownMM(distance);
+		this->cmd_queue.push(m);
 		printf("Motion_controller::centering(): the height is too large %d\n",detect.height);
 		okay_image = 0;
 	}
