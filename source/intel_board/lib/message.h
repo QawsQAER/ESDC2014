@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
+#include <string.h>
 
 struct IntelCarCmd
 {
@@ -67,12 +68,24 @@ struct IntelCarCmd
 	uint8_t check_sum;
 };
 
+struct ACK
+{
+	/*
+	starter indicates the start of the message
+	*/
+	uint8_t starter;
+	uint8_t O; //0x4f
+	uint8_t K; //0x4B
+	uint8_t check_sum; //0x9A
+};
+
 class Message
 {
 public:
 	Message();
 	~Message();
 	void sendMessage(int fd);
+	int receiveACK(int fd);
 
 	void CarMoveUpMM(uint16_t _mm);
 	void CarMoveDownMM(uint16_t _mm);
@@ -94,6 +107,7 @@ public:
 
 private:
 	struct IntelCarCmd* _IntelCarCmd;
+	struct ACK* _ACK;
 	void setCarMove(uint8_t move_dir, uint16_t move_dis);
 	void setCarRotate(uint8_t rotate_dir, uint16_t rotate_dis);
 	void setLifterMove(uint8_t move_dir, uint16_t move_dis);

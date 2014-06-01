@@ -9,7 +9,8 @@ using namespace cv;
 
 int main(int argc, char ** argv)
 {
-	VideoCapture cap(0);
+	VideoCapture cap("http://192.168.43.1:8080/video");
+	printf("haha\n");
 	if(!cap.isOpened())
 	{
 		cout<<"The camera is not opened successfully"<<endl;

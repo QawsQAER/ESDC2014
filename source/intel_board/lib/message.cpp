@@ -4,12 +4,14 @@
 //public
 Message::Message()
 {
-	this->_IntelCarCmd = (struct IntelCarCmd *) malloc(sizeof(struct IntelCarCmd));
+	this->_IntelCarCmd = (struct IntelCarCmd*) malloc(sizeof(struct IntelCarCmd));
+	this->_ACK = (struct ACK*) malloc(sizeof(struct ACK));
 }
 
 Message::~Message()
 {
 	free(_IntelCarCmd);
+	free(_ACK);
 }
 
 void Message::sendMessage(int fd)
@@ -20,20 +22,45 @@ void Message::sendMessage(int fd)
 	uint8_t rotate_dis_upper_8 = (_IntelCarCmd->rotate_dis) >> 8;
 	uint8_t rotate_dis_lower_8 = (_IntelCarCmd->rotate_dis) & 0x00ff;
 
-	write_error += write(fd, (void *) &(_IntelCarCmd->starter),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(_IntelCarCmd->action_type),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(move_dis_upper_8),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(move_dis_lower_8),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(_IntelCarCmd->move_dir),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(rotate_dis_upper_8),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(rotate_dis_lower_8),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(_IntelCarCmd->rotate_dir),sizeof(uint8_t));
-	write_error += write(fd, (void *) &(_IntelCarCmd->check_sum),sizeof(uint8_t));
+	write_error += write(fd, (void *) &(_IntelCarCmd->starter), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(_IntelCarCmd->action_type), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(move_dis_upper_8), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(move_dis_lower_8), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(_IntelCarCmd->move_dir), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(rotate_dis_upper_8), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(rotate_dis_lower_8), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(_IntelCarCmd->rotate_dir), sizeof(uint8_t));
+	write_error += write(fd, (void *) &(_IntelCarCmd->check_sum), sizeof(uint8_t));
 
 	if(write_error != 9)
 	{
-		printf("Message::sendMessage(int fd) error: error happened when writing bytes to the file descriptor!\n");
+		printf("void Message::sendMessage(int fd) error: error happened when writing bytes to the file descriptor!\n");
 	}
+}
+
+int Message::receiveACK(int fd)
+{
+	memset(&_ACK, 0 , sizeof(struct ACK));
+	int receive_error = 0;
+
+	receive_error += read(fd, (void*) &(_ACK->starter), sizeof(uint8_t));
+	receive_error += read(fd, (void*) &(_ACK->O), sizeof(uint8_t));
+	receive_error += read(fd, (void*) &(_ACK->K), sizeof(uint8_t));
+	receive_error += read(fd, (void*) &(_ACK->check_sum), sizeof(uint8_t));
+
+	if(receive_error != 4)
+	{
+		printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
+		return -1;
+	}
+
+	if(_ACK->starter == STARTER && _ACK->O == 0x4f && _ACK->K == 0x4b && _ACK->check_sum == 0x9a)
+	{
+		return 1;
+	}
+	
+	printf("int Message::receiveACK(int fd) error: ACK is invalid!\n");
+	return 0;
 }
 
 void Message::CarMoveUpMM(uint16_t _mm)
@@ -160,15 +187,6 @@ void Message::calCheckSum()
 	_IntelCarCmd->check_sum = _IntelCarCmd->action_type + (_IntelCarCmd->move_dis >> 8)
 				+ (_IntelCarCmd->move_dis & 0x00ff) + _IntelCarCmd->move_dir + (_IntelCarCmd->rotate_dis >> 8)
 				+ (_IntelCarCmd->rotate_dis & 0x00ff) + _IntelCarCmd->rotate_dir;
-
-	printf("%x ", _IntelCarCmd->action_type);
-	printf("%x ", _IntelCarCmd->move_dis >> 8);
-	printf("%x ", _IntelCarCmd->move_dis & 0x00ff);
-	printf("%x ", _IntelCarCmd->move_dir);
-	printf("%x ", _IntelCarCmd->rotate_dis >> 8);
-	printf("%x ", _IntelCarCmd->rotate_dis & 0x00ff);
-	printf("%x ", _IntelCarCmd->rotate_dir);
-	printf("%x ", _IntelCarCmd->check_sum);
 }
 void Message::resetStruct()
 {

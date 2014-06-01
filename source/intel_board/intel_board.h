@@ -7,6 +7,7 @@
 
 #include "Image_processor/Image_processor.h"
 #include "Motion_controller/Motion_controller.h"
+#include "User_interface/ui.h"
 //#include "Motion_controller/Motion_controller.h"
 #include "lib/message.h"
 
@@ -45,6 +46,7 @@ private:
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
 	Motion_controller *motion_controller;
+	UI *ui;
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();
