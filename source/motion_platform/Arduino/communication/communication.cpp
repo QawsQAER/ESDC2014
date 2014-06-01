@@ -194,6 +194,14 @@ void Communication::parseMessage()
 	}
 }
 
+void Communication::ACK()
+{
+	putByte(STARTER);
+    putByte(0x4f); //O
+    putByte(0x4b); //K
+    putByte(0x9a); //check_sum = 0xaf + 0x4b = 0x9a
+}
+
 uint8_t Communication::getInfoOK()
 {
 	return info_ok;

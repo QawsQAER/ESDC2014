@@ -74,15 +74,7 @@ void loop()
     case 1: //car motion
     car.carMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
     com.resetInfoOK();
-    Serial.write(0x7e);
-    break;
-    
-    case 2: //lifter motion
-    com.resetInfoOK();
-    break;
-    
-    case 3: //camera platform motion
-    com.resetInfoOK();
+    com.ACK();
     break;
     
     default:

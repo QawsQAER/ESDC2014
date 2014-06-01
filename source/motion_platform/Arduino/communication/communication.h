@@ -27,6 +27,7 @@ public:
 	void putByte(uint8_t _x);
 	void put2Bytes(uint16_t _x);
 	void parseMessage();
+	void ACK(); //send ACK back to the Mbed board
 
 	uint8_t getInfoOK();
 	void resetInfoOK();

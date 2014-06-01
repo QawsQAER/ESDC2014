@@ -1,3 +1,10 @@
+#include "ui.h"
+
+#include <string>
+#include <iostream>
+#include <cstdio>
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -10,11 +17,8 @@
 #include <pthread.h>
 
 
-#define PORT 60000
-#define false 0
-#define true 1
-#define MAX_MESSAGE_SIZE 255
-#define MESSAGELENGTH 2
+
+
 
 /*
 
@@ -22,31 +26,36 @@ protacal from phone to board
 
 type operation
 
-connect request 0x00 0x00
-start movement  0x00 0x02
-confirm picture 0x00 0x03
+connect request cr  1
+start movement  sm  2 
+confirm picture cp  3 
 
-pattern 1 0x01 0x01  
-pattern 2 0x01 0x02
-pattern 3 0x01 0x03  
-pattern 4 0x01 0x04
+pattern 1 p1  4
+pattern 2 p2  5
+pattern 3 p3  6
+pattern 4 p4  7
 
-car 
-forward 0x02 0x01
-backward 0x02 0x02
-left     0x02 0x03
-right    0x02 0x04
+car 				 
+forward  fw	 8
+backward bw	 9
+left     lw	 10
+right    rw    11 
 
 
-camera 
-forward 0x03 0x01
-backward 0x03 0x02
-left     0x03 0x03
-right    0x03 0x04
+camera 				 
+forward   up	 12
+backward  do	 13
+left      le	 14
+right     ri	 15
 
-lift
-up 0x04 0x01
-down 0x04 0x02
+
+lift 				
+up lu         16
+down ld		 17
+
+-------------------------------------
+
+protacal from board to  phone
 
 connect established 0x00 0x01
 
@@ -74,101 +83,29 @@ lift
 up ack		  0x05 0x0d
 down ack      0x05 0x0e
 
+finish  0x00 0x04
 
 */
 
-char msg_code[MESSAGELENGTH];
-char content[MESSAGELENGTH];
-<<<<<<< HEAD
-<<<<<<< HEAD
-char tempBuffer[MESSAGELENGTH];
-=======
-char tempBuffer[MAX_MESSAGE_SIZE];
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-char tempBuffer[MAX_MESSAGE_SIZE];
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
-int client_sd;
-struct sockaddr_in client_addr;
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-typedef struct Client {
-	unsigned int IP_addr;
-	unsigned short Port_num;
-	unsigned short Listening_Port_num;
-	int client_sd;
-}Client;
-
-
-Client client_inf;
-
-
-int init_server_socket();
-void send_msg();
-void read_msg();
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-
-int init_server_socket();
-void send_msg();
-int read_msg();
+UI::UI()
+{
+	contention();
+}
 
 
 
+UI::~UI()
+{
+	close(server_socket);
+}
 
 
 
-
-void send_established();
-void send_finished_ack();
-void send_pattern1_ack();
-void send_pattern2_ack();
-void send_pattern3_ack();
-void send_pattern4_ack();
-void send_car_forward_ack();
-void send_car_backward_ack();
-void send_car_left_ack();
-void send_car_right_ack();
-void send_camera_forward_ack();
-void send_camera_backward_ack();
-void send_camera_left_ack();
-void send_camera_right_ack();
-void send_lift_up_ack();
-void send_lift_down_ack();
-
-
-
-
-
-
-
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-
-
-int main(int argc, char** argv){
+void UI::contention()
+{
 	
-<<<<<<< HEAD
-<<<<<<< HEAD
-	 //use usr provided prot or not
-		
-		if(argc==2){
-			PROT_USED=atoi(argv[1]);
-		}else{
-			PROT_USED=PORT;
-		}
-
-		
-=======
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-	int server_socket = init_server_socket();
+	 server_socket = init_server_socket();
 
 	int val=1;
 	if(setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
@@ -179,17 +116,9 @@ int main(int argc, char** argv){
 				
 
 
-	
+	struct sockaddr_in client_addr;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-		int addr_len=sizeof(client_addr);
-=======
-		socklen_t addr_len=sizeof(client_addr);
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-		socklen_t addr_len=sizeof(client_addr);
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
+		socklen_t addr_len=sizeof(struct sockaddr_in);
 
 				printf("before accept client\n");
 
@@ -199,96 +128,133 @@ int main(int argc, char** argv){
 			printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
 			exit(0);
 		}
-<<<<<<< HEAD
-<<<<<<< HEAD
-		printf("after accept client\n");
-	
-				
-	  			 	msg_code[0]=0x03;
-					msg_code[1]=0x00;
-					msg_code[2]=0x03;
-					msg_code[3]=0x00;
-					msg_code[4]=0x03;
-					msg_code[5]=0x00;
-					msg_code[6]=0x03;
-					msg_code[7]=0x00;  			
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 		printf("after accept client\n");
 	
-				
-	  			 
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-					int i ;
-					for (i= 0; i < 10; ++i)
-					{
-							send_msg();
-					}
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-					read_msg();
-				  			 
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-		while(1)
-		{
+}			
 
 
+int UI::wait_command()
+{
 		int read_type=read_msg();
-		if(read_type==-1)
-		{
+
+		switch(read_type){
+			case -1: 			
 			printf("Error: Received undefined message from other client.\n");
-			// exit(0);
-		}
-				 
+			break;
+
+			case 1:
+			printf("Command: connect request\n");
+			send_established();
+			break;
+
+			case 2:
+			printf("Command: start movement\n");
+			send_start_ack();
+			break;
+
+			case 3:
+			printf("Command: confirm picture\n");
+			send_comfrim_ack();
+			break;
+
+
+			case 4:
+			//use pattern1
+			printf("Command:  pattern1\n");
+			send_pattern1_ack();
+			break;
+
+
+			case 5:
+			printf("Command: pattern 2\n");
+			send_pattern2_ack();
+			break;
+
+			case 6:
+			printf("Command: pattern3\n");
+			send_pattern3_ack();
+			break;
+
+			case 7:
+			printf("Command: pattern4\n");
+			send_pattern4_ack();
+			break;
+
+			case 8:
+			printf("Command: car forward\n");
+			send_car_forward_ack();
+			break;
+
+			case 9:
+			printf("Command: car backward\n");
+			send_car_backward_ack();
+			break;
+
+			case 10:
+			printf("Command: car left\n");
+			send_car_left_ack();
+			break;
+
+			case 11:
+			printf("Command: car right\n");
+			send_car_right_ack();
+			break;
+
+			case 12:
+			printf("Command: camera up\n");
+			send_camera_forward_ack();
+			break;
+
+			case 13:
+			printf("Command: camera down\n");
+			send_camera_backward_ack();
+			break;
+
+			case 14:
+			printf("Command: camera left\n");
+			send_camera_left_ack();
+			break;
+
+			case 15:
+			printf("Command: camera right\n");
+			send_camera_right_ack();
+			break;
+
+			case 16:
+			printf("Command: lift up\n");
+			send_lift_up_ack();
+			break;
+
+			case 17:
+			printf("Command: lift down\n");
+			send_lift_down_ack();
+			break;
+
+
+			default:
+			printf("Error: undefined read_type.\n");
+			break;
 
 
 		}
 
-		 			 
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-
-				
-
-
-	close(server_socket);
-	return 0;
+			return read_type;
 }
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-void send_msg()
+	
+
+
+
+
+
+void UI::send_msg()
 {
 			printf("Send msg to client\n");
-					memset(msg_code,0,MESSAGELENGTH);
-=======
-
-
-void send_msg()
-{
-			printf("Send msg to client\n");
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-
-
-void send_msg()
-{
-			printf("Send msg to client\n");
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 					
 					int already_sent=0;
-					while(1){
+					while(already_sent<MESSAGELENGTH){
 						int len=send(client_sd,msg_code+already_sent,MESSAGELENGTH-already_sent,0);
 						if(len<=0){
 							perror("send()");
@@ -302,155 +268,180 @@ void send_msg()
 }
 
 
-
-
-<<<<<<< HEAD
-<<<<<<< HEAD
-void read_msg()
+void UI::send_finished_ack()
 {
-			printf("Receive msg from client\n");
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="fa";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
 
-	memset(tempBuffer,0,MESSAGELENGTH);
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-void send_established()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x00;
-msg_code[1]=0x01;
-send_msg();
-}
-
-void send_finished_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x00;
-msg_code[1]=0x04;
-send_msg();
+	send_msg();
 }
 
 
-void send_pattern1_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x01;
-send_msg();
-}
 
-void send_pattern2_ack()
+void UI::send_established()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x02;
-send_msg();
-}
-
-void send_pattern3_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x03;
-send_msg();
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cr";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+	 
+	// printf("send content:%s\n",msg_code);
+	send_msg();
 }
 
 
-void send_pattern4_ack()
+void UI::send_start_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x04;
-send_msg();
-}
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="sm";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
 
-void send_car_forward_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x05;
-send_msg();
-}
-
-void send_car_backward_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x06;
-send_msg();
-}
-
-void send_car_left_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x07;
-send_msg();
+	send_msg();
 }
 
 
-void send_car_right_ack()
+void UI::send_comfrim_ack()
 {
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x08;
-send_msg();
-}
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cp";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
 
-
-void send_camera_forward_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x09;
-send_msg();
-}
-
-void send_camera_backward_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0a;
-send_msg();
-}
-
-void send_camera_left_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0b;
-send_msg();
-}
-
-
-void send_camera_right_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0c;
-send_msg();
-}
-
-void send_lift_up_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0d;
-send_msg();
-}
-
-
-void send_lift_down_ack()
-{
-memset(msg_code,0,MESSAGELENGTH);
-msg_code[0]=0x05;
-msg_code[1]=0x0e;
-send_msg();
+	send_msg();
 }
 
 
 
 
+void UI::send_pattern1_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p1";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_pattern2_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p2";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_pattern3_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p3";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_pattern4_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p4";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_car_forward_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="Up";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_car_backward_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="Do";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_car_left_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="Le";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_car_right_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="Ri";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_camera_forward_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cU";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_camera_backward_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cD";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_camera_left_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cL";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_camera_right_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="cR";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_lift_up_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="lu";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_lift_down_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="ld";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
 
 
 
@@ -458,15 +449,15 @@ send_msg();
 
 
 
-int read_msg()
+
+
+
+
+int UI::read_msg()
 {
 	printf("Receive msg from client\n");
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	memset(content,0,MESSAGELENGTH);
 	
 	int receiveByte=0;
@@ -476,63 +467,64 @@ int read_msg()
 
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	while(1){
-		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0){
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	while(alreadyReceiveByte<MESSAGELENGTH){
 
 
 		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
 		{
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 			 printf("Error: Couldn't receive\n");
 			// exit(0);
 		}
 
 		alreadyReceiveByte+=receiveByte;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-		if(1)
-		{/*! = 0x21*/
-=======
 		
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-		
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 			if(alreadyReceiveByte>=MESSAGELENGTH)
 			{
 				memcpy(&content,tempBuffer,sizeof(char)*MESSAGELENGTH);
 				printf("%s\n",content);
-<<<<<<< HEAD
-<<<<<<< HEAD
-				 receiveByte=0;
-				alreadyReceiveByte = 0;
-				// content=ntohl(content);
-			}
-			else{continue;}
-		
-		}
-		else
-		{
-			printf("Error: Received undefined message from other client.\n");
-			exit(0);
-		}
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 				 
 
 
-				switch (content[0]){
+				if(strcmp(content,"cr")==0)
+					return 1;
+				else if (strcmp(content,"sm")==0)
+					return 2;
+				else if (strcmp(content,"cp")==0)
+					return 3;
+				else if (strcmp(content,"p1")==0)
+					return 4;
+				else if (strcmp(content,"p2")==0)
+					return 5;
+				else if (strcmp(content,"p3")==0)
+					return 6;
+				else if (strcmp(content,"p4")==0)
+					return 7;
+				else if (strcmp(content,"Up")==0)
+					return 8;
+				else if (strcmp(content,"Do")==0)
+					return 9;
+				else if (strcmp(content,"Le")==0)
+					return 10;
+				else if (strcmp(content,"Ri")==0)
+					return 11;
+				else if (strcmp(content,"cU")==0)
+					return 12;
+				else if (strcmp(content,"cD")==0)
+					return 13;
+				else if (strcmp(content,"cL")==0)
+					return 14;
+				else if (strcmp(content,"cR")==0)
+					return 15;
+				else if (strcmp(content,"lu")==0)
+					return 16;
+				else if (strcmp(content,"ld")==0)
+					return 17;
+				else
+					return -1;
+
+
+				/*switch (content[0]){
 
 				case 0x00:
 				if(content[1]==0x00)
@@ -601,14 +593,10 @@ int read_msg()
 				return -1;
 
 
-				}
+				}*/
 
 			}
 			else{continue;}
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 	}
 
 
@@ -617,11 +605,6 @@ int read_msg()
 
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
 
 
 
@@ -629,11 +612,7 @@ int read_msg()
 
 
 
-<<<<<<< HEAD
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
-int init_server_socket(){
+int UI::	init_server_socket(){
 
 	int sd=socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_addr;
@@ -647,15 +626,7 @@ int init_server_socket(){
 
 	server_addr.sin_family=AF_INET;
 	server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-<<<<<<< HEAD
-<<<<<<< HEAD
-	server_addr.sin_port=htons(PROT_USED);
-=======
-	server_addr.sin_port=htons(PORT);
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-	server_addr.sin_port=htons(PORT);
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
+	server_addr.sin_port=htons(UI_PORT);
 	
 	if(bind(sd,(struct sockaddr *) &server_addr,sizeof(server_addr))<0){
 		printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
@@ -669,15 +640,7 @@ int init_server_socket(){
 		
 
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-	printf("**Server Standby** PORT:%d\n",PROT_USED);
-=======
-	printf("**Server Standby** PORT:%d\n",PORT);
->>>>>>> 832ff13e7ed61c990077dccbdf7673e773ceac7e
-=======
-	printf("**Server Standby** PORT:%d\n",PORT);
->>>>>>> 3af6513febf7f52551889e07a264a5f01d3aedf9
+	printf("**Server Standby** PORT:%d\n",UI_PORT);
 	return sd;
 
 }
