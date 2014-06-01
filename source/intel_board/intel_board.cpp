@@ -158,14 +158,8 @@ uint8_t intel_board::robot_find_target()
 	while(!this->image_processor->target_in_scope())
 	{
 		Message k;
-		k.CarMoveDownMM(300);
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->starter),sizeof(uint8_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->action_type),sizeof(uint8_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->move_dis),sizeof(uint16_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->move_dir),sizeof(uint8_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->rotate_dis),sizeof(uint16_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->rotate_dir),sizeof(uint8_t));
-		write(this->motion_controller->Com->fd, (void *) &(k._IntelCarCmd->check_sum),sizeof(uint8_t));
+		k.CarMoveDownMM(256);
+		k.sendMessage(this->motion_controller->Com->fd);
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
 	}

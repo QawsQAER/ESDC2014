@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <unistd.h>
 
 struct IntelCarCmd
 {
@@ -69,9 +70,10 @@ struct IntelCarCmd
 class Message
 {
 public:
-	struct IntelCarCmd* _IntelCarCmd;
 	Message();
 	~Message();
+	void sendMessage(int fd);
+
 	void CarMoveUpMM(uint16_t _mm);
 	void CarMoveDownMM(uint16_t _mm);
 	void CarMoveLeftMM(uint16_t _mm);
@@ -91,15 +93,13 @@ public:
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
 private:
-	
-
+	struct IntelCarCmd* _IntelCarCmd;
 	void setCarMove(uint8_t move_dir, uint16_t move_dis);
 	void setCarRotate(uint8_t rotate_dir, uint16_t rotate_dis);
 	void setLifterMove(uint8_t move_dir, uint16_t move_dis);
 	void setCameraPlatformRotate(uint8_t rotate_dir, uint16_t rotate_dis);
 
-	void sendMessage();
-	void calCheckSum(uint8_t action_type, uint8_t _dir, uint16_t _dis);
+	void calCheckSum();
 	void resetStruct();
 };
 
