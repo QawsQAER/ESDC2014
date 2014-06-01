@@ -292,9 +292,9 @@ Log.v(TAG,"Rec :Start");
 					while(state!=STATE_CLOSE&&state==STATE_CONNECT_SUCCESS&&null!=inStream)
 					{
 Log.v(TAG,"Rec :---------");
-							byte[] bodyBytes=new byte[5];
+							byte[] bodyBytes=new byte[2];
 							int offset=0;
-							int length=5;
+							int length=2;
 							int read=0;
 							
 							while((read=inStream.read(bodyBytes, offset, length))>0)

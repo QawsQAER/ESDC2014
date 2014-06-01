@@ -64,14 +64,9 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		
 		
-		ImageView imageView;
-	    imageView = (ImageView)findViewById(R.id.image_view);
-	    
-	    String urlStr = "http://www.cse.cuhk.edu.hk/v7/images/about/leader/hermanlam.jpg";
-	  
-	 Bitmap bitmap = getHttpBitmap(urlStr);
+	
         //显示
-     imageView.setImageBitmap(bitmap);
+    
      
 		initView();
 		user=new Client(this.getApplicationContext(),socketListener);
@@ -87,6 +82,9 @@ public class MainActivity extends Activity {
 	{
 		
 		findViewById(R.id.open).setOnClickListener(listener);
+		findViewById(R.id.comfrim).setOnClickListener(listener);
+		findViewById(R.id.start).setOnClickListener(listener);
+		
 		findViewById(R.id.Up).setOnClickListener(listener);
 		findViewById(R.id.Down).setOnClickListener(listener);
 		findViewById(R.id.Left).setOnClickListener(listener);
@@ -97,16 +95,22 @@ public class MainActivity extends Activity {
 		findViewById(R.id.cLeft).setOnClickListener(listener);
 		findViewById(R.id.cRight).setOnClickListener(listener);
 		
+		findViewById(R.id.liftUp).setOnClickListener(listener);
+		findViewById(R.id.liftDown).setOnClickListener(listener);
+		findViewById(R.id.pattern1).setOnClickListener(listener);
+		findViewById(R.id.pattern2).setOnClickListener(listener);
+		
 //		findViewById(R.id.clear).setOnClickListener(listener);
 		
 		ip=(EditText) findViewById(R.id.ip);
 		port=(EditText) findViewById(R.id.port);
 //		sendContent=(EditText) findViewById(R.id.sendContent);
-		recContent=(EditText) findViewById(R.id.recContent);
+//		recContent=(EditText) findViewById(R.id.recContent);
 		
-		ip.setText("192.168.210.239");
+		ip.setText("192.168.43.56");
 		port.setText("60000");
-
+		
+//		recContent.setText("Connection: OFF");
 		
 		
 		
@@ -150,14 +154,110 @@ public class MainActivity extends Activity {
 		
 		@Override
 		public void onSocketResponse(final String txt) {
-			
-			if(txt==)
-			
-			/*runOnUiThread(new Runnable() {
+		runOnUiThread(new Runnable() {
 				public void run() {
-					recContent.getText().append(txt).append("");
+				
+					if(txt.equals("cr"))
+					{
+						port.setText("connected");
+					}
+					
+					else if(txt.equals("sm"))
+					{
+						port.setText("start");
+					}
+					
+					else if(txt.equals("cp"))
+					{
+						port.setText("confrim");
+					}
+					
+					else if(txt.equals("p1"))
+					{
+						port.setText("pattern 1");
+					}
+					
+					else if(txt.equals("p2"))
+					{
+						port.setText("pattern 2");
+					}
+					
+					else if(txt.equals("p3"))
+					{
+						port.setText("pattern 3");
+					}
+					
+					else if(txt.equals("p4"))
+					{
+						port.setText("pattern 4");
+					}
+					
+					
+					else if(txt.equals("Up"))
+					{
+						port.setText("car forward");
+					}
+					
+					else if(txt.equals("Do"))
+					{
+						port.setText("car backward");
+					}
+					
+					else if(txt.equals("Le"))
+					{
+						port.setText("car left");
+					}
+					
+					else if(txt.equals("Ri"))
+					{
+						port.setText("car right");
+					}
+					
+					
+					else if(txt.equals("cU"))
+					{
+						port.setText("camera forward");
+					}
+					
+					else if(txt.equals("cD"))
+					{
+						port.setText("camera backward");
+					}
+					
+					else if(txt.equals("cL"))
+					{
+						port.setText("camera left");
+					}
+					
+					else if(txt.equals("cR"))
+					{
+						port.setText("camera right");
+					}
+					
+					else if(txt.equals("lu"))
+					{
+						port.setText("lift left");
+					}
+					
+					else if(txt.equals("ld"))
+					{
+						port.setText("lift right");
+					}
+					
+					
+					
+				else if(txt.equals("fa"))
+					{
+						port.setText("finished_ack");
+					ImageView imageView;
+				    imageView = (ImageView)findViewById(R.id.image_view);
+				    String urlStr = "http://192.168.43.1:8080/photoaf.jpg";
+				 Bitmap bitmap = getHttpBitmap(urlStr);
+					 imageView.setImageBitmap(bitmap);
+					}
+					
 				}
-			});*/
+			});
 		}
 	};
 	
@@ -170,11 +270,22 @@ public class MainActivity extends Activity {
 			
 				case R.id.open:
 //					user.open();
+//					user.close();
 					user.open(ip.getText().toString(), Integer.valueOf(port.getText().toString()));
 					packet.pack("cr");
 					user.send(packet);
 					break;
 		
+				case R.id.start:	
+					packet.pack("sm");
+					user.send(packet);
+					break;
+					
+				case R.id.comfrim:	
+					packet.pack("cp");
+					user.send(packet);
+					break;
+					
 					
 				case R.id.Up:
 //					packet.pack(sendContent.getText().toString());
@@ -222,6 +333,30 @@ public class MainActivity extends Activity {
 				case R.id.cDown:
 					
 					packet.pack("cD");
+					user.send(packet);
+					break;
+					
+					
+				case R.id.liftUp:	
+					packet.pack("lu");
+					user.send(packet);
+					break;
+					
+					
+				case R.id.liftDown:	
+					packet.pack("ld");
+					user.send(packet);
+					break;
+						
+					
+				case R.id.pattern1:	
+					packet.pack("p1");
+					user.send(packet);
+					break;
+					
+					
+				case R.id.pattern2:	
+					packet.pack("p2");
 					user.send(packet);
 					break;
 					
