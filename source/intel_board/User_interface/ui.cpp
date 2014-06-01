@@ -60,30 +60,30 @@ protacal from board to  phone
 connect established 0x00 0x01
 
 
-pattern 1 ack 0x05 0x01  
-pattern 2 ack 0x05 0x02
-pattern 3 ack 0x05 0x03  
-pattern 4 ack 0x05 0x04
+pattern 1 ack p1
+pattern 2 ack p2
+pattern 3 ack p3 
+pattern 4 ack p4
 
 car
-forward	ack	  0x05 0x05
-backward ack  0x05 0x06
-left ack 	  0x05 0x07
-right ack     0x05 0x08
+forward	ack	  Up
+backward ack  Do
+left ack 	  Le
+right ack     Ri
 
 
 camera
-forward	ack	  0x05 0x09
-backward ack  0x05 0x0a
-left ack 	  0x05 0x0b
-right ack     0x05 0x0c
+forward	ack	  cU
+backward ack  cD
+left ack 	  cL
+right ack     cR
 
 
 lift
-up ack		  0x05 0x0d
-down ack      0x05 0x0e
+up ack		  lu
+down ack      ld
 
-finish  0x00 0x04
+send_finished_ack  fa
 
 */
 
@@ -251,7 +251,7 @@ int UI::wait_command()
 
 void UI::send_msg()
 {
-			printf("Send msg to client\n");
+			// printf("Send msg to client\n");
 					
 					int already_sent=0;
 					while(already_sent<MESSAGELENGTH){
@@ -482,43 +482,43 @@ int UI::read_msg()
 			if(alreadyReceiveByte>=MESSAGELENGTH)
 			{
 				memcpy(&content,tempBuffer,sizeof(char)*MESSAGELENGTH);
-				printf("%s\n",content);
+				// printf("%s\n",content);
 				 
 
 
-				if(strcmp(content,"cr")==0)
+				if(strcmp(content,"crcr")==0)
 					return 1;
-				else if (strcmp(content,"sm")==0)
+				else if (strcmp(content,"smsm")==0)
 					return 2;
-				else if (strcmp(content,"cp")==0)
+				else if (strcmp(content,"cpcp")==0)
 					return 3;
-				else if (strcmp(content,"p1")==0)
+				else if (strcmp(content,"p1p1")==0)
 					return 4;
-				else if (strcmp(content,"p2")==0)
+				else if (strcmp(content,"p2p2")==0)
 					return 5;
-				else if (strcmp(content,"p3")==0)
+				else if (strcmp(content,"p3p3")==0)
 					return 6;
-				else if (strcmp(content,"p4")==0)
+				else if (strcmp(content,"p4p4")==0)
 					return 7;
-				else if (strcmp(content,"Up")==0)
+				else if (strcmp(content,"UpUp")==0)
 					return 8;
-				else if (strcmp(content,"Do")==0)
+				else if (strcmp(content,"DoDo")==0)
 					return 9;
-				else if (strcmp(content,"Le")==0)
+				else if (strcmp(content,"LeLe")==0)
 					return 10;
-				else if (strcmp(content,"Ri")==0)
+				else if (strcmp(content,"RiRi")==0)
 					return 11;
-				else if (strcmp(content,"cU")==0)
+				else if (strcmp(content,"cUcU")==0)
 					return 12;
-				else if (strcmp(content,"cD")==0)
+				else if (strcmp(content,"cDcD")==0)
 					return 13;
-				else if (strcmp(content,"cL")==0)
+				else if (strcmp(content,"cLcL")==0)
 					return 14;
-				else if (strcmp(content,"cR")==0)
+				else if (strcmp(content,"cRcR")==0)
 					return 15;
-				else if (strcmp(content,"lu")==0)
+				else if (strcmp(content,"lulu")==0)
 					return 16;
-				else if (strcmp(content,"ld")==0)
+				else if (strcmp(content,"ldld")==0)
 					return 17;
 				else
 					return -1;

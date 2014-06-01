@@ -9,8 +9,13 @@ int main()
 
 UI ui;
 
-ui.wait_command();
+for (int i = 0; i < 10; ++i)
+{
+	ui.wait_command();
 
+}
+
+ui.send_finished_ack();
 
 
 return 0;
