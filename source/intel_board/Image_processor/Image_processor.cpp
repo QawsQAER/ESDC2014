@@ -13,15 +13,18 @@ Image_processor::Image_processor(uint8_t img_source)
 	this->img_source = img_source;
 	if(this->img_source == IMG_SOURCE_WEBCAM)
 	{
-		this->cap = new cv::VideoCapture(0);
+		printf("Image_processor: Using WEBCAM\n");
+		this->cap = new cv::VideoCapture(CV_CAP_ANY);
 		if(!cap->isOpened())
 		{
 			printf("Image_processor Error: Cannot open camera\n");
 			exit(-1);
 		}
+		cap->set(CV_CAP_PROP_POS_AVI_RATIO,1);
 	}
 	else if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
+		printf("Image_processor: Using CELL PHONE\n");
 		this->cam = new Camera();
 		std::string ip("192.168.43.1:8080");
 		this->cam->setip(ip);
@@ -79,6 +82,26 @@ uint8_t Image_processor::get_image_from_cellphone()
 
 uint8_t Image_processor::get_image_from_webcam()
 {
+	for(uint8_t count_frame = 0;count_frame < 255;count_frame++)
+	{
+		if(!this->cap->grab())
+		{
+			printf("Image_processor::get_image_from_webcam(): Error, Cannot grab()\n");
+			return 0;
+		}
+	}
+	
+	if(!this->cap->retrieve(this->current_img))
+	{
+		printf("Image_processor::get_image_from_webcam(): Error, Cannot retrieve()\n");
+		return 0;
+	}
+
+	if( (this->current_img.rows == this->current_img.cols) && (this->current_img.cols == 0))
+	{
+		printf("Image_processor::get_image_from_webcam(): Error, get cols = rows = 0\n");
+		return 0;
+	}
 	return 1;
 }
 /*
@@ -341,6 +364,28 @@ uint8_t Image_processor::basic_filter()
 			}
 		}
 	}
+
+	//if no body is detected after the filtering and a face is detected only once
+	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
+	{
+		uint8_t factor = 1;
+		float height_factor = 7.5;
+		cv::Rect rect = face_detect[0];
+		this->final_face_detect.push_back(rect);
+
+		rect.x = std::max(rect.x - factor * rect.width,0);
+		if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
+			rect.width = this->current_img.cols - rect.x;
+		else
+			rect.width = rect.width * (factor * 2 + 1);
+
+		if(rect.y + rect.height * height_factor > this->current_img.rows)
+			rect.height = this->current_img.rows - rect.y;
+		else
+			rect.height = ceil(rect.height * height_factor);
+
+		this->final_body_detect.push_back(rect);
+	}
 }
 
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
@@ -468,7 +513,7 @@ uint8_t Image_processor::target_in_scope()
 	//if an image is captured, run basic analysis
 	this->run_body_detection(this->current_img,this->body_detect);
 	this->run_face_detection(this->current_img,this->face_detect);
-	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
 	this->show_analyzed_img();
 	
