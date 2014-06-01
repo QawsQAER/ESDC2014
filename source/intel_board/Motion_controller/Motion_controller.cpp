@@ -66,7 +66,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 
 	int diff_x = center.x - exp_center_x;
 	int diff_y = center.y - exp_center_y;
-	float p = 0.5;
+	//compute length per pixel 
+	float p = (float) 1700 / (float) detect.height;
 	uint16_t move_x = 0;
 	if(abs(diff_x) > threshold_x)
 	{

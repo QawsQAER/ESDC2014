@@ -24,6 +24,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	}
 
 	this->motion_controller = new Motion_controller();
+	this->ui = new UI();
 	printf("hello intel board\n");
 	state = ROBOT_INIT;
 }
@@ -124,6 +125,7 @@ uint8_t intel_board::main_function()
 				case ROBOT_APPROACH_REF:
 					this->robot_approach_ref();
 					//take another picture and check whether the target is in scope
+					printf("intel_board: ROBOT_APPROACH_REF finished\n");
 					this->state = ROBOT_FIND_TARGET;
 					break;
 				case ROBOT_WAIT_FOR_ADJUSTMENT:
@@ -149,6 +151,7 @@ uint8_t intel_board::robot_init()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
+	printf("intel_board: the robot has received %d\n",ui->wait_command());
 	printf("intel_board: the robot is going to find target\n\n\n");
 	this->state = ROBOT_FIND_TARGET;
 	return 1;
@@ -190,6 +193,7 @@ uint8_t intel_board::robot_approach_ref()
 	printf("intel_board::robot_approach_ref() running\n");
 	//have the motion_controller send the command to the car
 	this->motion_controller->send_cmd();
+	printf("intel_board::robot_approach_ref() send cmd finished\n");
 	return 1;
 }
 
