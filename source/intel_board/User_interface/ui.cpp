@@ -120,7 +120,7 @@ void UI::contention()
 
 		socklen_t addr_len=sizeof(struct sockaddr_in);
 
-				printf("before accept client\n");
+				// printf("before accept client\n");
 
 	
 		if((client_sd=accept(server_socket,(struct sockaddr *) &client_addr,&addr_len))<0)
@@ -129,7 +129,7 @@ void UI::contention()
 			exit(0);
 		}
 
-		printf("after accept client\n");
+		// printf("after accept client\n");
 	
 }			
 
