@@ -130,7 +130,7 @@ void UI::contention()
 		}
 
 		// printf("after accept client\n");
-	
+	wait_command();
 }			
 
 
