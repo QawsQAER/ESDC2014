@@ -95,6 +95,11 @@ uint8_t intel_board::main_function()
 					{
 						this->state = ROBOT_READY;
 					}
+					else
+					{
+						printf("intel_board robot_init() return 0\n");
+						exit(-1);
+					}
 					break;
 				
 				case ROBOT_READY:
