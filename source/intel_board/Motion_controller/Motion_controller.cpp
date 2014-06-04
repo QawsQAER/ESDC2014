@@ -48,7 +48,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 {
 	uint8_t okay_image = 1;
 	//allow positive or negative error in 50 pixels
-	uint16_t threshold_x = 50, threshold_y = 50;
+	uint16_t threshold_x = 20, threshold_y = 20;
 	uint16_t exp_center_x = 320, exp_center_y = 240;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
@@ -78,7 +78,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 		{	
 			//should move left
 			move_x = ceil(abs(diff_x) * p);
-			printf("Motion_controller centering(): moving left %d mm\n",move_x);
+			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveLeftMM(move_x);
 			msg.sendMessage(this->Com->fd);
@@ -88,7 +88,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 		{
 			//should move right
 			move_x = ceil(abs(diff_x) * p);
-			printf("Motion_controller centering(): moving right %d mm\n",move_x);
+			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveRightMM(move_x);
 			msg.sendMessage(this->Com->fd);
@@ -115,12 +115,13 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 
 void Motion_controller::send_cmd()
 {
+	return ;
 	printf("Motion_controller::send_cmd(): sending messages to the car\n");
 	while(!this->cmd_queue.empty())
 	{
 		//this->Com->send_cmd(cmd_queue.front());
 		//cmd_queue.front().sendMessage(this->Com->fd);
-		//cmd_queue.pop();
+		cmd_queue.pop();
 	}
 	
 }

@@ -161,13 +161,49 @@ uint8_t Image_processor::save_current_image()
 	cv::imwrite(filename,this->current_img,compression_params);
 	free(filename);
 }
+
 /*
- * Implementation of basic analyzation
+ *
+ */
+cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,uint8_t dir = 0)
+{
+	cv::Mat result(img1.rows,img1.cols + img2.cols,CV_8UC3);
+	if(dir == 0)
+	{
+		cv::Mat left(result,cv::Rect(0,0,img1.cols,img1.rows));
+		img1.copyTo(left);
+
+		cv::Mat right(result,cv::Rect(img1.cols,0,img2.cols,img2.rows));
+		img2.copyTo(right);
+	}
+	else
+	{
+
+	}
+	return result;
+}
+/*
+ * Implementation of basic analysis
  */
 uint8_t Image_processor::analyze_image()
 {
 
 }
+
+/*
+ * Basic edge detection implementation
+ */
+cv::Mat Image_processor::edge_detection(const cv::Mat &img)
+{
+	cv::Mat gray_img,result;
+	cv::cvtColor(img,gray_img,CV_BGR2GRAY);
+	uint16_t threadhold1 = 50;
+	uint16_t threadhold2 = 150;
+	int32_t apertureSize = 3;
+	cv::Canny(gray_img,result,threadhold1,threadhold2,apertureSize);
+
+	return result;
+}	
 /*
  *
  * Implementation of basic pedestrain detection algorithm
@@ -205,6 +241,8 @@ uint8_t Image_processor::analyze_image()
  	}
  	return 1;
  }
+
+
 cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std::vector<cv::Rect> &body_detect)
 {
 	//note that the body_detect is the parameter of the function, not the body_detect of the instance
@@ -224,18 +262,20 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 	}
 	return marked_img;
 }
- uint8_t Image_processor::basic_pedestrain_detection()
- {
- 	this->run_body_detection(this->current_img,this->body_detect);
- 	printf("basic_pedestrain_detection: %d body detected\n",this->body_detect.size());
- 	this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
- 	return 1;
- }
+
+uint8_t Image_processor::basic_pedestrain_detection()
+{
+	this->run_body_detection(this->current_img,this->body_detect);
+	printf("basic_pedestrain_detection: %u body detected\n",this->body_detect.size());
+	this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
+	return 1;
+}
 /*
  *
  * Implementation of basic face detection
  *
  */
+
 uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect)
 {
 	face_detect.clear();
@@ -409,16 +449,16 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 			&& (face_center.x + face.width / 2) < (body_center.x + (body.width / 2)) )
 		{	
 			//body is related to this face
-			printf("Image_processor face_body_related(): the face_center (%d,%d) the body_center (%d,%d)\n",face_center.x,face_center.y,body_center.x,body_center.y);
-			printf("body_center.x - body.width / 2 is %d, body_center.x + body.width/2 is %d\n",body_center.x - body.width / 2,body_center.x + body.width/2);
+			//printf("Image_processor face_body_related(): the face_center (%d,%d) the body_center (%d,%d)\n",face_center.x,face_center.y,body_center.x,body_center.y);
+			//printf("body_center.x - body.width / 2 is %d, body_center.x + body.width/2 is %d\n",body_center.x - body.width / 2,body_center.x + body.width/2);
 		}
 		else
 			return 0;
 
 		//check whether the body is much longer than the face
-		printf("Image_processor face_body_related(): face height %d body height %d\n",face.height,body.height);
-		printf("Image_processor face_body_related(): face height / body height %f\n",(float)face.height/(float)body.height);
-		printf("Image_processor face_body_related(): threshold %f\n",face_body_height_ratio);
+		//printf("Image_processor face_body_related(): face height %d body height %d\n",face.height,body.height);
+		//printf("Image_processor face_body_related(): face height / body height %f\n",(float)face.height/(float)body.height);
+		//printf("Image_processor face_body_related(): threshold %f\n",face_body_height_ratio);
 		if(((float)face.height / (float)body.height) > face_body_height_ratio)
 			return 0;
 
@@ -434,7 +474,7 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 uint8_t Image_processor::find_body_according_to_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	uint8_t factor = 2;
-	printf("find_body_according_to_face(): There are %d faces\n",face_detect.size());
+	printf("find_body_according_to_face(): There are %u faces\n",face_detect.size());
 	std::vector<cv::Rect> body_detect;
 	//for every detected face recorded in face_detect
 	for(size_t count_face = 0;count_face < face_detect.size();count_face++)
@@ -485,7 +525,7 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	cv::Mat subImage = source_img(roi);
 	cv::Mat resulted_img;
 	this->run_body_detection(subImage,body_detect);
-	printf("find_body_in_roi(): find %d body\n",body_detect.size());
+	printf("find_body_in_roi(): find %u body\n",body_detect.size());
 	resulted_img = this->mark_detected_body(subImage,body_detect);
 
 	cv::destroyWindow(this->winname);
@@ -524,6 +564,8 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
 
+	cv::Mat img = this->edge_detection(this->current_img);
+	this->analyzed_img = this->concat_image(this->analyzed_img,img);
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)

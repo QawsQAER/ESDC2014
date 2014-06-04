@@ -109,14 +109,18 @@ public:
 	//this function will get an image from either cam or cap, and store the image into the current_img
 	uint8_t capture_image();
 	uint8_t load_current_img_to_analyzed_img();
+
 	//this function will stored the image into the hard disk,
 	//naming it according to the time since Epoch
 	uint8_t save_current_image();
+	
 	//this function simplily read the image from file to current_img
 	uint8_t read_image(const char* filename);
+	//this function will concat the input two images horizontally
+	cv::Mat concat_image(const cv::Mat &img1, const cv::Mat &img2,uint8_t dir);
 	uint8_t analyze_image();
 	
-
+	cv::Mat edge_detection(const cv::Mat &img);
 	/*
 	
 		body detection related functions
