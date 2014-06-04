@@ -1,4 +1,29 @@
+/******************************************************
 
+*** ┏┓          ┏┓
+**┏┛┻━━━━━━┛┻┓
+**┃                 ┃
+**┃      ━━━      ┃
+**┃  ┳┛       ┗┳ ┃
+**┃                 ┃
+**┃ '''   ┻   '''  ┃
+**┃                 ┃
+**┗━━━┓   ┏━━━┛
+******   ┃   ┃
+******   ┃   ┃
+******   ┃   ┃
+******   ┃   ┗━━━━━━━━━━━━┓
+******   ┃                         ┃━━┓
+******   ┃         NO BUG          ┏━━┛
+******   ┃                         ┃
+******   ┗━┓  ┓  ┏━━━━┏━━┓━┛
+********    ┃  ┛  ┛    ┃  ┛  ┛
+********    ┃  ┃  ┃    ┃  ┃  ┃
+********    ┗━┛━┛     ┗━┛━┛
+
+This part is added by project ESDC2014 of CUHK team.
+All the code with this header are under GPL open source license.
+******************************************************/
 #include <PinChangeInt.h>
 #include <PinChangeIntConfig.h>
 #include <EEPROM.h>
@@ -91,19 +116,3 @@ void serialEvent() //called between loops
     com.putToBuffer(ch);
   }
 }
-
-/*
-void loop()
-{
-  Omni.setCarAdvance(250);
-  Omni.delayMS(1500);
-  Omni.setCarRight(250);
-  Omni.delayMS(1000);
-  Omni.setCarRotateLeftDegree(180, 250);
-  Omni.setCarAdvance(250);
-  Omni.delayMS(1500);
-  Omni.setCarRight(250);
-  Omni.delayMS(1000);
-  Omni.setCarRotateRightDegree(180, 250);
-}
-*/
