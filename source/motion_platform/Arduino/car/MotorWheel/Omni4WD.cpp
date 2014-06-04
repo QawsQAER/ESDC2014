@@ -424,10 +424,32 @@ void Omni4WD::debugger(bool wheelULDebug,bool wheelLLDebug,bool wheelLRDebug,boo
 }
 
 
-/**********************************************************
+/******************************************************
+
+***┏┓           ┏┓
+**┏┛┻━━━━━━━━━━━┛┻┓
+**┃               ┃
+**┃      ━━━      ┃
+**┃  ┳┛       ┗┳  ┃
+**┃               ┃
+**┃ '''   ┻   ''' ┃
+**┃               ┃
+**┗━━━┓       ┏━━━┛
+******┃       ┃
+******┃       ┃
+******┃       ┃
+******┃       ┗━━━━━━━━━━━━┓
+******┃                    ┃━━┓
+******┃      NO BUG        ┏━━┛
+******┃                    ┃
+******┗━┓  ┓  ┏━━━━┏━━┓  ━━┛
+********┃  ┛  ┛    ┃  ┛  ┛
+********┃  ┃  ┃    ┃  ┃  ┃
+********┗━━┛━━┛    ┗━━┛━━┛
+
 This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
-**********************************************************/
+******************************************************/
 int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS)
 {
 	setCarStat(STAT_ROTATELEFT);
