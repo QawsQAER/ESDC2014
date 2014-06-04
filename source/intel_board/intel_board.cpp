@@ -156,10 +156,14 @@ uint8_t intel_board::robot_init()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
-	printf("intel_board: the robot has received %d\n",ui->wait_command());
+	int32_t cmd = ui->wait_command();
+	printf("intel_board: the robot has received %d\n",cmd);
 	printf("intel_board: the robot is going to find target\n\n\n");
-	this->state = ROBOT_FIND_TARGET;
-	return 1;
+	if(cmd == 2)
+	{
+		this->state = ROBOT_FIND_TARGET;
+		return 1;
+	}	
 }
 
 uint8_t intel_board::robot_find_target()

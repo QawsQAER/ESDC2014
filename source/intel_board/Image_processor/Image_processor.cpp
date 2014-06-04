@@ -327,6 +327,7 @@ uint8_t Image_processor::show_analyzed_img()
 	cv::destroyWindow(this->winname);
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	cv::imshow(this->winname,this->analyzed_img);
+	/*	
 	char k;
 	while( (k = cv::waitKey(0)) != 'n')
 	{
@@ -334,7 +335,10 @@ uint8_t Image_processor::show_analyzed_img()
 			exit(0);
 		printf("You have pressed %c %d\n",k,k);
 	}
+	*/
+	//imshow does not block the main process any more
 
+	waitKey(30);
 	return 1;
 }
 /*
