@@ -29,6 +29,8 @@ public:
 	std::string photo_JPEG();
 
 	std::string take_photo_af();
+	void save_photo_af();
+	void save_photo();
 
 	void zoom(float scaler);// (scaler>1 in) (scaler< 1 out)
 

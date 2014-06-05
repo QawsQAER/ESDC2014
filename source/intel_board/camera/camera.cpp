@@ -321,6 +321,75 @@ void Camera::zoom(float scaler){
 
 
 }
+
+
+
+
+    void Camera::save_photo_af()
+    {
+
+
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/photoaf_save_only.jpg";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+
+
+
+    }
+
+
+
+     void Camera::save_photo()
+    {
+
+
+     if(DEBUG_MODE) cout<<"Create command"<<endl;
+
+        string str_command="wget http://"+ip+"/photo_save_only.jpg";
+      const char* command=str_command.c_str();
+
+   if(DEBUG_MODE) cout<<"wget command"<<" " << command<<endl;
+
+        if ((fp = popen(command, "r")) == NULL) {// fp = popen("wget  -O ~/a.jpg http://192.168.43.1:8080/photoaf.jpg", "r"))
+                perror("popen failed");
+                // return -1;
+            }
+          
+            if (pclose(fp) == -1) {
+                perror("pclose failed");
+                // return -2;
+            }
+
+
+
+
+    }
+
+
+
+
+
+
+
+
+
+
+
+
     void Camera::flash_open()
     {
 

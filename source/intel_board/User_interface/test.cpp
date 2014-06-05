@@ -9,11 +9,11 @@ int main()
 
 UI ui;
 
-// for (int i = 0; i < 20; ++i)
-// {
-// 	ui.wait_command();
+for (int i = 0; i < 20; ++i)
+{
+	ui.wait_command();
 
-// }
+}
 
 ui.send_finished_ack();
 
