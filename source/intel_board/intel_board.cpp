@@ -185,7 +185,7 @@ uint8_t intel_board::robot_find_target()
 	{
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
-		
+
 		switch(state)
 		{
 			case 0://repeat state
@@ -214,6 +214,9 @@ uint8_t intel_board::robot_find_target()
 				break;
 			case 5:
 				this->motion_controller->rotate(degree,0);
+				state = 0;
+				counter = 0;
+				break;
 			default:
 			break;
 		}
