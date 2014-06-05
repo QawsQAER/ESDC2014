@@ -357,6 +357,7 @@ uint8_t Image_processor::show_analyzed_img()
 {
 	cv::destroyWindow(this->winname);
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	cv::moveWindow(this->winname,0,0);
 	cv::imshow(this->winname,this->analyzed_img);
 	/*
 	char k;
