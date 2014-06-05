@@ -70,18 +70,26 @@ void Message::sendMessage(int fd)
 int Message::receiveACK(int fd)
 {
 	memset(&_ACK, 0 , sizeof(struct ACK));
-	int receive_error = 0;
+	uint8_t buff[4];
+	uint8_t read_num = 0;
 
-	receive_error += read(fd, (void*) &(_ACK->starter), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->O), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->K), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->check_sum), sizeof(uint8_t));
-
-	if(receive_error != 4)
+	while(read_num < sizeof(struct ACK))
 	{
-		printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
-		return -1;
+		int temp = read(fd, buff + read_num, sizeof(struct ACK));
+
+		if(temp == -1)
+		{
+			printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
+			return -1;
+		}
+
+		read_num += temp;
 	}
+
+	_ACK->starter = buff[0];
+	_ACK->O = buff[1];
+	_ACK->K = buff[2];
+	_ACK->check_sum = buff[3];
 
 	if(_ACK->starter == STARTER && _ACK->O == 0x4f && _ACK->K == 0x4b && _ACK->check_sum == 0x9a)
 	{
