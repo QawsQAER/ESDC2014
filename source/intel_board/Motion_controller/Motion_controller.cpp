@@ -14,6 +14,7 @@ Motion_controller::~Motion_controller()
 
 uint8_t Motion_controller::init()
 {
+	printf("Motion_controller::init() running\n");
 	Message msg;
 	msg.CarRotateLeftDegree(360);
 	msg.sendMessage(this->Com->fd);
@@ -24,6 +25,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	if(this->eval_state == EVAL_COMPLETE)
 		return 1;
 	else
+	{	
 		switch(this->eval_state)
 		{
 			case EVAL_CENTERING:
@@ -42,62 +44,49 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			break;
 
 		}
+		return 0;
+	}
 }
 
 uint8_t Motion_controller::centering(const cv::Rect &detect)
 {
+	printf("Motion_controller::centering() running\n");
 	uint8_t okay_image = 1;
 	//allow positive or negative error in 50 pixels
 	uint16_t threshold_x = 20, threshold_y = 20;
 	uint16_t exp_center_x = 320, exp_center_y = 240;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
-	//TODO: use ref also
-	if(detect.height > 300)
-	{
-		//set command move backward 300mm
-		uint16_t distance = 300;
-		Message m;
-		m.CarMoveDownMM(distance);
-		this->cmd_queue.push(m);
-		printf("Motion_controller::centering(): the height is too large %d\n",detect.height);
-		okay_image = 0;
-	}
 
 	int diff_x = center.x - exp_center_x;
 	int diff_y = center.y - exp_center_y;
 	//compute length per pixel 
 	float p = (float) 1700 / (float) detect.height;
+
 	uint16_t move_x = 0;
 	if(abs(diff_x) > threshold_x)
 	{
 		okay_image = 0;
-		//push movement to right or left
+		//movement to right or left
 		printf("Motion_controller centering(): diff_x is %d\n",diff_x);
 		if(diff_x < 0)
 		{	
 			//should move left
-			move_x = ceil(abs(diff_x) * p);
+			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveLeftMM(move_x);
 			msg.sendMessage(this->Com->fd);
-			//cmd_queue.push(msg);
 		}
 		else
 		{
 			//should move right
-			move_x = ceil(abs(diff_x) * p);
+			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveRightMM(move_x);
 			msg.sendMessage(this->Com->fd);
-			//cmd_queue.push(msg);
 		}
-	}
-	if(abs(diff_y) > threshold_y)
-	{
-		//push lifter movement
 	}
 
 	return okay_image;
@@ -105,14 +94,23 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect)
 {
+	printf("Motion_controller::zoom_in_out() running\n");
 	return 1;
 }
 
 uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 {
+	printf("Motion_controller::adjusting() running\n");
 	return 1;
 }
 
+uint16_t Motion_controller::bound_dis(const uint32_t &dis)
+{
+	if(dis > 0xffff)
+		return 0xffff;
+	else
+		return (uint16_t) dis;
+}
 void Motion_controller::send_cmd()
 {
 	return ;
@@ -123,5 +121,47 @@ void Motion_controller::send_cmd()
 		//cmd_queue.front().sendMessage(this->Com->fd);
 		cmd_queue.pop();
 	}
-	
+}
+
+void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
+{
+	Message msg;
+	switch(dir)
+	{
+		case 0://forward
+			msg.CarMoveUpMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+			
+		case 1://backward
+			msg.CarMoveDownMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		case 2://left
+			msg.CarMoveLeftMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		case 3://right
+			msg.CarMoveRightMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		default:
+		break;
+	}
+	return ;
+}
+
+void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
+{
+	Message msg;
+	if(dir == 0)
+	{
+		msg.CarRotateRightDegree(degree);
+	}
+	else
+	{
+		msg.CarRotateLeftDegree(degree);
+	}
+	msg.sendMessage(this->Com->fd);
+	return ;
 }

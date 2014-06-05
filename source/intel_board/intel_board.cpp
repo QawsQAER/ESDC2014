@@ -31,7 +31,14 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 
 intel_board::~intel_board()
 {
+	printf("~intel_board(): deleting Image_processor\n");
+	delete this->image_processor;
+	printf("~intel_board(): deleting Motion_controller\n");
+	delete this->motion_controller;
+	printf("~intel_board(): deleting UI\n");
+	delete this->ui;
 	printf("Bye bye intel board\n");
+
 }
 
 uint8_t intel_board::main_function()
@@ -96,13 +103,14 @@ uint8_t intel_board::main_function()
 						this->state = ROBOT_READY;
 					}
 					else
-					{
+					{	
 						printf("intel_board robot_init() return 0\n");
 						exit(-1);
 					}
 					break;
 				
 				case ROBOT_READY:
+					//the robot will be waiting for user's specific command to continue
 					this->robot_ready();
 					break;
 				
@@ -156,19 +164,62 @@ uint8_t intel_board::robot_init()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
-	printf("intel_board: the robot has received %d\n",ui->wait_command());
+	int32_t cmd = ui->wait_command();
+	printf("intel_board: the robot has received %d\n",cmd);
 	printf("intel_board: the robot is going to find target\n\n\n");
-	this->state = ROBOT_FIND_TARGET;
-	return 1;
+	if(cmd == 2)
+	{
+		this->state = ROBOT_FIND_TARGET;
+		return 1;
+	}	
 }
 
 uint8_t intel_board::robot_find_target()
 {
 	printf("intel_board::robot_find_target() running\n");
+	uint8_t state = 0;
+	uint8_t counter = 0;
+	uint16_t dis = 300;
+	uint16_t degree = 30;
 	while(!this->image_processor->target_in_scope())
 	{
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
+
+		switch(state)
+		{
+			case 0://repeat state
+				if(counter < 3)
+				//do nothing
+					counter++;
+				else
+					state = 1;
+				break;
+			case 1://forward 300mm
+				this->motion_controller->move(dis,0);
+				state = 2;
+				break;
+			case 2://backward 600mm
+				this->motion_controller->move(dis * 2,1);
+				state = 3;
+				break;
+			case 3:
+				this->motion_controller->move(dis,0);
+				this->motion_controller->move(dis,2);
+				state = 4;
+				break;
+			case 4:
+				this->motion_controller->move(dis * 2,3);
+				state = 5;
+				break;
+			case 5:
+				this->motion_controller->rotate(degree,0);
+				state = 0;
+				counter = 0;
+				break;
+			default:
+			break;
+		}
 	}
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n\n\n");
 	return 1;
@@ -204,6 +255,10 @@ uint8_t intel_board::robot_approach_ref()
 
 uint8_t intel_board::robot_wait_for_adjustment()
 {
+
 	printf("intel_board::robot_wait_for_adjustment() running\n");
+	//TODO:
+	//should be waiting for adjustment here.
+	this->ui->send_finished_ack();
 	return 1;
 }

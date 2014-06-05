@@ -327,6 +327,7 @@ uint8_t Image_processor::show_analyzed_img()
 	cv::destroyWindow(this->winname);
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	cv::imshow(this->winname,this->analyzed_img);
+	
 	char k;
 	while( (k = cv::waitKey(0)) != 'n')
 	{
@@ -334,7 +335,7 @@ uint8_t Image_processor::show_analyzed_img()
 			exit(0);
 		printf("You have pressed %c %d\n",k,k);
 	}
-
+	//imshow does not block the main process any more
 	return 1;
 }
 /*
@@ -553,10 +554,11 @@ uint8_t Image_processor::target_in_scope()
 	//if an image is captured, run basic analysis
 	this->run_body_detection(this->current_img,this->body_detect);
 	this->run_face_detection(this->current_img,this->face_detect);
+	
 	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
-	this->show_analyzed_img();
-	
+	//this->show_analyzed_img();
+	cv::Mat tmp_img = this->analyzed_img.clone();
 	//run basic filter;
 	this->basic_filter();
 
@@ -564,8 +566,8 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
 
-	cv::Mat img = this->edge_detection(this->current_img);
-	this->analyzed_img = this->concat_image(this->analyzed_img,img);
+	//cv::Mat img = this->edge_detection(this->current_img);
+	this->analyzed_img = this->concat_image(tmp_img,this->analyzed_img);
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
