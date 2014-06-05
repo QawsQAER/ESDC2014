@@ -1,6 +1,6 @@
 package com.boyaa.chat.demo;
-	import android.app.Activity;  
-
+	import android.annotation.SuppressLint;
+import android.app.Activity;  
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;  
@@ -16,7 +16,6 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -46,7 +45,9 @@ import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Calendar;
 
 
 
@@ -54,17 +55,20 @@ import android.graphics.BitmapFactory;
 
 
 import android.graphics.drawable.Drawable;
-
 import com.boyaa.chat.R;
 import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
 
+@SuppressLint("SimpleDateFormat")
 public class MainActivity extends Activity {
 
 	private Client user=null;
 	private EditText ip;
 	private TextView status;
+	
+	private String camera_ip="192.168.1.1";
+	private String board_ip="192.168.1.136";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -122,7 +126,7 @@ public class MainActivity extends Activity {
 //		sendContent=(EditText) findViewById(R.id.sendContent);
 //		recContent=(EditText) findViewById(R.id.recContent);
 //		ip.setText("172.20.10.7");
-		ip.setText("192.168.43.142");
+		ip.setText(board_ip);
 		status.setText("off");
 		
 //		ip.clearFocus();  
@@ -276,9 +280,25 @@ public class MainActivity extends Activity {
 						
 					ImageView imageView;
 				    imageView = (ImageView)findViewById(R.id.image_view);
-				  String urlStr  =  "http://192.168.43.1:8080/photoaf.jpg";
-				    //	"http://192.168.43.1:8080/photoaf.jpg";
+				    
+				    SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd_HH-mm");
+			
+				    Log.v("url",dateformat.format(new Date()).toString());
+				  String urlStr  =  "http://"+camera_ip.toString()+":8080/v/photo/photo_"+dateformat.format(new Date()).toString()+".jpg";
+//				  System.out.println(urlStr); 
+				  //	"http://192.168.43.1:8080/photoaf.jpg";
+				  
+				    
+//				    String urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
+				    Log.v("url",urlStr);
 				 Bitmap bitmap = getHttpBitmap(urlStr);
+				 
+				 if(bitmap==null)
+				 {
+					 urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
+					 bitmap = getHttpBitmap(urlStr);
+				 }
+				 
 					 imageView.setImageBitmap(bitmap);
 					 
 					 
