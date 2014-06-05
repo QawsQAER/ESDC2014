@@ -1,8 +1,9 @@
 /*
  * Copyright (C) Your copyright notice.
  *
- * Author: CUHK
- *
+ * Author: Edward HUANG@CUHK huangxx_2155@live.com
+ *         Tony Yi@CUHK     
+ *         Terry Lai@CUHK
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions are met:
@@ -37,6 +38,8 @@ using namespace std;
 
 void exit_routine(int arg);
 char *dir_path;
+intel_board *robot;
+
 int main(int argc, char ** argv) 
 {
         /* prints Hello World */
@@ -83,8 +86,8 @@ int main(int argc, char ** argv)
                 printf("The robot is going to initiate in default mode\n");
 
 
-        intel_board robot(mode,img_source);
-        robot.main_function();
+        robot = new intel_board(mode,img_source);
+        robot->main_function();
 
         free(dir_path);
         return 0;
@@ -92,7 +95,8 @@ int main(int argc, char ** argv)
 
 void exit_routine(int arg)
 {
-        printf("Executing the pre-registered exit routine\n");
+        printf("\n\n\n\nExecuting the pre-registered exit routine\n");
+        delete robot;
         free(dir_path);
         exit(-1);
 }
