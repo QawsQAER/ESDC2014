@@ -35,7 +35,10 @@ void Message::sendMessage(int fd)
 	if(write_error != 9)
 	{
 		printf("void Message::sendMessage(int fd) error: error happened when writing bytes to the file descriptor!\n");
+		return;
 	}
+
+	receiveACK();
 }
 
 int Message::receiveACK(int fd)
