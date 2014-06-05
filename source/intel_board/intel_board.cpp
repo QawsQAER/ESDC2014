@@ -172,9 +172,9 @@ uint8_t intel_board::robot_find_target()
 	printf("intel_board::robot_find_target() running\n");
 	uint8_t state = 0;
 	uint8_t counter = 0;
-	uint16_t dis = 300;
+	uint16_t dis = 500;
 	uint16_t degree = 30;
-	uint8_t sec = 5;
+	uint8_t sec = 1;
 
 	this->robot_countdown(sec);	
 	while(!this->image_processor->target_in_scope())
@@ -308,6 +308,7 @@ uint8_t intel_board::robot_only_image_analysis()
 void intel_board::robot_countdown(uint8_t sec)
 {
 	useconds_t usec = 1000000;
+	//this->ui->send_finished_ack();
 	printf("intel_board: counting down\n");
 	for(uint8_t count = sec;count > 0;count--)
 	{
