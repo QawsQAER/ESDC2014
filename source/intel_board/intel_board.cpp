@@ -1,9 +1,39 @@
+/*
+ * Copyright (C) Your copyright notice.
+ *
+ * Author: Edward HUANG@CUHK huangxx_2155@live.com
+ *         Tony Yi@CUHK     
+ *         Terry Lai@CUHK
+ *
+ * Redistribution and use in source and binary forms, with or without
+ * modification, are permitted provided that the following conditions are met:
+ *     * Redistributions of source code must retain the above copyright
+ *       notice, this list of conditions and the following disclaimer.
+ *     * Redistributions in binary form must reproduce the above copyright
+ *       notice, this list of conditions and the following disclaimer in the
+ *       documentation and/or other materials provided with the distribution.
+ *     * Neither the name of the PG_ORGANIZATION nor the
+ *       names of its contributors may be used to endorse or promote products
+ *       derived from this software without specific prior written permission.
+ * 
+ * THIS SOFTWARE IS PROVIDED BY	THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS-IS"
+ * AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE 
+ * IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ * ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE 
+ * LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR 
+ * CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF 
+ * SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS 
+ * INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN 
+ * CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) 
+ * ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE 
+ * POSSIBILITY OF SUCH DAMAGE.
+ */
+
 #include "intel_board.h"
 
 intel_board::intel_board(uint8_t mode,uint8_t img_source)
 {
-	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
-	this->image_processor = new Image_processor(img_source);
+
 	switch(mode)
 	{
 	case(0):
@@ -22,10 +52,14 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			printf("Invalid Mode\nExiting program\n");
 			exit(1);
 	}
-
+	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
+	printf("Creating Image_processor()\n");
+	this->image_processor = new Image_processor(img_source);
+	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
+	printf("Creating UI()\n");
 	this->ui = new UI();
-	printf("hello intel board\n");
+	printf("hello intel board\n\n");
 	state = ROBOT_INIT;
 }
 
@@ -38,7 +72,6 @@ intel_board::~intel_board()
 	printf("~intel_board(): deleting UI\n");
 	delete this->ui;
 	printf("Bye bye intel board\n");
-
 }
 
 uint8_t intel_board::main_function()
@@ -47,48 +80,7 @@ uint8_t intel_board::main_function()
 	char key;
 	if(this->mode == IMG_ANALYSIS_MODE)
 	{
-		DIR *dir;
-		struct dirent *ent;
-		if((dir = opendir(dir_path)) == NULL)
-		{
-			perror("");
-			return EXIT_FAILURE;
-		}
-		while((ent = readdir(dir)) != NULL)
-		{
-			this->image_processor->init();
-			if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
-				continue;
-			char filename[64];
-			strcpy(filename,dir_path);
-			strcat(filename,"/");
-			strcat(filename,ent->d_name);
-			printf("Openning %s\n",filename);
-			Image_processor *ptr = this->image_processor;
-			ptr->read_image(filename);
-			ptr->load_current_img_to_analyzed_img();
-
-			//run the basic body detection algorithm
-			//ptr->run_body_detection(ptr->current_img,ptr->body_detect);
-			//run the basic face detection algorithm
-			ptr->run_body_detection(ptr->current_img,ptr->body_detect);
-			ptr->run_face_detection(ptr->current_img,ptr->face_detect);
-			//mark the face and body after basic detection algorithm
-			//ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->body_detect);
-			//ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->face_detect);
-			//show the analyzed img after basic detection algorithm
-			//ptr->show_analyzed_img();
-
-			//run a basic filter 
-			ptr->basic_filter();
-			//mark the face and body after basic filter
-			ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->final_body_detect);
-			ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);
-			//show the analyzed img after basic filter
-			this->robot_evaluate_image();
-			ptr->show_analyzed_img();
-
-		}
+		this->robot_only_image_analysis();
 	}
 	else
 	{
@@ -158,6 +150,7 @@ uint8_t intel_board::robot_init()
 		return 0;
 	if(!this->motion_controller->init())
 		return 0;
+	printf("intel_board: initilization done\n");
 	return 1;
 }
 
@@ -261,4 +254,48 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//should be waiting for adjustment here.
 	this->ui->send_finished_ack();
 	return 1;
+}
+
+uint8_t intel_board::robot_only_image_analysis()
+{
+	DIR *dir;
+	struct dirent *ent;
+	if((dir = opendir(dir_path)) == NULL)
+	{
+		perror("");
+		return EXIT_FAILURE;
+	}
+	while((ent = readdir(dir)) != NULL)
+	{
+		this->image_processor->init();
+		if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
+			continue;
+		char filename[64];
+		strcpy(filename,dir_path);
+		strcat(filename,"/");
+		strcat(filename,ent->d_name);
+		printf("Openning %s\n",filename);
+		Image_processor *ptr = this->image_processor;
+		ptr->read_image(filename);
+		ptr->load_current_img_to_analyzed_img();
+
+		//run the basic body detection algorithm
+		//ptr->run_body_detection(ptr->current_img,ptr->body_detect);
+		//run the basic face detection algorithm
+		ptr->run_body_detection(ptr->current_img,ptr->body_detect);
+		ptr->run_face_detection(ptr->current_img,ptr->face_detect);
+		//mark the face and body after basic detection algorithm
+		//ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->body_detect);
+		//ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->face_detect);
+		//show the analyzed img after basic detection algorithm
+		//ptr->show_analyzed_img();
+		//run a basic filter 
+		ptr->basic_filter();
+		//mark the face and body after basic filter
+		ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->final_body_detect);
+		ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);
+		//show the analyzed img after basic filter
+		this->robot_evaluate_image();
+		ptr->show_analyzed_img();
+	}
 }
