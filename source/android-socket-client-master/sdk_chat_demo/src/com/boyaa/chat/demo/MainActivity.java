@@ -32,6 +32,7 @@ import android.widget.ImageView;
 	import android.os.Bundle;  
 import android.os.Environment;  
 import android.widget.MediaController;  
+import android.widget.TextView;
 import android.widget.VideoView;  
 import android.widget.ImageView;  
 import android.app.Activity;
@@ -40,6 +41,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.graphics.Bitmap;
@@ -61,11 +63,16 @@ import com.boyaa.push.lib.service.Packet;
 public class MainActivity extends Activity {
 
 	private Client user=null;
-	private EditText ip,status;
+	private EditText ip;
+	private TextView status;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		
+		
+		
+		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		setContentView(R.layout.activity_main);
 		
 		
@@ -108,7 +115,7 @@ public class MainActivity extends Activity {
 //		findViewById(R.id.clear).setOnClickListener(listener);
 		
 		ip=(EditText) findViewById(R.id.ip);
-		status=(EditText) findViewById(R.id.status);
+		status=(TextView) findViewById(R.id.status);
 		
 		
 		
