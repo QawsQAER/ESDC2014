@@ -49,6 +49,7 @@ uint8_t Motion_controller::init()
 	Message msg;
 	msg.CarRotateLeftDegree(360);
 	msg.sendMessage(this->Com->fd);
+	printf("Motion_controller::init() returning\n");
 	return 1;
 }
 uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref)
@@ -62,7 +63,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			case EVAL_CENTERING:
 				if(this->centering(detect))
 				{
-					this->eval_state = EVAL_ZOOMING;
+					//this->eval_state = EVAL_ZOOMING;
 					printf("\n!!!!!!!\n!!!!!!!\nMotion_controller::evaluate_image -> centering DONE!\n!!!!!\n!!!!!\n");
 					return 1;
 				}
