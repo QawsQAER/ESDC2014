@@ -23,35 +23,35 @@ class UI{
 
 
 	//use this when 
-	int wait_command();
+	command_type wait_command();
 	/*
 
 	send_finished_ack  fa
 
-	connect request cr  1
-	start movement  sm  2 
-	confirm picture cp  3 
+	connect_request cr  1
+	start_movement  sm  2 
+	confirm_picture cp  3 
 
-	pattern 1 p1  4
-	pattern 2 p2  5
-	pattern 3 p3  6
-	pattern 4 p4  7
+	pattern_1 p1  4
+	pattern_2 p2  5
+	pattern_3 p3  6
+	pattern_4 p4  7
 
 	car 				 
-	forward  Up	 8
-	backward Do	 9
-	left     Le	 10
-	right    Ri    11 
+	car_forward Up	 8
+	car_backward Do	 9
+	car_left   Le	 10
+	car_right    Ri    11 
 
 	camera 				 
-	forward   cU	 12
-	backward  cD	 13
-	left      cL	 14
-	right     cR	 15
+	camera_forward   cU	 12
+	camera_backward  cD	 13
+	camera_left      cL	 14
+	camera_right     cR	 15
 
 	lift 				
-	up lu         16
-	down ld		 17*/
+	lift_up lu         16
+	lift_down ld		 17*/
 
 
 

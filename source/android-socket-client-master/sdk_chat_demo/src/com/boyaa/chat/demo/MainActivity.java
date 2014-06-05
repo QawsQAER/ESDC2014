@@ -5,6 +5,9 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;  
 import java.net.URLConnection;  
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;  
 
@@ -32,10 +35,12 @@ import android.widget.MediaController;
 import android.widget.VideoView;  
 import android.widget.ImageView;  
 import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -104,11 +109,21 @@ public class MainActivity extends Activity {
 		
 		ip=(EditText) findViewById(R.id.ip);
 		port=(EditText) findViewById(R.id.port);
+		
+		
 //		sendContent=(EditText) findViewById(R.id.sendContent);
 //		recContent=(EditText) findViewById(R.id.recContent);
-		
-		ip.setText("192.168.43.56");
+//		ip.setText("172.20.10.7");
+		ip.setText("192.168.43.203");
 		port.setText("60000");
+		
+//		ip.clearFocus();  
+//		port.clearFocus();  
+//		
+//		
+//		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
+//		imm.hideSoftInputFromWindow(ip.getWindowToken(),0);  
+//		imm.hideSoftInputFromWindow(port.getWindowToken(),0);  
 		
 //		recContent.setText("Connection: OFF");
 		
@@ -157,6 +172,7 @@ public class MainActivity extends Activity {
 		runOnUiThread(new Runnable() {
 				public void run() {
 				
+					Log.v("equals",txt);
 					if(txt.equals("cr"))
 					{
 						port.setText("connected");
@@ -221,7 +237,7 @@ public class MainActivity extends Activity {
 					
 					else if(txt.equals("cD"))
 					{
-						port.setText("camera backward");
+						port.setText("camera backwrd");
 					}
 					
 					else if(txt.equals("cL"))
@@ -249,11 +265,23 @@ public class MainActivity extends Activity {
 				else if(txt.equals("fa"))
 					{
 						port.setText("finished_ack");
+						
 					ImageView imageView;
 				    imageView = (ImageView)findViewById(R.id.image_view);
-				    String urlStr = "http://192.168.43.1:8080/photoaf.jpg";
+				  String urlStr  =  "http://192.168.43.116:8080/photoaf.jpg";
+				    //	"http://192.168.43.1:8080/photoaf.jpg";
 				 Bitmap bitmap = getHttpBitmap(urlStr);
 					 imageView.setImageBitmap(bitmap);
+					 
+					 
+					 
+					 saveBitmap(bitmap);
+					 
+					 
+					 
+					 
+					 
+					 
 					}
 					
 				}
@@ -277,87 +305,124 @@ public class MainActivity extends Activity {
 					break;
 		
 				case R.id.start:	
+					
+					
 					packet.pack("sm");
 					user.send(packet);
+//					user.receive();
 					break;
 					
 				case R.id.comfrim:	
+					
 					packet.pack("cp");
 					user.send(packet);
+//					user.receive();
 					break;
 					
 					
 				case R.id.Up:
 //					packet.pack(sendContent.getText().toString());
+					
 					packet.pack("Up");
+					
 					user.send(packet);
+//					user.receive();
 //					sendContent.setText("");
 					break;
 					
 					
 					
 				case R.id.Left:
+					
+					
 					packet.pack("Le");
+					
 					user.send(packet);
+//					user.receive();
 					break;
 					
 				case R.id.Right:
-					packet.pack("Ri");
+				
+				packet.pack("Ri");
+					
 					user.send(packet);
+//					user.receive();
 					break;
 					
 				case R.id.Down:
-					packet.pack("Do");
+				packet.pack("Do");
+					
 					user.send(packet);
+//					user.receive();	
 					break;
 					
 				case R.id.cUp:
 //					packet.pack(sendContent.getText().toString());
 					packet.pack("cU");
+					
 					user.send(packet);
+//					user.receive();
 //					sendContent.setText("");
 					break;
 					
 					
 					
 				case R.id.cLeft:
-					packet.pack("cL");
-					user.send(packet);
+					
+						packet.pack("cL");
+				user.send(packet);
+//				user.receive();
 					break;
 					
 				case R.id.cRight:
 					packet.pack("cR");
+				
 					user.send(packet);
+//					user.receive();	
 					break;
 					
 				case R.id.cDown:
 					
-					packet.pack("cD");
+				
+				packet.pack("cD");
+					
 					user.send(packet);
+//					user.receive();	
 					break;
 					
 					
 				case R.id.liftUp:	
-					packet.pack("lu");
+				
+				packet.pack("lu");
+					
 					user.send(packet);
+//					user.receive();	
 					break;
 					
 					
 				case R.id.liftDown:	
 					packet.pack("ld");
+					
 					user.send(packet);
+//					user.receive();
+			
 					break;
 						
 					
 				case R.id.pattern1:	
-					packet.pack("p1");
+					
+			packet.pack("p1");
+					
 					user.send(packet);
+//					user.receive();
 					break;
 					
 					
 				case R.id.pattern2:	
-					packet.pack("p2");
+					
+				packet.pack("p2");
 					user.send(packet);
+//					user.receive();
 					break;
 					
 //				case R.id.clear:
@@ -377,7 +442,29 @@ public class MainActivity extends Activity {
 	}
 	
 	
+	public void saveBitmap( Bitmap bitmap) {
+		String picName="pic.JPG";
+		  File f = new File("/sdcard/DCIM/intelcup/", picName);
+		  if (f.exists()) {
+		   f.delete();
+		  }
+		  try {
+		   FileOutputStream out = new FileOutputStream(f);
+		   bitmap.compress(Bitmap.CompressFormat.PNG, 90, out);
+		   out.flush();
+		   out.close();
 	
+		  } catch (FileNotFoundException e) {
+		   // TODO Auto-generated catch block
+		   e.printStackTrace();
+		  } catch (IOException e) {
+		   // TODO Auto-generated catch block
+		   e.printStackTrace();
+		  }
+
+		 }
+
+		 
 	
 	
 	

@@ -18,6 +18,7 @@ import com.boyaa.push.lib.util.NetworkUtil;
 /**
  * 
  * @author Administrator
+ * 
  *
  */
 public class Client {
@@ -47,6 +48,17 @@ public class Client {
 	private LinkedBlockingQueue<Packet> requestQueen=new LinkedBlockingQueue<Packet>();
 	private final Object lock=new Object();
 	private final String TAG="Client";
+	
+	
+	public void set_in_null(){
+		
+		inStream=null;
+	}
+
+	public void set_out_null(){
+		outStream=null;
+	}
+	
 	
 	public int send(Packet in)
 	{
@@ -89,10 +101,32 @@ public class Client {
 	
 	public void open(String host,int port)
 	{
+		if((state!=STATE_CONNECT_SUCCESS)&&(state!=99))
+		{
 		this.IP=host;
 		this.PORT=port;
 		reconn();
+		}
+		
+		else
+		{
+			close();
+			reconn();
+		}
+		
+		
 	}
+	
+	
+	public void receive()
+	{
+		state=99;
+		set_in_null();
+		conn=new Thread(new Conn());
+		conn.start();
+		//修改这个函数，目前是只有ＣＯＮ才有接收，因为ＯＰＥＮ调用了new con();
+	}
+	
 	
 	private long lastConnTime=0;
 	public synchronized void reconn()
@@ -102,11 +136,19 @@ public class Client {
 			return;
 		}
 		lastConnTime=System.currentTimeMillis();
-		
+		Log.v("Debug","0");
+
 		close();
+		Log.v("Debug","1");
+
 		state=STATE_OPEN;
-		conn=new Thread(new Conn());
-		conn.start();
+		
+		if(conn==null)
+		conn=new Thread(new Conn());	
+		
+		Log.v("Debug","2");
+
+		conn.start();Log.v("Debug","3");
 	}
 	
 	public synchronized void close()
@@ -196,10 +238,17 @@ Log.v(TAG,"Conn :Start");
 					while(state!=STATE_CLOSE)
 					{
 						try {
+							if(state!=STATE_CONNECT_SUCCESS){
 							state=STATE_CONNECT_START;
 							socket=new Socket();
 							socket.connect(new InetSocketAddress(IP, PORT), 15*1000);
 							state=STATE_CONNECT_SUCCESS;
+							}
+							else
+							{
+								state=99;
+							}
+							
 						} catch (Exception e) {
 							e.printStackTrace();
 							state=STATE_CONNECT_FAILED;
@@ -220,6 +269,20 @@ Log.v(TAG,"Conn :Start");
 							rec.start();
 							break;
 						}
+						else if (state==99) {
+
+							try {
+								inStream=socket.getInputStream();
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							
+							rec=new Thread(new Rec());
+							rec.start();
+							break;
+							
+						}
+
 						else
 						{
 							state=STATE_CONNECT_WAIT;
@@ -246,6 +309,7 @@ Log.v(TAG,"Conn :Start");
 Log.v(TAG,"Conn :End");
 		}
 	}
+
 	
 	private class Send implements Runnable
 	{
@@ -289,12 +353,14 @@ Log.v(TAG,"Send ::End");
 Log.v(TAG,"Rec :Start");
 			
 			try {
-					while(state!=STATE_CLOSE&&state==STATE_CONNECT_SUCCESS&&null!=inStream)
+				
+				while(state!=STATE_CLOSE&&((state==99)||(state==STATE_CONNECT_SUCCESS))&&null!=inStream)
 					{
 Log.v(TAG,"Rec :---------");
-							byte[] bodyBytes=new byte[2];
+							int num=2;
+							byte[] bodyBytes=new byte[num];
 							int offset=0;
-							int length=2;
+							int length=num;
 							int read=0;
 							
 							while((read=inStream.read(bodyBytes, offset, length))>0)
@@ -307,12 +373,12 @@ Log.v(TAG,"Rec :---------");
 									}
 									
 									offset=0;
-									length=5;
+									length=num;
 									read=0;
 									continue;
 								}
 								offset+=read;
-								length=5-offset;
+								length=num-offset;
 							}
 							
 							reconn();//走到这一步，说明服务器socket断了
