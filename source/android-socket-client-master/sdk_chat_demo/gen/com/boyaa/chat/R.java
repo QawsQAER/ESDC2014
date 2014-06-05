@@ -40,8 +40,8 @@ public final class R {
         public static final int open=0x7f070002;
         public static final int pattern1=0x7f070012;
         public static final int pattern2=0x7f070013;
-        public static final int port=0x7f070001;
         public static final int start=0x7f070003;
+        public static final int status=0x7f070001;
         public static final int textView2=0x7f07000a;
     }
     public static final class layout {
