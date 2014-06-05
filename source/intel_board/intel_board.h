@@ -98,6 +98,7 @@ public:
 
 	uint8_t robot_exit();
 
+	void robot_countdown(uint8_t sec);
 	uint8_t robot_only_image_analysis();
 };
 

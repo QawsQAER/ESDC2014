@@ -1,3 +1,29 @@
+/******************************************************
+
+***┏┓           ┏┓
+**┏┛┻━━━━━━━━━━━┛┻┓
+**┃               ┃
+**┃      ━━━      ┃
+**┃  ┳┛       ┗┳  ┃
+**┃               ┃
+**┃ '''   ┻   ''' ┃
+**┃               ┃
+**┗━━━┓       ┏━━━┛
+******┃       ┃
+******┃       ┃
+******┃       ┃
+******┃       ┗━━━━━━━━━━━━┓
+******┃                    ┃━━┓
+******┃      NO BUG        ┏━━┛
+******┃                    ┃
+******┗━┓  ┓  ┏━━━━┏━━┓  ━━┛
+********┃  ┛  ┛    ┃  ┛  ┛
+********┃  ┃  ┃    ┃  ┃  ┃
+********┗━━┛━━┛    ┗━━┛━━┛
+
+This part is added by project ESDC2014 of CUHK team.
+All the code with this header are under GPL open source license.
+******************************************************/
 #include "message.h"
 
 
@@ -43,22 +69,46 @@ void Message::sendMessage(int fd)
 
 int Message::receiveACK(int fd)
 {
-	memset(&_ACK, 0 , sizeof(struct ACK));
-	int receive_error = 0;
+	//printf("Message::receiveACK() entering.\n");
+	memset(_ACK, 0 , sizeof(struct ACK));
+	uint8_t buff[4];
+	uint8_t read_num = 0;
 
-	receive_error += read(fd, (void*) &(_ACK->starter), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->O), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->K), sizeof(uint8_t));
-	receive_error += read(fd, (void*) &(_ACK->check_sum), sizeof(uint8_t));
-
-	if(receive_error != 4)
+	//printf("Message::receiveACK() looping.\n");
+	while(read_num < sizeof(struct ACK))
 	{
-		printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
-		return -1;
+		int temp = read(fd, buff + read_num, sizeof(struct ACK));
+
+		//printf("Message::receiveACK() temp = %d.\n", temp);
+		
+		if(temp == -1)
+		{
+			printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
+			return -1;
+		}
+
+		read_num += temp;
 	}
+
+/*
+	for(int i = 0; i < 4; i++)
+	{
+		printf("%x ", buff[i]);
+	}
+*/
+
+	//printf("\nMessage::receiveACK() exiting loop.\n");
+	
+	_ACK->starter = buff[0];
+	_ACK->O = buff[1];
+	_ACK->K = buff[2];
+	_ACK->check_sum = buff[3];
+
+	//printf("Message::receiveACK() exiting assignment.\n");
 
 	if(_ACK->starter == STARTER && _ACK->O == 0x4f && _ACK->K == 0x4b && _ACK->check_sum == 0x9a)
 	{
+		//printf("Message::receiveACK() returning 1.\n");
 		return 1;
 	}
 	
