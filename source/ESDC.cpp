@@ -32,9 +32,10 @@
 #include "intel_board/intel_board.h"
 #include <stdio.h>
 #include <stdlib.h>
-
+#include <signal.h>
 using namespace std;
 
+void exit_routine(int arg);
 char *dir_path;
 int main(int argc, char ** argv) 
 {
@@ -44,7 +45,8 @@ int main(int argc, char ** argv)
         uint8_t mode = 1;
         //img_source default using Cellphone
         uint8_t img_source = 0;
-        
+        signal(SIGTERM,exit_routine);
+        signal(SIGINT,exit_routine);
         if(argc >= 2)
         {
         	//the user has set the mode
@@ -88,3 +90,9 @@ int main(int argc, char ** argv)
         return 0;
 }
 
+void exit_routine(int arg)
+{
+        printf("Executing the pre-registered exit routine\n");
+        free(dir_path);
+        exit(-1);
+}

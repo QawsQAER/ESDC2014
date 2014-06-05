@@ -31,7 +31,14 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 
 intel_board::~intel_board()
 {
+	printf("~intel_board(): deleting Image_processor\n");
+	delete this->image_processor;
+	printf("~intel_board(): deleting Motion_controller\n");
+	delete this->motion_controller;
+	printf("~intel_board(): deleting UI\n");
+	delete this->ui;
 	printf("Bye bye intel board\n");
+
 }
 
 uint8_t intel_board::main_function()
@@ -103,6 +110,7 @@ uint8_t intel_board::main_function()
 					break;
 				
 				case ROBOT_READY:
+					//the robot will be waiting for user's specific command to continue
 					this->robot_ready();
 					break;
 				
@@ -208,6 +216,10 @@ uint8_t intel_board::robot_approach_ref()
 
 uint8_t intel_board::robot_wait_for_adjustment()
 {
+
 	printf("intel_board::robot_wait_for_adjustment() running\n");
+	//TODO:
+	//should be waiting for adjustment here.
+	this->ui->send_finished_ack();
 	return 1;
 }

@@ -67,6 +67,8 @@ public:
 	uint8_t robot_analyze_image();
 	uint8_t robot_approach_ref();
 	uint8_t robot_wait_for_adjustment();
+
+	uint8_t robot_exit();
 };
 
 #endif
