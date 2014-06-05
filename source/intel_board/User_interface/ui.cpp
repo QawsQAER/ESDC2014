@@ -134,112 +134,111 @@ void UI::contention()
 }			
 
 
-int UI::wait_command()
+command_type UI::wait_command()
 {
 		int read_type=read_msg();
 
 		switch(read_type){
 			case -1: 			
 			printf("Error: Received undefined message from other client.\n");
-			break;
+			return undefined;
 
 			case 1:
 			printf("Command: connect request\n");
 			send_established();
-			break;
+			return connect_request;
 
 			case 2:
 			printf("Command: start movement\n");
 			send_start_ack();
-			break;
+			return start_movement;
 
 			case 3:
 			printf("Command: confirm picture\n");
 			send_comfrim_ack();
-			break;
+			return confirm_picture;
 
 
 			case 4:
 			//use pattern1
 			printf("Command:  pattern1\n");
 			send_pattern1_ack();
-			break;
+			return pattern_1;
 
 
 			case 5:
 			printf("Command: pattern 2\n");
 			send_pattern2_ack();
-			break;
+			return pattern_2;
 
 			case 6:
 			printf("Command: pattern3\n");
 			send_pattern3_ack();
-			break;
+			return pattern_3;
 
 			case 7:
 			printf("Command: pattern4\n");
 			send_pattern4_ack();
-			break;
+			return pattern_4;
 
 			case 8:
 			printf("Command: car forward\n");
 			send_car_forward_ack();
-			break;
+			return car_forward;
 
 			case 9:
 			printf("Command: car backward\n");
 			send_car_backward_ack();
-			break;
+			return car_backward;
 
 			case 10:
 			printf("Command: car left\n");
 			send_car_left_ack();
-			break;
+			return car_left;
 
 			case 11:
 			printf("Command: car right\n");
 			send_car_right_ack();
-			break;
+			return car_right;
 
 			case 12:
 			printf("Command: camera up\n");
 			send_camera_forward_ack();
-			break;
+			return camera_forward;
 
 			case 13:
 			printf("Command: camera down\n");
 			send_camera_backward_ack();
-			break;
+			return camera_backward;
 
 			case 14:
 			printf("Command: camera left\n");
 			send_camera_left_ack();
-			break;
+			return camera_left;
 
 			case 15:
 			printf("Command: camera right\n");
 			send_camera_right_ack();
-			break;
+			return camera_right;
 
 			case 16:
 			printf("Command: lift up\n");
 			send_lift_up_ack();
-			break;
+			return lift_up;
 
 			case 17:
 			printf("Command: lift down\n");
 			send_lift_down_ack();
-			break;
+			return lift_down;
 
 
 			default:
 			printf("Error: undefined read_type.\n");
-			break;
+			return undefined;
 
 
 		}
 
-			return read_type;
 }
 
 
@@ -273,7 +272,7 @@ void UI::send_finished_ack()
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="fa";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
-
+	printf("send_finished_ack\n");
 	send_msg();
 }
 
