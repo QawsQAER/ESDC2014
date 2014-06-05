@@ -61,7 +61,11 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		{
 			case EVAL_CENTERING:
 				if(this->centering(detect))
+				{
 					this->eval_state = EVAL_ZOOMING;
+					printf("\n!!!!!!!\n!!!!!!!\nMotion_controller::evaluate_image -> centering DONE!\n!!!!!\n!!!!!\n");
+					return 1;
+				}
 			break;
 			case EVAL_ZOOMING:
 				if(this->zoom_in_out(detect))
@@ -84,7 +88,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	printf("Motion_controller::centering() running\n");
 	uint8_t okay_image = 1;
 	//allow positive or negative error in 50 pixels
-	uint16_t threshold_x = 20, threshold_y = 20;
+	uint16_t threshold_x = 50, threshold_y = 50;
 	uint16_t exp_center_x = 320, exp_center_y = 240;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);

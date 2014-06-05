@@ -174,8 +174,33 @@ uint8_t intel_board::robot_find_target()
 	uint8_t counter = 0;
 	uint16_t dis = 300;
 	uint16_t degree = 30;
+	useconds_t usec = 1000000;
+		
+	printf("intel_board: sleep till the camera is stable\n");
+	printf("5\n");
+	usleep(usec);
+	printf("4\n");
+	usleep(usec);
+	printf("3\n");
+	usleep(usec);
+	printf("2\n");
+	usleep(usec);
+	printf("1\n");
+	usleep(usec);
 	while(!this->image_processor->target_in_scope())
 	{
+
+		printf("intel_board: sleep till the camera is stable\n");
+		printf("5\n");
+		usleep(usec);
+		printf("4\n");
+		usleep(usec);
+		printf("3\n");
+		usleep(usec);
+		printf("2\n");
+		usleep(usec);
+		printf("1\n");
+		usleep(usec);
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
 
@@ -213,6 +238,8 @@ uint8_t intel_board::robot_find_target()
 			default:
 			break;
 		}
+		printf("intel_board: sleep till the camera is stable\n");
+		usleep(5000);
 	}
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n\n\n");
 	return 1;
