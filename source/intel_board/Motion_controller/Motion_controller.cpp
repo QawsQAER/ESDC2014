@@ -14,6 +14,7 @@ Motion_controller::~Motion_controller()
 
 uint8_t Motion_controller::init()
 {
+	printf("Motion_controller::init() running\n");
 	Message msg;
 	msg.CarRotateLeftDegree(360);
 	msg.sendMessage(this->Com->fd);
@@ -61,37 +62,31 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	int diff_y = center.y - exp_center_y;
 	//compute length per pixel 
 	float p = (float) 1700 / (float) detect.height;
+
 	uint16_t move_x = 0;
 	if(abs(diff_x) > threshold_x)
 	{
 		okay_image = 0;
-		//push movement to right or left
+		//movement to right or left
 		printf("Motion_controller centering(): diff_x is %d\n",diff_x);
 		if(diff_x < 0)
 		{	
 			//should move left
-			move_x = ceil(abs(diff_x) * p);
+			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveLeftMM(move_x);
 			msg.sendMessage(this->Com->fd);
-			//cmd_queue.push(msg);
 		}
 		else
 		{
 			//should move right
-			move_x = ceil(abs(diff_x) * p);
+			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
 			Message msg;
 			msg.CarMoveRightMM(move_x);
 			msg.sendMessage(this->Com->fd);
-			//cmd_queue.push(msg);
 		}
-	}
-	if(abs(diff_y) > threshold_y)
-	{
-		okay_image = 0;
-		//push lifter movement
 	}
 
 	return okay_image;
@@ -109,6 +104,13 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	return 1;
 }
 
+uint16_t Motion_controller::bound_dis(const uint32_t &dis)
+{
+	if(dis > 0xffff)
+		return 0xffff;
+	else
+		return (uint16_t) dis;
+}
 void Motion_controller::send_cmd()
 {
 	return ;
@@ -119,5 +121,47 @@ void Motion_controller::send_cmd()
 		//cmd_queue.front().sendMessage(this->Com->fd);
 		cmd_queue.pop();
 	}
-	
+}
+
+void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
+{
+	Message msg;
+	switch(dir)
+	{
+		case 0://forward
+			msg.CarMoveUpMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+			
+		case 1://backward
+			msg.CarMoveDownMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		case 2://left
+			msg.CarMoveLeftMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		case 3://right
+			msg.CarMoveRightMM(mm);
+			msg.sendMessage(this->Com->fd);
+		break;
+		default:
+		break;
+	}
+	return ;
+}
+
+void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
+{
+	Message msg;
+	if(dir == 0)
+	{
+		msg.CarRotateRightDegree(degree);
+	}
+	else
+	{
+		msg.CarRotateLeftDegree(degree);
+	}
+	msg.sendMessage(this->Com->fd);
+	return ;
 }

@@ -177,10 +177,46 @@ uint8_t intel_board::robot_ready()
 uint8_t intel_board::robot_find_target()
 {
 	printf("intel_board::robot_find_target() running\n");
+	uint8_t state = 0;
+	uint8_t counter = 0;
+	uint16_t dis = 300;
+	uint16_t degree = 30;
 	while(!this->image_processor->target_in_scope())
 	{
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
+		
+		switch(state)
+		{
+			case 0://repeat state
+				if(counter < 3)
+				//do nothing
+					counter++;
+				else
+					state = 1;
+				break;
+			case 1://forward 300mm
+				this->motion_controller->move(dis,0);
+				state = 2;
+				break;
+			case 2://backward 600mm
+				this->motion_controller->move(dis * 2,1);
+				state = 3;
+				break;
+			case 3:
+				this->motion_controller->move(dis,0);
+				this->motion_controller->move(dis,2);
+				state = 4;
+				break;
+			case 4:
+				this->motion_controller->move(dis * 2,3);
+				state = 5;
+				break;
+			case 5:
+				this->motion_controller->rotate(degree,0);
+			default:
+			break;
+		}
 	}
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n\n\n");
 	return 1;
