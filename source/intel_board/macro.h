@@ -1,5 +1,5 @@
 #ifndef _MACRO_H
-#define _MACRO_h
+#define _MACRO_H
 
 #define IMG_SOURCE_CELLPHONE 0
 #define IMG_SOURCE_WEBCAM 1
