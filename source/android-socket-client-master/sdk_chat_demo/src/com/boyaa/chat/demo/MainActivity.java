@@ -61,7 +61,7 @@ import com.boyaa.push.lib.service.Packet;
 public class MainActivity extends Activity {
 
 	private Client user=null;
-	private EditText ip,port,recContent;
+	private EditText ip,status;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -108,14 +108,15 @@ public class MainActivity extends Activity {
 //		findViewById(R.id.clear).setOnClickListener(listener);
 		
 		ip=(EditText) findViewById(R.id.ip);
-		port=(EditText) findViewById(R.id.port);
+		status=(EditText) findViewById(R.id.status);
+		
 		
 		
 //		sendContent=(EditText) findViewById(R.id.sendContent);
 //		recContent=(EditText) findViewById(R.id.recContent);
 //		ip.setText("172.20.10.7");
-		ip.setText("192.168.43.203");
-		port.setText("60000");
+		ip.setText("192.168.43.142");
+		status.setText("off");
 		
 //		ip.clearFocus();  
 //		port.clearFocus();  
@@ -175,100 +176,100 @@ public class MainActivity extends Activity {
 					Log.v("equals",txt);
 					if(txt.equals("cr"))
 					{
-						port.setText("connected");
+						status.setText("connected");
 					}
 					
 					else if(txt.equals("sm"))
 					{
-						port.setText("start");
+						status.setText("start");
 					}
 					
 					else if(txt.equals("cp"))
 					{
-						port.setText("confrim");
+						status.setText("confrim");
 					}
 					
 					else if(txt.equals("p1"))
 					{
-						port.setText("pattern 1");
+						status.setText("pattern 1");
 					}
 					
 					else if(txt.equals("p2"))
 					{
-						port.setText("pattern 2");
+						status.setText("pattern 2");
 					}
 					
 					else if(txt.equals("p3"))
 					{
-						port.setText("pattern 3");
+						status.setText("pattern 3");
 					}
 					
 					else if(txt.equals("p4"))
 					{
-						port.setText("pattern 4");
+						status.setText("pattern 4");
 					}
 					
 					
 					else if(txt.equals("Up"))
 					{
-						port.setText("car forward");
+						status.setText("car forward");
 					}
 					
 					else if(txt.equals("Do"))
 					{
-						port.setText("car backward");
+						status.setText("car backward");
 					}
 					
 					else if(txt.equals("Le"))
 					{
-						port.setText("car left");
+						status.setText("car left");
 					}
 					
 					else if(txt.equals("Ri"))
 					{
-						port.setText("car right");
+						status.setText("car right");
 					}
 					
 					
 					else if(txt.equals("cU"))
 					{
-						port.setText("camera forward");
+						status.setText("camera forward");
 					}
 					
 					else if(txt.equals("cD"))
 					{
-						port.setText("camera backwrd");
+						status.setText("camera backwrd");
 					}
 					
 					else if(txt.equals("cL"))
 					{
-						port.setText("camera left");
+						status.setText("camera left");
 					}
 					
 					else if(txt.equals("cR"))
 					{
-						port.setText("camera right");
+						status.setText("camera right");
 					}
 					
 					else if(txt.equals("lu"))
 					{
-						port.setText("lift left");
+						status.setText("lift left");
 					}
 					
 					else if(txt.equals("ld"))
 					{
-						port.setText("lift right");
+						status.setText("lift right");
 					}
 					
 					
 					
 				else if(txt.equals("fa"))
 					{
-						port.setText("finished_ack");
+					status.setText("finished_ack");
 						
 					ImageView imageView;
 				    imageView = (ImageView)findViewById(R.id.image_view);
-				  String urlStr  =  "http://192.168.43.116:8080/photoaf.jpg";
+				  String urlStr  =  "http://192.168.43.1:8080/photoaf.jpg";
 				    //	"http://192.168.43.1:8080/photoaf.jpg";
 				 Bitmap bitmap = getHttpBitmap(urlStr);
 					 imageView.setImageBitmap(bitmap);
@@ -299,7 +300,7 @@ public class MainActivity extends Activity {
 				case R.id.open:
 //					user.open();
 //					user.close();
-					user.open(ip.getText().toString(), Integer.valueOf(port.getText().toString()));
+					user.open(ip.getText().toString(), 60000);
 					packet.pack("cr");
 					user.send(packet);
 					break;

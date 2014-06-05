@@ -36,16 +36,16 @@
 	                android:id="@+id/ip"
 	                android:layout_width="103dp"
 	                android:layout_height="wrap_content"
-	                android:layout_weight="0.14"
+	                android:layout_weight="0.07"
 	                android:hint="IP:" />
 
 	            <EditText
-	                android:id="@+id/port"
+	                android:id="@+id/status"
 	                android:layout_width="84dp"
 	                android:layout_height="match_parent"
 	                android:layout_weight="0.09"
 	                android:ems="10"
-	                android:hint="Port:" />
+	                android:hint="status" />
 
 	        </LinearLayout>
 
