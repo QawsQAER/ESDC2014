@@ -320,6 +320,8 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	//doing face detection
 	this->face_cascade.detectMultiScale(frame_gray, face_detect, 1.1, 2, 0, cv::Size(10, 10));
 	printf("run_face_detection: detect %d faces\n",face_detect.size());
+
+	//TODO: use color detection to filtered out the non-human color face
 	return 1;
 }
 
