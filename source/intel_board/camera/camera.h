@@ -26,7 +26,7 @@ public:
 
 	std::string photo();
 	std::string photo_af();
-	std::string photo_JPEG();
+	std::string photo_frame();
 
 	std::string take_photo_af();
 	void save_photo_af();

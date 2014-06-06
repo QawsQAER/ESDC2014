@@ -133,7 +133,7 @@ string Camera::photo_af()
         return path_temp_function;
 }
 
-string Camera::photo_JPEG()
+string Camera::photo_frame()
 {
 
         if(DEBUG_MODE) cout<<"Function:photo_JPEG()"<<endl;
@@ -153,7 +153,7 @@ string Camera::photo_JPEG()
 
              if(DEBUG_MODE) cout<<"set path finished"<<endl;
 
-       string str_command="wget  -O "+path_temp_function+" http://"+ip+"/shoot.jpg";
+       string str_command="wget  -O "+path_temp_function+" http://"+ip+"/shot.jpg";
 
      if(DEBUG_MODE) cout<<"convert command"<<endl;
 
