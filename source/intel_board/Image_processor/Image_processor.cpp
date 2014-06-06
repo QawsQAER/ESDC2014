@@ -101,7 +101,7 @@ uint8_t Image_processor::get_image_from_cellphone()
 	#ifdef AUTOFOCUS
 	strcpy(this->current_img_path,this->cam->photo_af().c_str());
 	#else
-	strcpy(this->current_img_path,this->cam->photo().c_str());
+	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 	#endif
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
@@ -327,24 +327,26 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	this->face_cascade.detectMultiScale(frame_gray, face_detect, 1.1, 2, 0, cv::Size(10, 10));
 	printf("run_face_detection: detect %d faces\n",face_detect.size());
 
+
 	//TODO: use color detection to filtered out the non-human color face
 	return 1;
 }
 
-cv::Mat Image_processor::getSkin(const cv::Mat &source_img)
+cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 {
 	int32_t Y_MIN = 0;
 	int32_t Y_MAX = 255;
 	int32_t Cr_MIN = 133;
 	int32_t Cr_MAX = 173;
 	int32_t Cb_MIN = 77;
-	int32_t Cb_MAX = 127;
+	int32_t Cb_MAX = 140;
 	cv::Mat result = source_img.clone();
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
 	cv::Scalar value = mean(result);
 	printf("Image_processor::getSkin average %lf\n",value[0]);
-	return result;
+	dest_img = result;
+	return value;
 }
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
@@ -378,13 +380,13 @@ uint8_t Image_processor::basic_face_detection()
  */
 uint8_t Image_processor::show_analyzed_img()
 {
-	cv::destroyWindow(this->winname);
-	cv::destroyWindow(this->skinwin);
-	cv::destroyWindow(this->edgewin);
+	//cv::destroyWindow(this->winname);
+	//cv::destroyWindow(this->skinwin);
+	//cv::destroyWindow(this->edgewin);
 
-	cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
-	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
-	cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
 	cv::moveWindow(this->winname,0,0);
 	
@@ -475,6 +477,39 @@ uint8_t Image_processor::basic_filter()
 		}
 	}
 
+	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
+	{
+		for(count_face = 0;count_face < this->face_detect.size();count_face++)
+		{
+			cv::Mat subImage = this->current_img(face_detect[count_face]);
+			cv::Scalar mean = this->getSkin(subImage,subImage);
+			printf("basic_filter() : mean of the detected face region %lf\n",mean[0]);
+			if(mean[0] > 100)
+			{
+				uint8_t factor = 1;
+				float height_factor = 7.5;
+				cv::Rect rect = face_detect[0];
+				cv::Rect face_rect = rect;
+				
+
+				rect.x = std::max(rect.x - factor * rect.width,0);
+				if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
+					rect.width = this->current_img.cols - rect.x;
+				else
+					rect.width = rect.width * (factor * 2 + 1);
+				
+				if(rect.y + rect.height * height_factor > this->current_img.rows)
+					rect.height = this->current_img.rows - rect.y;
+				else
+					rect.height = ceil(rect.height * height_factor);
+				if( float(rect.width) / float(rect.height) < 1 / 7 )
+				{
+					this->final_face_detect.push_back(face_rect);
+					this->final_body_detect.push_back(rect);
+				}
+			}
+		}
+	}
 /*
 	//if no body is detected after the filtering and a face is detected only once
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
@@ -630,7 +665,7 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
 	//this->show_analyzed_img();
 	cv::Mat tmp_img = this->analyzed_img.clone();
-	this->skin_img = this->getSkin(this->current_img);
+	this->getSkin(this->current_img,this->skin_img);
 	this->edge_img = this->edge_detection(this->current_img);
 	//run basic filter;
 	this->basic_filter();
