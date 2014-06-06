@@ -98,7 +98,11 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 uint8_t Image_processor::get_image_from_cellphone()
 {
 	//TODO: maybe check the length of the c_str() return value
+	#ifdef AUTOFOCUS
 	strcpy(this->current_img_path,this->cam->photo_af().c_str());
+	#else
+	strcpy(this->current_img_path,this->cam->photo().c_str());
+	#endif
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	if(!this->current_img.data)
@@ -338,7 +342,7 @@ cv::Mat Image_processor::getSkin(const cv::Mat &source_img)
 	cv::Mat result = source_img.clone();
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
-	Scalar value = mean(result);
+	cv::Scalar value = mean(result);
 	printf("Image_processor::getSkin average %lf\n",value[0]);
 	return result;
 }

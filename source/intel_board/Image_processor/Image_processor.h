@@ -46,7 +46,7 @@ private:
 	IMAGE_PROCESS_STATE state;
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
-
+	
 	char* current_img_path;
 	//this variable indicates where the frame for analysis comes from
 	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
