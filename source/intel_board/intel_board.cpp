@@ -179,6 +179,7 @@ uint8_t intel_board::robot_find_target()
 	this->robot_countdown(sec);	
 	while(!this->image_processor->target_in_scope())
 	{
+		//TODO: may adjust the position according to the initial detection results
 		this->robot_countdown(sec);
 		//rotate 30 degree every time if no target is detected
 		printf("intel_board::robot_find_target(): finding target again\n");
@@ -257,6 +258,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	printf("intel_board::robot_wait_for_adjustment() running\n");
 	//TODO:
 	//should be waiting for adjustment here.
+
+	this->image_processor->cam->save_photo_af();
 	this->ui->send_finished_ack();
 	return 1;
 }

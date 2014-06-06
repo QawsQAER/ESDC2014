@@ -27,6 +27,8 @@
 #endif
 
 extern char *dir_path;
+extern char *PATH_TEMP;
+
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -38,11 +40,13 @@ class Image_processor
 private:
 	//the name of the displayed window
 	char winname[WINNAME_LENGTH];
+	char skinwin[WINNAME_LENGTH];
+	char edgewin[WINNAME_LENGTH];
 	//the state of the Image_processor
 	IMAGE_PROCESS_STATE state;
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
-
+	
 	char* current_img_path;
 	//this variable indicates where the frame for analysis comes from
 	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
@@ -50,8 +54,7 @@ private:
 
 	//cap is useful when img_source == IMG_SOURCE_WEBCAM
 	cv::VideoCapture *cap;
-	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
-	Camera *cam;
+
 
 //-----------------body DETECTION RELATED VARIABLE--------------------------------------------
 	//body_detect stores the rectangle of the body detected in the current_img
@@ -84,6 +87,9 @@ public:
 	Image_processor(uint8_t img_source);
 	~Image_processor();
 
+	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
+	Camera *cam;
+	
 	//these variables stores the detection results
 	std::vector<cv::Rect> body_detect;
 	std::vector<cv::Rect> face_detect;
@@ -92,7 +98,8 @@ public:
 	//these variables stores the current image that is being processed
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
-
+	cv::Mat skin_img;
+	cv::Mat edge_img;
 	//these variables stores the expected image parameters
 	
 	float exp_w,exp_h; //expected width and height
@@ -137,7 +144,10 @@ public:
 	*/
 	uint8_t basic_face_detection();
 	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
+	cv::Mat getSkin(const cv::Mat &source_img);
+	
 	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
+
 
 	/*
 	

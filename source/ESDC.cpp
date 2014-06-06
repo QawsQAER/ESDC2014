@@ -36,8 +36,12 @@
 #include <signal.h>
 using namespace std;
 
+void generate_dir();
 void exit_routine(int arg);
 char *dir_path;
+char *PATH_TEMP = NULL;
+unsigned char continuity = 0;
+
 intel_board *robot;
 
 int main(int argc, char ** argv) 
@@ -48,6 +52,7 @@ int main(int argc, char ** argv)
         uint8_t mode = 1;
         //img_source default using Cellphone
         uint8_t img_source = 0;
+        generate_dir();
         signal(SIGTERM,exit_routine);
         signal(SIGINT,exit_routine);
         if(argc >= 2)
@@ -55,7 +60,7 @@ int main(int argc, char ** argv)
         	//the user has set the mode
         	mode = atoi(argv[1]);
                 //if the mode is image processing mode
-                switch(mode)
+                switch(mode)    
                 {
                         case 0://case for auto mode
                                 printf("The robot is going to initiate in default mode\n");
@@ -89,7 +94,7 @@ int main(int argc, char ** argv)
         robot = new intel_board(mode,img_source);
         robot->main_function();
 
-        free(dir_path);
+        exit_routine(0);
         return 0;
 }
 
@@ -98,5 +103,33 @@ void exit_routine(int arg)
         printf("\n\n\n\nExecuting the pre-registered exit routine\n");
         delete robot;
         free(dir_path);
-        exit(-1);
+        free(PATH_TEMP);
+        exit(0);
+}
+
+void generate_dir()
+{
+        printf("generate_dir running\n");
+        PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+        char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
+        time_t timestamp = time(NULL);
+        struct tm *current_time = gmtime(&timestamp);
+        //get the filename in format of month-day_hour:minute:second
+        sprintf(filename,"%d_%d_%d_%d_%d\0",
+                        current_time->tm_mon,
+                        current_time->tm_mday,
+                        current_time->tm_hour,
+                        current_time->tm_min,
+                        current_time->tm_sec);
+        strcpy(PATH_TEMP,filename);
+        free(filename);
+
+        printf("creating dir named as %s\n",PATH_TEMP);
+        if(mkdir(PATH_TEMP,S_IRWXU) < 0)
+        {
+                printf("fail to create dir %s\n",PATH_TEMP);
+                exit(0);
+        }
+
+        strcat(PATH_TEMP,"/");
 }
