@@ -144,7 +144,7 @@ public:
 	*/
 	uint8_t basic_face_detection();
 	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
-	cv::Mat getSkin(const cv::Mat &source_img);
+	cv::Scalar getSkin(const cv::Mat &source_img,cv::Mat &dest_img);
 	
 	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
 
