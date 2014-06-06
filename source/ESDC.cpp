@@ -40,7 +40,7 @@ void generate_dir();
 void exit_routine(int arg);
 char *dir_path;
 char *PATH_TEMP = NULL;
-unsigned char continuity = 0;
+unsigned char continuity = 1;
 
 intel_board *robot;
 

@@ -477,7 +477,7 @@ uint8_t Image_processor::basic_filter()
 		}
 	}
 
-	if(this->final_body_detect.size() == 0 && this->face_detect.size() >= 1)
+	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
 	{
 		for(count_face = 0;count_face < this->face_detect.size();count_face++)
 		{
@@ -489,7 +489,8 @@ uint8_t Image_processor::basic_filter()
 				uint8_t factor = 1;
 				float height_factor = 7.5;
 				cv::Rect rect = face_detect[0];
-				this->final_face_detect.push_back(rect);
+				cv::Rect face_rect = rect;
+				
 
 				rect.x = std::max(rect.x - factor * rect.width,0);
 				if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
@@ -501,7 +502,11 @@ uint8_t Image_processor::basic_filter()
 					rect.height = this->current_img.rows - rect.y;
 				else
 					rect.height = ceil(rect.height * height_factor);
-				this->final_body_detect.push_back(rect);
+				if( float(rect.width) / float(rect.height) < 1 / 7 )
+				{
+					this->final_face_detect.push_back(face_rect);
+					this->final_body_detect.push_back(rect);
+				}
 			}
 		}
 	}

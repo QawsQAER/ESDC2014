@@ -19,6 +19,6 @@ extern unsigned char continuity;
 
 enum command_type{undefined,connect_request,start_movement,confirm_picture,pattern_1,pattern_2,pattern_3,pattern_4,car_forward,car_backward,car_left,car_right,camera_forward,camera_backward,camera_left,camera_right,lift_up,lift_down};
 
-//#define AUTOFOCUS
+#define AUTOFOCUS
 
 #endif
