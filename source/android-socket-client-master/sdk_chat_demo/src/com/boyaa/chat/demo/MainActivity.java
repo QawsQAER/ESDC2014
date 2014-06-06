@@ -1,71 +1,46 @@
 package com.boyaa.chat.demo;
 	import android.annotation.SuppressLint;
 import android.app.Activity;  
+
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;  
-import java.net.URLConnection;  
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;  
 
-	
-import java.io.InputStream;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import android.app.Activity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebSettings;
+import android.webkit.WebSettings.PluginState;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
-
-
-
-
-
-	import android.os.Bundle;  
-import android.os.Environment;  
-import android.widget.MediaController;  
 import android.widget.TextView;
-import android.widget.VideoView;  
-import android.widget.ImageView;  
-import android.app.Activity;
-import android.content.Context;
-import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Calendar;
 
-
-
-
-
-
-import android.graphics.drawable.Drawable;
 import com.boyaa.chat.R;
 import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
 
-@SuppressLint("SimpleDateFormat")
+@SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled" })
 public class MainActivity extends Activity {
 
 	private Client user=null;
 	private EditText ip;
 	private TextView status;
+	private WebView myWebView;
 	
 	private String camera_ip="192.168.1.1";
 	private String board_ip="192.168.1.136";
@@ -74,17 +49,14 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
-		
-		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-		setContentView(R.layout.activity_main);
 		
+		setContentView(R.layout.activity_main);
+		initView();
 		
 	
         //显示
-    
-     
-		initView();
+		
 		user=new Client(this.getApplicationContext(),socketListener);
 		
 		
@@ -101,6 +73,24 @@ public class MainActivity extends Activity {
 		findViewById(R.id.comfrim).setOnClickListener(listener);
 		findViewById(R.id.start).setOnClickListener(listener);
 		
+		findViewById(R.id.next).setOnClickListener(listener);
+		findViewById(R.id.pattern1).setOnClickListener(listener);
+		findViewById(R.id.pattern2).setOnClickListener(listener);
+		
+		ip=(EditText) findViewById(R.id.ip);
+		status=(TextView) findViewById(R.id.status);
+		
+		ip.setText(board_ip);
+		status.setText("off");
+	
+	}
+	
+	
+	private void sendview()
+	{
+		
+		findViewById(R.id.Back).setOnClickListener(listener);
+		
 		findViewById(R.id.Up).setOnClickListener(listener);
 		findViewById(R.id.Down).setOnClickListener(listener);
 		findViewById(R.id.Left).setOnClickListener(listener);
@@ -113,35 +103,11 @@ public class MainActivity extends Activity {
 		
 		findViewById(R.id.liftUp).setOnClickListener(listener);
 		findViewById(R.id.liftDown).setOnClickListener(listener);
-		findViewById(R.id.pattern1).setOnClickListener(listener);
-		findViewById(R.id.pattern2).setOnClickListener(listener);
-		
-//		findViewById(R.id.clear).setOnClickListener(listener);
-		
-		ip=(EditText) findViewById(R.id.ip);
-		status=(TextView) findViewById(R.id.status);
-		
-		
-		
-//		sendContent=(EditText) findViewById(R.id.sendContent);
-//		recContent=(EditText) findViewById(R.id.recContent);
-//		ip.setText("172.20.10.7");
-		ip.setText(board_ip);
-		status.setText("off");
-		
-//		ip.clearFocus();  
-//		port.clearFocus();  
-//		
-//		
-//		InputMethodManager imm = (InputMethodManager)getSystemService(Context.INPUT_METHOD_SERVICE); 
-//		imm.hideSoftInputFromWindow(ip.getWindowToken(),0);  
-//		imm.hideSoftInputFromWindow(port.getWindowToken(),0);  
-		
-//		recContent.setText("Connection: OFF");
-		
-		
-		
 	}
+	
+	
+	
+	
 	
 	
 	public static Bitmap getHttpBitmap(String url){
@@ -220,7 +186,7 @@ public class MainActivity extends Activity {
 						status.setText("pattern 4");
 					}
 					
-					
+					/*
 					else if(txt.equals("Up"))
 					{
 						status.setText("car forward");
@@ -271,7 +237,7 @@ public class MainActivity extends Activity {
 					{
 						status.setText("lift right");
 					}
-					
+					*/
 					
 					
 				else if(txt.equals("fa"))
@@ -303,14 +269,10 @@ public class MainActivity extends Activity {
 					 
 					 
 					 
-					 saveBitmap(bitmap);
+//					 saveBitmap(bitmap);
 					 
-					 
-					 
-					 
-					 
-					 
-					}
+				}
+				
 					
 				}
 			});
@@ -319,14 +281,13 @@ public class MainActivity extends Activity {
 	
 	private OnClickListener listener=new OnClickListener() {
 		Packet packet=new Packet();
+		@SuppressWarnings("deprecation")
 		@Override
 		public void onClick(View v) {
 			switch(v.getId())
 			{
 			
 				case R.id.open:
-//					user.open();
-//					user.close();
 					user.open(ip.getText().toString(), 60000);
 					packet.pack("cr");
 					user.send(packet);
@@ -337,25 +298,68 @@ public class MainActivity extends Activity {
 					
 					packet.pack("sm");
 					user.send(packet);
-//					user.receive();
 					break;
 					
 				case R.id.comfrim:	
 					
 					packet.pack("cp");
 					user.send(packet);
-//					user.receive();
+					break;
+					
+				case R.id.next:	
+					setContentView(R.layout.second);
+					sendview();
+					  myWebView = (WebView) findViewById(R.id.WebView);
+					
+					WebSettings setting=myWebView.getSettings();
+					
+	                  setting.setJavaScriptEnabled(true);     
+	                  setting.setPluginState(PluginState.ON);
+	                  setting.setAllowFileAccess(true);
+	                  setting.setSupportZoom(true); //可以缩放
+	                  setting.setBuiltInZoomControls(true); //显示放大缩小 controler                //设置出现缩放工具
+	                  
+	                  myWebView.setWebViewClient(new WebViewClient(){  
+	                      @Override  
+	                      public boolean shouldOverrideUrlLoading(WebView view, String url) {  
+	                          view.loadUrl(url);  
+	                          return true;  
+	                      }  
+	                  });  
+	                  
+	                  myWebView.addJavascriptInterface(new Object() {         
+	                      public void clickOnAndroid() {         
+	                          View mHandler = null;
+							mHandler.post(new Runnable() {         
+	                              public void run() {         
+	                            	  myWebView.loadUrl("javascript:wave()");         
+	                              }         
+	                          });         
+	                      }         
+	                  }, "demo"); 
+					
+	                  
+	                 
+	                  
+	                  
+					String urlweb="http://"+camera_ip.toString()+":8080/jsfs.html";
+					myWebView.loadUrl(urlweb);
+					break;
+					
+					
+				case R.id.Back:	
+					
+					setContentView(R.layout.activity_main);
+					initView();
 					break;
 					
 					
 				case R.id.Up:
-//					packet.pack(sendContent.getText().toString());
 					
 					packet.pack("Up");
 					
 					user.send(packet);
-//					user.receive();
-//					sendContent.setText("");
+
 					break;
 					
 					
@@ -366,7 +370,6 @@ public class MainActivity extends Activity {
 					packet.pack("Le");
 					
 					user.send(packet);
-//					user.receive();
 					break;
 					
 				case R.id.Right:
@@ -374,23 +377,18 @@ public class MainActivity extends Activity {
 				packet.pack("Ri");
 					
 					user.send(packet);
-//					user.receive();
 					break;
 					
 				case R.id.Down:
 				packet.pack("Do");
 					
 					user.send(packet);
-//					user.receive();	
 					break;
 					
 				case R.id.cUp:
-//					packet.pack(sendContent.getText().toString());
 					packet.pack("cU");
 					
 					user.send(packet);
-//					user.receive();
-//					sendContent.setText("");
 					break;
 					
 					
@@ -399,14 +397,12 @@ public class MainActivity extends Activity {
 					
 						packet.pack("cL");
 				user.send(packet);
-//				user.receive();
 					break;
 					
 				case R.id.cRight:
 					packet.pack("cR");
 				
 					user.send(packet);
-//					user.receive();	
 					break;
 					
 				case R.id.cDown:
@@ -415,7 +411,6 @@ public class MainActivity extends Activity {
 				packet.pack("cD");
 					
 					user.send(packet);
-//					user.receive();	
 					break;
 					
 					
@@ -424,7 +419,6 @@ public class MainActivity extends Activity {
 				packet.pack("lu");
 					
 					user.send(packet);
-//					user.receive();	
 					break;
 					
 					
@@ -432,17 +426,15 @@ public class MainActivity extends Activity {
 					packet.pack("ld");
 					
 					user.send(packet);
-//					user.receive();
 			
 					break;
-						
+					
 					
 				case R.id.pattern1:	
 					
 			packet.pack("p1");
 					
 					user.send(packet);
-//					user.receive();
 					break;
 					
 					
@@ -450,24 +442,28 @@ public class MainActivity extends Activity {
 					
 				packet.pack("p2");
 					user.send(packet);
-//					user.receive();
 					break;
-					
-//				case R.id.clear:
-//					recContent.setText("");
-//					break;
+
 			}
 		}
 	};
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		if(keyCode==KeyEvent.KEYCODE_BACK)
+		 if ((keyCode == KeyEvent.KEYCODE_BACK) &&   myWebView .canGoBack()) {  
+			 
+			 myWebView.goBack();         
+	                   return true;         
+	        }    
+		 else	if(keyCode==KeyEvent.KEYCODE_BACK)
 		{
 			android.os.Process.killProcess(android.os.Process.myPid());
 		}
+		      
+		
 		return super.onKeyDown(keyCode, event);
 	}
+	
 	
 	
 	public void saveBitmap( Bitmap bitmap) {

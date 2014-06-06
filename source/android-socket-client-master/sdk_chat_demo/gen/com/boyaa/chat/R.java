@@ -22,30 +22,34 @@ public final class R {
         public static final int ic_launcher=0x7f020002;
     }
     public static final class id {
-        public static final int Down=0x7f070007;
-        public static final int Left=0x7f070008;
-        public static final int Right=0x7f070009;
-        public static final int TextView01=0x7f070005;
-        public static final int Up=0x7f070006;
-        public static final int cDown=0x7f07000c;
-        public static final int cLeft=0x7f07000e;
-        public static final int cRight=0x7f07000d;
-        public static final int cUp=0x7f07000b;
-        public static final int comfrim=0x7f070004;
-        public static final int image_view=0x7f070014;
+        public static final int Back=0x7f070009;
+        public static final int Down=0x7f07000c;
+        public static final int Left=0x7f07000d;
+        public static final int Right=0x7f07000e;
+        public static final int Up=0x7f07000b;
+        public static final int WebView=0x7f070017;
+        public static final int cDown=0x7f070014;
+        public static final int cLeft=0x7f070015;
+        public static final int cRight=0x7f070016;
+        public static final int cUp=0x7f070013;
+        public static final int comfrim=0x7f070005;
+        public static final int image_view=0x7f070008;
         public static final int ip=0x7f070000;
-        public static final int lift=0x7f07000f;
         public static final int liftDown=0x7f070011;
         public static final int liftUp=0x7f070010;
-        public static final int open=0x7f070002;
-        public static final int pattern1=0x7f070012;
-        public static final int pattern2=0x7f070013;
-        public static final int start=0x7f070003;
+        public static final int next=0x7f070002;
+        public static final int open=0x7f070003;
+        public static final int pattern1=0x7f070006;
+        public static final int pattern2=0x7f070007;
+        public static final int start=0x7f070004;
         public static final int status=0x7f070001;
-        public static final int textView2=0x7f07000a;
+        public static final int text_camera=0x7f070012;
+        public static final int text_car=0x7f07000a;
+        public static final int text_lift=0x7f07000f;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
+        public static final int second=0x7f030001;
     }
     public static final class string {
         public static final int action_settings=0x7f040001;
