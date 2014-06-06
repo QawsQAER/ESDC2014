@@ -39,7 +39,9 @@ Image_processor::Image_processor(uint8_t img_source)
 
 	printf("Constructing Image processor\n");
 	this->state = IMAGE_PROCESS_INIT;
-	strcpy(this->winname,"hello, world");
+	strcpy(this->winname,"main window");
+	strcpy(this->skinwin,"skin window");
+	strcpy(this->edgewin,"edge window");
 	this->win_exist = 0;
 	this->img_source = img_source;
 	if(this->img_source == IMG_SOURCE_WEBCAM)
@@ -325,6 +327,19 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	return 1;
 }
 
+cv::Mat Image_processor::getSkin(const cv::Mat &source_img)
+{
+	int32_t Y_MIN = 0;
+	int32_t Y_MAX = 255;
+	int32_t Cr_MIN = 133;
+	int32_t Cr_MAX = 173;
+	int32_t Cb_MIN = 77;
+	int32_t Cb_MAX = 127;
+	cv::Mat result = source_img.clone();
+	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
+	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
+	return result;
+}
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	cv::Mat marked_img = source_img.clone();
@@ -358,20 +373,32 @@ uint8_t Image_processor::basic_face_detection()
 uint8_t Image_processor::show_analyzed_img()
 {
 	cv::destroyWindow(this->winname);
+	cv::destroyWindow(this->skinwin);
+	cv::destroyWindow(this->edgewin);
+
+	cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
 	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
+
 	cv::moveWindow(this->winname,0,0);
+	
 	cv::imshow(this->winname,this->analyzed_img);
-	/*
-	char k;
-	while( (k = cv::waitKey(0)) != 'n')
+	cv::imshow(this->skinwin,this->skin_img);
+	cv::imshow(this->edgewin,this->edge_img);
+	if(continuity == 0)
 	{
-		if(k == 'e')
-			exit(0);
-		printf("You have pressed %c %d\n",k,k);
+		char k;
+		while( (k = cv::waitKey(0)) != 'n')
+		{
+			if(k == 'e')
+				exit(0);
+			printf("You have pressed %c %d\n",k,k);
+		}
 	}
-	*/
-	//imshow does not block the main process any more
-	cv::waitKey(3000);
+	else
+	{//imshow does not block the main process any more
+		cv::waitKey(3000);
+	}
 	return 1;
 }
 /*
@@ -597,6 +624,8 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
 	//this->show_analyzed_img();
 	cv::Mat tmp_img = this->analyzed_img.clone();
+	this->skin_img = this->getSkin(this->current_img);
+	this->edge_img = this->edge_detection(this->current_img);
 	//run basic filter;
 	this->basic_filter();
 
@@ -606,16 +635,19 @@ uint8_t Image_processor::target_in_scope()
 
 	//cv::Mat img = this->edge_detection(this->current_img);
 	this->analyzed_img = this->concat_image(tmp_img,this->analyzed_img);
+	
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
 		return this->final_body_detect.size();
-	else 
+	else if(this->face_detect.size() == 0)
 	{
-		//delete the current image if no target is found in the scope
+		//delete the current image if no faces is found in the scope
 		remove(this->current_img_path);
 		return 0;
 	}
+	
+	return 0;
 }
 
 cv::Rect Image_processor::get_detection_result()

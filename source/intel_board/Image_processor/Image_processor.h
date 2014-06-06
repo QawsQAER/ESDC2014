@@ -40,6 +40,8 @@ class Image_processor
 private:
 	//the name of the displayed window
 	char winname[WINNAME_LENGTH];
+	char skinwin[WINNAME_LENGTH];
+	char edgewin[WINNAME_LENGTH];
 	//the state of the Image_processor
 	IMAGE_PROCESS_STATE state;
 	//the boolean variable which indicates whether there exist a window
@@ -96,7 +98,8 @@ public:
 	//these variables stores the current image that is being processed
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
-
+	cv::Mat skin_img;
+	cv::Mat edge_img;
 	//these variables stores the expected image parameters
 	
 	float exp_w,exp_h; //expected width and height
@@ -141,7 +144,10 @@ public:
 	*/
 	uint8_t basic_face_detection();
 	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
+	cv::Mat getSkin(const cv::Mat &source_img);
+	
 	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
+
 
 	/*
 	

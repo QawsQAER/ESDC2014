@@ -40,6 +40,8 @@ void generate_dir();
 void exit_routine(int arg);
 char *dir_path;
 char *PATH_TEMP = NULL;
+unsigned char continuity = 0;
+
 intel_board *robot;
 
 int main(int argc, char ** argv) 
@@ -128,4 +130,6 @@ void generate_dir()
                 printf("fail to create dir %s\n",PATH_TEMP);
                 exit(0);
         }
+
+        strcat(PATH_TEMP,"/");
 }
