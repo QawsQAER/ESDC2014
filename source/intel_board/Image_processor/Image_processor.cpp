@@ -101,7 +101,7 @@ uint8_t Image_processor::get_image_from_cellphone()
 	#ifdef AUTOFOCUS
 	strcpy(this->current_img_path,this->cam->photo_af().c_str());
 	#else
-	strcpy(this->current_img_path,this->cam->photo().c_str());
+	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 	#endif
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
@@ -338,7 +338,7 @@ cv::Mat Image_processor::getSkin(const cv::Mat &source_img)
 	int32_t Cr_MIN = 133;
 	int32_t Cr_MAX = 173;
 	int32_t Cb_MIN = 77;
-	int32_t Cb_MAX = 127;
+	int32_t Cb_MAX = 140;
 	cv::Mat result = source_img.clone();
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);

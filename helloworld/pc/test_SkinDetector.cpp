@@ -28,21 +28,32 @@ void exit_routine(int args)
 
 SkinDetector mySkinDetector;
 
-int main()
+int main(int argc, char **argv)
 {
 	signal(SIGTERM,exit_routine);
 	signal(SIGINT,exit_routine);
 	//open capture object at location zero (default location for webcam)
-	if(!capture.isOpened())
-	{
-		printf("failed to open the device\n");
-		exit(-1);
-	}
 	if(!faceDetectInit())
 	{
 		printf("Cannot Init face detector\n");
 		return -1;
 	}
+
+	if(argc == 2)
+	{
+		Mat img = imread(argv[1],CV_LOAD_IMAGE_COLOR);
+		detectAndDisplay(img);
+		Mat skinMat = mySkinDetector.getSkin(img);
+		imshow("Skin detection",skinMat);
+		waitKey(0);
+		return 0;
+	}
+	if(!capture.isOpened())
+	{
+		printf("failed to open the device\n");
+		exit(-1);
+	}
+
 	//set height and width of capture frame
 	//capture.set(CV_CAP_PROP_FRAME_WIDTH,320);
 	//capture.set(CV_CAP_PROP_FRAME_HEIGHT,480);

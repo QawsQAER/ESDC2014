@@ -8,9 +8,9 @@ SkinDetector::SkinDetector(void)
 Y_MIN  = 0;
 Y_MAX  = 255;
 Cr_MIN = 133;
-Cr_MAX = 173;
+Cr_MAX = 170;
 Cb_MIN = 77;
-Cb_MAX = 127;
+Cb_MAX = 140;
 }
 
 SkinDetector::~SkinDetector(void)
