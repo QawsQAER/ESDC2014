@@ -258,6 +258,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	printf("intel_board::robot_wait_for_adjustment() running\n");
 	//TODO:
 	//should be waiting for adjustment here.
+
+	this->image_processor->cam->save_photo_af();
 	this->ui->send_finished_ack();
 	return 1;
 }

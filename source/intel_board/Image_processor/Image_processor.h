@@ -27,6 +27,8 @@
 #endif
 
 extern char *dir_path;
+extern char *PATH_TEMP;
+
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -50,8 +52,7 @@ private:
 
 	//cap is useful when img_source == IMG_SOURCE_WEBCAM
 	cv::VideoCapture *cap;
-	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
-	Camera *cam;
+
 
 //-----------------body DETECTION RELATED VARIABLE--------------------------------------------
 	//body_detect stores the rectangle of the body detected in the current_img
@@ -84,6 +85,9 @@ public:
 	Image_processor(uint8_t img_source);
 	~Image_processor();
 
+	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
+	Camera *cam;
+	
 	//these variables stores the detection results
 	std::vector<cv::Rect> body_detect;
 	std::vector<cv::Rect> face_detect;

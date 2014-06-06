@@ -14,8 +14,6 @@ All the code with this header are under GPL open source license.
 
 #include "../macro.h"
 
-
-
 class Camera
 {
 public:
