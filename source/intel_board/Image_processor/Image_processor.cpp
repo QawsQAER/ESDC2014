@@ -378,13 +378,13 @@ uint8_t Image_processor::basic_face_detection()
  */
 uint8_t Image_processor::show_analyzed_img()
 {
-	cv::destroyWindow(this->winname);
-	cv::destroyWindow(this->skinwin);
-	cv::destroyWindow(this->edgewin);
+	//cv::destroyWindow(this->winname);
+	//cv::destroyWindow(this->skinwin);
+	//cv::destroyWindow(this->edgewin);
 
-	cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
-	cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
-	cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
 	cv::moveWindow(this->winname,0,0);
 	
