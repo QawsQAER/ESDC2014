@@ -338,6 +338,8 @@ cv::Mat Image_processor::getSkin(const cv::Mat &source_img)
 	cv::Mat result = source_img.clone();
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
+	Scalar value = mean(result);
+	printf("Image_processor::getSkin average %lf\n",value[0]);
 	return result;
 }
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)

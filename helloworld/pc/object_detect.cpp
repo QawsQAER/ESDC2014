@@ -11,8 +11,8 @@ int main(int argc, char ** argv)
 	VideoCapture cap(0);
 
 	//set the width and the height of frame captured from this camera
-	cap.set(CV_CAP_PROP_FRAME_WIDTH,320);
-	cap.set(CV_CAP_PROP_FRAME_HEIGHT,240);
+	//cap.set(CV_CAP_PROP_FRAME_WIDTH,320);
+	//cap.set(CV_CAP_PROP_FRAME_HEIGHT,240);
 	if(!cap.isOpened())
 	{
 		cout<<"Error: Failed to open camera"<<endl;
