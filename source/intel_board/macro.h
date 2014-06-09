@@ -21,4 +21,24 @@ enum command_type{undefined,connect_request,start_movement,confirm_picture,patte
 
 #define AUTOFOCUS
 
+
+
+
+#define E970_F_NUMBER 2.4
+#define E970_SENSOR_SIZE 1/3.2
+#define E970_SENSOR_DIAGONAL 5.68
+#define E970_SENSOR_WIDTH 4.54
+#define E970_SENSOR_HEIGHT 3.42
+ 
+
+#define PIXEL_HEIGHT 127/480 //127mm for a 480 pixel height
+#define PIXEL_WIDTH PIXEL_HEIGHT //consider PIXEL as a square
+#define FOCAL_LENGTH 43 //43 mm for 
+#define F_NUMBER 2.4
+#define SENSOR_DIAGONAL 5.68
+#define SENSOR_WIDTH 4.54
+#define SENSOR_HEIGHT 3.42
+
+
+
 #endif
