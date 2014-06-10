@@ -56,8 +56,15 @@ uint8_t Motion_controller::init()
 {
 	printf("Motion_controller::init() running\n");
 	Message msg;
-	msg.CarRotateLeftDegree(360);
+
+	msg.CameraPlatformYawClk(30);
 	msg.sendMessage(this->Com->fd);
+	msg.CameraPlatformYawCounterClk(60);
+	msg.sendMessage(this->Com->fd);
+	msg.CameraPlatformYawClk(30);
+	msg.sendMessage(this->Com->fd);
+
+	
 	printf("Motion_controller::init() returning\n");
 	return 1;
 }
