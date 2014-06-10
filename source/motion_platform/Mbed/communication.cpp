@@ -142,7 +142,10 @@ void Communication::parseMessage()
         {
             case 0: //checking starter
             {
-                //putByte('0', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('0', 1);
+                }
                 check_sum = 0;
 
                 if(_x == STARTER)
@@ -158,7 +161,10 @@ void Communication::parseMessage()
 
             case 1: //checking action_type
             {
-                //putByte('1', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('1', 1);
+                }
                 check_sum += _x;
                 action_type = _x;
                 if(action_type == 0 || action_type == 1 || action_type == 2)
@@ -174,7 +180,10 @@ void Communication::parseMessage()
 
             case 2: //move_dis upper 4 bits
             {
-                //putByte('2', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('2', 1);
+                }
                 check_sum += _x;
                 move_dis = _x << 8;
                 state_IntelToMbed++;
@@ -183,7 +192,10 @@ void Communication::parseMessage()
 
             case 3: //move_dis lower 4 bits
             {
-                //putByte('3', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('3', 1);
+                }
                 check_sum += _x;
                 move_dis |=  _x;
                 state_IntelToMbed++;
@@ -192,10 +204,13 @@ void Communication::parseMessage()
 
             case 4: //move_dir
             {
-                //putByte('4', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('4', 1);
+                }
                 check_sum += _x;
                 move_dir = _x;
-                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)))
+                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)) || action_type == 2)
                 {
                     state_IntelToMbed++;
                 }
@@ -208,7 +223,10 @@ void Communication::parseMessage()
 
             case 5: //rotate_dis upper 4 bits
             {
-                //putByte('5', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('5', 1);
+                }
                 check_sum += _x;
                 rotate_dis = _x << 8;
                 state_IntelToMbed++;
@@ -217,7 +235,10 @@ void Communication::parseMessage()
 
             case 6: //rotate_dis lower 4 bits
             {
-                //putByte('6', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('6', 1);
+                }
                 check_sum += _x;
                 rotate_dis |= _x;
                 state_IntelToMbed++;
@@ -226,7 +247,10 @@ void Communication::parseMessage()
 
             case 7: //rotate_dir
             {
-                //putByte('7', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('7', 1);
+                }
                 check_sum += _x;
                 rotate_dir = _x;
                 if((action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
@@ -242,7 +266,10 @@ void Communication::parseMessage()
 
             case 8: //check_sum
             {
-                //putByte('8', 1);
+                if(DEBUG_ON)
+                {
+                    putByte('8', 1);
+                }
                 if(check_sum == _x)
                 {
                     switch(action_type)
@@ -292,7 +319,7 @@ void Communication::forwardMessage()
     putByte(buffer_IntelToMbed[i++], 2); //checksum
 }
 
-void Communication::ACK()
+void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
 {
     if(action_type == 0) //car movement
     {
@@ -364,6 +391,21 @@ void Communication::ACK()
                         break;
                     }
                 }
+            }
+        }
+    }
+    else if(action_type == 1) //lifter
+    {
+        uint32_t pulseCountOld = 0;
+        uint32_t pulseCountNew = 0;
+        while(!lifter->isStopped())
+        {
+            pulseCountOld = lifter->pulseCount;
+            wait_ms(50);
+            pulseCountNew = lifter->pulseCount;
+            if(pulseCountOld == pulseCountNew)
+            {
+                break;
             }
         }
     }

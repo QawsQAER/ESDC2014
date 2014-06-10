@@ -102,8 +102,8 @@ void init_PORT() //used in main() function
     camera_platform_pwmPitch.period_ms(20); //20ms periodic, 1000us to 2000us
     camera_platform_pwmYaw.period_ms(20); //20ms periodic, 1000us to 2000us
     camera_platform_pwmRoll.pulsewidth_us(1500);
-    camera_platform_pwmPitch.pulsewidth_us(1500);
-    camera_platform_pwmYaw.pulsewidth_us(1500);
+    camera_platform_pwmPitch.pulsewidth_us(PITCH_MID);
+    camera_platform_pwmYaw.pulsewidth_us(YAW_MID);
 }
 
 #endif

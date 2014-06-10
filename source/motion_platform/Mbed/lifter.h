@@ -51,6 +51,7 @@ public:
     void lifterDown(uint16_t mm);
     void lifterMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint8_t rotate_dir);
     uint8_t getDir();
+    uint8_t isStopped();
     
     uint32_t pulseCount;
     uint32_t targetPulseCount;
@@ -66,6 +67,7 @@ private:
     MyInterruptIn* _encoder_A; //6 pulse per round
     MyDigitalIn* _encoder_B; //5v is up, 0v is down. looks like no use
     uint8_t _dir;
+    uint8_t _stop; //0 means moving, 1 means stopped
 };
 
 #endif

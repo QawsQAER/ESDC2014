@@ -39,20 +39,21 @@ int main()
         if(com.getInfoOK(0) == 1) //car
         {
             com.forwardMessage();
-            com.ACK();
+            com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
         }
         else if(com.getInfoOK(0) == 2) //lifter
         {
             lifter.lifterMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
-            com.ACK();
+            com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
         }
         else if(com.getInfoOK(0) == 3) //camera_platform
         {
-            com.ACK();
+            camera_platform.cameraPlatformMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
+            com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
         }

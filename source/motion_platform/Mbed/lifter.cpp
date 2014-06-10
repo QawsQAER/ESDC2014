@@ -32,6 +32,7 @@ Lifter::Lifter(MyDigitalOut* _enable, MyPwmOut* _pwmUp, MyPwmOut* _pwmDown, MyIn
     pulseCount = 0;
     targetPulseCount = 0;
     _dir = 0;
+    _stop = 0;
     
     this->_enable = _enable;
     this->_pwmUp = _pwmUp;
@@ -79,10 +80,15 @@ uint8_t Lifter::getDir()
     */
     return _dir;
 }
+uint8_t Lifter::isStopped()
+{
+    return _stop;
+}
 
 void Lifter::lifterMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint8_t rotate_dir)
 {
     pulseCount = targetPulseCount = 0;
+    _stop = 0;
     
     if(_dir = move_dir == 0x00) //up
     {
@@ -99,6 +105,7 @@ void Lifter::setLifterStop()
     *_enable = 0;
     *_pwmUp = 1.0f;
     *_pwmDown = 1.0f;
+    _stop = 1;
 }
 void Lifter::setLifterUp()
 {

@@ -39,6 +39,7 @@ The communication protocol is inside source/intel_board/lib/message.h
 #define BUFFER_SIZE 1024
 #define STARTER 0x7e
 
+#define DEBUG_ON 0
 class Communication
 {
 public:
@@ -52,7 +53,7 @@ public:
     void put2Bytes(uint16_t _x, uint8_t _i);
     void parseMessage();
     void forwardMessage(); //forward the message to the Arduino
-    void ACK(); //send ACK back to the intel board
+    void ACK(Lifter* lifter, Camera_platform* camera_platform); //send ACK back to the intel board
 
     uint8_t getInfoOK(uint8_t communication_type); //0 is IntelToMbed, 1 is MbedTOArduino
     void resetInfoOK(uint8_t communication_type); //0 is IntelToMbed, 1 is MbedTOArduino
