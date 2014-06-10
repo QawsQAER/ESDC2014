@@ -76,8 +76,10 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	
 	//find out the center of the detected region
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
+	printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
+	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	int diff_x = center.x - this->center_x;
-	int diff_y = detect.height - exp_height;
+	int diff_y = detect.height - this->exp_height;
 	if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 	{
 		this->centering(detect);
@@ -101,7 +103,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 uint8_t Motion_controller::centering(const cv::Rect &detect)
 {
-	printf("Motion_controller::centering() running\n");
+	printf("\nMotion_controller::centering() running\n");
 	uint8_t okay_image = 1;
 	//allow positive or negative error in 50 pixels
 	uint16_t threshold_x = 50, threshold_y = 50;
@@ -113,7 +115,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	int diff_y = center.y - exp_center_y;
 	//compute length per pixel 
 	float p = (float) 1700 / (float) detect.height;
-
+	printf("\n\nMotion_controller::centering() length per pixel is %f.\n\n",p);
 	uint16_t move_x = 0;
 	if(abs(diff_x) > threshold_x)
 	{
@@ -145,7 +147,28 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect)
 {
-	printf("Motion_controller::zoom_in_out() running\n");
+	printf("\nMotion_controller::zoom_in_out() running\n");
+	//the car need to adjust the position according to the detection result
+
+	int diff_y = detect.height - this->exp_height;
+	if(diff_y < 0)
+	{
+		//the height too small, need to zoom in
+		//to zoom in, move forward
+		printf("Motion_controller::zoom_in_out() moving forward\n");
+		Message msg;
+		msg.CarMoveUpMM(DEFAULT_DIS);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//the height too large, need to zoom out
+		//to zoom out, move backward
+		printf("Motion_controller::zoom_in_out() moving backward\n");
+		Message msg;
+		msg.CarMoveDownMM(DEFAULT_DIS);
+		msg.sendMessage(this->Com->fd);
+	}
 	return 1;
 }
 

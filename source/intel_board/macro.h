@@ -49,4 +49,5 @@ enum command_type{undefined,connect_request,start_movement,confirm_picture,patte
 #define IMG_EXP_HEIGHT 210
 #define IMG_EXP_WIDTH 70
 
+#define DEFAULT_DIS 300
 #endif

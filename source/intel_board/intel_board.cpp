@@ -173,7 +173,7 @@ uint8_t intel_board::robot_find_target()
 	printf("intel_board::robot_find_target() running\n");
 	uint8_t state = 0;
 	uint8_t counter = 0;
-	uint16_t dis = 500;
+	uint16_t dis = 350;
 	uint16_t degree = 30;
 	uint8_t sec = 1;
 
