@@ -329,6 +329,16 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 
 
 	//TODO: use color detection to filtered out the non-human color face
+	std::vector<cv::Rect> tmp(face_detect);
+	face_detect.clear();
+	for(size_t count = 0;count < tmp.size();count++)
+	{
+		cv::Mat subImage = source_img(tmp[count]);
+		if(getSkin(subImage,subImage)[0] > 100)
+		{
+			face_detect.push(tmp[count]);
+		}
+	}
 	return 1;
 }
 
@@ -348,6 +358,7 @@ cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 	dest_img = result;
 	return value;
 }
+
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	cv::Mat marked_img = source_img.clone();
@@ -477,6 +488,7 @@ uint8_t Image_processor::basic_filter()
 		}
 	}
 
+/*
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
 	{
 		for(count_face = 0;count_face < this->face_detect.size();count_face++)
@@ -510,6 +522,7 @@ uint8_t Image_processor::basic_filter()
 			}
 		}
 	}
+*/
 /*
 	//if no body is detected after the filtering and a face is detected only once
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
