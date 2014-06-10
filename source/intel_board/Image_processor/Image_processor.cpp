@@ -375,6 +375,7 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 	}
 	return marked_img;
 }
+
 uint8_t Image_processor::basic_face_detection()
 {
 	printf("Entering basic_face_detection\n");
@@ -415,7 +416,8 @@ uint8_t Image_processor::show_analyzed_img()
 		}
 	}
 	else
-	{//imshow does not block the main process any more
+	{
+		//imshow does not block the main process any more
 		cv::waitKey(3000);
 	}
 	return 1;
@@ -488,48 +490,17 @@ uint8_t Image_processor::basic_filter()
 		}
 	}
 
-/*
-	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
-	{
-		for(count_face = 0;count_face < this->face_detect.size();count_face++)
-		{
-			cv::Mat subImage = this->current_img(face_detect[count_face]);
-			cv::Scalar mean = this->getSkin(subImage,subImage);
-			printf("basic_filter() : mean of the detected face region %lf\n",mean[0]);
-			if(mean[0] > 100)
-			{
-				uint8_t factor = 1;
-				float height_factor = 7.5;
-				cv::Rect rect = face_detect[0];
-				cv::Rect face_rect = rect;
-				
-
-				rect.x = std::max(rect.x - factor * rect.width,0);
-				if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
-					rect.width = this->current_img.cols - rect.x;
-				else
-					rect.width = rect.width * (factor * 2 + 1);
-				
-				if(rect.y + rect.height * height_factor > this->current_img.rows)
-					rect.height = this->current_img.rows - rect.y;
-				else
-					rect.height = ceil(rect.height * height_factor);
-				if( float(rect.width) / float(rect.height) < 1 / 7 )
-				{
-					this->final_face_detect.push_back(face_rect);
-					this->final_body_detect.push_back(rect);
-				}
-			}
-		}
-	}
-*/
-
 	//if no body is detected after the filtering and a face is detected only once
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
 	{
 		uint8_t factor = 1;
 		float height_factor = 7.5;
 		cv::Rect rect = face_detect[0];
+
+		//if the face is at the lower section of the image
+		if(rect.y > IMG_CENTER_Y)
+			return 0;
+		
 		this->final_face_detect.push_back(rect);
 
 		rect.x = std::max(rect.x - factor * rect.width,0);
