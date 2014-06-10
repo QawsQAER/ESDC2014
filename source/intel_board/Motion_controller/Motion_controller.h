@@ -40,6 +40,8 @@
 #include "Controller_Com.h"
 #include <opencv2/opencv.hpp>
 #include "../lib/message.h"
+#include "../macro.h"
+
 
 #define EVAL_CENTERING 0
 #define EVAL_ZOOMING 1
@@ -53,6 +55,17 @@ private:
 	cv::Rect *ref;
 	std::queue<Message> cmd_queue;
 	uint8_t eval_state;
+
+
+	
+	/*
+	variable for reference in image evaluation:
+		threshold_x, threshold_y: the threshold for largest horizontally and vertically
+		center_x, center y: the center of the image
+	*/
+	uint16_t threshold_x, threshold_y,center_x, center_y;
+	uint16_t exp_x, exp_y, exp_width, exp_height;
+
 
 	uint8_t centering(const cv::Rect &detect);
 	uint8_t zoom_in_out(const cv::Rect &detect);

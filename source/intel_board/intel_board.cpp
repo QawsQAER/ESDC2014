@@ -84,9 +84,10 @@ uint8_t intel_board::main_function()
 	}
 	else
 	{
+
+		// the main state machine
 		while(1)
 		{
-
 			switch(this->state)
 			{
 				case ROBOT_INIT:
@@ -113,8 +114,8 @@ uint8_t intel_board::main_function()
 					break;
 
 				case ROBOT_EVALUATE_IMAGE:
-					//if the image is good enough
 					if(this->robot_evaluate_image())
+						//if the image is good enough
 						//store the image and go back wait for the next command
 						this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
 					else
@@ -172,7 +173,7 @@ uint8_t intel_board::robot_find_target()
 	printf("intel_board::robot_find_target() running\n");
 	uint8_t state = 0;
 	uint8_t counter = 0;
-	uint16_t dis = 500;
+	uint16_t dis = 350;
 	uint16_t degree = 30;
 	uint8_t sec = 1;
 

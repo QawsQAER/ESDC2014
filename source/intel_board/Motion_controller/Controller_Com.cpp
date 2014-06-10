@@ -1,6 +1,6 @@
 #include "Controller_Com.h"
 
-Controller_Com::Controller_Com(char *devname)
+Controller_Com::Controller_Com(const char *devname)
 {
 	if((this->fd = open(devname,O_RDWR | O_NOCTTY | O_SYNC)) < 0)
 	{

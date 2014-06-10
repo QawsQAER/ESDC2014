@@ -32,7 +32,7 @@ private:
 	char *read_buff;
 public:
 	int fd;
-	Controller_Com(char *devname);
+	Controller_Com(const char *devname);
 	~Controller_Com();
 	uint8_t send_cmd(const Message &cmd);
 };
