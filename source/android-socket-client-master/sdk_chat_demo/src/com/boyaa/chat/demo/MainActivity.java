@@ -12,6 +12,8 @@ import java.io.InputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.AudioManager;
+import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -28,13 +30,14 @@ import android.widget.EditText;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.boyaa.chat.R;
 import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
 
-@SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled" })
+@SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
 public class MainActivity extends Activity {
 
 	private Client user=null;
@@ -42,8 +45,12 @@ public class MainActivity extends Activity {
 	private TextView status;
 	private WebView myWebView;
 	
-	private String camera_ip="192.168.1.1";
-	private String board_ip="192.168.1.136";
+	private String camera_ip="192.168.43.1";
+	private String board_ip="192.168.43.142";
+	SoundPool player,play;
+	HashMap<Integer,Integer> soundMap;
+	
+
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -51,9 +58,26 @@ public class MainActivity extends Activity {
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
+		
+		
+		
 		setContentView(R.layout.activity_main);
+		
+		ip=(EditText) findViewById(R.id.ip);
+		status=(TextView) findViewById(R.id.status);
+		
+		ip.setText(board_ip);
+		status.setText("off");
+		
 		initView();
 		
+		
+		
+		 soundMap=new HashMap<Integer,Integer>();
+	        player=new SoundPool(1,AudioManager.STREAM_MUSIC,10);
+	        play=new SoundPool(1,AudioManager.STREAM_MUSIC,10);
+	        play.load(this, R.raw.test, 10);
+	        soundMap.put(1,player.load(this, R.raw.test, 10));
 	
         //显示
 		
@@ -68,6 +92,10 @@ public class MainActivity extends Activity {
 	
 	private void initView()
 	{
+		ip=(EditText) findViewById(R.id.ip);
+		status=(TextView) findViewById(R.id.status);
+		
+		ip.setText(board_ip);
 		
 		findViewById(R.id.open).setOnClickListener(listener);
 		findViewById(R.id.comfrim).setOnClickListener(listener);
@@ -76,12 +104,6 @@ public class MainActivity extends Activity {
 		findViewById(R.id.next).setOnClickListener(listener);
 		findViewById(R.id.pattern1).setOnClickListener(listener);
 		findViewById(R.id.pattern2).setOnClickListener(listener);
-		
-		ip=(EditText) findViewById(R.id.ip);
-		status=(TextView) findViewById(R.id.status);
-		
-		ip.setText(board_ip);
-		status.setText("off");
 	
 	}
 	
@@ -164,6 +186,8 @@ public class MainActivity extends Activity {
 					else if(txt.equals("cp"))
 					{
 						status.setText("confrim");
+						Log.v("player","play");
+						player.play(soundMap.get(1), 1, 1, 10,0, 1);
 					}
 					
 					else if(txt.equals("p1"))
@@ -243,7 +267,19 @@ public class MainActivity extends Activity {
 				else if(txt.equals("fa"))
 					{
 					status.setText("finished_ack");
-						
+					
+					
+					
+					try {
+						Thread.currentThread();
+						Thread.sleep(2000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					
+					player.play(soundMap.get(1), 1, 1, 10,0, 1);
+					
 					ImageView imageView;
 				    imageView = (ImageView)findViewById(R.id.image_view);
 				    
@@ -302,8 +338,11 @@ public class MainActivity extends Activity {
 					
 				case R.id.comfrim:	
 					
+			//		play(int soundID, float leftVolume, float rightVolume, int priority, int loop, float rate) ,其中leftVolume和rightVolume表示左右音量，priority表示优先级,loop表示循环次数,rate表示速率，
+//					player.play(soundMap.get(1), 1, 1, 10,0, 1);
 					packet.pack("cp");
 					user.send(packet);
+					
 					break;
 					
 				case R.id.next:	
@@ -450,12 +489,8 @@ public class MainActivity extends Activity {
 	
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		 if ((keyCode == KeyEvent.KEYCODE_BACK) &&   myWebView .canGoBack()) {  
-			 
-			 myWebView.goBack();         
-	                   return true;         
-	        }    
-		 else	if(keyCode==KeyEvent.KEYCODE_BACK)
+		
+		 	if(keyCode==KeyEvent.KEYCODE_BACK)
 		{
 			android.os.Process.killProcess(android.os.Process.myPid());
 		}
