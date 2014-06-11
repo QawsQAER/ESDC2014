@@ -59,10 +59,13 @@ uint8_t Motion_controller::init()
 
 	msg.CameraPlatformYawClk(30);
 	msg.sendMessage(this->Com->fd);
+	sleep(1);
 	msg.CameraPlatformYawCounterClk(60);
 	msg.sendMessage(this->Com->fd);
+	sleep(1);
 	msg.CameraPlatformYawClk(30);
 	msg.sendMessage(this->Com->fd);
+	sleep(1);
 
 	
 	printf("Motion_controller::init() returning\n");

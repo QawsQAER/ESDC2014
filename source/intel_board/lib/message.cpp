@@ -168,37 +168,37 @@ void Message::CameraPlatformRollLeft(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xe0;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 void Message::CameraPlatformRollRight(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xf0;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 void Message::CameraPlatformPitchUp(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xcc;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 void Message::CameraPlatformPitchDown(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xc8;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 void Message::CameraPlatformYawClk(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xc3;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 void Message::CameraPlatformYawCounterClk(uint16_t _degree)
 {
 	uint8_t rotate_dir = 0xc2;
 	uint16_t rotate_dis = _degree * 100;
-	setCarRotate(rotate_dir, rotate_dis);
+	setCameraPlatformRotate(rotate_dir, rotate_dis);
 }
 
 //private
