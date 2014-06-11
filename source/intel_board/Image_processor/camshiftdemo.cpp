@@ -53,7 +53,7 @@ double answer;
 	// 							   200.0*MMtoP, 150.0*MMtoP, 0.0,
 	// 							   200.0*MMtoP, 0.0, 0.0);
 	   	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
-								   0.0, FACE_WIDTH.MMtoP, 0.0,
+								   0.0, FACE_WIDTH*MMtoP, 0.0,
 								   FACE_HEIGHT*MMtoP, FACE_WIDTH*MMtoP, 0.0,
 								   FACE_HEIGHT*MMtoP, 0.0, 0.0);
 
