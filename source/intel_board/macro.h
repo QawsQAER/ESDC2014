@@ -55,12 +55,19 @@ enum command_type{undefined,connect_request,start_movement,confirm_picture,patte
 
 
 //IMAGE PROCESSING THRESHOLD
-#define IMG_CENTER_X 320
-#define IMG_CENTER_Y 240
-#define IMG_HORI_THRESHOLD 30
-#define IMG_VERT_THRESHOLD 30
-#define IMG_EXP_HEIGHT 300
+#define IMG_WIDTH 640
+#define IMG_HEIGHT 480
+#define IMG_CENTER_X IMG_WIDTH/2
+#define IMG_CENTER_Y IMG_HEIGHT/2
+#define IMG_HORI_THRESHOLD 50
+#define IMG_VERT_THRESHOLD 40
+#define IMG_EXP_HEIGHT 320
 #define IMG_EXP_WIDTH 70
 
-#define DEFAULT_DIS 300
+#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * 0.618)
+#define IMG_EXP_POS1_Y 60
+
+#define DEFAULT_DIS 400
+#define DEFAULT_DIS_LARGE 500
+#define DEFAULT_DIS_SMALL 300
 #endif

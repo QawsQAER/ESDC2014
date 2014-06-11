@@ -410,7 +410,7 @@ uint8_t Image_processor::show_analyzed_img()
 	
 	cv::imshow(this->winname,this->analyzed_img);
 	cv::imshow(this->skinwin,this->skin_img);
-	cv::imshow(this->edgewin,this->edge_img);
+	//cv::imshow(this->edgewin,this->edge_img);
 	if(continuity == 0)
 	{
 		char k;
@@ -656,7 +656,8 @@ uint8_t Image_processor::target_in_scope()
 	//this->show_analyzed_img();
 	cv::Mat tmp_img = this->analyzed_img.clone();
 	this->getSkin(this->current_img,this->skin_img);
-	this->edge_img = this->edge_detection(this->current_img);
+	
+	//this->edge_img = this->edge_detection(this->current_img);
 	//run basic filter;
 	this->basic_filter();
 

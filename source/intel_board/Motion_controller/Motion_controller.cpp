@@ -33,16 +33,19 @@
 
 Motion_controller::Motion_controller()
 {
+	printf("Motion_controller(): Constructing new Motion_controller\n");
+
 	//initialize threshold value
 	this->threshold_x = IMG_HORI_THRESHOLD;
 	this->threshold_y = IMG_VERT_THRESHOLD;
+	printf("Motion_controller(): Threshold_x %d Threshold_y %d\n",this->threshold_x,this->threshold_y);
 	this->center_x = IMG_CENTER_X;
 	this->center_y = IMG_CENTER_Y;
 	this->exp_x = 320;
 	this->exp_y = 240;
 	this->exp_width = IMG_EXP_WIDTH;
 	this->exp_height = IMG_EXP_HEIGHT;
-	printf("Motion_controller(): Constructing new Motion_controller\n");
+	
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	//TODO: initilized the reference rectangle
 }
@@ -94,18 +97,16 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	{
 		this->centering(detect);
 		return 0;
-	}
-
-	if(abs(diff_y) > threshold_y)//need to zoom in or zoom out
+	}	
+	else if(abs(diff_y) > threshold_y)//need to zoom in or zoom out
 	{
 		this->zoom_in_out(detect,distance);
 		//return 1;// only run once zoom in out.
 		return 0;
 	}
-
-	if(false)//need to move to the expected position
+	else if(abs(center.x - IMG_EXP_POS1_X) > threshold_x)
 	{
-		//never enter this phase for now
+		this->adjusting(detect);
 		return 0;
 	}
 
@@ -116,9 +117,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 {
 	printf("\nMotion_controller::centering() running\n");
 	uint8_t okay_image = 1;
-	//allow positive or negative error in 50 pixels
-	uint16_t threshold_x = 50, threshold_y = 50;
-	uint16_t exp_center_x = 320, exp_center_y = 240;
+	uint16_t exp_center_x = IMG_CENTER_X, exp_center_y = IMG_CENTER_Y;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
 
@@ -159,8 +158,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &distance)
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
-	// the car now will adjust its position so it's only 1 meter from the target
 	/*
+	// the car now will adjust its position so it's only 1 meter from the target
 	if(distance < 0)
 	{
 		printf("Motion_controller::zoom_in_out ERROR: invalid distance %lf\n",distance);
@@ -169,19 +168,19 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 	{
 		printf("Motion_controller::zoom_in_out() moving forward %lf\n",distance - 1000);
 		Message msg;
-		msg.CarMoveUpMM(distance - 1000);
+		msg.CarMoveUpMM((uint16_t) distance - 1000);
 		msg.sendMessage(this->Com->fd);
 	}
 	else
 	{
 		printf("Motion_controller::zoom_in_out() moving backward\n");
 		Message msg;
-		msg.CarMoveDownMM(1000 - distance);
+		msg.CarMoveDownMM((uint16_t) 1000 - distance);
 		msg.sendMessage(this->Com->fd);
-	}*/
-	//the car need to adjust the position according to the detection result
-
+	}
+	*/
 	
+	//the car need to adjust the position according to the detection result
 	int diff_y = detect.height - this->exp_height;
 	if(diff_y < 0)
 	{
@@ -201,13 +200,33 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 		msg.CarMoveDownMM(DEFAULT_DIS);
 		msg.sendMessage(this->Com->fd);
 	}
-	
 	return 1;
 }
 
 uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 {
 	printf("Motion_controller::adjusting() running\n");
+	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
+	int diff_x = center.x - IMG_EXP_POS1_X;
+	float p = (float) 1700 / (float) detect.height;
+	if(diff_x > 0)
+	{
+		//move right
+		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
+		printf("\n\n\nMotion_controller adjusting(): moving right %d mm\n\n\n",move_x);
+		Message msg;
+		msg.CarMoveRightMM(move_x);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//move left
+		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
+		printf("\n\n\nMotion_controller adjusting(): moving left %d mm\n\n\n",move_x);
+		Message msg;
+		msg.CarMoveLeftMM(move_x);
+		msg.sendMessage(this->Com->fd);
+	}
 	return 1;
 }
 
