@@ -110,7 +110,11 @@ uint8_t intel_board::main_function()
 				case ROBOT_FIND_TARGET:
 					//working on finding the target
 					if(this->robot_find_target())
+					{
 						this->state = ROBOT_EVALUATE_IMAGE;
+						this->distance = this->image_processor->get_distance(this->image_processor->final_face_detect[0]);
+						printf("\n\n@@@@\nTHE TARGET IS %lf away from the camera\n@@@@@@@\n\n",this->distance);
+					}
 					break;
 
 				case ROBOT_EVALUATE_IMAGE:
@@ -230,7 +234,7 @@ uint8_t intel_board::robot_evaluate_image()
 	printf("intel_board: robot_evaluate_image() running\n");
 	cv::Rect dummy;
 	if(this->image_processor->final_face_detect.size() != 0)
-		return this->motion_controller->evaluate_image(this->image_processor->get_detection_result(),dummy);
+		return this->motion_controller->evaluate_image(this->image_processor->get_detection_result(),dummy,this->distance);
 	else
 		printf("intel_board::robot_evaluate_image() error: evaluating an image without detection result!\n");
 		return 0;

@@ -671,7 +671,6 @@ uint8_t Image_processor::target_in_scope()
 	
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::target_in_scope the target is %lf mm away from camera\n",this->get_distance(this->final_face_detect[0]));
 		return this->final_body_detect.size();			
 	}
 	else if(this->face_detect.size() == 0)
@@ -690,6 +689,6 @@ cv::Rect Image_processor::get_detection_result()
 }
 
 double Image_processor::get_distance(const cv::Rect &face)
-{
+{	
 	return runCAMShift(face);
 }

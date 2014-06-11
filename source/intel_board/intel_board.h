@@ -75,6 +75,7 @@ private:
 	ROBOT_MODE mode;
 	Motion_controller *motion_controller;
 	UI *ui;
+	double distance;
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();

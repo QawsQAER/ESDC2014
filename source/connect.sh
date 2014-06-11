@@ -32,7 +32,7 @@ echo "Generating configuration file..."
 echo "Done"
 
 echo "Setting up wpa_supplicant daemon..."
-wpa_supplicant -B -i $1 -c $config_file -Dath9k
+wpa_supplicant -B -i $1 -c $config_file
 echo "Done"
 
 

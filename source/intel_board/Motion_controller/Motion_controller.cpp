@@ -73,7 +73,7 @@ uint8_t Motion_controller::init()
 }
 
 
-uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref)
+uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance)
 {
 /*
 	threshold_x, threshold_y: the threshold for largest horizontally and vertically
@@ -98,7 +98,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 	if(abs(diff_y) > threshold_y)//need to zoom in or zoom out
 	{
-		this->zoom_in_out(detect);
+		this->zoom_in_out(detect,distance);
+		//return 1;// only run once zoom in out.
 		return 0;
 	}
 
@@ -155,11 +156,32 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	return okay_image;
 }
 
-uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect)
+uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &distance)
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
+	// the car now will adjust its position so it's only 1 meter from the target
+	/*
+	if(distance < 0)
+	{
+		printf("Motion_controller::zoom_in_out ERROR: invalid distance %lf\n",distance);
+	}
+	else if(distance > 1000) //1000mm away from the target, move closer
+	{
+		printf("Motion_controller::zoom_in_out() moving forward %lf\n",distance - 1000);
+		Message msg;
+		msg.CarMoveUpMM(distance - 1000);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		printf("Motion_controller::zoom_in_out() moving backward\n");
+		Message msg;
+		msg.CarMoveDownMM(1000 - distance);
+		msg.sendMessage(this->Com->fd);
+	}*/
 	//the car need to adjust the position according to the detection result
 
+	
 	int diff_y = detect.height - this->exp_height;
 	if(diff_y < 0)
 	{
@@ -179,6 +201,7 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect)
 		msg.CarMoveDownMM(DEFAULT_DIS);
 		msg.sendMessage(this->Com->fd);
 	}
+	
 	return 1;
 }
 
