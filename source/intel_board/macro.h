@@ -85,7 +85,7 @@ enum command_type{
 
 #define GOLDEN_RATIO 0.618
 #define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
-#define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)
+#define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
 #define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
 #define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)

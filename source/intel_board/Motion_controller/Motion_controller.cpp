@@ -52,6 +52,9 @@ Motion_controller::Motion_controller()
 
 Motion_controller::~Motion_controller()
 {
+	Message msg;
+	msg.LifterMoveDownMM(1000);
+	msg.sendMessage(this->Com->fd);
 	delete this->Com;
 }
 
@@ -70,6 +73,8 @@ uint8_t Motion_controller::init()
 	msg.sendMessage(this->Com->fd);
 	sleep(1);
 
+	msg.LifterMoveDownMM(1000);
+	msg.sendMessage(this->Com->fd);
 	
 	printf("Motion_controller::init() returning\n");
 	return 1;
@@ -229,11 +234,16 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		msg.sendMessage(this->Com->fd);
 	}
 
-	int diff_y = detect.y - IMG_EXP_HEIGHT;
+	int32_t tmp = IMG_EXP_POS1_Y;
+	int diff_y = (int32_t) detect.y - tmp;
+	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
+	printf("Motion_controller adjusting(): IMG_EXP_POS1_Y is %d\n",tmp);
+	uint16_t move_y = ceil(abs(diff_y) * p);
+	printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
 	if(diff_y > 0)
 	{
 		//moving down
-		uint16_t move_y = ceil(abs(diff_y) * p);
+		
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
 		Message msg;
 		msg.LifterMoveDownMM(move_y);
@@ -242,7 +252,6 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	else
 	{
 		//moving up
-		uint16_t move_y = ceil(abs(diff_y) * p);
 		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
 		Message msg;
 		msg.LifterMoveUpMM(move_y);

@@ -156,13 +156,13 @@ void Message::LifterMoveUpMM(uint16_t _mm)
 {
 	uint8_t move_dir = 0x00;
 	uint16_t move_dis = _mm;
-	setCarMove(move_dir, move_dis);
+	setLifterMove(move_dir, move_dis);
 }
 void Message::LifterMoveDownMM(uint16_t _mm)
 {
 	uint8_t move_dir = 0x02;
 	uint16_t move_dis = _mm;
-	setCarMove(move_dir, move_dis);
+	setLifterMove(move_dir, move_dis);
 }
 void Message::CameraPlatformRollLeft(uint16_t _degree)
 {
