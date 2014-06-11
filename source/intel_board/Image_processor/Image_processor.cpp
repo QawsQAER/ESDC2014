@@ -379,6 +379,7 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 				cv::Size(face_detect[count].width/2,face_detect[count].height/2),
 				0,0,360, cv::Scalar(255,0,0),2,8,0);
 	}
+	cv::ellipse(marked_img,cv::Point(IMG_EXP_POS1_X,IMG_EXP_POS1_Y),cv::Size(5,5),0,0,360,cv::Scalar(128,128,0),2,8,0);
 	return marked_img;
 }
 
@@ -410,7 +411,7 @@ uint8_t Image_processor::show_analyzed_img()
 	
 	cv::imshow(this->winname,this->analyzed_img);
 	cv::imshow(this->skinwin,this->skin_img);
-	//cv::imshow(this->edgewin,this->edge_img);
+	cv::imshow(this->edgewin,this->edge_img);
 	if(continuity == 0)
 	{
 		char k;

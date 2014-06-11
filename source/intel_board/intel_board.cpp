@@ -164,14 +164,15 @@ uint8_t intel_board::robot_ready()
 	printf("intel_board: the robot is in ready state\n");
 	command_type cmd = ui->wait_command();
 	printf("intel_board: the robot has received %d\n",cmd);
-	printf("intel_board: the robot is going to find target\n\n\n");
+	
 	if(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
 	{
 		command_type cmd = ui->wait_command();
-		if(cmd = start_movement)
+		if(cmd == start_movement)
 		{
-		this->state = ROBOT_FIND_TARGET;
-		return 1;
+			printf("intel_board: the robot is going to find target\n\n\n");
+			this->state = ROBOT_FIND_TARGET;
+			return 1;
 		}
 	}	
 }
@@ -270,6 +271,10 @@ uint8_t intel_board::robot_wait_for_adjustment()
 
 	this->image_processor->cam->save_photo_af();
 	this->ui->send_finished_ack();
+	while(ui->wait_command() != confirm_picture)
+	{
+		
+	}
 	return 1;
 }
 

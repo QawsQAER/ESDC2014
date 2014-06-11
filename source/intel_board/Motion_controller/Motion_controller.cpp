@@ -93,6 +93,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	int diff_x = center.x - this->center_x;
 	int diff_y = detect.height - this->exp_height;
+	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 	{
 		this->centering(detect);
@@ -109,7 +110,6 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		this->adjusting(detect);
 		return 1;
 	}
-
 	return 1;
 }
 
