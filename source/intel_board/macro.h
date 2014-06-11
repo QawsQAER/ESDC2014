@@ -1,6 +1,7 @@
 #ifndef _MACRO_H
 #define _MACRO_H
 
+#include "stdint.h"
 
 #define MAX_COUNT	4			// max. no. of points being tracked
 #define PixelWidth	0.0084		// in mm
@@ -82,9 +83,12 @@ enum command_type{
 #define IMG_EXP_HEIGHT 320
 #define IMG_EXP_WIDTH 70
 
-#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * 0.618)
-#define IMG_EXP_POS1_Y 60
+#define GOLDEN_RATIO 0.618
+#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)
 
+#define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 500
 #define DEFAULT_DIS_SMALL 300

@@ -158,7 +158,7 @@ void Message::LifterMoveUpMM(uint16_t _mm)
 	uint16_t move_dis = _mm;
 	setCarMove(move_dir, move_dis);
 }
-void Message::LifterMoveDowmMM(uint16_t _mm)
+void Message::LifterMoveDownMM(uint16_t _mm)
 {
 	uint8_t move_dir = 0x02;
 	uint16_t move_dis = _mm;

@@ -228,6 +228,26 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		msg.CarMoveLeftMM(move_x);
 		msg.sendMessage(this->Com->fd);
 	}
+
+	int diff_y = detect.y - IMG_EXP_HEIGHT;
+	if(diff_y > 0)
+	{
+		//moving down
+		uint16_t move_y = ceil(abs(diff_y) * p);
+		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
+		Message msg;
+		msg.LifterMoveDownMM(move_y);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//moving up
+		uint16_t move_y = ceil(abs(diff_y) * p);
+		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
+		Message msg;
+		msg.LifterMoveUpMM(move_y);
+		msg.sendMessage(this->Com->fd);
+	}
 	return 1;
 }
 
