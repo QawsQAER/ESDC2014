@@ -162,13 +162,17 @@ uint8_t intel_board::robot_init()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
-	int32_t cmd = ui->wait_command();
+	command_type cmd = ui->wait_command();
 	printf("intel_board: the robot has received %d\n",cmd);
 	printf("intel_board: the robot is going to find target\n\n\n");
-	if(cmd == 2)
+	if(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
 	{
+		command_type cmd = ui->wait_command();
+		if(cmd = start_movement)
+		{
 		this->state = ROBOT_FIND_TARGET;
 		return 1;
+		}
 	}	
 }
 
