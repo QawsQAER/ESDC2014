@@ -46,10 +46,15 @@ double answer;
 
 	
 	// 3D coodinates of 4 model points on the same plane (4 corners of square)
-	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
-								   0.0, 150.0*MMtoP, 0.0,
-								   200.0*MMtoP, 150.0*MMtoP, 0.0,
-								   200.0*MMtoP, 0.0, 0.0);
+	// Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
+	// 							   0.0, 150.0*MMtoP, 0.0,
+	// 							   200.0*MMtoP, 150.0*MMtoP, 0.0,
+	// 							   200.0*MMtoP, 0.0, 0.0);
+	   	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
+								   0.0, 190.0*MMtoP, 0.0,
+								   270.0*MMtoP, 190.0*MMtoP, 0.0,
+								   270.0*MMtoP, 0.0, 0.0);
+
 	// 3D coodinates of 4 model points on different plane
 	/*Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
 								   0.0, 0.0, 60.0*MMtoP,
