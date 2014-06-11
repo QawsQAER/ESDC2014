@@ -113,7 +113,7 @@ uint8_t intel_board::main_function()
 					{
 						this->state = ROBOT_EVALUATE_IMAGE;
 						this->distance = this->image_processor->get_distance(this->image_processor->final_face_detect[0]);
-						printf("\n\n@@@@\nTHE TARGET IS %lf away from the camera\n@@@@@@@\n\n",this->distance);
+						//printf("\n\n@@@@\nTHE TARGET IS %lf away from the camera\n@@@@@@@\n\n",this->distance);
 					}
 					break;
 

@@ -107,7 +107,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else if(abs(center.x - IMG_EXP_POS1_X) > threshold_x)
 	{
 		this->adjusting(detect);
-		return 0;
+		return 1;
 	}
 
 	return 1;
@@ -158,6 +158,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &distance)
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 	/*
 	// the car now will adjust its position so it's only 1 meter from the target
 	if(distance < 0)
