@@ -15,6 +15,8 @@ This program is used to demonstrate the 4-point algorithm using CAMShift method
 #define MaxIter		50			// upper bound of number of iteration of the algorithm
 #define A(i, j)		A.at<double>(i, j)
 #define a(i, j)		a.at<double>(i, j)
+#define FACE_WIDTH 235.0
+#define FACE_HEIGHT 235.0
 
 using namespace cv;
 using namespace std;
@@ -51,9 +53,9 @@ double answer;
 	// 							   200.0*MMtoP, 150.0*MMtoP, 0.0,
 	// 							   200.0*MMtoP, 0.0, 0.0);
 	   	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
-								   0.0, 190.0*MMtoP, 0.0,
-								   270.0*MMtoP, 190.0*MMtoP, 0.0,
-								   270.0*MMtoP, 0.0, 0.0);
+								   0.0, FACE_WIDTH.MMtoP, 0.0,
+								   FACE_HEIGHT*MMtoP, FACE_WIDTH*MMtoP, 0.0,
+								   FACE_HEIGHT*MMtoP, 0.0, 0.0);
 
 	// 3D coodinates of 4 model points on different plane
 	/*Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
