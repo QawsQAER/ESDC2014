@@ -16,6 +16,10 @@
 #include "../camera/camera.h"
 #include <string>
 
+
+#include "camshiftdemo.h"
+#include "fourPointAlgo.h"
+
 #define WINNAME_LENGTH 32
 
 #ifndef IMG_SOURCE_CELLPHONE
@@ -176,6 +180,7 @@ public:
 	//and analyze whether there is a person/target in the picture.
 	uint8_t target_in_scope();
 	cv::Rect get_detection_result();
+	double get_distance(const cv::Rect &face);
 };
 
 #endif

@@ -303,7 +303,7 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 uint8_t Image_processor::basic_pedestrain_detection()
 {
 	this->run_body_detection(this->current_img,this->body_detect);
-	printf("basic_pedestrain_detection: %u body detected\n",this->body_detect.size());
+	printf("basic_pedestrain_detection: %lu body detected\n",this->body_detect.size());
 	this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
 	return 1;
 }
@@ -362,9 +362,15 @@ cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	cv::Mat marked_img = source_img.clone();
+
 	//for evert detected face
 	for(size_t count = 0;count < face_detect.size();count++)
 	{
+		printf("Image_processor::mark_detected_face (%d,%d,%d,%d)\n",
+			face_detect[count].x,
+			face_detect[count].y,
+			face_detect[count].width,
+			face_detect[count].height);
 		//create a point noting the center of the region where a face is detected
 		cv::Point center(face_detect[count].x + face_detect[count].width/2,
 						face_detect[count].y + face_detect[count].height/2);
@@ -565,7 +571,7 @@ uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &
 uint8_t Image_processor::find_body_according_to_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	uint8_t factor = 2;
-	printf("find_body_according_to_face(): There are %u faces\n",face_detect.size());
+	printf("find_body_according_to_face(): There are %lu faces\n",face_detect.size());
 	std::vector<cv::Rect> body_detect;
 	//for every detected face recorded in face_detect
 	for(size_t count_face = 0;count_face < face_detect.size();count_face++)
@@ -664,7 +670,10 @@ uint8_t Image_processor::target_in_scope()
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
-		return this->final_body_detect.size();
+	{	
+		printf("Image_processor::target_in_scope the target is %lf mm away from camera\n",this->get_distance(this->final_face_detect[0]));
+		return this->final_body_detect.size();			
+	}
 	else if(this->face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
@@ -678,4 +687,9 @@ uint8_t Image_processor::target_in_scope()
 cv::Rect Image_processor::get_detection_result()
 {
 	return this->final_body_detect[0];
+}
+
+double Image_processor::get_distance(const cv::Rect &face)
+{
+	return runCAMShift(face);
 }

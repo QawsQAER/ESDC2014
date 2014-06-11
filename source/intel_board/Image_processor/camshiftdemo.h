@@ -10,6 +10,6 @@ This is the header file of the part of camshift
 using namespace std;
 using namespace cv;
 // CvRect r
-double runCAMShift(CvRect r);
+double runCAMShift(Rect r);
 
 // double runCAMShift();
