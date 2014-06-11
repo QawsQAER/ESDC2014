@@ -336,7 +336,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 		cv::Mat subImage = source_img(tmp[count]);
 		if(getSkin(subImage,subImage)[0] > 100)
 		{
-			face_detect.push(tmp[count]);
+			face_detect.push_back(tmp[count]);
 		}
 	}
 	return 1;
@@ -523,7 +523,7 @@ uint8_t Image_processor::basic_filter()
 		}
 	}
 */
-/*
+
 	//if no body is detected after the filtering and a face is detected only once
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
 	{
@@ -545,7 +545,7 @@ uint8_t Image_processor::basic_filter()
 
 		this->final_body_detect.push_back(rect);
 	}
-*/
+
 }
 
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)

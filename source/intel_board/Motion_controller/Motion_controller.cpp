@@ -40,8 +40,8 @@ Motion_controller::Motion_controller()
 	this->center_y = IMG_CENTER_Y;
 	this->exp_x = 320;
 	this->exp_y = 240;
-	this->exp_width = 30;
-	this->exp_height = 210;
+	this->exp_width = IMG_EXP_WIDTH;
+	this->exp_height = IMG_EXP_HEIGHT;
 	printf("Motion_controller(): Constructing new Motion_controller\n");
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	//TODO: initilized the reference rectangle
