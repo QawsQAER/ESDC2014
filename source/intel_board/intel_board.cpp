@@ -247,7 +247,6 @@ uint8_t intel_board::robot_find_target()
 uint8_t intel_board::robot_evaluate_image()
 {
 	printf("intel_board: robot_evaluate_image() running\n");
-	cv::Rect dummy;
 	if(this->image_processor->final_face_detect.size() != 0)
 		return this->motion_controller->evaluate_image(
 			this->image_processor->get_detection_result(),
@@ -263,6 +262,7 @@ uint8_t intel_board::robot_analyze_image()
 	printf("intel_board::robot_analyze_image() running\n");
 	//analyze the image and get the expected movement to take
 	//currently it is done in robot_evaluate_image()
+	printf("intel_board::robot_analyze_image() exiting\n");
 	return 1;
 }
 
@@ -270,7 +270,6 @@ uint8_t intel_board::robot_approach_ref()
 {
 	printf("intel_board::robot_approach_ref() running\n");
 	//have the motion_controller send the command to the car
-	this->motion_controller->send_cmd();
 	printf("intel_board::robot_approach_ref() send cmd finished\n");
 	return 1;
 }

@@ -85,9 +85,7 @@ public:
 	//this function will only be called when a target is detected by the Image processor
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance);
 	//this function will read the detection result and then try to get a command such that the next detect result will be closer to the reference
-	void calculate_cmd(const cv::Rect &detect);
-	void send_cmd();
-
+	
 	void move(const uint16_t &mm,const uint8_t &dir);
 	void rotate(const uint16_t &degree,const uint8_t &dir);
 

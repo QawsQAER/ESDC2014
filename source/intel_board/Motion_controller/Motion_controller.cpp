@@ -83,6 +83,7 @@ uint8_t Motion_controller::init()
 
 uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &face,const double &distance)
 {
+
 /*
 	detect: the detected body region
 	face: the detected face region
@@ -111,7 +112,6 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else if(abs(diff_y) > threshold_y)//need to zoom in or zoom out
 	{
 		this->zoom_in_out(detect,distance);
-		//return 1;// only run once zoom in out.
 		return 0;
 	}
 	else if(abs(center.x - img_exp_pos_x) > threshold_x)
@@ -176,9 +176,13 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 
 uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 {
+/*
+	diff_x is the difference between the detected body region's top left x coordinate, and the expected position's x coordinate
+	diff_y is the difference between the detected body region's top left y coordinate, and the expected position's y coordinate
+	p is the length per pixel, assuming that every detected region's height is 1700 mm 
+*/
 	printf("Motion_controller::adjusting() running\n");
-	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
-	int diff_x = center.x - img_exp_pos_x;
+	int diff_x = detect.x - img_exp_pos_x;
 	float p = (float) 1700 / (float) detect.height;
 	if(diff_x > 0)
 	{
@@ -199,7 +203,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		msg.sendMessage(this->Com->fd);
 	}
 
-	int diff_y = (int32_t) detect.y - img_exp_pos_y;
+	int diff_y = detect.y - img_exp_pos_y;
 	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
 	printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
 	uint16_t move_y = ceil(abs(diff_y) * p);
@@ -207,7 +211,6 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	if(diff_y > 0)
 	{
 		//moving down
-		
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
 		Message msg;
 		msg.LifterMoveDownMM(move_y);
@@ -226,21 +229,10 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 
 uint16_t Motion_controller::bound_dis(const uint32_t &dis)
 {
-	if(dis > 0xffff)
+	if(dis > 0x0000ffff)
 		return 0xffff;
 	else
 		return (uint16_t) dis;
-}
-void Motion_controller::send_cmd()
-{
-	return ;
-	printf("Motion_controller::send_cmd(): sending messages to the car\n");
-	while(!this->cmd_queue.empty())
-	{
-		//this->Com->send_cmd(cmd_queue.front());
-		//cmd_queue.front().sendMessage(this->Com->fd);
-		cmd_queue.pop();
-	}
 }
 
 void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
