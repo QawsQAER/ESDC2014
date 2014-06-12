@@ -164,6 +164,30 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+
+	if(distance > IMG_EXP_DIS)
+	{
+		//the target too far away from the camera
+		uint16_t move_z = abs(ceil(distance - IMG_EXP_DIS));
+		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
+		Message msg;
+		msg.CarMoveUpMM(move_z);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//the target too close to the camera
+		uint16_t move_z = abs(ceil(distance - IMG_EXP_DIS));
+		printf("Motion_controller::zoom_in_out() moving backward %lf\n",move_z);
+		Message msg;
+		msg.CarMoveDownMM(move_z);
+		msg.sendMessage(this->Com->fd);
+	}
+
 	/*
 	// the car now will adjust its position so it's only 1 meter from the target
 	if(distance < 0)
@@ -186,6 +210,7 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 	}
 	*/
 	
+	/*
 	//the car need to adjust the position according to the detection result
 	int diff_y = detect.height - this->exp_height;
 	if(diff_y < 0)
@@ -206,6 +231,7 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 		msg.CarMoveDownMM(DEFAULT_DIS);
 		msg.sendMessage(this->Com->fd);
 	}
+	*/
 	return 1;
 }
 
