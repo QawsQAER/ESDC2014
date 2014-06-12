@@ -74,6 +74,9 @@ enum command_type{
 
 
 //IMAGE PROCESSING THRESHOLD
+#define IMG_ORI_WIDTH 640
+#define IMG_ORI_HEIGHT 480
+	
 #define IMG_WIDTH 640
 #define IMG_HEIGHT 480
 #define IMG_CENTER_X IMG_WIDTH/2
