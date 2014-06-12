@@ -1,6 +1,7 @@
 #ifndef _MACRO_H
 #define _MACRO_H
 
+#include "stdint.h"
 
 #define MAX_COUNT	4			// max. no. of points being tracked
 #define PixelWidth	0.0084		// in mm
@@ -30,7 +31,25 @@ extern unsigned char continuity;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 
-enum command_type{undefined,connect_request,start_movement,confirm_picture,pattern_1,pattern_2,pattern_3,pattern_4,car_forward,car_backward,car_left,car_right,camera_forward,camera_backward,camera_left,camera_right,lift_up,lift_down};
+enum command_type{
+	undefined,
+	connect_request,
+	start_movement,
+	confirm_picture,
+	pattern_1,
+	pattern_2,
+	pattern_3,
+	pattern_4,
+	car_forward,
+	car_backward,
+	car_left,
+	car_right,
+	camera_forward,
+	camera_backward,
+	camera_left,
+	camera_right,
+	lift_up,
+	lift_down};
 
 #define AUTOFOCUS
 
@@ -64,9 +83,12 @@ enum command_type{undefined,connect_request,start_movement,confirm_picture,patte
 #define IMG_EXP_HEIGHT 320
 #define IMG_EXP_WIDTH 70
 
-#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * 0.618)
-#define IMG_EXP_POS1_Y 60
+#define GOLDEN_RATIO 0.618
+#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
+#define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 500
 #define DEFAULT_DIS_SMALL 300

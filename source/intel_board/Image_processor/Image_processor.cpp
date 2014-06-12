@@ -204,6 +204,7 @@ uint8_t Image_processor::save_current_image()
  */
 cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,uint8_t dir = 0)
 {
+	printf("Image_processor::concat_image working\n");
 	cv::Mat result(img1.rows,img1.cols + img2.cols,CV_8UC3);
 	if(dir == 0)
 	{
@@ -217,6 +218,7 @@ cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,u
 	{
 
 	}
+	printf("Image_processor::concat_image exiting\n");
 	return result;
 }
 /*
@@ -297,6 +299,7 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 		cv::Rect r = body_detect[count];
 		cv::rectangle(marked_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
+	printf("mark_detected_body(): exiting\n");
 	return marked_img;
 }
 
@@ -362,7 +365,7 @@ cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	cv::Mat marked_img = source_img.clone();
-
+	printf("Image_processor::mark_detected_face working\n");
 	//for evert detected face
 	for(size_t count = 0;count < face_detect.size();count++)
 	{
@@ -379,6 +382,10 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 				cv::Size(face_detect[count].width/2,face_detect[count].height/2),
 				0,0,360, cv::Scalar(255,0,0),2,8,0);
 	}
+	cv::ellipse(marked_img,cv::Point(IMG_EXP_POS1_X,IMG_EXP_POS1_Y),
+				cv::Size(5,5),
+				0,0,360,cv::Scalar(255,255,0),2,8,0);
+	printf("Image_processor::mark_detected_face exiting\n");
 	return marked_img;
 }
 
@@ -398,6 +405,7 @@ uint8_t Image_processor::basic_face_detection()
  */
 uint8_t Image_processor::show_analyzed_img()
 {
+	printf("\nImage_processor::show_analyzed_img() working\n");
 	//cv::destroyWindow(this->winname);
 	//cv::destroyWindow(this->skinwin);
 	//cv::destroyWindow(this->edgewin);
@@ -407,9 +415,11 @@ uint8_t Image_processor::show_analyzed_img()
 	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
 	cv::moveWindow(this->winname,0,0);
-	
+	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
 	cv::imshow(this->winname,this->analyzed_img);
+	printf("Image_processor::show_analyzed_img() showing skin_img\n");
 	cv::imshow(this->skinwin,this->skin_img);
+
 	//cv::imshow(this->edgewin,this->edge_img);
 	if(continuity == 0)
 	{
@@ -426,6 +436,7 @@ uint8_t Image_processor::show_analyzed_img()
 		//imshow does not block the main process any more
 		cv::waitKey(3000);
 	}
+	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
 }
 /*
@@ -475,6 +486,7 @@ uint8_t Image_processor::load_current_img_to_analyzed_img()
 
 uint8_t Image_processor::basic_filter()
 {
+	printf("Image_processor::basic_filter() working\n");
 	this->final_body_detect.clear();
 	this->final_face_detect.clear();
 	//for each body deteced, try to find a face detected in the body region
@@ -522,7 +534,7 @@ uint8_t Image_processor::basic_filter()
 
 		this->final_body_detect.push_back(rect);
 	}
-
+	printf("Image_processor::basic_filter() exiting\n");
 }
 
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
@@ -655,9 +667,8 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
 	//this->show_analyzed_img();
 	cv::Mat tmp_img = this->analyzed_img.clone();
+
 	this->getSkin(this->current_img,this->skin_img);
-	
-	//this->edge_img = this->edge_detection(this->current_img);
 	//run basic filter;
 	this->basic_filter();
 
@@ -665,18 +676,19 @@ uint8_t Image_processor::target_in_scope()
 	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
 
-	//cv::Mat img = this->edge_detection(this->current_img);
 	this->analyzed_img = this->concat_image(tmp_img,this->analyzed_img);
 	
 	this->show_analyzed_img();
 	
 	if(this->final_body_detect.size() >= 1)
 	{	
+		printf("Image_processor::target_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
 	else if(this->face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
+		printf("Image_processor::target_in_scope() returning\n");
 		remove(this->current_img_path);
 		return 0;
 	}

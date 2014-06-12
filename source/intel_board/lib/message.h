@@ -122,7 +122,7 @@ public:
 	void CarRotateRightDegree(uint16_t _degree);
 
 	void LifterMoveUpMM(uint16_t _mm);
-	void LifterMoveDowmMM(uint16_t _mm);
+	void LifterMoveDownMM(uint16_t _mm);
 
 	void CameraPlatformRollLeft(uint16_t _degree);
 	void CameraPlatformRollRight(uint16_t _degree);

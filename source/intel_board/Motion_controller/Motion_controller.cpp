@@ -52,6 +52,9 @@ Motion_controller::Motion_controller()
 
 Motion_controller::~Motion_controller()
 {
+	Message msg;
+	msg.LifterMoveDownMM(1000);
+	msg.sendMessage(this->Com->fd);
 	delete this->Com;
 }
 
@@ -70,6 +73,8 @@ uint8_t Motion_controller::init()
 	msg.sendMessage(this->Com->fd);
 	sleep(1);
 
+	msg.LifterMoveDownMM(1000);
+	msg.sendMessage(this->Com->fd);
 	
 	printf("Motion_controller::init() returning\n");
 	return 1;
@@ -93,6 +98,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	int diff_x = center.x - this->center_x;
 	int diff_y = detect.height - this->exp_height;
+	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 	{
 		this->centering(detect);
@@ -107,9 +113,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else if(abs(center.x - IMG_EXP_POS1_X) > threshold_x)
 	{
 		this->adjusting(detect);
-		return 0;
+		return 1;
 	}
-
 	return 1;
 }
 
@@ -158,6 +163,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &distance)
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 	/*
 	// the car now will adjust its position so it's only 1 meter from the target
 	if(distance < 0)
@@ -225,6 +231,30 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		printf("\n\n\nMotion_controller adjusting(): moving left %d mm\n\n\n",move_x);
 		Message msg;
 		msg.CarMoveLeftMM(move_x);
+		msg.sendMessage(this->Com->fd);
+	}
+
+	int32_t tmp = IMG_EXP_POS1_Y;
+	int diff_y = (int32_t) detect.y - tmp;
+	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
+	printf("Motion_controller adjusting(): IMG_EXP_POS1_Y is %d\n",tmp);
+	uint16_t move_y = ceil(abs(diff_y) * p);
+	printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	if(diff_y > 0)
+	{
+		//moving down
+		
+		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
+		Message msg;
+		msg.LifterMoveDownMM(move_y);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//moving up
+		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
+		Message msg;
+		msg.LifterMoveUpMM(move_y);
 		msg.sendMessage(this->Com->fd);
 	}
 	return 1;
