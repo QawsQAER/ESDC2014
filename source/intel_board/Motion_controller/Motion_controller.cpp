@@ -81,9 +81,11 @@ uint8_t Motion_controller::init()
 }
 
 
-uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance)
+uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect &face,const double &distance)
 {
 /*
+	detect: the detected body region
+	face: the detected face region
 	threshold_x, threshold_y: the threshold for largest horizontally and vertically
 	center_x, center y: the center of the image
 	exp_x, exp_y: the expected position of the detected region

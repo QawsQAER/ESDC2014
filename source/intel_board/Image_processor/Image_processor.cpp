@@ -701,6 +701,11 @@ cv::Rect Image_processor::get_detection_result()
 	return this->final_body_detect[0];
 }
 
+cv::Rect Image_processor::get_face_detection_result()
+{
+	return this->final_face_detect[0];
+}
+
 double Image_processor::get_distance(const cv::Rect &face)
 {	
 	return runCAMShift(face);

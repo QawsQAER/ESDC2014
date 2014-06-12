@@ -249,7 +249,10 @@ uint8_t intel_board::robot_evaluate_image()
 	printf("intel_board: robot_evaluate_image() running\n");
 	cv::Rect dummy;
 	if(this->image_processor->final_face_detect.size() != 0)
-		return this->motion_controller->evaluate_image(this->image_processor->get_detection_result(),dummy,this->distance);
+		return this->motion_controller->evaluate_image(
+			this->image_processor->get_detection_result(),
+			this->image_processor->get_face_detection_result(),
+			this->distance);
 	else
 		printf("intel_board::robot_evaluate_image() error: evaluating an image without detection result!\n");
 		return 0;

@@ -180,6 +180,7 @@ public:
 	//and analyze whether there is a person/target in the picture.
 	uint8_t target_in_scope();
 	cv::Rect get_detection_result();
+	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
 };
 
