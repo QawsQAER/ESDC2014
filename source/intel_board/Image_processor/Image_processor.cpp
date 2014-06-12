@@ -33,9 +33,6 @@
 
 Image_processor::Image_processor(uint8_t img_source)
 {
-	//the default target should be at 0.5
-	this->exp_x = 0.5;
-	this->exp_y = 0.2;
 
 	printf("Constructing Image processor\n");
 	this->state = IMAGE_PROCESS_INIT;
@@ -98,11 +95,11 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 uint8_t Image_processor::get_image_from_cellphone()
 {
 	//TODO: maybe check the length of the c_str() return value
-	#ifdef AUTOFOCUS
+#ifdef AUTOFOCUS
 	strcpy(this->current_img_path,this->cam->photo_af().c_str());
-	#else
+#else
 	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
-	#endif
+#endif
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	if(!this->current_img.data)
@@ -111,9 +108,6 @@ uint8_t Image_processor::get_image_from_cellphone()
 		exit(-1);
 	}
 
-	point.x = floor(this->current_img.cols * this->exp_x);
-	point.y = floor(this->current_img.rows * this->exp_y);
-	printf("Image_processor::get_image_from_cellphone: expected x %d expected y %d\n",point.x,point.y);
 	return 1;
 }
 

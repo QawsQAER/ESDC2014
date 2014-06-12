@@ -106,8 +106,6 @@ public:
 	cv::Mat edge_img;
 	//these variables stores the expected image parameters
 	
-	float exp_w,exp_h; //expected width and height
-	float exp_x,exp_y; //expected x and y
 	cv::Point point;
 	cv::Rect expected_region; //
 

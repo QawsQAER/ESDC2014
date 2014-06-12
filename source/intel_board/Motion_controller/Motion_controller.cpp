@@ -88,8 +88,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	detect: the detected body region
 	face: the detected face region
 	threshold_x, threshold_y: the threshold for largest horizontally and vertically
-	center_x, center y: the center of the image
-	exp_x, exp_y: the expected position of the detected region
+	center_x, center_y: the center of the image
+	img_exp_pos_x, img_exp_pos_y: the expected (top left) position  of the detected region
 	exp_width, exp_height: the expected width and height
 	diff_x: the difference between the detected region center and the image center -> cause centering
 	diff_y: the difference between the actual detected region height and the expected region height -> cause backward and forward
