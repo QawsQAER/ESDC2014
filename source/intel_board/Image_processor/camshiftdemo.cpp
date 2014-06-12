@@ -6,24 +6,23 @@ This program is used to demonstrate the 4-point algorithm using CAMShift method
 #include "camshiftdemo.h"
 
 #define MAX_COUNT	4			// max. no. of points being tracked
-#define PixelWidth	0.0084		// in mm
+#define PixelWidth	0.0005		// in mm
 #define MMtoP		1/PixelWidth	// no. of pixel per mm, each pixel is 5 um, so 1 mm has 200 pixel
 #define GUESS		3000*MMtoP		// initial value of l[0], l[1], l[2], l[3]
 #define ERROR		0.1			// lower bound of the errors' value
-// #define Focal		692.28		// focal length of webcam
-#define Focal		460.28	
+#define Focal		460		// focal length of webcam
 #define MaxIter		50			// upper bound of number of iteration of the algorithm
 #define A(i, j)		A.at<double>(i, j)
 #define a(i, j)		a.at<double>(i, j)
-#define FACE_WIDTH 235.0
-#define FACE_HEIGHT 235.0
+#define FACE_WIDTH 270.0
+#define FACE_HEIGHT 270.0
 
 using namespace cv;
 using namespace std;
 
 
 
-double runCAMShift( Rect r ){
+double runCAMShift(CvRect r){
 // double runCAMShift(){
 double answer;
 	// 2D coordinates of 4 model points on the image plane
@@ -48,15 +47,10 @@ double answer;
 
 	
 	// 3D coodinates of 4 model points on the same plane (4 corners of square)
-	// Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
-	// 							   0.0, 150.0*MMtoP, 0.0,
-	// 							   200.0*MMtoP, 150.0*MMtoP, 0.0,
-	// 							   200.0*MMtoP, 0.0, 0.0);
-	   	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
+	Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
 								   0.0, FACE_WIDTH*MMtoP, 0.0,
 								   FACE_HEIGHT*MMtoP, FACE_WIDTH*MMtoP, 0.0,
 								   FACE_HEIGHT*MMtoP, 0.0, 0.0);
-
 	// 3D coodinates of 4 model points on different plane
 	/*Mat m = (Mat_<double>(4, 3) << 0.0, 0.0, 0.0,
 								   0.0, 0.0, 60.0*MMtoP,
@@ -93,7 +87,25 @@ double answer;
 				
 			}
 
-		return answer*PixelWidth;
+			answer*=PixelWidth;
+
+			if((answer>=3000)&&(answer<=3500))
+			{
+				answer-=150;
+			}
+			else if((answer>=3500)&&(answer<=4500))
+			{
+				answer-=450;
+			}
+
+			else if((answer>=4500)&&(answer<=4700))
+			{
+				answer-=150;
+			}
+
+
+
+		return (answer);
 
   } 
 
