@@ -22,7 +22,7 @@ using namespace std;
 
 
 
-double runCAMShift(CvRect r){
+double runCAMShift(Rect r){
 // double runCAMShift(){
 double answer;
 	// 2D coordinates of 4 model points on the image plane
