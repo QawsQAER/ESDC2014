@@ -41,8 +41,8 @@ Motion_controller::Motion_controller()
 	printf("Motion_controller(): Threshold_x %d Threshold_y %d\n",this->threshold_x,this->threshold_y);
 	this->center_x = IMG_CENTER_X;
 	this->center_y = IMG_CENTER_Y;
-	this->exp_x = 320;
-	this->exp_y = 240;
+	this->img_exp_pos_x = IMG_EXP_POS1_X;
+	this->img_exp_pos_y = IMG_EXP_POS1_Y;
 	this->exp_width = IMG_EXP_WIDTH;
 	this->exp_height = IMG_EXP_HEIGHT;
 	
@@ -94,11 +94,13 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	
 	//find out the center of the detected region
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
-	printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
-	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	int diff_x = center.x - this->center_x;
 	int diff_y = detect.height - this->exp_height;
+	
+	printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
+	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
+	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 	{
 		this->centering(detect);
@@ -110,7 +112,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		//return 1;// only run once zoom in out.
 		return 0;
 	}
-	else if(abs(center.x - IMG_EXP_POS1_X) > threshold_x)
+	else if(abs(center.x - img_exp_pos_x) > threshold_x)
 	{
 		this->adjusting(detect);
 		return 1;
@@ -164,75 +166,9 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 {
 	printf("\nMotion_controller::zoom_in_out() running\n");
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
-	double img_exp_dis = IMG_EXP_DIS;
-	if(distance > img_exp_dis)
-	{
-		//the target too far away from the camera
-		uint16_t move_z = abs(ceil(distance - img_exp_dis));
-		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
-		Message msg;
-		msg.CarMoveUpMM(move_z);
-		msg.sendMessage(this->Com->fd);
-	}
-	else
-	{
-		//the target too close to the camera
-		uint16_t move_z = abs(ceil(distance - IMG_EXP_DIS));
-		printf("Motion_controller::zoom_in_out() moving backward %lf\n",move_z);
-		Message msg;
-		msg.CarMoveDownMM(move_z);
-		msg.sendMessage(this->Com->fd);
-	}
-
-	/*
-	// the car now will adjust its position so it's only 1 meter from the target
-	if(distance < 0)
-	{
-		printf("Motion_controller::zoom_in_out ERROR: invalid distance %lf\n",distance);
-	}
-	else if(distance > 1000) //1000mm away from the target, move closer
-	{
-		printf("Motion_controller::zoom_in_out() moving forward %lf\n",distance - 1000);
-		Message msg;
-		msg.CarMoveUpMM((uint16_t) distance - 1000);
-		msg.sendMessage(this->Com->fd);
-	}
-	else
-	{
-		printf("Motion_controller::zoom_in_out() moving backward\n");
-		Message msg;
-		msg.CarMoveDownMM((uint16_t) 1000 - distance);
-		msg.sendMessage(this->Com->fd);
-	}
-	*/
-	
-	/*
-	//the car need to adjust the position according to the detection result
-	int diff_y = detect.height - this->exp_height;
-	if(diff_y < 0)
-	{
-		//the height too small, need to zoom in
-		//to zoom in, move forward
-		printf("Motion_controller::zoom_in_out() moving forward\n");
-		Message msg;
-		msg.CarMoveUpMM(DEFAULT_DIS);
-		msg.sendMessage(this->Com->fd);
-	}
-	else
-	{
-		//the height too large, need to zoom out
-		//to zoom out, move backward
-		printf("Motion_controller::zoom_in_out() moving backward\n");
-		Message msg;
-		msg.CarMoveDownMM(DEFAULT_DIS);
-		msg.sendMessage(this->Com->fd);
-	}
-	*/
+	this->zoom_in_out_by_default(detect,distance);
+	//this->zoom_in_out_by_distance(detect,distance);
 	return 1;
 }
 
@@ -240,7 +176,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 {
 	printf("Motion_controller::adjusting() running\n");
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
-	int diff_x = center.x - IMG_EXP_POS1_X;
+	int diff_x = center.x - img_exp_pos_x;
 	float p = (float) 1700 / (float) detect.height;
 	if(diff_x > 0)
 	{
@@ -261,10 +197,9 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		msg.sendMessage(this->Com->fd);
 	}
 
-	int32_t tmp = IMG_EXP_POS1_Y;
-	int diff_y = (int32_t) detect.y - tmp;
+	int diff_y = (int32_t) detect.y - img_exp_pos_y;
 	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
-	printf("Motion_controller adjusting(): IMG_EXP_POS1_Y is %d\n",tmp);
+	printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
 	uint16_t move_y = ceil(abs(diff_y) * p);
 	printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
 	if(diff_y > 0)
@@ -346,5 +281,85 @@ void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 		msg.CarRotateLeftDegree(degree);
 	}
 	msg.sendMessage(this->Com->fd);
+	return ;
+}
+
+void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const double &distance)
+{
+	//the car need to adjust the position according to the detection result
+	int diff_y = detect.height - this->exp_height;
+	if(diff_y < 0)
+	{
+		//the height too small, need to zoom in
+		//to zoom in, move forward
+		printf("Motion_controller::zoom_in_out() moving forward\n");
+		Message msg;
+		msg.CarMoveUpMM(DEFAULT_DIS);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//the height too large, need to zoom out
+		//to zoom out, move backward
+		printf("Motion_controller::zoom_in_out() moving backward\n");
+		Message msg;
+		msg.CarMoveDownMM(DEFAULT_DIS);
+		msg.sendMessage(this->Com->fd);
+	}
+}
+
+void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const double &distance)
+{
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+
+	double img_exp_dis = IMG_EXP_DIS;
+	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",img_exp_dis);
+	printf("Motion_controller::zoom_in_out() the diff is %lf\n",distance - img_exp_dis);
+	printf("Motion_controller::zoom_in_out() the abs diff is %lf\n",abs(distance - img_exp_dis));
+	printf("Motion_controller::zoom_in_out() the ceil abs diff is %ud\n",ceil(abs(distance - img_exp_dis)));
+	if(distance > img_exp_dis)
+	{
+		//the target too far away from the camera
+		uint16_t move_z = ceil(abs(distance - img_exp_dis));
+		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
+		Message msg;
+		msg.CarMoveUpMM(move_z);
+		msg.sendMessage(this->Com->fd);
+	}
+	else
+	{
+		//the target too close to the camera
+		uint16_t move_z = ceil(abs(distance - img_exp_dis));
+		printf("Motion_controller::zoom_in_out() moving backward %lf\n",move_z);
+		Message msg;
+		msg.CarMoveDownMM(move_z);
+		msg.sendMessage(this->Com->fd);
+	}
+}
+
+void Motion_controller::set_pattern(uint8_t pattern)
+{
+	printf("Motion_controller::set_pattern() running\n");
+	printf("Motion_controller::set_pattern() pattern is %u\n",pattern);
+	switch(pattern)
+	{
+		case(1):
+			this->img_exp_pos_x = IMG_EXP_POS1_X;
+			this->img_exp_pos_y = IMG_EXP_POS1_Y;
+		break;
+		case(2):
+			this->img_exp_pos_x = IMG_EXP_POS2_X;
+			this->img_exp_pos_y = IMG_EXP_POS2_Y;
+		break;
+		default:
+			printf("Motion_controller::set_pattern() pattern undefined\n");
+		break;
+	}
+	printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
+	printf("Motion_controller::set_pattern() exiting\n");
+
 	return ;
 }

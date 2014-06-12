@@ -64,7 +64,7 @@ private:
 		center_x, center y: the center of the image
 	*/
 	uint16_t threshold_x, threshold_y,center_x, center_y;
-	uint16_t exp_x, exp_y, exp_width, exp_height;
+	uint16_t img_exp_pos_x, img_exp_pos_y, exp_width, exp_height;
 
 
 	uint8_t centering(const cv::Rect &detect);
@@ -72,6 +72,9 @@ private:
 	uint8_t adjusting(const cv::Rect &detect);
 
 	uint16_t bound_dis(const uint32_t &dis);
+
+	void zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
+	void zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
 public:
 	Controller_Com *Com;
 	
@@ -88,8 +91,7 @@ public:
 	void move(const uint16_t &mm,const uint8_t &dir);
 	void rotate(const uint16_t &degree,const uint8_t &dir);
 
-	//this function will compute the distance of the target to the camera
-	double compute_distance(const cv::Rect &ref,const cv::Rect &detect, uint16_t actual_height,uint16_t focus_length);
+	void set_pattern(uint8_t pattern);
 };
 
 #endif

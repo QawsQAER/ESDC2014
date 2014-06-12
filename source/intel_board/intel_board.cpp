@@ -84,7 +84,6 @@ uint8_t intel_board::main_function()
 	}
 	else
 	{
-
 		// the main state machine
 		while(1)
 		{
@@ -109,12 +108,14 @@ uint8_t intel_board::main_function()
 				
 				case ROBOT_FIND_TARGET:
 					//working on finding the target
+					
 					if(this->robot_find_target())
 					{
 						this->state = ROBOT_EVALUATE_IMAGE;
 						this->distance = this->image_processor->get_distance(this->image_processor->final_face_detect[0]);
-						//printf("\n\n@@@@\nTHE TARGET IS %lf away from the camera\n@@@@@@@\n\n",this->distance);
 					}
+					
+				
 					break;
 
 				case ROBOT_EVALUATE_IMAGE:
@@ -168,7 +169,15 @@ uint8_t intel_board::robot_ready()
 	while(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
 	{
 		ui->pattern=cmd;
-		 cmd = ui->wait_command();
+		if(cmd == pattern_1)
+		{
+			this->motion_controller->set_pattern(1);
+		}
+		else if(cmd == pattern_2)
+		{
+			this->motion_controller->set_pattern(2);
+		}
+		cmd = ui->wait_command();
 		if(cmd == start_movement)
 		{
 			printf("intel_board: the robot is going to find target\n\n\n");

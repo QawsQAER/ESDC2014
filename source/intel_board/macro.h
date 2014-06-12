@@ -80,7 +80,7 @@ enum command_type{
 #define IMG_CENTER_Y IMG_HEIGHT/2
 #define IMG_HORI_THRESHOLD 50
 #define IMG_VERT_THRESHOLD 40
-#define IMG_EXP_HEIGHT 320
+#define IMG_EXP_HEIGHT 360
 #define IMG_EXP_WIDTH 70
 
 #define IMG_EXP_DIS 4887.5
@@ -90,7 +90,8 @@ enum command_type{
 #define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
 #define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
-#define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) IMG_HEIGHT * GOLDEN_RATIO)
+#define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
+
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 500
 #define DEFAULT_DIS_SMALL 300
