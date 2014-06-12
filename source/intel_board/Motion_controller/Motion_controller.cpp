@@ -169,10 +169,11 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
-	if(distance > IMG_EXP_DIS)
+	double img_exp_dis = IMG_EXP_DIS;
+	if(distance > img_exp_dis)
 	{
 		//the target too far away from the camera
-		uint16_t move_z = abs(ceil(distance - IMG_EXP_DIS));
+		uint16_t move_z = abs(ceil(distance - img_exp_dis));
 		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
 		Message msg;
 		msg.CarMoveUpMM(move_z);
