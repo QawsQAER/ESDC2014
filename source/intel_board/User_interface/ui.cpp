@@ -90,6 +90,7 @@ send_finished_ack  fa
 
 UI::UI()
 {
+	pattern=undefined;
 	contention();
 }
 

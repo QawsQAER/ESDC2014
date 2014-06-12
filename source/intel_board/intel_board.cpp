@@ -165,9 +165,10 @@ uint8_t intel_board::robot_ready()
 	command_type cmd = ui->wait_command();
 	printf("intel_board: the robot has received %d\n",cmd);
 	
-	if(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
+	while(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
 	{
-		command_type cmd = ui->wait_command();
+		ui->pattern=cmd;
+		 cmd = ui->wait_command();
 		if(cmd == start_movement)
 		{
 			printf("intel_board: the robot is going to find target\n\n\n");
