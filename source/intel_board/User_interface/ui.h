@@ -90,6 +90,13 @@ class UI{
 	void send_pattern2_ack();
 	void send_pattern3_ack();
 	void send_pattern4_ack();
+	void send_pattern5_ack();
+	void send_pattern6_ack();
+	void send_pattern7_ack();
+	void send_pattern8_ack();
+	void send_pattern9_ack();
+	void send_pattern10_ack();
+	void send_patterndiy_ack();
 
 	void send_car_forward_ack();
 	void send_car_backward_ack();
