@@ -1,6 +1,7 @@
 INTEL_BOARD_LD = -l Image_processor/Image_processor.o
 INTEL_BOARD_DEPEND = intel_board.cpp intel_board.h Image_processor.o camera.o Motion_controller.o message.o ui.o Makefile 
 INTEL_BOARD_DEPEND_OBJECT = Image_processor.o camera.o Motion_controller.o
+INTEL_BOARD_DEPEND_OBJECT+= message.o ui.o camshiftdemo.o Controller_Com.o
 
 export RM=rm
 export CP=cp
