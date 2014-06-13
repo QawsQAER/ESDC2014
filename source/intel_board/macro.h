@@ -41,6 +41,13 @@ enum command_type{
 	pattern_2,
 	pattern_3,
 	pattern_4,
+	pattern_5,
+	pattern_6,
+	pattern_7,
+	pattern_8,
+	pattern_9,
+	pattern_10,
+	pattern_diy,
 	car_forward,
 	car_backward,
 	car_left,
@@ -121,3 +128,4 @@ enum command_type{
 #define LIFTER_INIT_POS 250
 
 #endif
+// 27828986
