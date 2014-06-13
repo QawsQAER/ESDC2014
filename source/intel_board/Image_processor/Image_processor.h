@@ -20,15 +20,6 @@
 #include "camshiftdemo.h"
 #include "fourPointAlgo.h"
 
-#define WINNAME_LENGTH 32
-
-#ifndef IMG_SOURCE_CELLPHONE
-#define IMG_SOURCE_CELLPHONE 0
-#endif
-
-#ifndef IMG_SOURCE_WEBCAM
-#define IMG_SOURCE_WEBCAM 1
-#endif
 
 extern char *dir_path;
 extern char *PATH_TEMP;

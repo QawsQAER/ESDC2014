@@ -374,14 +374,11 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 		//create a point noting the center of the region where a face is detected
 		cv::Point center(face_detect[count].x + face_detect[count].width/2,
 						face_detect[count].y + face_detect[count].height/2);
-		//draw a ellipse for the face
+		//draw an ellipse for the face
 		cv::ellipse(marked_img,center,
 				cv::Size(face_detect[count].width/2,face_detect[count].height/2),
 				0,0,360, cv::Scalar(255,0,0),2,8,0);
 	}
-	cv::ellipse(marked_img,cv::Point(IMG_EXP_POS1_X,IMG_EXP_POS1_Y),
-				cv::Size(5,5),
-				0,0,360,cv::Scalar(255,255,0),2,8,0);
 	printf("Image_processor::mark_detected_face exiting\n");
 	return marked_img;
 }

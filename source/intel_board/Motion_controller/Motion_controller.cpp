@@ -110,7 +110,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		this->zoom_in_out(detect,distance);
 		return 0;
 	}
-	else if(abs(center.x - img_exp_pos_x) > threshold_x)
+	else if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y)
 	{
 		this->adjusting(detect);
 		return 1;

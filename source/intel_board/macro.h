@@ -14,6 +14,7 @@
 #define a(i, j)		a.at<double>(i, j)
 
 
+#define WINNAME_LENGTH 32
 #define IMG_SOURCE_CELLPHONE 0
 #define IMG_SOURCE_WEBCAM 1
 
@@ -99,10 +100,10 @@ enum command_type{
 #define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
 #define IMG_EXP_POS3_X IMG_CENTER_X
-#define IMG_EXP_POS3_Y IMG_EXP_POS2_Y
+#define IMG_EXP_POS3_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO )))
 
 #define IMG_EXP_POS4_X IMG_WIDTH - 20
-#define IMG_EXP_POS4_Y IMG_EXP_POS2_Y
+#define IMG_EXP_POS4_Y IMG_EXP_POS3_Y
 
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 500
