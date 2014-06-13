@@ -168,6 +168,7 @@ uint8_t intel_board::robot_ready()
 	
 	while(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
 	{
+		this->motion_controller->move(1000,0);
 		ui->pattern=cmd;
 		if(cmd == pattern_1)
 		{
