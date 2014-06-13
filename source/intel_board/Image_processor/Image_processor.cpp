@@ -102,7 +102,9 @@ uint8_t Image_processor::get_image_from_cellphone()
 #endif
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
+	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
 	cv::resize(this->current_img,this->current_img,cv::Size(IMG_WIDTH,IMG_HEIGHT));
+	printf("Image_processor::get_image_from_cellphone: current size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
 	if(!this->current_img.data)
 	{
 		printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");

@@ -76,6 +76,9 @@ uint8_t Motion_controller::init()
 	msg.LifterMoveDownMM(1000);
 	msg.sendMessage(this->Com->fd);
 	
+	msg.LifterMoveUpMM(150);
+	msg.sendMessage(this->Com->fd);
+
 	printf("Motion_controller::init() returning\n");
 	return 1;
 }
@@ -177,12 +180,12 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 {
 /*
-	diff_x is the difference between the detected body region's top left x coordinate, and the expected position's x coordinate
+	diff_x is the difference between the detected body region center's x coordinate, and the expected position's x coordinate
 	diff_y is the difference between the detected body region's top left y coordinate, and the expected position's y coordinate
 	p is the length per pixel, assuming that every detected region's height is 1700 mm 
 */
 	printf("Motion_controller::adjusting() running\n");
-	int diff_x = detect.x - img_exp_pos_x;
+	int diff_x = (detect.x + detect.width/2) - img_exp_pos_x;
 	float p = (float) 1700 / (float) detect.height;
 	if(diff_x > 0)
 	{
@@ -348,6 +351,14 @@ void Motion_controller::set_pattern(uint8_t pattern)
 			this->img_exp_pos_x = IMG_EXP_POS2_X;
 			this->img_exp_pos_y = IMG_EXP_POS2_Y;
 		break;
+		case(3):
+			this->img_exp_pos_x = IMG_EXP_POS3_X;
+			this->img_exp_pos_y = IMG_EXP_POS3_Y;
+		break;
+		case(4):
+			this->img_exp_pos_x = IMG_EXP_POS4_X;
+			this->img_exp_pos_y = IMG_EXP_POS4_Y;
+		break;
 		default:
 			printf("Motion_controller::set_pattern() pattern undefined\n");
 		break;
@@ -356,4 +367,16 @@ void Motion_controller::set_pattern(uint8_t pattern)
 	printf("Motion_controller::set_pattern() exiting\n");
 
 	return ;
+}
+
+void Motion_controller::reset_lifter()
+{
+	printf("Motion_controller::reset_lifter() running\n");
+	Message msg;
+	msg.LifterMoveDownMM(1000);
+	msg.sendMessage(this->Com->fd);
+	
+	msg.LifterMoveUpMM(150);
+	msg.sendMessage(this->Com->fd);
+	printf("Motion_controller::reset_lifter() exiting\n");
 }

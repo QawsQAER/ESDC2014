@@ -177,6 +177,15 @@ uint8_t intel_board::robot_ready()
 		{
 			this->motion_controller->set_pattern(2);
 		}
+		else if(cmd == pattern_3)
+		{
+			this->motion_controller->set_pattern(3);
+		}
+		else if(cmd == pattern_4)
+		{
+			this->motion_controller->set_pattern(4);
+		}
+
 		cmd = ui->wait_command();
 		if(cmd == start_movement)
 		{
@@ -194,7 +203,7 @@ uint8_t intel_board::robot_find_target()
 	uint8_t counter = 0;
 	uint16_t dis = 350;
 	uint16_t degree = 30;
-	uint8_t sec = 1;
+	uint8_t sec = 0;
 
 	this->robot_countdown(sec);	
 	while(!this->image_processor->target_in_scope())
@@ -207,30 +216,33 @@ uint8_t intel_board::robot_find_target()
 		switch(state)
 		{
 			case 0://repeat state
-				if(counter < 3)
+				if(counter < 2)
 				//do nothing
 					counter++;
 				else
 					state = 1;
 				break;
-			case 1://forward 300mm
+			case 1://forward [dis] mm
 				this->motion_controller->move(dis,0);
 				state = 2;
 				break;
-			case 2://backward 600mm
+			case 2://backward [dis] mm
 				this->motion_controller->move(dis * 2,1);
 				state = 3;
 				break;
-			case 3:
+			case 3: //right side [dis] mm
 				this->motion_controller->move(dis,0);
 				this->motion_controller->move(dis,2);
 				state = 4;
 				break;
-			case 4:
+			case 4: //left side [dis * 2] mm
 				this->motion_controller->move(dis * 2,3);
 				state = 5;
 				break;
 			case 5:
+				//move right [dis] mm
+				this->motion_controller->move(dis,2);
+				//rotate 30 degree
 				this->motion_controller->rotate(degree,0);
 				state = 0;
 				counter = 0;
@@ -287,6 +299,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	{
 		
 	}
+	this->motion_controller->reset_lifter();
 	return 1;
 }
 

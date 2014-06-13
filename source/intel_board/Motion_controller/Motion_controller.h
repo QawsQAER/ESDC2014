@@ -56,7 +56,7 @@ private:
 	std::queue<Message> cmd_queue;
 	uint8_t eval_state;
 
-
+	uint16_t lifter_pos; //unit mm.
 	
 	/*
 	variable for reference in image evaluation:
@@ -85,11 +85,13 @@ public:
 	//this function will only be called when a target is detected by the Image processor
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance);
 	//this function will read the detection result and then try to get a command such that the next detect result will be closer to the reference
-	
+
 	void move(const uint16_t &mm,const uint8_t &dir);
 	void rotate(const uint16_t &degree,const uint8_t &dir);
 
 	void set_pattern(uint8_t pattern);
+
+	void reset_lifter();
 };
 
 #endif
