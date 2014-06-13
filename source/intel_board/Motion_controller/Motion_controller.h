@@ -75,6 +75,7 @@ private:
 
 	void zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
 	void zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
+	void lift(const uint16_t &mm, const uint8_t &dir);
 public:
 	Controller_Com *Com;
 	
@@ -92,6 +93,7 @@ public:
 	void set_pattern(uint8_t pattern);
 
 	void reset_lifter();
+	void set_lifter(const uint16_t &mm);
 };
 
 #endif

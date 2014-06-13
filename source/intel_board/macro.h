@@ -107,4 +107,16 @@ enum command_type{
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 500
 #define DEFAULT_DIS_SMALL 300
+
+
+
+//
+//
+//
+#define LIFTER_UP 0
+#define LIFTER_DOWN 1
+#define LIFTER_MIN 0 //the minimum height of the lifter in mm
+#define LIFTER_MAX 700 //the maximun height of the lifter in mm
+#define LIFTER_INIT_POS 250
+
 #endif

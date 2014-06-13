@@ -35,6 +35,7 @@ Motion_controller::Motion_controller()
 {
 	printf("Motion_controller(): Constructing new Motion_controller\n");
 
+	this->lifter_pos = 0;
 	//initialize threshold value
 	this->threshold_x = IMG_HORI_THRESHOLD;
 	this->threshold_y = IMG_VERT_THRESHOLD;
@@ -52,9 +53,7 @@ Motion_controller::Motion_controller()
 
 Motion_controller::~Motion_controller()
 {
-	Message msg;
-	msg.LifterMoveDownMM(1000);
-	msg.sendMessage(this->Com->fd);
+	this->set_lifter(LIFTER_MIN);
 	delete this->Com;
 }
 
@@ -72,13 +71,7 @@ uint8_t Motion_controller::init()
 	msg.CameraPlatformYawClk(30);
 	msg.sendMessage(this->Com->fd);
 	sleep(1);
-
-	msg.LifterMoveDownMM(1000);
-	msg.sendMessage(this->Com->fd);
-	
-	msg.LifterMoveUpMM(150);
-	msg.sendMessage(this->Com->fd);
-
+	this->reset_lifter();
 	printf("Motion_controller::init() returning\n");
 	return 1;
 }
@@ -215,17 +208,13 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	{
 		//moving down
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
-		Message msg;
-		msg.LifterMoveDownMM(move_y);
-		msg.sendMessage(this->Com->fd);
+		this->lift(move_y,LIFTER_DOWN);
 	}
 	else
 	{
 		//moving up
 		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
-		Message msg;
-		msg.LifterMoveUpMM(move_y);
-		msg.sendMessage(this->Com->fd);
+		this->lift(move_y,LIFTER_UP);
 	}
 	return 1;
 }
@@ -308,9 +297,6 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const double &distance)
 {
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
 	double img_exp_dis = IMG_EXP_DIS;
 	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",img_exp_dis);
@@ -373,10 +359,45 @@ void Motion_controller::reset_lifter()
 {
 	printf("Motion_controller::reset_lifter() running\n");
 	Message msg;
-	msg.LifterMoveDownMM(1000);
+	msg.LifterMoveDownMM(LIFTER_MAX);
 	msg.sendMessage(this->Com->fd);
 	
-	msg.LifterMoveUpMM(150);
+	msg.LifterMoveUpMM(LIFTER_INIT_POS);
 	msg.sendMessage(this->Com->fd);
+	this->lifter_pos = LIFTER_INIT_POS;
 	printf("Motion_controller::reset_lifter() exiting\n");
+}
+
+void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
+{
+	Message msg;
+	if(dir == LIFTER_UP)
+	{
+		if(this->lifter_pos + mm > LIFTER_MAX)
+			this->lifter_pos = LIFTER_MAX;
+		else
+			this->lifter_pos += mm;
+		msg.LifterMoveUpMM(mm);
+	}
+	else if(dir == LIFTER_DOWN)
+	{
+		if(this->lifter_pos - mm < LIFTER_MIN)
+			this->lifter_pos = LIFTER_MIN;
+		else
+			this->lifter_pos -= mm;
+		msg.LifterMoveDownMM(mm);
+	}
+	msg.sendMessage(this->Com->fd);
+}
+
+void Motion_controller::set_lifter(const uint16_t &mm)
+{
+	if(mm > this->lifter_pos)
+	{
+		this->lift(mm - this->lifter_pos,LIFTER_DOWN);
+	}
+	else
+	{
+		this->lift(this->lifter_pos - mm,LIFTER_UP);
+	}
 }

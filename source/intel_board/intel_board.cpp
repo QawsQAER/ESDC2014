@@ -99,24 +99,22 @@ uint8_t intel_board::main_function()
 						printf("intel_board robot_init() return 0\n");
 						exit(-1);
 					}
-					break;
+				break;
 				
 				case ROBOT_READY:
 					//the robot will be waiting for user's specific command to continue
 					this->robot_ready();
-					break;
+				break;
 				
 				case ROBOT_FIND_TARGET:
 					//working on finding the target
-					
 					if(this->robot_find_target())
 					{
 						this->state = ROBOT_EVALUATE_IMAGE;
+						//get the distance according to the face detection result (running four point algorithm)
 						this->distance = this->image_processor->get_distance(this->image_processor->final_face_detect[0]);
 					}
-					
-				
-					break;
+				break;
 
 				case ROBOT_EVALUATE_IMAGE:
 					if(this->robot_evaluate_image())
@@ -126,7 +124,7 @@ uint8_t intel_board::main_function()
 					else
 						//let the system analyze the image and find out possible method to make it better
 						this->state = ROBOT_ANALYZE_IMAGE;
-					break;
+				break;
 				
 				case ROBOT_ANALYZE_IMAGE:
 					this->robot_analyze_image();
@@ -152,6 +150,8 @@ uint8_t intel_board::main_function()
 uint8_t intel_board::robot_init()
 {
 	printf("intel_board: the robot is in init state\n");
+	printf("intel_board: setting the task_counter to 0\n");
+	this->task_counter = 0;
 	if(!this->image_processor->init())
 		return 0;
 	if(!this->motion_controller->init())
@@ -189,7 +189,8 @@ uint8_t intel_board::robot_ready()
 		cmd = ui->wait_command();
 		if(cmd == start_movement)
 		{
-			printf("intel_board: the robot is going to find target\n\n\n");
+			this->task_counter++;
+			printf("intel_board: the robot is going to find target\n");
 			this->state = ROBOT_FIND_TARGET;
 			return 1;
 		}
@@ -252,7 +253,7 @@ uint8_t intel_board::robot_find_target()
 		}
 		printf("intel_board: sleep till the camera is stable\n");
 	}
-	printf("intel_board::robot_find_target(): TARGET FOUND!\n\n\n");
+	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
 	return 1;
 }
 
@@ -299,7 +300,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	{
 		
 	}
-	this->motion_controller->reset_lifter();
+	this->motion_controller->set_lifter(LIFTER_INIT_POS);
+	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 	return 1;
 }
 
@@ -350,12 +352,11 @@ uint8_t intel_board::robot_only_image_analysis()
 void intel_board::robot_countdown(uint8_t sec)
 {
 	useconds_t usec = 1000000;
-	//this->ui->send_finished_ack();
-	printf("intel_board: counting down\n");
+	printf("intel_board::robot_countdown counting down\n");
 	for(uint8_t count = sec;count > 0;count--)
 	{
-		printf("intel_board: counting down %d\n",count);
+		printf("intel_board::robot_countdown counting down %d\n",count);
 		usleep(usec);
 	}
-	
+	printf("intel_board::robot_countdown finished\n");
 }

@@ -76,6 +76,7 @@ private:
 	Motion_controller *motion_controller;
 	UI *ui;
 	double distance;
+	uint16_t task_counter;
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();
