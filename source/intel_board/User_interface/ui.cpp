@@ -53,6 +53,13 @@ lift
 up lu         16
 down ld		 17
 
+pattern 5 p1  18
+pattern 6 p2  19
+pattern 7 p3  20
+pattern 8 p4  21
+pattern 9 p1  22
+pattern 10 p2  23
+pattern diy p3  24
 -------------------------------------
 
 protacal from board to  phone
@@ -232,6 +239,40 @@ command_type UI::wait_command()
 			send_lift_down_ack();
 			return lift_down;
 
+			case 18:
+			printf("Command: pattern 5\n");
+			send_pattern5_ack();
+			return pattern_5;
+
+			case 19:
+			printf("Command: pattern6\n");
+			send_pattern6_ack();
+			return pattern_6;
+
+			case 20:
+			printf("Command: pattern7\n");
+			send_pattern7_ack();
+			return pattern_7;
+
+			case 21:
+			printf("Command: pattern8\n");
+			send_pattern8_ack();
+			return pattern_8;
+
+			case 22:
+			printf("Command: pattern9\n");
+			send_pattern9_ack();
+			return pattern_9;
+
+			case 23:
+			printf("Command: pattern10\n");
+			send_pattern10_ack();
+			return pattern_10;
+
+			case 24:
+			printf("Command: pattern_diy\n");
+			send_patterndiy_ack();
+			return pattern_diy;
 
 			default:
 			printf("Error: undefined read_type.\n");
@@ -348,6 +389,73 @@ void UI::send_pattern4_ack()
 
 	send_msg();
 }
+
+
+void UI::send_pattern5_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p5";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_pattern6_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p6";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_pattern7_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p7";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_pattern8_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p8";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+
+void UI::send_pattern9_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="p9";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_pattern10_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="pa";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
+void UI::send_patterndiy_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="diy";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
+
 
 void UI::send_car_forward_ack()
 {
@@ -500,6 +608,20 @@ int UI::read_msg()
 					return 6;
 				else if (strcmp(content,"p4p4")==0)
 					return 7;
+				else if (strcmp(content,"p5p5")==0)
+					return 18;
+				else if (strcmp(content,"p6p6")==0)
+					return 19;
+				else if (strcmp(content,"p7p7")==0)
+					return 20;
+				else if (strcmp(content,"p8p8")==0)
+					return 21;
+				else if (strcmp(content,"p9p9")==0)
+					return 22;
+				else if (strcmp(content,"papa")==0)
+					return 23;
+				else if (strcmp(content,"diy")==0)
+					return 24;
 				else if (strcmp(content,"UpUp")==0)
 					return 8;
 				else if (strcmp(content,"DoDo")==0)
