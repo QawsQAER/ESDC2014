@@ -8,7 +8,7 @@
 #define UI_PORT 60000
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
-
+#define COMPASSLENGTH 
 
 
 class UI{
@@ -59,8 +59,8 @@ class UI{
 	void send_finished_ack();
 	
 	command_type pattern;
-
-
+	int degree;
+	int read_degree();
 
 	private:
 

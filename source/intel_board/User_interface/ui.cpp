@@ -138,7 +138,12 @@ void UI::contention()
 		}
 
 		// printf("after accept client\n");
-	while(wait_command()!=connect_request);
+	if(wait_command()!=connect_request)
+		{
+			printf("Error: It's not a connect_request \n");
+			exit(0);
+		};
+	degree=read_degree();
 }			
 
 
@@ -563,8 +568,8 @@ void UI::send_lift_down_ack()
 
 int UI::read_msg()
 {
-	printf("Receive msg from client\n");
-
+	// printf("\n");
+	 printf("Receiving msg from client  ");
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
 	memset(content,0,MESSAGELENGTH);
 	
@@ -589,58 +594,62 @@ int UI::read_msg()
 		
 			if(alreadyReceiveByte>=MESSAGELENGTH)
 			{
-				memcpy(&content,tempBuffer,sizeof(char)*MESSAGELENGTH);
-				// printf("%s\n",content);
-				 
+				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
+ 				// strncpy(content,tempBuffer,sizeof(char)*MESSAGELENGTH);
+				// int d=sizeof(char);
+				// printf("%d\n",d );
+				 // printf("tempBuffer: %s\n", tempBuffer);
+				// printf("Receive msg from client: %s\n",tempBuffer);
+				
 
 
-				if(strcmp(content,"crcr")==0)
+				if(strcmp(tempBuffer,"cr")==0)
 					return 1;
-				else if (strcmp(content,"smsm")==0)
+				else if (strcmp(tempBuffer,"sm")==0)
 					return 2;
-				else if (strcmp(content,"cpcp")==0)
+				else if (strcmp(tempBuffer,"cp")==0)
 					return 3;
-				else if (strcmp(content,"p1p1")==0)
+				else if (strcmp(tempBuffer,"p1")==0)
 					return 4;
-				else if (strcmp(content,"p2p2")==0)
+				else if (strcmp(tempBuffer,"p2")==0)
 					return 5;
-				else if (strcmp(content,"p3p3")==0)
+				else if (strcmp(tempBuffer,"p3")==0)
 					return 6;
-				else if (strcmp(content,"p4p4")==0)
+				else if (strcmp(tempBuffer,"p4")==0)
 					return 7;
-				else if (strcmp(content,"p5p5")==0)
+				else if (strcmp(tempBuffer,"p5")==0)
 					return 18;
-				else if (strcmp(content,"p6p6")==0)
+				else if (strcmp(tempBuffer,"p6")==0)
 					return 19;
-				else if (strcmp(content,"p7p7")==0)
+				else if (strcmp(tempBuffer,"p7")==0)
 					return 20;
-				else if (strcmp(content,"p8p8")==0)
+				else if (strcmp(tempBuffer,"p8")==0)
 					return 21;
-				else if (strcmp(content,"p9p9")==0)
+				else if (strcmp(tempBuffer,"p9")==0)
 					return 22;
-				else if (strcmp(content,"papa")==0)
+				else if (strcmp(tempBuffer,"pa")==0)
 					return 23;
-				else if (strcmp(content,"diy")==0)
+				else if (strcmp(tempBuffer,"di")==0)
 					return 24;
-				else if (strcmp(content,"UpUp")==0)
+				else if (strcmp(tempBuffer,"Up")==0)
 					return 8;
-				else if (strcmp(content,"DoDo")==0)
+				else if (strcmp(tempBuffer,"Do")==0)
 					return 9;
-				else if (strcmp(content,"LeLe")==0)
+				else if (strcmp(tempBuffer,"Le")==0)
 					return 10;
-				else if (strcmp(content,"RiRi")==0)
+				else if (strcmp(tempBuffer,"Ri")==0)
 					return 11;
-				else if (strcmp(content,"cUcU")==0)
+				else if (strcmp(tempBuffer,"cU")==0)
 					return 12;
-				else if (strcmp(content,"cDcD")==0)
+				else if (strcmp(tempBuffer,"cD")==0)
 					return 13;
-				else if (strcmp(content,"cLcL")==0)
+				else if (strcmp(tempBuffer,"cL")==0)
 					return 14;
-				else if (strcmp(content,"cRcR")==0)
+				else if (strcmp(tempBuffer,"cR")==0)
 					return 15;
-				else if (strcmp(content,"lulu")==0)
+				else if (strcmp(tempBuffer,"lu")==0)
 					return 16;
-				else if (strcmp(content,"ldld")==0)
+				else if (strcmp(tempBuffer,"ld")==0)
 					return 17;
 				else
 					return -1;
@@ -727,6 +736,54 @@ int UI::read_msg()
 
 
 
+
+int UI::read_degree()
+{
+	// printf("\n");
+
+	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
+	memset(content,0,3);
+	
+	int receiveByte=0;
+	int alreadyReceiveByte=0;
+
+	// receive hello message
+
+
+
+	while(alreadyReceiveByte<3){
+
+
+		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
+		{
+			 printf("Error: Couldn't receive\n");
+			// exit(0);
+		}
+
+		alreadyReceiveByte+=receiveByte;
+
+		
+			if(alreadyReceiveByte>=3)
+			{
+				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
+ 				// strncpy(content,tempBuffer,sizeof(char)*3);
+				// int d=sizeof(char);
+				// printf("%d\n",d );
+				// printf("tempBuffer: %s\n", tempBuffer);
+				// printf("Receive degree : %s\n",tempBuffer);
+				
+			}
+			else{continue;}
+	}
+
+	int degree=0;
+
+	degree=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
+	printf("calculated degree %d\n", degree);
+
+	return degree;
+
+}
 
 
 
