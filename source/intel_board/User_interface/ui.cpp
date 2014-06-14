@@ -143,7 +143,7 @@ void UI::contention()
 			printf("Error: It's not a connect_request \n");
 			exit(0);
 		};
-	degree=read_degree();
+		get_degree();
 }			
 
 
@@ -314,6 +314,7 @@ void UI::send_msg()
 }
 
 
+
 void UI::send_finished_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
@@ -324,6 +325,16 @@ void UI::send_finished_ack()
 }
 
 
+
+void UI::send_fetch_degree_notice()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="fd";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+	 
+	// printf("send content:%s\n",msg_code);
+	send_msg();
+}
 
 void UI::send_established()
 {
@@ -737,9 +748,11 @@ int UI::read_msg()
 
 
 
-int UI::read_degree()
+int UI::update_degree()
 {
 	// printf("\n");
+
+	send_fetch_degree_notice();
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
 	memset(content,0,3);
@@ -776,17 +789,23 @@ int UI::read_degree()
 			else{continue;}
 	}
 
-	int degree=0;
+	int degree_temp=0;
 
-	degree=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
-	printf("calculated degree %d\n", degree);
+	degree_temp=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
+	printf("calculated campass degree %d\n", degree_temp);
 
+	degree=degree_temp;
 	return degree;
 
 }
 
 
 
+	 int UI::get_degree(){
+
+	 	update_degree();
+	 	return degree;
+	 }
 
 
 

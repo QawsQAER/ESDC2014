@@ -156,36 +156,39 @@ public class MainActivity extends Activity {
 	      if(degree <0)
 	    	  degree = 360+degree;
 	      
-	      Log.i(TAG, values[0]+"");
-	      
-//	      status.setText(degree+"");
-	      //values[1] = (float) Math.toDegrees(values[1]);
-	      //values[2] = (float) Math.toDegrees(values[2]);
-	      
-	      if(values[0] >= -5 && values[0] < 5){
-	    	 Log.i(TAG, "正北");
-	      }
-	      else if(values[0] >= 5 && values[0] < 85){
-	    	  Log.i(TAG, "东北");
-	      }
-	      else if(values[0] >= 85 && values[0] <=95){
-	    	  Log.i(TAG, "正东");
-	      }
-	      else if(values[0] >= 95 && values[0] <175){
-	    	  Log.i(TAG, "东南");
-	      }
-	      else if((values[0] >= 175 && values[0] <= 180) || (values[0]) >= -180 && values[0] < -175){
-	    	  Log.i(TAG, "正南");
-	      }
-	      else if(values[0] >= -175 && values[0] <-95){
-	    	  Log.i(TAG, "西南");
-	      }
-	      else if(values[0] >= -95 && values[0] < -85){
-	    	  Log.i(TAG, "正西");
-	      }
-	      else if(values[0] >= -85 && values[0] <-5){
-	    	  Log.i(TAG, "西北");
-	      }
+	      if(connected==0)
+	    	  status.setText(degree+"");
+	    	  
+//	      Log.i(TAG, values[0]+"");
+//	      
+////	      status.setText(degree+"");
+//	      //values[1] = (float) Math.toDegrees(values[1]);
+//	      //values[2] = (float) Math.toDegrees(values[2]);
+//	      
+//	      if(values[0] >= -5 && values[0] < 5){
+//	    	 Log.i(TAG, "正北");
+//	      }
+//	      else if(values[0] >= 5 && values[0] < 85){
+//	    	  Log.i(TAG, "东北");
+//	      }
+//	      else if(values[0] >= 85 && values[0] <=95){
+//	    	  Log.i(TAG, "正东");
+//	      }
+//	      else if(values[0] >= 95 && values[0] <175){
+//	    	  Log.i(TAG, "东南");
+//	      }
+//	      else if((values[0] >= 175 && values[0] <= 180) || (values[0]) >= -180 && values[0] < -175){
+//	    	  Log.i(TAG, "正南");
+//	      }
+//	      else if(values[0] >= -175 && values[0] <-95){
+//	    	  Log.i(TAG, "西南");
+//	      }
+//	      else if(values[0] >= -95 && values[0] < -85){
+//	    	  Log.i(TAG, "正西");
+//	      }
+//	      else if(values[0] >= -85 && values[0] <-5){
+//	    	  Log.i(TAG, "西北");
+//	      }
 	    }
 	
 	     
@@ -548,6 +551,19 @@ public class MainActivity extends Activity {
 						connected=1;
 						initView();
 						
+					
+					}
+					
+					else if(txt.equals("sm"))
+					{
+						status.setText("start");
+						flag=3;
+						initView();
+					}
+					
+					//fetch degree notice
+					else if(txt.equals("fd"))
+					{
 						
 						if(degree<10)
 						{
@@ -564,13 +580,6 @@ public class MainActivity extends Activity {
 							packet.pack(""+degree);
 							user.send(packet);
 						}
-					}
-					
-					else if(txt.equals("sm"))
-					{
-						status.setText("start");
-						flag=3;
-						initView();
 					}
 					
 					else if(txt.equals("cp"))
