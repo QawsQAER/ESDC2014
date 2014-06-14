@@ -22,32 +22,46 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            <EditText
-                android:id="@+id/ip"
-                android:layout_width="103dp"
+            <Button
+                android:id="@+id/open"
+                android:layout_width="75dp"
                 android:layout_height="wrap_content"
-                android:layout_weight="0.03"
-                android:hint="IP:" >
+                android:layout_marginTop="5.0dp"
+                android:layout_weight="0.46"
+                android:text="CONN" />
 
-                <requestFocus />
-            </EditText>
+            <Button
+                android:id="@+id/start"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5.0dp"
+                android:layout_weight="0.89"
+                android:text="start" />
 
             <TextView
                 android:id="@+id/status"
                 android:layout_width="84dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.01"
+                android:layout_weight="0.60"
                 android:ems="10"
                 android:gravity="center"
                 android:hint="status"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <Button
+                android:id="@+id/reset"
+                android:layout_width="77dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5.0dp"
+                android:layout_weight="0.36"
+                android:text="reset" />
+
+            <Button
                 android:id="@+id/next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5.0dp"
-                android:layout_weight="0.03"
+                android:layout_weight="0.93"
                 android:text="Next" />
         </LinearLayout>
 
@@ -62,43 +76,146 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical" >
 
-                <Button
-                    android:id="@+id/open"
-                    android:layout_width="75dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5.0dp"
-                    android:layout_weight="0.46"
-                    android:text="CONN" />
-
-                <Button
-                    android:id="@+id/start"
-                    android:layout_width="77dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="5.0dp"
-                    android:layout_weight="0.36"
-                    android:text="start" />
-
-                <Button
-                    android:id="@+id/comfrim"
+                <FrameLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="5.0dp"
-                    android:layout_weight="0.46"
-                    android:text="comfrim" />
+                    android:layout_weight="0.46" >
+
+                    <Button
+                        android:id="@+id/comfrim"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5.0dp"
+                        android:layout_weight="0.46"
+                        android:text="comfrim" />
+
+                    <Button
+                        android:id="@+id/mback"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5.0dp"
+                        android:layout_weight="0.46"
+                        android:text="mback" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:id="@+id/FrameLayout1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_weight="0.46" >
+
+                    <Button
+                        android:id="@+id/pattern1"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern1" />
+
+                    <Button
+                        android:id="@+id/single"
+                        android:layout_width="85dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="single" />
+
+                    <Button
+                        android:id="@+id/pattern5"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern5" />
+
+                    <Button
+                        android:id="@+id/pattern8"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern8" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.46" >
+
+                    <Button
+                        android:id="@+id/pattern2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern2" />
+
+                    <Button
+                        android:id="@+id/ddouble"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="double" />
+
+                    <Button
+                        android:id="@+id/pattern6"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern6" />
+
+                    <Button
+                        android:id="@+id/pattern9"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern9" />
+
+                </FrameLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.46" >
+
+                    <Button
+                        android:id="@+id/pattern3"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern3" />
+
+                    <Button
+                        android:id="@+id/multiple"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.46"
+                        android:text="multiple" />
+
+                    <Button
+                        android:id="@+id/pattern7"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern7" />
+
+                    <Button
+                        android:id="@+id/pattern10"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.03"
+                        android:text="pattern10" />
+
+                </FrameLayout>
 
                 <Button
-                    android:id="@+id/pattern1"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/pattern4"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.03"
-                    android:text="pattern1" />
+                    android:text="pattern4" />
 
                 <Button
-                    android:id="@+id/pattern2"
-                    android:layout_width="wrap_content"
+                    android:id="@+id/pdiy"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_weight="0.03"
-                    android:text="pattern2" />
+                    android:text="DIY" />
+
             </LinearLayout>
 
             <ImageView
@@ -111,4 +228,3 @@
     </LinearLayout>
 
 </ScrollView>
-

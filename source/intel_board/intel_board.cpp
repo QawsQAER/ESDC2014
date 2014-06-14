@@ -162,6 +162,9 @@ uint8_t intel_board::robot_init()
 
 uint8_t intel_board::robot_ready()
 {
+	//fetch degree
+	ui->update_degree();
+
 	printf("intel_board: the robot is in ready state\n");
 	command_type cmd = ui->wait_command();
 	printf("intel_board: the robot has received %d\n",cmd);

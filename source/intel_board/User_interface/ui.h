@@ -8,7 +8,7 @@
 #define UI_PORT 60000
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
-
+#define COMPASSLENGTH 
 
 
 class UI{
@@ -21,6 +21,8 @@ class UI{
 	//close connection when class destroyed
 	~UI();
 
+	//return the updated compass degree
+	int get_degree();
 
 	//use this when 
 	command_type wait_command();
@@ -60,7 +62,10 @@ class UI{
 	
 	command_type pattern;
 
+	
 
+
+	// int get_degree();
 
 	private:
 
@@ -72,7 +77,6 @@ class UI{
 
 	int server_socket;
 	int client_sd;
-
 
 
 
@@ -110,7 +114,12 @@ class UI{
 
 	void send_lift_up_ack();
 	void send_lift_down_ack();
+	void send_fetch_degree_notice();
 
+
+	int degree;
+
+	int update_degree();
 };
 
 

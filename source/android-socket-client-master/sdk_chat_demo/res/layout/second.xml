@@ -1,127 +1,135 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/ScrollView1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="horizontal" >
+    android:layout_height="match_parent" >
 
-    <LinearLayout
+    <ScrollView
+        android:id="@+id/ScrollView2"
         android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
-
-        <Button
-            android:id="@+id/Back"
-            android:layout_width="84dp"
-            android:layout_height="wrap_content"
-            android:text="Back" />
-
-        <TextView
-            android:id="@+id/text_car"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ems="10"
-            android:gravity="center"
-            android:hint="car"
-            android:textAppearance="?android:attr/textAppearanceMedium" />
-
-        <Button
-            android:id="@+id/Up"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Up" />
-
-        <Button
-            android:id="@+id/Down"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Down" />
-
-        <Button
-            android:id="@+id/Left"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Left" />
-
-        <Button
-            android:id="@+id/Right"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Right" />
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:orientation="vertical" >
+        android:layout_height="match_parent" >
 
         <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal" >
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" >
 
-            <TextView
-                android:id="@+id/text_lift"
-                android:layout_width="42dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="center"
-                android:hint="lift"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <Button
-                android:id="@+id/liftUp"
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Up" />
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
-            <Button
-                android:id="@+id/liftDown"
+                <Button
+                    android:id="@+id/Back"
+                    android:layout_width="84dp"
+                    android:layout_height="wrap_content"
+                    android:text="Back" />
+
+                <TextView
+                    android:id="@+id/text_car"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:ems="10"
+                    android:gravity="center"
+                    android:hint="car"
+                    android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                <Button
+                    android:id="@+id/Up"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Up" />
+
+                <Button
+                    android:id="@+id/Down"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Down" />
+
+                <Button
+                    android:id="@+id/Left"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Left" />
+
+                <Button
+                    android:id="@+id/Right"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Right" />
+            </LinearLayout>
+
+            <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Down" />
+                android:layout_height="match_parent"
+                android:orientation="vertical" >
 
-            <TextView
-                android:id="@+id/text_camera"
-                android:layout_width="100dp"
-                android:layout_height="wrap_content"
-                android:ems="10"
-                android:gravity="center"
-                android:hint="camera"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal" >
 
-            <Button
-                android:id="@+id/cUp"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Up" />
+                    <TextView
+                        android:id="@+id/text_lift"
+                        android:layout_width="42dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="lift"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
-            <Button
-                android:id="@+id/cDown"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Down" />
+                    <Button
+                        android:id="@+id/liftUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Up" />
 
-            <Button
-                android:id="@+id/cLeft"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Left" />
+                    <Button
+                        android:id="@+id/liftDown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Down" />
 
-            <Button
-                android:id="@+id/cRight"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Right" />
+                    <TextView
+                        android:id="@+id/text_camera"
+                        android:layout_width="100dp"
+                        android:layout_height="wrap_content"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:hint="camera"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
 
+                    <Button
+                        android:id="@+id/cUp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Up" />
+
+                    <Button
+                        android:id="@+id/cDown"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Down" />
+
+                    <Button
+                        android:id="@+id/cLeft"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Left" />
+
+                    <Button
+                        android:id="@+id/cRight"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Right" />
+                </LinearLayout>
+
+                <WebView
+                    android:id="@+id/WebView"
+                    android:layout_width="469dp"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/ic_cu" />
+            </LinearLayout>
         </LinearLayout>
+    </ScrollView>
 
-        <WebView
-            android:id="@+id/WebView"
-            android:layout_width="469dp"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_cu" />
-
-    </LinearLayout>
-
-</LinearLayout>
+</ScrollView>
