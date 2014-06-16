@@ -54,27 +54,43 @@ private:
 	//this is the reference rectangle, where the person should be
 	cv::Rect *ref;
 	std::queue<Message> cmd_queue;
-	uint8_t eval_state;
-
+	uint8_t eval_state, half;
 	uint16_t lifter_pos; //unit mm.
 	
 	/*
 	variable for reference in image evaluation:
-		threshold_x, threshold_y: the threshold for largest horizontally and vertically
-		center_x, center y: the center of the image
-	*/
-	uint16_t threshold_x, threshold_y,center_x, center_y;
-	uint16_t img_exp_pos_x, img_exp_pos_y, exp_width, exp_height;
 
+		center_x, center y -> the center of the image.
+		threshold_x, threshold_y -> the threshold for detected body region horizontally and vertically.
+		threshold_face_x, threshold_face_y -> the threshold for detected face region horizontally and vertically
+
+		img_exp_pos_x, img_exp_pos_y -> the expected position of x and y of the detected body (top center point)
+		exp_width, exp_height -> the expected height and width of the detected body
+
+		img_exp_face_pos_x, img_exp_face_pos_y -> the expected x and y of the detected body (top center point)
+		exp_face_height, exp_face_width -> the expected height and width of the detected face
+	*/
+	uint16_t threshold_x, threshold_y;
+	uint16_t img_exp_pos_x, img_exp_pos_y, exp_width, exp_height;
+	uint16_t center_x, center_y;
+
+	uint16_t threshold_face_y, threshold_face_x;
+	uint16_t exp_face_height, exp_face_width;
+	uint16_t img_exp_face_pos_x, img_exp_face_pos_y;
+	//-------------------------------------------------------------------------------------------------//
+	//-------------------------------------------------------------------------------------------------//
 
 	uint8_t centering(const cv::Rect &detect);
 	uint8_t zoom_in_out(const cv::Rect &detect,const double &distance);
 	uint8_t adjusting(const cv::Rect &detect);
+	uint8_t adjusting_by_face(const cv::Rect &face);
 
 	uint16_t bound_dis(const uint32_t &dis);
 
 	void zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
 	void zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
+	void zoom_in_out_by_face(const cv::Rect &face,const double &distance);
+
 	void lift(const uint16_t &mm, const uint8_t &dir);
 public:
 	Controller_Com *Com;
