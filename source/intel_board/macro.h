@@ -32,32 +32,39 @@ extern unsigned char continuity;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 
+
+/* enum type definition START */
+/* enum type definition START */
+/* enum type definition START */
 enum command_type{
-	undefined,
-	connect_request,
-	start_movement,
-	confirm_picture,
-	pattern_1,
-	pattern_2,
-	pattern_3,
-	pattern_4,
-	pattern_5,
-	pattern_6,
-	pattern_7,
-	pattern_8,
-	pattern_9,
-	pattern_10,
-	pattern_diy,
-	car_forward,
-	car_backward,
-	car_left,
-	car_right,
-	camera_forward,
-	camera_backward,
-	camera_left,
-	camera_right,
-	lift_up,
-	lift_down};
+	undefined, connect_request, start_movement, confirm_picture,
+	pattern_1, pattern_2, pattern_3, pattern_4, pattern_5,
+	pattern_6, pattern_7, pattern_8, pattern_9, pattern_10,
+	pattern_diy, 
+	car_forward, car_backward, car_left, car_right,
+	camera_forward, camera_backward, camera_left, camera_right,
+	lift_up, lift_down};
+
+enum PHOTO_MODE{
+	SINGLE_PHOTO,
+	DOUBLE_PHOTO,
+	MULTI_PHOTO
+};
+
+enum ROBOT_STATE {
+	ROBOT_INIT, ROBOT_READY, //actually waiting for command
+	ROBOT_NO_TARGET, ROBOT_FIND_TARGET,
+	ROBOT_EVALUATE_IMAGE, ROBOT_ANALYZE_IMAGE,
+	ROBOT_APPROACH_REF, ROBOT_WAIT_FOR_ADJUSTMENT,
+};
+
+enum ROBOT_MODE{
+	AUTO_MODE, MANUAL_MODE, IMG_ANALYSIS_MODE
+};
+
+/* enum type definition END */
+/* enum type definition END */
+/* enum type definition END */
 
 #define AUTOFOCUS
 

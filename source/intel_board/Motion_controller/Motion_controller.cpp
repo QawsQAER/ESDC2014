@@ -371,12 +371,14 @@ void Motion_controller::reset_lifter()
 void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 {
 	Message msg;
+	printf("Motion_controller::lift current at %u\n",this->lifter_pos);
 	if(dir == LIFTER_UP)
 	{
 		if(this->lifter_pos + mm > LIFTER_MAX)
 			this->lifter_pos = LIFTER_MAX;
 		else
 			this->lifter_pos += mm;
+		printf("Motion_controller::lift moving up to %u\n",this->lifter_pos);
 		msg.LifterMoveUpMM(mm);
 	}
 	else if(dir == LIFTER_DOWN)
@@ -385,9 +387,11 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 			this->lifter_pos = LIFTER_MIN;
 		else
 			this->lifter_pos -= mm;
+		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
 	msg.sendMessage(this->Com->fd);
+
 }
 
 void Motion_controller::set_lifter(const uint16_t &mm)

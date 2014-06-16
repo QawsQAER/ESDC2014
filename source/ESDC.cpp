@@ -93,6 +93,7 @@ int main(int argc, char ** argv)
     else // the user has not set the mode
     	printf("The robot is going to initiate in default mode\n");
 
+
     robot = new intel_board(mode,img_source);
     robot->main_function();
 	exit_routine(0);

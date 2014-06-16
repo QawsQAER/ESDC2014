@@ -38,6 +38,7 @@
 #include "User_interface/ui.h"
 //#include "Motion_controller/Motion_controller.h"
 #include "lib/message.h"
+#include "macro.h"
 
 #include <unistd.h>
 #include <stdint.h>
@@ -50,33 +51,23 @@
 //this is defined, declared and allocated space in ESDC.cpp
 extern char *dir_path;
 
-enum ROBOT_STATE {
-	ROBOT_INIT,
-	ROBOT_READY, //actually waiting for command
-	ROBOT_NO_TARGET,
-	ROBOT_FIND_TARGET,
-	ROBOT_EVALUATE_IMAGE,
-	ROBOT_ANALYZE_IMAGE,
-	ROBOT_APPROACH_REF,
-	ROBOT_WAIT_FOR_ADJUSTMENT,
-};
-
-enum ROBOT_MODE{
-	AUTO_MODE,
-	MANUAL_MODE,
-	IMG_ANALYSIS_MODE
-};
-
 class intel_board
 {
 private:
-	Image_processor *image_processor;
+	//STATE
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
+	PHOTO_MODE photo_mode;
+	uint16_t task_counter;
+	
+	//SUBMODULE
+	Image_processor *image_processor;
 	Motion_controller *motion_controller;
 	UI *ui;
+
+	//MISC
 	double distance;
-	uint16_t task_counter;
+	
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();

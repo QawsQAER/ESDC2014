@@ -23,7 +23,7 @@ class UI{
 
 	//return the updated compass degree
 	int get_degree();
-
+	int update_degree();
 	//use this when 
 	command_type wait_command();
 	/*
@@ -119,7 +119,7 @@ class UI{
 
 	int degree;
 
-	int update_degree();
+	
 };
 
 

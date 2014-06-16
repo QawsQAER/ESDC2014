@@ -33,7 +33,9 @@
 
 intel_board::intel_board(uint8_t mode,uint8_t img_source)
 {
-
+	//STATE
+	//STATE
+	//STATE
 	switch(mode)
 	{
 	case(0):
@@ -52,25 +54,37 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			printf("Invalid Mode\nExiting program\n");
 			exit(1);
 	}
+	state = ROBOT_INIT;
+	photo_mode = SINGLE_PHOTO;
+	
+	//SUBMODULE
+	//SUBMODULE
+	//SUBMODULE
+
 	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
 	printf("Creating Image_processor()\n");
 	this->image_processor = new Image_processor(img_source);
+
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
+	
 	printf("Creating UI()\n");
 	this->ui = new UI();
-	printf("hello intel board\n\n");
-	state = ROBOT_INIT;
+
+	printf("hello intel board\n\n");	
 }
 
 intel_board::~intel_board()
 {
 	printf("~intel_board(): deleting Image_processor\n");
 	delete this->image_processor;
+
 	printf("~intel_board(): deleting Motion_controller\n");
 	delete this->motion_controller;
+	
 	printf("~intel_board(): deleting UI\n");
 	delete this->ui;
+	
 	printf("Bye bye intel board\n");
 }
 
