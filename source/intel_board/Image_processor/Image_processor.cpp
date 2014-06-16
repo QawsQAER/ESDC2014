@@ -385,10 +385,10 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 
 uint8_t Image_processor::basic_face_detection()
 {
-	printf("Entering basic_face_detection\n");
+	printf("Image_processor::basic_face_detection(): Entering basic_face_detection\n");
 	if(!this->run_face_detection(this->current_img,this->face_detect))
 	{
-		printf("Image_processor basic_face_detection ERROR\n");
+		printf("Image_processor::basic_face_detection(): Image_processor basic_face_detection ERROR\n");
 		return -1;
 	}
 	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);

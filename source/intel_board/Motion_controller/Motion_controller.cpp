@@ -142,18 +142,14 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 			//should move left
 			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
-			Message msg;
-			msg.CarMoveLeftMM(move_x);
-			msg.sendMessage(this->Com->fd);
+			this->move(move_x,2);
 		}
 		else
 		{
 			//should move right
 			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
-			Message msg;
-			msg.CarMoveRightMM(move_x);
-			msg.sendMessage(this->Com->fd);
+			this->move(move_x,3);
 		}
 	}
 
@@ -185,18 +181,14 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		//move right
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
 		printf("\n\n\nMotion_controller adjusting(): moving right %d mm\n\n\n",move_x);
-		Message msg;
-		msg.CarMoveRightMM(move_x);
-		msg.sendMessage(this->Com->fd);
+		this->move(move_x,3);
 	}
 	else
 	{
 		//move left
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
 		printf("\n\n\nMotion_controller adjusting(): moving left %d mm\n\n\n",move_x);
-		Message msg;
-		msg.CarMoveLeftMM(move_x);
-		msg.sendMessage(this->Com->fd);
+		this->move(move_x,2);
 	}
 
 	int diff_y = detect.y - img_exp_pos_y;
