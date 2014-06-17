@@ -56,6 +56,18 @@ Motion_controller::Motion_controller()
 	this->half = 0;
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	//TODO: initilized the reference rectangle
+
+	this->ref = cv::Rect(
+		this->img_exp_pos_x - this->exp_width/2,
+		this->img_exp_pos_y,
+		this->exp_width,
+		this->exp_height);
+	
+	this->face_ref = cv::Rect(
+		this->img_exp_face_pos_x - this->exp_face_width/2,
+		this->img_exp_pos_y,
+		this->exp_face_width,
+		this->exp_face_height);
 }
 
 Motion_controller::~Motion_controller()

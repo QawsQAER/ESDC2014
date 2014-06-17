@@ -93,6 +93,7 @@ public:
 	//these variables stores the current image that is being processed
 	cv::Mat current_img;
 	cv::Mat analyzed_img;
+	cv::Mat analyzed_img_filtered;
 	cv::Mat skin_img;
 	cv::Mat edge_img;
 	//these variables stores the expected image parameters
@@ -142,6 +143,7 @@ public:
 	cv::Mat mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect);
 
 
+	void mark_exp_region(const cv::Rect &rect);
 	/*
 	
 		filtering related functions
@@ -167,7 +169,7 @@ public:
 	*/
 	//this function will take a picture of the current scope,
 	//and analyze whether there is a person/target in the picture.
-	uint8_t target_in_scope();
+	uint8_t one_target_in_scope();
 	cv::Rect get_detection_result();
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);

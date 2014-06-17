@@ -408,9 +408,11 @@ uint8_t Image_processor::show_analyzed_img()
 	//cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
+	cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 	cv::moveWindow(this->winname,0,0);
 	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
-	cv::imshow(this->winname,this->analyzed_img);
+	cv::imshow(this->winname,concat_image);
+
 	printf("Image_processor::show_analyzed_img() showing skin_img\n");
 	cv::imshow(this->skinwin,this->skin_img);
 
@@ -428,6 +430,7 @@ uint8_t Image_processor::show_analyzed_img()
 	else
 	{
 		//imshow does not block the main process any more
+		//but instead it waits for 3 second
 		cv::waitKey(3000);
 	}
 	printf("Image_processor::show_analyzed_img() exiting\n");
@@ -644,9 +647,9 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	return 1;
 }
 		
-uint8_t Image_processor::target_in_scope()
+uint8_t Image_processor::one_target_in_scope()
 {
-	printf("Image_processor::target_in_scope() running\n");
+	printf("Image_processor::one_target_in_scope() running\n");
 	if(!this->capture_image())
 	{
 		printf("Image_processor Error: cannot capture valid image\n");
@@ -654,35 +657,31 @@ uint8_t Image_processor::target_in_scope()
 	}
 	
 	//if an image is captured, run basic analysis
+	//this->analyzed_img is the initial detection result image
 	this->run_body_detection(this->current_img,this->body_detect);
 	this->run_face_detection(this->current_img,this->face_detect);
-	
 	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);
 	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
-	//this->show_analyzed_img();
-	cv::Mat tmp_img = this->analyzed_img.clone();
-
+	
+	//get the skin color detection result, and store it into skin_img
 	this->getSkin(this->current_img,this->skin_img);
+	
 	//run basic filter;
 	this->basic_filter();
-
 	//mark the detected results
-	this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
-	this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
-
-	this->analyzed_img = this->concat_image(tmp_img,this->analyzed_img);
-	
-	this->show_analyzed_img();
+	//this->analyzed_img_filtered is the final detection result image
+	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
+	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
 	
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::target_in_scope() returning\n");
+		printf("Image_processor::one_target_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
 	else if(this->face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::target_in_scope() returning\n");
+		printf("Image_processor::one_target_in_scope() returning\n");
 		remove(this->current_img_path);
 		return 0;
 	}
@@ -690,6 +689,13 @@ uint8_t Image_processor::target_in_scope()
 	return 0;
 }
 
+
+void Image_processor::mark_exp_region(const cv::Rect &rect)
+{
+	cv::rectangle(this->analyzed_img,rect.tl(),rect.br(),cv::Scalar(0,0,0x80),2);
+	cv::rectangle(this->analyzed_img_filtered,rect.tl(),rect.br(),cv::Scalar(0,0,0x80),2);
+	return ;
+}
 cv::Rect Image_processor::get_detection_result()
 {
 	return this->final_body_detect[0];

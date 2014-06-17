@@ -211,7 +211,8 @@ uint8_t intel_board::robot_ready()
 			this->state = ROBOT_FIND_TARGET;
 			return 1;
 		}
-	}	
+	}
+	return 0;
 }
 
 uint8_t intel_board::robot_find_target()
@@ -224,8 +225,10 @@ uint8_t intel_board::robot_find_target()
 	uint8_t sec = 0;
 
 	this->robot_countdown(sec);	
-	while(!this->image_processor->target_in_scope())
+	while(!this->image_processor->one_target_in_scope())
 	{
+		this->image_processor->mark_exp_region(this->motion_controller->ref);
+		this->image_processor->show_analyzed_img();
 		//TODO: may adjust the position according to the initial detection results
 		this->robot_countdown(sec);
 		//rotate 30 degree every time if no target is detected
@@ -270,6 +273,8 @@ uint8_t intel_board::robot_find_target()
 		}
 		printf("intel_board: sleep till the camera is stable\n");
 	}
+	this->image_processor->mark_exp_region(this->motion_controller->ref);
+	this->image_processor->show_analyzed_img();
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
 	return 1;
 }
@@ -313,7 +318,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 
 	this->image_processor->cam->save_photo_af();
 	this->ui->send_finished_ack();
-	while(ui->wait_command() != confirm_picture)
+	command_type cmd;
+	while((cmd = ui->wait_command()) != confirm_picture)
 	{
 		
 	}
