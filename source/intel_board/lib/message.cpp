@@ -42,7 +42,6 @@ Message::~Message()
 
 void Message::sendMessage(int fd)
 {
-	return ;
 	int write_error = 0;
 	uint8_t move_dis_upper_8 = (_IntelCarCmd->move_dis) >> 8;
 	uint8_t move_dis_lower_8 = (_IntelCarCmd->move_dis) & 0x00ff;

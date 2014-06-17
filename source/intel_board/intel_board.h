@@ -60,6 +60,7 @@ private:
 	PHOTO_MODE photo_mode;
 	uint16_t task_counter;
 	uint8_t half;
+	
 	//SUBMODULE
 	Image_processor *image_processor;
 	Motion_controller *motion_controller;

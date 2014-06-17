@@ -112,8 +112,7 @@ UI::~UI()
 
 void UI::contention()
 {
-	
-	 server_socket = init_server_socket();
+	server_socket = init_server_socket();
 
 	int val=1;
 	if(setsockopt(server_socket,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
@@ -297,20 +296,19 @@ command_type UI::wait_command()
 
 void UI::send_msg()
 {
-			// printf("Send msg to client\n");
-					
-					int already_sent=0;
-					while(already_sent<MESSAGELENGTH){
-						int len=send(client_sd,msg_code+already_sent,MESSAGELENGTH-already_sent,0);
-						if(len<=0){
-							perror("send()");
-						}else{
-							already_sent+=len;
-						}
-						if(already_sent>=MESSAGELENGTH){
-							break;
-						}
-					}
+	// printf("Send msg to client\n");
+	int already_sent=0;
+	while(already_sent<MESSAGELENGTH){
+		int len=send(client_sd,msg_code+already_sent,MESSAGELENGTH-already_sent,0);
+		if(len<=0){
+			perror("send()");
+		}else{
+			already_sent+=len;
+		}
+		if(already_sent>=MESSAGELENGTH){
+			break;
+		}
+	}
 }
 
 
@@ -515,7 +513,7 @@ void UI::send_camera_forward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cU";
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	memcpy(&msg_code,&temp,2*sizeof(char));
 
 	send_msg();
 }
@@ -524,7 +522,7 @@ void UI::send_camera_backward_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cD";
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	memcpy(&msg_code,&temp,2*sizeof(char));
 
 	send_msg();
 }
@@ -533,7 +531,7 @@ void UI::send_camera_left_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cL";
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	memcpy(&msg_code,&temp,2*sizeof(char));
 
 	send_msg();
 }
@@ -543,7 +541,7 @@ void UI::send_camera_right_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="cR";
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	memcpy(&msg_code,&temp,2*sizeof(char));
 
 	send_msg();
 }
@@ -552,7 +550,7 @@ void UI::send_lift_up_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="lu";
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	memcpy(&msg_code,&temp,2*sizeof(char));
 
 	send_msg();
 }
@@ -566,15 +564,6 @@ void UI::send_lift_down_ack()
 
 	send_msg();
 }
-
-
-
-
-
-
-
-
-
 
 
 int UI::read_msg()
@@ -810,7 +799,7 @@ int UI::update_degree()
 
 
 
-int UI::	init_server_socket(){
+int UI::init_server_socket(){
 
 	int sd=socket(AF_INET,SOCK_STREAM,0);
 	struct sockaddr_in server_addr;

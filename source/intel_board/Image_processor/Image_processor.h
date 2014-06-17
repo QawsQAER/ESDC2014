@@ -113,7 +113,7 @@ public:
 
 	//this function will stored the image into the hard disk,
 	//naming it according to the time since Epoch
-	uint8_t save_current_image();
+	uint8_t save_current_image(uint16_t task_counter);
 	
 	//this function simplily read the image from file to current_img
 	uint8_t read_image(const char* filename);

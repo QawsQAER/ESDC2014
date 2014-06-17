@@ -54,9 +54,9 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 			printf("Invalid Mode\nExiting program\n");
 			exit(1);
 	}
-	state = ROBOT_INIT;
-	photo_mode = SINGLE_PHOTO;
-	
+	this->state = ROBOT_INIT;
+	this->photo_mode = SINGLE_PHOTO;
+	this->half = 1;
 	//SUBMODULE
 	//SUBMODULE
 	//SUBMODULE
@@ -67,7 +67,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
-	
+	this->motion_controller->half = &this->half;
 	printf("Creating UI()\n");
 	this->ui = new UI();
 
@@ -227,7 +227,10 @@ uint8_t intel_board::robot_find_target()
 	this->robot_countdown(sec);	
 	while(!this->image_processor->one_target_in_scope())
 	{
-		this->image_processor->mark_exp_region(this->motion_controller->ref);
+		if(this->half)
+			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+		else
+			this->image_processor->mark_exp_region(this->motion_controller->ref);
 		this->image_processor->show_analyzed_img();
 		//TODO: may adjust the position according to the initial detection results
 		this->robot_countdown(sec);
@@ -273,7 +276,11 @@ uint8_t intel_board::robot_find_target()
 		}
 		printf("intel_board: sleep till the camera is stable\n");
 	}
-	this->image_processor->mark_exp_region(this->motion_controller->ref);
+
+	if(this->half)
+		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+	else
+		this->image_processor->mark_exp_region(this->motion_controller->ref);
 	this->image_processor->show_analyzed_img();
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
 	return 1;
@@ -317,12 +324,20 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//should be waiting for adjustment here.
 
 	this->image_processor->cam->save_photo_af();
+	this->image_processor->one_target_in_scope();
+	if(this->half)
+		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+	else		
+		this->image_processor->mark_exp_region(this->motion_controller->ref);
+	this->image_processor->show_analyzed_img();
+	this->image_processor->save_current_image(this->task_counter);	
 	this->ui->send_finished_ack();
 	command_type cmd;
 	while((cmd = ui->wait_command()) != confirm_picture)
 	{
 		
 	}
+
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 	return 1;

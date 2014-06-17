@@ -53,7 +53,7 @@ class Motion_controller
 private:
 	//this is the reference rectangle, where the person should be
 	std::queue<Message> cmd_queue;
-	uint8_t eval_state, half;
+	uint8_t eval_state;
 	uint16_t lifter_pos; //unit mm.
 	
 	/*
@@ -80,6 +80,7 @@ private:
 	//-------------------------------------------------------------------------------------------------//
 
 	uint8_t centering(const cv::Rect &detect);
+	uint8_t centering_by_Face(const cv::Rect &face);
 	uint8_t zoom_in_out(const cv::Rect &detect,const double &distance);
 	uint8_t adjusting(const cv::Rect &detect);
 	uint8_t adjusting_by_face(const cv::Rect &face);
@@ -93,6 +94,7 @@ private:
 	void lift(const uint16_t &mm, const uint8_t &dir);
 public:
 
+	uint8_t *half;
 	cv::Rect ref;
 	cv::Rect face_ref;
 	Controller_Com *Com;

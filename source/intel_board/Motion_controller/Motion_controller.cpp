@@ -119,7 +119,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
-	if(!half)
+	if(!(*this->half))
 	{
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
@@ -140,9 +140,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else
 	{
 		diff_y = face.height - this->exp_face_height;
-		if(abs(diff_x) > threshold_x)
+		if(abs(diff_x) > threshold_face_x)
 		{
-			this->centering(detect);
+			this->centering_by_face(detect);
 			return 0;
 		}
 		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
@@ -159,6 +159,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	return 1;
 }
 
+/*CENTERING FUNCTION BEGIN*/
+/*CENTERING FUNCTION BEGIN*/
+/*CENTERING FUNCTION BEGIN*/
 uint8_t Motion_controller::centering(const cv::Rect &detect)
 {
 	printf("\nMotion_controller::centering() running\n");
@@ -197,9 +200,13 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 	return okay_image;
 }
 
-
-
-
+uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
+{
+	return 1;
+}
+/*CENTERING FUNCTION END*/
+/*CENTERING FUNCTION END*/
+/*CENTERING FUNCTION END*/
 
 uint16_t Motion_controller::bound_dis(const uint32_t &dis)
 {
@@ -239,7 +246,7 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 		//the height too large, need to zoom out
 		//to zoom out, move backward
 		printf("Motion_controller::zoom_in_out() moving backward\n");
-		this->move(DEFAULT_DIS,0);
+		this->move(DEFAULT_DIS,1);
 	}
 }
 
@@ -381,7 +388,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 	}
 	printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
 	printf("Motion_controller::set_pattern() exiting\n");
-
+	this->ref = cv::Rect(this->img_exp_pos_x - this->exp_width / 2,this->img_exp_pos_y,this->exp_width,this->exp_height);
 	return ;
 }
 
@@ -433,11 +440,11 @@ void Motion_controller::set_lifter(const uint16_t &mm)
 {
 	if(mm > this->lifter_pos)
 	{
-		this->lift(mm - this->lifter_pos,LIFTER_DOWN);
+		this->lift(mm - this->lifter_pos,LIFTER_UP);
 	}
 	else
 	{
-		this->lift(this->lifter_pos - mm,LIFTER_UP);
+		this->lift(this->lifter_pos - mm,LIFTER_DOWN);
 	}
 }
 

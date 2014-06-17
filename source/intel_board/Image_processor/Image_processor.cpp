@@ -175,25 +175,34 @@ uint8_t Image_processor::get_image_and_show()
  *	Implementation of stored_current_image()
  *
  */
-uint8_t Image_processor::save_current_image()
+uint8_t Image_processor::save_current_image(uint16_t task_counter)
 {
 	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
+	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
+
 	time_t timestamp = time(NULL);
 	struct tm *current_time = gmtime(&timestamp);
 	//get the filename in format of month-day_hour:minute:second
-	sprintf(filename,"%d-%d_%d:%d:%d.png",
-			current_time->tm_mon,
-			current_time->tm_mday,
-			current_time->tm_hour,
-			current_time->tm_min,
-			current_time->tm_sec);
+	sprintf(filename,"%u",task_counter);
+	strcpy(analyzed_filename,filename);
+	strcat(analyzed_filename,"_ana.jpg");
+
+	strcpy(analyzed_filtered_filename,filename);
+	strcat(analyzed_filtered_filename,"_ana_fil.jpg");
+	strcat(filename,".jpg");
+
 	//specify the compression parameters
 	std::vector<int> compression_params;
-	compression_params.push_back(CV_IMWRITE_PNG_COMPRESSION);
-	compression_params.push_back(9);
+	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
 	cv::imwrite(filename,this->current_img,compression_params);
+	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
+	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
+
 	free(filename);
+	free(analyzed_filename);
+	free(analyzed_filtered_filename);
 }
 
 /*
