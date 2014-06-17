@@ -25,10 +25,10 @@ echo "INTERFACE is $1"
 echo "SSID is $2"
 echo "PASSWORD is $3"
 
-config_file=tmp
+config_file=/home/root/tmp
 
 echo "Generating configuration file..."
-#wpa_passphrase $2 $3 > $config_file
+wpa_passphrase $2 $3 > $config_file
 echo "Done"
 
 echo "Setting up wpa_supplicant daemon..."
