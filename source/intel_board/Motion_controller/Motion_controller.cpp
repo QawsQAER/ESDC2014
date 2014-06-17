@@ -140,9 +140,10 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else
 	{
 		diff_y = face.height - this->exp_face_height;
-		if(abs(diff_x) > threshold_face_x)
+
+		if(abs(diff_x) > threshold_x)
 		{
-			this->centering_by_face(detect);
+			this->centering(detect);
 			return 0;
 		}
 		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
@@ -196,12 +197,30 @@ uint8_t Motion_controller::centering(const cv::Rect &detect)
 			this->move(move_x,3);
 		}
 	}
-
 	return okay_image;
 }
 
 uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 {
+	float p = (float) IMG_FACE_ACTUAL_HEIGHT / (float) face.height;// mm per pixel
+	int32_t diff_x = (face.x - face.width / 2) - this->center_x;
+	uint16_t move_x = abs(ceil(p * diff_x)); 
+	printf("Motion_controller::centering_by_face(): diff_x is %d\n",diff_x);
+	printf("Motion_controller::centering_by_face(): mm per pixel is %f\n",p);
+	if(diff_x > 0)
+	{
+		//the face is on the right hand side
+		//move right
+		printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
+		this->move(move_x,3);
+	}
+	else
+	{
+		//the face is on the left hand side
+		//move left
+		printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
+		this->move(move_x,2);
+	}
 	return 1;
 }
 /*CENTERING FUNCTION END*/

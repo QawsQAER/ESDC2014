@@ -80,7 +80,7 @@ private:
 	//-------------------------------------------------------------------------------------------------//
 
 	uint8_t centering(const cv::Rect &detect);
-	uint8_t centering_by_Face(const cv::Rect &face);
+	uint8_t centering_by_face(const cv::Rect &face);
 	uint8_t zoom_in_out(const cv::Rect &detect,const double &distance);
 	uint8_t adjusting(const cv::Rect &detect);
 	uint8_t adjusting_by_face(const cv::Rect &face);
