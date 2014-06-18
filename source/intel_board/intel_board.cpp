@@ -149,7 +149,10 @@ uint8_t intel_board::main_function()
 					this->robot_approach_ref();
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
-					this->state = ROBOT_FIND_TARGET;
+					while(this->image_processor->one_target_in_scope() == 0)
+						;
+					//go back for evaulat image
+					this->state = ROBOT_EVALUATE_IMAGE;
 					break;
 				case ROBOT_WAIT_FOR_ADJUSTMENT:
 					this->robot_wait_for_adjustment();
@@ -191,7 +194,6 @@ uint8_t intel_board::robot_ready()
 			this->state = ROBOT_FIND_TARGET;
 			return 1;
 		}
-		
 		if(cmd == pattern_1)
 		{
 			this->motion_controller->set_pattern(1);
