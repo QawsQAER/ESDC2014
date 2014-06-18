@@ -150,7 +150,25 @@ uint8_t intel_board::main_function()
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
 					while(this->image_processor->one_target_in_scope() == 0)
-						;
+					{
+						if(this->waist_shot)
+							this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+						else		
+							this->image_processor->mark_exp_region(this->motion_controller->ref);
+						this->image_processor->show_analyzed_img();
+					}
+					
+					if(this->waist_shot)
+						this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+					else		
+						this->image_processor->mark_exp_region(this->motion_controller->ref);
+					this->image_processor->show_analyzed_img();
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
 					//go back for evaulat image
 					this->state = ROBOT_EVALUATE_IMAGE;
 					break;
@@ -190,6 +208,8 @@ uint8_t intel_board::robot_ready()
 		if(cmd == start_movement)
 		{
 			this->task_counter++;
+			printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+			printf("INTEL BOARD STARTING A NEW TASK\n!!");
 			printf("intel_board: the robot is going to find target\n");
 			this->state = ROBOT_FIND_TARGET;
 			return 1;

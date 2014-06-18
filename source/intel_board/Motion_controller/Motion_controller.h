@@ -56,6 +56,9 @@ private:
 	uint8_t eval_state;
 	uint16_t lifter_pos; //unit mm.
 	
+	uint8_t need_to_center;
+	uint8_t need_to_zoom;
+	uint8_t need_to_adjust;
 	/*
 	variable for reference in image evaluation:
 
@@ -79,7 +82,7 @@ private:
 	//-------------------------------------------------------------------------------------------------//
 	//-------------------------------------------------------------------------------------------------//
 
-	uint8_t centering(const cv::Rect &detect);
+	uint8_t centering(const cv::Rect &detect,const cv::Rect &face);
 	uint8_t centering_by_face(const cv::Rect &face);
 	uint8_t zoom_in_out(const cv::Rect &detect,const double &distance);
 	uint8_t adjusting(const cv::Rect &detect);

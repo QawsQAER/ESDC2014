@@ -57,6 +57,11 @@ Motion_controller::Motion_controller()
 	this->waist_shot = NULL; //should be pointing to the waist_shot of intel_board class
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	
+
+	this->need_to_center = 1;
+	this->need_to_zoom = 1;
+	this->need_to_adjust = 1;
+
 	//TODO: initilized the reference rectangle
 
 	this->ref = cv::Rect(
@@ -126,7 +131,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		//if not taking waist shot
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
-			this->centering(detect);
+			this->centering(detect,face);
 			return 0;
 		}	
 		else if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
@@ -145,18 +150,20 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		//if taking waist shot
 		diff_y = face.height - this->exp_face_height;
 
-		if(abs(diff_x) > threshold_x)
+		if(abs(diff_x) > threshold_x && need_to_center)
 		{
-			this->centering(detect);
+			this->centering(detect,face);
 			return 0;
 		}
 		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
 		{
+			this->need_to_center = 0;
 			this->zoom_in_out_by_face(face,distance);
 			return 0;
 		}
 		else if(true)
 		{
+			this->need_to_center = 1;
 			this->adjusting_by_face(face);
 			return 1;
 		}
@@ -167,9 +174,15 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
-uint8_t Motion_controller::centering(const cv::Rect &detect)
+uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
+
 	printf("\nMotion_controller::centering() running\n");
+	if(face.height > IMG_EXP_FACE_HEIGHT + this->threshold_face_y)
+	{
+		printf("Motion_controller::centering() face too large\n");
+		return 0;
+	}
 	uint8_t okay_image = 1;
 	uint16_t exp_center_x = IMG_CENTER_X, exp_center_y = IMG_CENTER_Y;
 
@@ -258,9 +271,9 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 	//the car need to adjust the position according to the detection result
 	int32_t diff_y = detect.height - this->exp_height;
 	uint16_t move_z = 0;
-	if(distance > 5)
+	if(distance > 5000)
 		move_z = DEFAULT_DIS_LARGE;
-	else if(distance > 3)
+	else if(distance > 3000)
 		move_z = DEFAULT_DIS;
 	else
 		move_z = DEFAULT_DIS_SMALL;
@@ -312,9 +325,9 @@ void Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double &d
 	uint16_t move_z = DEFAULT_DIS;
 	printf("Motion_controller::zoom_in_out_by_face() running\n");
 	
-	if(distance > 5)
+	if(distance > 5000)
 		move_z = DEFAULT_DIS_LARGE;
-	else if(distance > 3)
+	else if(distance > 3000)
 		move_z = DEFAULT_DIS;
 	else
 		move_z = DEFAULT_DIS_SMALL;
@@ -390,11 +403,13 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 {
 	printf("Motion_controller::adjusting_by_face() running\n");
 	cv::Point face_top(face.x + face.width / 2, face.y);
-	double p = (double) face.height / IMG_FACE_ACTUAL_HEIGHT; // mm per pixel
-	printf("Motion_controller::adjusting_by_face() mm per pixel is %lf\n",p);
+	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double)face.height; // mm per pixel
+	printf("Motion_controller::adjusting_by_face() face.height is %u mm per pixel is %lf\n",face.height,p);
 
 	//move horizontally
-	int32_t diff_x = face_top.x - this->img_exp_face_pos_x;
+	int32_t diff_x = face_top.x - (this->face_ref.x + this->face_ref.width / 2);
+	printf("Motion_controller::adjusting_by_face() face_top x is %u\n",face_top.x);
+	printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
 	uint16_t move_x , move_y;
 	
 	move_x = abs(ceil(p * diff_x));
@@ -414,18 +429,22 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	}
 	//move vertically
 	int32_t diff_y = face_top.y - this->img_exp_face_pos_y;
+	printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
+	printf("Motion_controller::adjusting_by_face() img_exp_face_pos_y is %u\n",this->img_exp_face_pos_y);
 	move_y = abs(ceil(p* diff_y));
 	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y)
 	{
-		//the target is too high w.r.t the expected region
-		//raise camera
-		printf("Motion_controller::adjusting_by_face() raising lifter\n");
-		this->lift(move_y,LIFTER_UP);
+		//the target is too low w.r.t the expected region
+		//lower camera
+		printf("Motion_controller::adjusting_by_face() lowering lifter\n");
+		this->lift(move_y,LIFTER_DOWN);
 	}
 	else if(abs(diff_y) > this->threshold_face_y)
 	{
-		printf("Motion_controller::adjusting_by_face() lowering lifter\n");
-		this->lift(move_y,LIFTER_DOWN);
+		//the target is too high w.r.t the expected region
+		//raising camera
+		printf("Motion_controller::adjusting_by_face() raising lifter\n");
+		this->lift(move_y,LIFTER_UP);
 	}
 	printf("Motion_controller::adjusting_by_face() exiting\n");
 	return 1;
@@ -524,26 +543,89 @@ void Motion_controller::set_lifter(const uint16_t &mm)
 
 void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 {
+	uint16_t segment = 500;
 	Message msg;
+	uint16_t dis = 0;
+	uint8_t count = mm / segment;
+	uint8_t count_msg = 0;
 	switch(dir)
 	{
 		case 0://forward
-			msg.CarMoveUpMM(mm);
-			msg.sendMessage(this->Com->fd);
+			if(mm > segment)
+			{
+				for(count_msg = 0;count_msg < count;count_msg++)
+				{
+					msg.CarMoveUpMM(segment);
+					msg.sendMessage(this->Com->fd);
+				}
+				dis = mm - count * segment;
+				msg.CarMoveUpMM(dis);
+				msg.sendMessage(this->Com->fd);
+			}
+			else
+			{
+				msg.CarMoveUpMM(mm);
+				msg.sendMessage(this->Com->fd);
+			}
 		break;
 			
 		case 1://backward
-			msg.CarMoveDownMM(mm);
-			msg.sendMessage(this->Com->fd);
+			if(mm > segment)
+			{
+				for(count_msg = 0;count_msg < count;count_msg++)
+				{
+					msg.CarMoveDownMM(segment);
+					msg.sendMessage(this->Com->fd);
+				}
+				dis = mm - count * segment;
+				msg.CarMoveDownMM(dis);
+				msg.sendMessage(this->Com->fd);
+			}
+			else
+			{
+				msg.CarMoveDownMM(mm);
+				msg.sendMessage(this->Com->fd);
+			}
 		break;
+
 		case 2://left
-			msg.CarMoveLeftMM(mm);
-			msg.sendMessage(this->Com->fd);
+			if(mm > segment)
+			{
+				for(count_msg = 0;count_msg < count;count_msg++)
+				{
+					msg.CarMoveLeftMM(segment);
+					msg.sendMessage(this->Com->fd);
+				}
+				dis = mm - count * segment;
+				msg.CarMoveLeftMM(dis);
+				msg.sendMessage(this->Com->fd);
+			}
+			else
+			{
+				msg.CarMoveLeftMM(mm);
+				msg.sendMessage(this->Com->fd);
+			}
 		break;
+
 		case 3://right
-			msg.CarMoveRightMM(mm);
-			msg.sendMessage(this->Com->fd);
+			if(mm > segment)
+			{
+				for(count_msg = 0;count_msg < count;count_msg++)
+				{
+					msg.CarMoveRightMM(segment);
+					msg.sendMessage(this->Com->fd);
+				}
+				dis = mm - count * segment;
+				msg.CarMoveRightMM(dis);
+				msg.sendMessage(this->Com->fd);
+			}
+			else
+			{
+				msg.CarMoveRightMM(mm);
+				msg.sendMessage(this->Com->fd);
+			}
 		break;
+
 		default:
 		break;
 	}
