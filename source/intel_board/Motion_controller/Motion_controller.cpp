@@ -388,12 +388,46 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 
 uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 {
+	printf("Motion_controller::adjusting_by_face() running\n");
 	cv::Point face_top(face.x + face.width / 2, face.y);
+	double p = (double) face.height / IMG_FACE_ACTUAL_HEIGHT; // mm per pixel
+	printf("Motion_controller::adjusting_by_face() mm per pixel is %lf\n",p);
 
 	//move horizontally
 	int32_t diff_x = face_top.x - this->img_exp_face_pos_x;
+	uint16_t move_x , move_y;
+	
+	move_x = abs(ceil(p * diff_x));
+	if(diff_x > 0 && abs(diff_x) > threshold_face_x)
+	{
+		//the target is on the right w.r.t the expected region
+		//move right
+		printf("Motion_controller::adjusting_by_face() moving right %u mm\n",move_x);
+		this->move(move_x,3);
+	}
+	else if(abs(diff_x) > threshold_face_x)
+	{
+		//the target is on the left w.r.t the expected region
+		//move left
+		printf("Motion_controller::adjusting_by_face() moving left %u mm\n",move_x);
+		this->move(move_x,2);
+	}
 	//move vertically
 	int32_t diff_y = face_top.y - this->img_exp_face_pos_y;
+	move_y = abs(ceil(p* diff_y));
+	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y)
+	{
+		//the target is too high w.r.t the expected region
+		//raise camera
+		printf("Motion_controller::adjusting_by_face() raising lifter\n");
+		this->lift(move_y,LIFTER_UP);
+	}
+	else if(abs(diff_y) > this->threshold_face_y)
+	{
+		printf("Motion_controller::adjusting_by_face() lowering lifter\n");
+		this->lift(move_y,LIFTER_DOWN);
+	}
+	printf("Motion_controller::adjusting_by_face() exiting\n");
 	return 1;
 }
 /*ADJUSTING FUNCTION IMPLEMENTATION END*/

@@ -180,12 +180,18 @@ uint8_t intel_board::robot_ready()
 	ui->update_degree();
 
 	printf("intel_board: the robot is in ready state\n");
-	command_type cmd = ui->wait_command();
-	printf("intel_board: the robot has received %d\n",cmd);
-	
-	while(cmd == pattern_1 || cmd == pattern_2 || cmd == pattern_3 || cmd == pattern_4)
+	command_type cmd;
+
+	while(cmd = ui->wait_command())
 	{
-		ui->pattern=cmd;
+		if(cmd == start_movement)
+		{
+			this->task_counter++;
+			printf("intel_board: the robot is going to find target\n");
+			this->state = ROBOT_FIND_TARGET;
+			return 1;
+		}
+		
 		if(cmd == pattern_1)
 		{
 			this->motion_controller->set_pattern(1);
@@ -201,15 +207,6 @@ uint8_t intel_board::robot_ready()
 		else if(cmd == pattern_4)
 		{
 			this->motion_controller->set_pattern(4);
-		}
-
-		cmd = ui->wait_command();
-		if(cmd == start_movement)
-		{
-			this->task_counter++;
-			printf("intel_board: the robot is going to find target\n");
-			this->state = ROBOT_FIND_TARGET;
-			return 1;
 		}
 	}
 	return 0;
