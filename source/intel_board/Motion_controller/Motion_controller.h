@@ -94,7 +94,7 @@ private:
 	void lift(const uint16_t &mm, const uint8_t &dir);
 public:
 
-	uint8_t *half;
+	uint8_t *waist_shot;
 	cv::Rect ref;
 	cv::Rect face_ref;
 	Controller_Com *Com;

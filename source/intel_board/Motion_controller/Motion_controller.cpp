@@ -47,14 +47,16 @@ Motion_controller::Motion_controller()
 	this->exp_width = IMG_EXP_WIDTH;
 	this->exp_height = IMG_EXP_HEIGHT;
 
+
 	this->exp_face_height = IMG_EXP_FACE_HEIGHT;
 	this->exp_face_width = IMG_EXP_FACE_WIDTH;
 	this->threshold_face_x = IMG_HORI_THRESHOLD_FACE;
 	this->threshold_face_y = IMG_VERT_THRESHOLD_FACE;
 	this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
 	this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
-	this->half = 0;
+	this->waist_shot = NULL; //should be pointing to the waist_shot of intel_board class
 	this->Com = new Controller_Com("/dev/ttyUSB0");
+	
 	//TODO: initilized the reference rectangle
 
 	this->ref = cv::Rect(
@@ -119,8 +121,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
-	if(!(*this->half))
+	if(!(*this->waist_shot))
 	{
+		//if not taking waist shot
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
 			this->centering(detect);
@@ -139,6 +142,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	}
 	else
 	{
+		//if taking waist shot
 		diff_y = face.height - this->exp_face_height;
 
 		if(abs(diff_x) > threshold_x)
@@ -253,19 +257,27 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 {
 	//the car need to adjust the position according to the detection result
 	int32_t diff_y = detect.height - this->exp_height;
+	uint16_t move_z = 0;
+	if(distance > 5)
+		move_z = DEFAULT_DIS_LARGE;
+	else if(distance > 3)
+		move_z = DEFAULT_DIS;
+	else
+		move_z = DEFAULT_DIS_SMALL;
+
 	if(diff_y < 0)
 	{
 		//the height too small, need to zoom in
 		//to zoom in, move forward
-		printf("Motion_controller::zoom_in_out() moving forward\n");
-		this->move(DEFAULT_DIS,0);
+		printf("Motion_controller::zoom_in_out() moving forward %u mm\n",move_z);
+		this->move(move_z,0);
 	}
 	else
 	{
 		//the height too large, need to zoom out
 		//to zoom out, move backward
-		printf("Motion_controller::zoom_in_out() moving backward\n");
-		this->move(DEFAULT_DIS,1);
+		printf("Motion_controller::zoom_in_out() moving backward %u mm\n",move_z);
+		this->move(move_z,1);
 	}
 }
 
@@ -297,18 +309,27 @@ void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const dou
 void Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double &distance)
 {
 	int32_t diff_y = face.height - this->exp_face_height;
+	uint16_t move_z = DEFAULT_DIS;
 	printf("Motion_controller::zoom_in_out_by_face() running\n");
+	
+	if(distance > 5)
+		move_z = DEFAULT_DIS_LARGE;
+	else if(distance > 3)
+		move_z = DEFAULT_DIS;
+	else
+		move_z = DEFAULT_DIS_SMALL;
+
 	if(diff_y > 0)
 	{
 		//the face is too large
-		printf("Motion_controller::zoom_in_out_by_face: moving backward, face detect size(%d,%d)\n",face.width,face.height);
-		this->move(DEFAULT_DIS,1);
+		printf("Motion_controller::zoom_in_out_by_face: moving backward %u mm, face detect size(%d,%d)\n",move_z,face.width,face.height);
+		this->move(move_z,1);
 	}
 	else
 	{
 		//the face is too small
-		printf("Motion_controller::zoom_in_out_by_face: moving forward, face detect size(%d,%d)\n",face.width,face.height);
-		this->move(DEFAULT_DIS,0);
+		printf("Motion_controller::zoom_in_out_by_face: moving forward %u mm, face detect size(%d,%d)\n",move_z,face.width,face.height);
+		this->move(move_z,0);
 	}
 	printf("Motion_controller::zoom_in_out_by_face exiting\n");
 	return ;

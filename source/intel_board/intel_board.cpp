@@ -56,7 +56,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	}
 	this->state = ROBOT_INIT;
 	this->photo_mode = SINGLE_PHOTO;
-	this->half = 1;
+	this->waist_shot = 1;
 	//SUBMODULE
 	//SUBMODULE
 	//SUBMODULE
@@ -67,7 +67,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
-	this->motion_controller->half = &this->half;
+	this->motion_controller->waist_shot = &this->waist_shot;
 	printf("Creating UI()\n");
 	this->ui = new UI();
 
@@ -227,7 +227,7 @@ uint8_t intel_board::robot_find_target()
 	this->robot_countdown(sec);	
 	while(!this->image_processor->one_target_in_scope())
 	{
-		if(this->half)
+		if(this->waist_shot)
 			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 		else
 			this->image_processor->mark_exp_region(this->motion_controller->ref);
@@ -277,7 +277,7 @@ uint8_t intel_board::robot_find_target()
 		printf("intel_board: sleep till the camera is stable\n");
 	}
 
-	if(this->half)
+	if(this->waist_shot)
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
@@ -325,7 +325,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 
 	this->image_processor->cam->save_photo_af();
 	this->image_processor->one_target_in_scope();
-	if(this->half)
+	if(this->waist_shot)
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
