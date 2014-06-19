@@ -805,6 +805,7 @@ int UI::init_server_socket(){
 	if(sd == -1)
 	{
 		perror("UI::init_server_socket: socket error:");
+		exit(-1);
 	}
 	struct sockaddr_in server_addr;
 
