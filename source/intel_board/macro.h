@@ -43,7 +43,8 @@ enum command_type{
 	pattern_diy, 
 	car_forward, car_backward, car_left, car_right,
 	camera_forward, camera_backward, camera_left, camera_right,
-	lift_up, lift_down};
+	lift_up, lift_down,
+	set_waist_shot};
 
 enum PHOTO_MODE{
 	SINGLE_PHOTO,
@@ -139,8 +140,10 @@ enum ROBOT_MODE{
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 800
 #define DEFAULT_DIS_SMALL 275
-
-
+#define CAR_FORWARD 0
+#define CAR_BACKWARD 1
+#define CAR_LEFT 2
+#define CAR_RIGHT 3
 //
 //
 //
@@ -149,6 +152,6 @@ enum ROBOT_MODE{
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
 #define LIFTER_MAX 700 //the maximun height of the lifter in mm
 #define LIFTER_INIT_POS 250
-
+#define LIFTER_SEG 50
 #endif
 // 27828986

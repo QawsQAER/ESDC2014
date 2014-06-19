@@ -56,7 +56,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	}
 	this->state = ROBOT_INIT;
 	this->photo_mode = SINGLE_PHOTO;
-	this->waist_shot = 1;
+	this->waist_shot = 0;
 	//SUBMODULE
 	//SUBMODULE
 	//SUBMODULE
@@ -203,10 +203,11 @@ uint8_t intel_board::robot_init()
 
 uint8_t intel_board::robot_ready()
 {
+		printf("intel_board: the robot is in ready state\n");
 	//fetch degree
 	ui->update_degree();
+	this->waist_shot = 0;
 
-	printf("intel_board: the robot is in ready state\n");
 	command_type cmd;
 
 	while(cmd = ui->wait_command())
@@ -220,21 +221,32 @@ uint8_t intel_board::robot_ready()
 			this->state = ROBOT_FIND_TARGET;
 			return 1;
 		}
-		if(cmd == pattern_1)
+		
+		switch(cmd)
 		{
-			this->motion_controller->set_pattern(1);
-		}
-		else if(cmd == pattern_2)
-		{
-			this->motion_controller->set_pattern(2);
-		}
-		else if(cmd == pattern_3)
-		{
-			this->motion_controller->set_pattern(3);
-		}
-		else if(cmd == pattern_4)
-		{
-			this->motion_controller->set_pattern(4);
+			case(pattern_1):
+				this->motion_controller->set_pattern(1);
+			break;
+
+			case(pattern_2):
+				this->motion_controller->set_pattern(2);
+			break;
+
+			case(pattern_3):
+				this->motion_controller->set_pattern(3);
+			break;
+			
+			case(pattern_4):
+				this->motion_controller->set_pattern(4);
+			break;
+			
+			case(set_waist_shot):
+				this->waist_shot = this->waist_shot ? 0:1;
+			break;
+
+			default:
+				printf("intel_board::robot_ready() undefined reaction for command %d\n",cmd);
+			break;
 		}
 	}
 	return 0;
@@ -356,11 +368,12 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
 	this->image_processor->show_analyzed_img();
 	this->image_processor->save_current_image(this->task_counter);	
+	
 	this->ui->send_finished_ack();
 	command_type cmd;
 	while((cmd = ui->wait_command()) != confirm_picture)
 	{
-		
+		this->robot_act_by_cmd(cmd);
 	}
 
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
@@ -422,4 +435,38 @@ void intel_board::robot_countdown(uint8_t sec)
 		usleep(usec);
 	}
 	printf("intel_board::robot_countdown finished\n");
+}
+
+void intel_board::robot_act_by_cmd(const command_type & cmd)
+{
+	switch(cmd)
+	{
+		case(car_forward):
+			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_FORWARD);
+		break;
+		
+		case(car_backward):
+			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_BACKWARD);
+		break;
+		
+		case(car_left):
+			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_LEFT);
+		break;
+
+		case(car_right):
+			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_RIGHT);
+		break;
+
+		case(lift_up):
+			this->motion_controller->lift(LIFTER_SEG,LIFTER_UP);
+		break;
+
+		case(lift_down):
+			this->motion_controller->lift(LIFTER_SEG,LIFTER_DOWN);
+		break;
+
+		default:
+			printf("intel_board::robot_act_by_cmd has not yet implemented reaction to %d\n",cmd);
+		break;	
+	}
 }
