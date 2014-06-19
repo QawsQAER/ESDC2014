@@ -39,21 +39,27 @@ Motion_controller::Motion_controller()
 	//initialize threshold value
 	this->threshold_x = IMG_HORI_THRESHOLD;
 	this->threshold_y = IMG_VERT_THRESHOLD;
-	printf("Motion_controller(): Threshold_x %d Threshold_y %d\n",this->threshold_x,this->threshold_y);
+	this->threshold_face_x = IMG_HORI_THRESHOLD_FACE;
+	this->threshold_face_y = IMG_VERT_THRESHOLD_FACE;
+	
+	printf("Motion_controller(): Threshold_x %u Threshold_y %u\n",this->threshold_x,this->threshold_y);
+	printf("Motion_controller(): Threshold_face_x %u Threshold_face_y %u\n",this->threshold_face_x,this->threshold_face_y);
+
 	this->center_x = IMG_CENTER_X;
 	this->center_y = IMG_CENTER_Y;
-	this->img_exp_pos_x = IMG_EXP_POS1_X;
+
+	//initilize the body reference region
+	this->img_exp_pos_x = IMG_EXP_POS1_X; //indicating the center of the region
 	this->img_exp_pos_y = IMG_EXP_POS1_Y;
 	this->exp_width = IMG_EXP_WIDTH;
 	this->exp_height = IMG_EXP_HEIGHT;
 
-
+	//initilize the face reference region
+	this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X; //indicating the center of the region
+	this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
 	this->exp_face_height = IMG_EXP_FACE_HEIGHT;
 	this->exp_face_width = IMG_EXP_FACE_WIDTH;
-	this->threshold_face_x = IMG_HORI_THRESHOLD_FACE;
-	this->threshold_face_y = IMG_VERT_THRESHOLD_FACE;
-	this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
-	this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
+
 	this->waist_shot = NULL; //should be pointing to the waist_shot of intel_board class
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	
@@ -120,10 +126,10 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	//find out the center of the detected region
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
 	int32_t diff_x = center.x - this->center_x;
-	int32_t diff_y = detect.height - this->exp_height;
+	int32_t diff_y = detect.height - this->ref.height;
 	
 	printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
-	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->exp_height);
+	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->ref.height);
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	if(!(*this->waist_shot))
@@ -148,7 +154,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else
 	{
 		//if taking waist shot
-		diff_y = face.height - this->exp_face_height;
+		diff_y = face.height - this->face_ref.height;
 
 		if(abs(diff_x) > threshold_x && need_to_center)
 		{
@@ -178,18 +184,17 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 {
 
 	printf("\nMotion_controller::centering() running\n");
-	if(face.height > IMG_EXP_FACE_HEIGHT + this->threshold_face_y)
+	if(face.height > this->face_ref.height + this->threshold_face_y)
 	{
 		printf("Motion_controller::centering() face too large\n");
 		return 0;
 	}
 	uint8_t okay_image = 1;
-	uint16_t exp_center_x = IMG_CENTER_X, exp_center_y = IMG_CENTER_Y;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
 
-	int32_t diff_x = center.x - exp_center_x;
-	int32_t diff_y = center.y - exp_center_y;
+	int32_t diff_x = center.x - this->center_x;
+	int32_t diff_y = center.y - this->center_y;
 	//compute length per pixel 
 	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
 	printf("\n\nMotion_controller::centering() length per pixel is %f.\n\n",p);
@@ -219,7 +224,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 
 uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 {
-	float p = (float) IMG_FACE_ACTUAL_HEIGHT / (float) face.height;// mm per pixel
+	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double) face.height;// mm per pixel
+
 	int32_t diff_x = (face.x - face.width / 2) - this->center_x;
 	uint16_t move_x = abs(ceil(p * diff_x)); 
 	printf("Motion_controller::centering_by_face(): diff_x is %d\n",diff_x);
@@ -269,7 +275,7 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const double &distance)
 {
 	//the car need to adjust the position according to the detection result
-	int32_t diff_y = detect.height - this->exp_height;
+	int32_t diff_y = detect.height - this->ref.height;
 	uint16_t move_z = 0;
 	if(distance > 5000)
 		move_z = DEFAULT_DIS_LARGE;
@@ -321,7 +327,7 @@ void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const dou
 
 void Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double &distance)
 {
-	int32_t diff_y = face.height - this->exp_face_height;
+	int32_t diff_y = face.height - this->face_ref.height;
 	uint16_t move_z = DEFAULT_DIS;
 	printf("Motion_controller::zoom_in_out_by_face() running\n");
 	
@@ -484,6 +490,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 	}
 	printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
 	printf("Motion_controller::set_pattern() exiting\n");
+
 	this->ref = cv::Rect(this->img_exp_pos_x - this->exp_width / 2,this->img_exp_pos_y,this->exp_width,this->exp_height);
 	return ;
 }

@@ -102,7 +102,7 @@ public:
 	void robot_countdown(uint8_t sec);
 	uint8_t robot_only_image_analysis();
 
-	void robot_act_by_cmd(const command &cmd);
+	void robot_act_by_cmd(const command_type &cmd);
 };
 
 #endif

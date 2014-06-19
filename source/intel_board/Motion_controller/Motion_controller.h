@@ -92,7 +92,7 @@ private:
 	void zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
 	void zoom_in_out_by_face(const cv::Rect &face,const double &distance);
 
-	void lift(const uint16_t &mm, const uint8_t &dir);
+	
 public:
 
 	uint8_t *waist_shot;
@@ -109,15 +109,17 @@ public:
 	uint8_t init();
 	//this function will only be called when a target is detected by the Image processor
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance);
-	//this function will read the detection result and then try to get a command such that the next detect result will be closer to the reference
 
+
+	void set_pattern(uint8_t pattern);
 	void move(const uint16_t &mm,const uint8_t &dir);
 	void rotate(const uint16_t &degree,const uint8_t &dir);
 
-	void set_pattern(uint8_t pattern);
 
+	//lifter related functions
 	void reset_lifter();
 	void set_lifter(const uint16_t &mm);
+	void lift(const uint16_t &mm, const uint8_t &dir);
 };
 
 #endif

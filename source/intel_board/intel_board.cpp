@@ -442,19 +442,19 @@ void intel_board::robot_act_by_cmd(const command_type & cmd)
 	switch(cmd)
 	{
 		case(car_forward):
-			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_FORWARD);
+			this->motion_controller->move(DEFAULT_DIS_SMALL,CAR_FORWARD);
 		break;
 		
 		case(car_backward):
-			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_BACKWARD);
+			this->motion_controller->move(DEFAULT_DIS_SMALL,CAR_BACKWARD);
 		break;
 		
 		case(car_left):
-			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_LEFT);
+			this->motion_controller->move(DEFAULT_DIS_SMALL,CAR_LEFT);
 		break;
 
 		case(car_right):
-			this->motion_controller->(DEFAULT_DIS_SMALL,CAR_RIGHT);
+			this->motion_controller->move(DEFAULT_DIS_SMALL,CAR_RIGHT);
 		break;
 
 		case(lift_up):
