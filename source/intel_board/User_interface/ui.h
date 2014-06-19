@@ -4,7 +4,6 @@
 
 
 
-
 #define UI_PORT 60000
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
@@ -23,9 +22,14 @@ class UI{
 
 	//return the updated compass degree
 	int get_degree();
+
 	int update_degree();
+
+	
 	//use this when 
 	command_type wait_command();
+	//if return is pattern_diy, then XXX
+
 	/*
 
 	send_finished_ack  fa
@@ -62,10 +66,14 @@ class UI{
 	
 	command_type pattern;
 
+	int ratiox;
+	int ratioy;
+	int ratiowidth;
+	int ratioheight;
+
 	
 
 
-	// int get_degree();
 
 	private:
 
@@ -79,7 +87,7 @@ class UI{
 	int client_sd;
 
 
-
+	void diy_data();
 	int init_server_socket();
 	int read_msg();
 	void send_msg();
@@ -118,6 +126,8 @@ class UI{
 
 
 	int degree;
+
+
 
 	
 };

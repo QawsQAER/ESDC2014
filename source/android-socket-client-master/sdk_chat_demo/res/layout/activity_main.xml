@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray"
@@ -14,7 +15,7 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="351dp"
+        android:layout_height="match_parent"
         android:orientation="vertical" >
 
         <LinearLayout
@@ -30,13 +31,27 @@
                 android:layout_weight="0.46"
                 android:text="CONN" />
 
-            <Button
-                android:id="@+id/start"
-                android:layout_width="77dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5.0dp"
-                android:layout_weight="0.89"
-                android:text="start" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_weight="0.96" >
+
+                <Button
+                    android:id="@+id/start"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5.0dp"
+                    android:layout_weight="0.89"
+                    android:text="start" />
+
+                <Button
+                    android:id="@+id/compass"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5.0dp"
+                    android:layout_weight="0.89"
+                    android:text="compass" />
+            </FrameLayout>
 
             <TextView
                 android:id="@+id/status"
@@ -67,8 +82,7 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.46"
+            android:layout_height="match_parent"
             android:orientation="horizontal" >
 
             <LinearLayout
@@ -96,7 +110,6 @@
                         android:layout_marginTop="5.0dp"
                         android:layout_weight="0.46"
                         android:text="mback" />
-
                 </FrameLayout>
 
                 <FrameLayout
@@ -132,7 +145,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.03"
                         android:text="pattern8" />
-
                 </FrameLayout>
 
                 <FrameLayout
@@ -166,7 +178,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.03"
                         android:text="pattern9" />
-
                 </FrameLayout>
 
                 <FrameLayout
@@ -201,7 +212,6 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="0.03"
                         android:text="pattern10" />
-
                 </FrameLayout>
 
                 <Button
@@ -215,16 +225,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="DIY" />
-
             </LinearLayout>
 
             <ImageView
                 android:id="@+id/image_view"
                 android:layout_width="match_parent"
-                android:layout_height="274dp"
-                android:layout_weight="7.68"
+                android:layout_height="match_parent"
                 android:src="@drawable/cuhk" />
         </LinearLayout>
+
     </LinearLayout>
 
-</ScrollView>
+</LinearLayout>

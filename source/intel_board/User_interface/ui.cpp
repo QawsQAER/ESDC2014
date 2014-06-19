@@ -142,6 +142,7 @@ void UI::contention()
 		printf("Error: It's not a connect_request \n");
 		exit(0);
 	};
+
 	get_degree();
 }			
 
@@ -274,7 +275,8 @@ command_type UI::wait_command()
 			return pattern_10;
 
 			case 24:
-			printf("Command: pattern_diy\n");
+			printf("Command: pattern_diy and waing for diy data\n");
+			diy_data();
 			send_patterndiy_ack();
 			return pattern_diy;
 
@@ -464,7 +466,7 @@ void UI::send_pattern10_ack()
 void UI::send_patterndiy_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	char temp[]="diy";
+	char temp[]="pd";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
 
 	send_msg();
@@ -629,7 +631,7 @@ int UI::read_msg()
 					return 22;
 				else if (strcmp(tempBuffer,"pa")==0)
 					return 23;
-				else if (strcmp(tempBuffer,"di")==0)
+				else if (strcmp(tempBuffer,"pd")==0)
 					return 24;
 				else if (strcmp(tempBuffer,"Up")==0)
 					return 8;
@@ -836,3 +838,73 @@ int UI::init_server_socket(){
 	return sd;
 
 }
+
+
+
+
+
+
+
+ void UI::diy_data()
+{
+	// printf("\n");
+
+
+	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
+	memset(content,0,12);
+	
+	int receiveByte=0;
+	int alreadyReceiveByte=0;
+
+	// receive hello message
+
+
+
+	while(alreadyReceiveByte<12){
+
+
+		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
+		{
+			 printf("Error: Couldn't receive\n");
+			// exit(0);
+		}
+
+		alreadyReceiveByte+=receiveByte;
+
+		
+			if(alreadyReceiveByte>=12)
+			{
+				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
+ 				// strncpy(content,tempBuffer,sizeof(char)*3);
+				// int d=sizeof(char);
+				// printf("%d\n",d );
+				// printf("tempBuffer: %s\n", tempBuffer);
+				// printf("Receive degree : %s\n",tempBuffer);
+				
+			}
+			else{continue;}
+	}
+
+	int temp=0;
+
+	temp=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
+	printf("calculated ratio x %d\n", temp);
+	ratiox=temp;
+
+	temp=(tempBuffer[3]-'0')*100+(tempBuffer[4]-'0')*10+(tempBuffer[5]-'0');
+	printf("calculated ratio y %d\n", temp);
+	ratioy=temp;
+
+	temp=(tempBuffer[6]-'0')*100+(tempBuffer[7]-'0')*10+(tempBuffer[8]-'0');
+	printf("calculated ratio width %d\n", temp);
+	ratiowidth=temp;
+
+	temp=(tempBuffer[9]-'0')*100+(tempBuffer[10]-'0')*10+(tempBuffer[11]-'0');
+	printf("calculated ratio height %d\n", temp);
+	ratioheight=temp;
+
+
+}
+
+
+

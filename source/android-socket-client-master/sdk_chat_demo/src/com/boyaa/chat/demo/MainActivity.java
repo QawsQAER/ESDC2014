@@ -14,6 +14,8 @@ import java.io.InputStream;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.graphics.Rect;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,16 +24,20 @@ import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.view.KeyEvent;
 import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
 import android.view.WindowManager;
 import android.widget.EditText;
 
@@ -43,9 +49,34 @@ import com.boyaa.chat.R;
 import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
+import com.view.MyView;
+
+
+
+
 
 @SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
-public class MainActivity extends Activity {
+public class MainActivity extends Activity  implements OnTouchListener{
+	
+	private int x;//绘画开始的横坐标
+	private int y;//绘画开始的纵坐标
+	private int m;//绘画结束的横坐标
+	private int n;//绘画结束的纵坐标
+	private int width;//绘画的宽度
+	private int height;//绘画的高度
+	private Bitmap bitmap;//生成的位图
+	private MyView myView;//绘画选择区域
+	private Button button;
+	
+	private int ratiox;//绘画开始的横坐标
+	private int ratioy;//绘画开始的纵坐标
+	private int ratioheight;//绘画开始的横坐标
+	private int ratiowidth;//绘画开始的纵坐标
+	
+	private int image_x;//绘画开始的横坐标
+	private int image_y;//绘画开始的纵坐标
+	private int image_width;//绘画结束的横坐标
+	private int image_height;//绘画结束的纵坐标
 
 	private Client user=null;
 //	private EditText ip;
@@ -53,7 +84,7 @@ public class MainActivity extends Activity {
 	private WebView myWebView;
 	
 	private String camera_ip="192.168.43.1";
-	private String board_ip="192.168.1.136";
+	private String board_ip="192.168.1.101";
 	SoundPool player,play;
 	HashMap<Integer,Integer> soundMap;
 	
@@ -82,10 +113,13 @@ public class MainActivity extends Activity {
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		
-	
-		  
 		  
 		setContentView(R.layout.activity_main);
+		
+
+		 
+		  
+		
 		
 //		ip=(EditText) findViewById(R.id.ip);
 		status=(TextView) findViewById(R.id.status);
@@ -97,8 +131,17 @@ public class MainActivity extends Activity {
 		mode=0;
 		viewcount=1;
 		connected=0;
+		degree=0;
 		
+		image_x=0;
+		image_y=0;
+		image_width=0;
+		image_height=0;
 		
+		ratiox=0;
+		ratioy=0;
+		ratioheight=0;
+		ratiowidth=0;
 		initView();
 		
 		
@@ -121,7 +164,89 @@ public class MainActivity extends Activity {
 		sm.registerListener(myListener, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
 		sm.registerListener(myListener, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
 		calculateOrientation();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+	       
+	        
+	      
 	}
+		
+		
+		
+		public boolean onTouch(View v, MotionEvent event) {
+			if(event.getAction() == MotionEvent.ACTION_DOWN){
+				x = 0;
+				y = 0;
+				width = 0;
+				height = 0;
+				x = (int) event.getRawX();
+				y = (int) event.getRawY();
+			}
+			if(event.getAction() == MotionEvent.ACTION_MOVE){
+//				m = (int) event.getRawX();
+				
+				if(event.getRawX()>x){
+					width = (int)event.getRawX()-x;
+					height = (int)event.getRawX()-x;
+				}else{
+					width = (int)(x-event.getRawX());
+					x = (int) event.getRawX();
+					
+					height = (int)(x-event.getRawX());
+					y = (int) event.getRawY();
+				}
+//				n = (int) event.getRawY();
+				myView.setSeat(x, y, x+width, y+height);
+				myView.postInvalidate();
+			}
+			if(event.getAction() == MotionEvent.ACTION_UP){
+				if(event.getRawX()>x){
+					width = (int)event.getRawX()-x;
+					height = (int)event.getRawX()-x;
+				}else{
+					width = (int)(x-event.getRawX());
+					x = (int) event.getRawX();
+					
+					height = (int)(x-event.getRawX());
+					y = (int) event.getRawY();
+				}
+				
+				ratiox=(int)(x-image_x)*640/image_width;
+				ratioy=(int)(y-image_y)*480/image_height;
+				ratiowidth=(int)(width*640/image_width);
+				ratioheight=(int)(height*480/image_height);
+				
+//				if(event.getRawY()>y){
+//					height = (int) event.getRawY()-y;
+//					
+//				}else{
+//					height = (int)(y-event.getRawY());
+//					
+//					y = (int) event.getRawY();
+//				}
+//				image2.setImageBitmap(getBitmap(this));
+			}
+			if(myView.isSign()){
+				return false;
+			}else{
+				return true;
+			}
+		}
+		
+		
+		
+		
+		
+		
+	
 	
 	
 	final SensorEventListener myListener = new SensorEventListener() {
@@ -159,36 +284,7 @@ public class MainActivity extends Activity {
 	      if(connected==0)
 	    	  status.setText(degree+"");
 	    	  
-//	      Log.i(TAG, values[0]+"");
-//	      
-////	      status.setText(degree+"");
-//	      //values[1] = (float) Math.toDegrees(values[1]);
-//	      //values[2] = (float) Math.toDegrees(values[2]);
-//	      
-//	      if(values[0] >= -5 && values[0] < 5){
-//	    	 Log.i(TAG, "正北");
-//	      }
-//	      else if(values[0] >= 5 && values[0] < 85){
-//	    	  Log.i(TAG, "东北");
-//	      }
-//	      else if(values[0] >= 85 && values[0] <=95){
-//	    	  Log.i(TAG, "正东");
-//	      }
-//	      else if(values[0] >= 95 && values[0] <175){
-//	    	  Log.i(TAG, "东南");
-//	      }
-//	      else if((values[0] >= 175 && values[0] <= 180) || (values[0]) >= -180 && values[0] < -175){
-//	    	  Log.i(TAG, "正南");
-//	      }
-//	      else if(values[0] >= -175 && values[0] <-95){
-//	    	  Log.i(TAG, "西南");
-//	      }
-//	      else if(values[0] >= -95 && values[0] < -85){
-//	    	  Log.i(TAG, "正西");
-//	      }
-//	      else if(values[0] >= -85 && values[0] <-5){
-//	    	  Log.i(TAG, "西北");
-//	      }
+
 	    }
 	
 	     
@@ -203,11 +299,86 @@ public class MainActivity extends Activity {
 //		ip.setText(board_ip);
 		
 		 imageView = (ImageView)findViewById(R.id.image_view);
+		 imageView.setImageResource(R.drawable.cuhk);  
+
+		 imageView.post(new Runnable(){   
+	        	  
+	            @Override  
+	            public void run() {  
+	                // TODO Auto-generated method stub  
+	                  
+	                //ImageView的宽和高  
+	                Log.d("lxy", "iv_W = " + imageView.getWidth() + ", iv_H = " + imageView.getHeight());  
+	  
+	                //获得ImageView中Image的真实宽高，  
+	                int dw = imageView.getDrawable().getBounds().width();  
+	                int dh = imageView.getDrawable().getBounds().height();  
+	                Log.d("lxy", "drawable_X = " + dw + ", drawable_Y = " + dh);  
+	                  
+	                //获得ImageView中Image的变换矩阵  
+	                Matrix m = imageView.getImageMatrix();  
+	                float[] values = new float[10];  
+	                m.getValues(values);  
+	                  
+	                //Image在绘制过程中的变换矩阵，从中获得x和y方向的缩放系数  
+	                float sx = values[0];  
+	                float sy = values[4];  
+	                Log.d("lxy", "scale_X = " + sx + ", scale_Y = " + sy);  
+	                  
+	                //计算Image在屏幕上实际绘制的宽高  
+	                int cw = (int)(dw * sx);  
+	                int ch = (int)(dh * sy);  
+	                Log.d("lxy", "caculate_W = " + cw + ", caculate_H = " + ch);  
+	                
+	            	
+	    			int[] location = new int[2];  
+	    			imageView.getLocationOnScreen(location);  
+	             image_x=  (int) imageView.getX(); //location[0];  
+	             image_y = 	(int) imageView.getY();//location[1];  
+	                
+	                
+	    			image_width=cw;
+	    			image_height=ch;
+	    			
+	    			  Log.v("image_x",image_x+"");
+	    		         Log.v("image_y",image_y+"");
+	    		         Log.v("image_width",image_width+"");
+	    		         Log.v("image_height",image_height+"");
+	            }});  
+	        
 		
+        
+//      
+//         image_width=imageView.getMeasuredWidth();
+//         image_height=imageView.getMeasuredHeight();	
+         
+       
+//	        image2 = (ImageView) findViewById(R.id.image2);
+	        myView = new MyView(this);
+	        button = (Button) findViewById(R.id.pdiy);
+			myView.setSign(true);
+			imageView.setOnTouchListener(this);
+		    this.addContentView(myView, new LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT));
+		 
+		    
+		    
+		    
+			
+		    
+		    
+		    
+		    
+		    
+		    
+		    
+		    
+		    
 		findViewById(R.id.open).setOnClickListener(listener);
 		findViewById(R.id.comfrim).setOnClickListener(listener);
 		findViewById(R.id.reset).setOnClickListener(listener);
 		
+		findViewById(R.id.compass).setOnClickListener(listener);
+
 		findViewById(R.id.start).setOnClickListener(listener);
 		findViewById(R.id.comfrim).setVisibility(View.VISIBLE);
 		
@@ -239,7 +410,8 @@ public class MainActivity extends Activity {
 		{
 			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
 			findViewById(R.id.start).setVisibility(View.INVISIBLE);
-			
+			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
+
 			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
@@ -261,8 +433,42 @@ public class MainActivity extends Activity {
 			//			findViewById(R.id.single).setVisibility(View.VISIBLE);
 
 		}
+		
+		else if(flag==9)
+		{
+		findViewById(R.id.compass).setVisibility(View.VISIBLE);
+		findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+		findViewById(R.id.start).setVisibility(View.INVISIBLE);
+		
+		findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+		findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+		findViewById(R.id.mback).setVisibility(View.INVISIBLE);
+
+		findViewById(R.id.single).setVisibility(View.INVISIBLE);
+		findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+		findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+		findViewById(R.id.open).setVisibility(View.INVISIBLE);
+		findViewById(R.id.reset).setVisibility(View.VISIBLE);
+		findViewById(R.id.next).setVisibility(View.INVISIBLE);
+
+
+
+		//			findViewById(R.id.single).setVisibility(View.VISIBLE);
+
+	}
 		else if(flag==1) //choose pattern
 		{
+			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
+
 			findViewById(R.id.single).setVisibility(View.VISIBLE);
 			findViewById(R.id.ddouble).setVisibility(View.VISIBLE);
 			findViewById(R.id.multiple).setVisibility(View.VISIBLE);
@@ -546,10 +752,10 @@ public class MainActivity extends Activity {
 					Log.v("equals",txt);
 					if(txt.equals("cr"))
 					{
-						status.setText("connected");
-						flag=1;
-						connected=1;
-						initView();
+//						status.setText("connected");
+//						flag=1;
+//						connected=1;
+//						initView();
 						
 					
 					}
@@ -565,21 +771,9 @@ public class MainActivity extends Activity {
 					else if(txt.equals("fd"))
 					{
 						
-						if(degree<10)
-						{
-							packet.pack("00"+degree);
-							user.send(packet);
-						}
-						else if(degree<100)
-						{
-							packet.pack("0"+degree);
-							user.send(packet);
-						}
-						else
-						{
-							packet.pack(""+degree);
-							user.send(packet);
-						}
+						flag=9;
+						initView();
+						
 					}
 					
 					else if(txt.equals("cp"))
@@ -627,7 +821,7 @@ public class MainActivity extends Activity {
 
 					}
 					
-					else if(txt.equals("pdiy"))
+					else if(txt.equals("pd"))
 					{
 						status.setText("pdiy");
 						flag=2;
@@ -830,6 +1024,28 @@ public class MainActivity extends Activity {
 					user.send(packet);
 					break;
 					
+				
+				case R.id.compass:	
+				
+					if(degree<10)
+					{
+						packet.pack("00"+degree);
+						user.send(packet);
+					}
+					else if(degree<100)
+					{
+						packet.pack("0"+degree);
+						user.send(packet);
+					}
+					else
+					{
+						packet.pack(""+degree);
+						user.send(packet);
+					}
+					
+					flag=1;
+					initView();
+					break;
 
 				case R.id.reset:	
 					   recreate(); 
@@ -1025,9 +1241,96 @@ public class MainActivity extends Activity {
 								break;
 								
 						case R.id.pdiy:	
-							
-							packet.pack("pdiy-000-000-000-000");
+							if(myView.isSign()){
+								myView.setSeat(0, 0, 0, 0);
+								myView.setSign(false);
+								button.setText("Stop");
+								
+								
+							}else{
+								myView.setSign(true);
+								button.setText("DIY");
+								
+								
+								packet.pack("pd");
 								user.send(packet);
+								
+								if(ratiox<10)
+								{
+									packet.pack("00"+ratiox);
+									user.send(packet);
+								}
+								else if(ratiox<100)
+								{
+									packet.pack("0"+ratiox);
+									user.send(packet);
+								}
+								else
+								{
+									packet.pack(""+ratiox);
+									user.send(packet);
+								}
+								
+								
+								if(ratioy<10)
+								{
+									packet.pack("00"+ratioy);
+									user.send(packet);
+								}
+								else if(ratioy<100)
+								{
+									packet.pack("0"+ratioy);
+									user.send(packet);
+								}
+								else
+								{
+									packet.pack(""+ratioy);
+									user.send(packet);
+								}
+								
+								
+								
+								if(ratiowidth<10)
+								{
+									packet.pack("00"+ratiowidth);
+									user.send(packet);
+								}
+								else if(ratiowidth<100)
+								{
+									packet.pack("0"+ratiowidth);
+									user.send(packet);
+								}
+								else
+								{
+									packet.pack(""+ratiowidth);
+									user.send(packet);
+								}
+								
+								
+								
+								if(ratioheight<10)
+								{
+									packet.pack("00"+ratioheight);
+									user.send(packet);
+								}
+								else if(ratioheight<100)
+								{
+									packet.pack("0"+ratioheight);
+									user.send(packet);
+								}
+								else
+								{
+									packet.pack(""+ratioheight);
+									user.send(packet);
+								}
+								
+								
+								
+							}
+							myView.postInvalidate();
+						
+//							packet.pack("pdiy-000-000-000-000");
+//								user.send(packet);
 								break;
 								
 								

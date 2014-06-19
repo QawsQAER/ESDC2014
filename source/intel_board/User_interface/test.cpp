@@ -10,14 +10,14 @@ int main()
 
 UI *ui=new UI();
 
-while(1)
-{
+// while(1)
+// {
 
 
 
-cout<<ui->get_degree()<<endl;
+// cout<<ui->get_degree()<<endl;
 
-}
+// }
 
 
  for (int i = 0; i < 30; ++i)
