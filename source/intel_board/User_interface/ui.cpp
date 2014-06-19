@@ -138,11 +138,11 @@ void UI::contention()
 
 		// printf("after accept client\n");
 	if(wait_command()!=connect_request)
-		{
-			printf("Error: It's not a connect_request \n");
-			exit(0);
-		};
-		get_degree();
+	{
+		printf("Error: It's not a connect_request \n");
+		exit(0);
+	};
+	get_degree();
 }			
 
 
