@@ -191,7 +191,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 	int32_t diff_x = center.x - exp_center_x;
 	int32_t diff_y = center.y - exp_center_y;
 	//compute length per pixel 
-	float p = (float) 1700 / (float) detect.height;
+	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
 	printf("\n\nMotion_controller::centering() length per pixel is %f.\n\n",p);
 	uint16_t move_x = 0;
 	if(abs(diff_x) > threshold_x)
@@ -359,11 +359,11 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 /*
 	diff_x is the difference between the detected body region center's x coordinate, and the expected position's x coordinate
 	diff_y is the difference between the detected body region's top left y coordinate, and the expected position's y coordinate
-	p is the length per pixel, assuming that every detected region's height is 1700 mm 
+	p is the length per pixel, assuming that every detected region's height is IMG_BODY_ACTUAL_HEIGHT mm 
 */
 	printf("Motion_controller::adjusting() running\n");
-	int diff_x = (detect.x + detect.width/2) - img_exp_pos_x;
-	float p = (float) 1700 / (float) detect.height;
+	int32_t diff_x = (detect.x + detect.width/2) - img_exp_pos_x;
+	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
 	if(diff_x > 0)
 	{
 		//move right
@@ -407,6 +407,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	printf("Motion_controller::adjusting_by_face() face.height is %u mm per pixel is %lf\n",face.height,p);
 
 	//move horizontally
+	//diff_x is the difference between the center of the face and the center of the ref region
 	int32_t diff_x = face_top.x - (this->face_ref.x + this->face_ref.width / 2);
 	printf("Motion_controller::adjusting_by_face() face_top x is %u\n",face_top.x);
 	printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
@@ -427,6 +428,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 		printf("Motion_controller::adjusting_by_face() moving left %u mm\n",move_x);
 		this->move(move_x,2);
 	}
+	
 	//move vertically
 	int32_t diff_y = face_top.y - this->img_exp_face_pos_y;
 	printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
