@@ -204,14 +204,14 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 			//should move left
 			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
-			this->move(move_x,2);
+			this->move(move_x,CAR_LEFT);
 		}
 		else
 		{
 			//should move right
 			move_x = this->bound_dis(ceil(abs(diff_x) * p));
 			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
-			this->move(move_x,3);
+			this->move(move_x,CAR_RIGHT);
 		}
 	}
 	return okay_image;
@@ -229,14 +229,14 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 		//the face is on the right hand side
 		//move right
 		printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
-		this->move(move_x,3);
+		this->move(move_x,CAR_RIGHT);
 	}
 	else
 	{
 		//the face is on the left hand side
 		//move left
 		printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
-		this->move(move_x,2);
+		this->move(move_x,CAR_LEFT);
 	}
 	return 1;
 }
@@ -283,14 +283,14 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 		//the height too small, need to zoom in
 		//to zoom in, move forward
 		printf("Motion_controller::zoom_in_out() moving forward %u mm\n",move_z);
-		this->move(move_z,0);
+		this->move(move_z,CAR_FORWARD);
 	}
 	else
 	{
 		//the height too large, need to zoom out
 		//to zoom out, move backward
 		printf("Motion_controller::zoom_in_out() moving backward %u mm\n",move_z);
-		this->move(move_z,1);
+		this->move(move_z,CAR_BACKWARD);
 	}
 }
 
@@ -308,14 +308,14 @@ void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const dou
 		//the target too far away from the camera
 		uint16_t move_z = ceil(abs(distance - img_exp_dis));
 		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
-		this->move(move_z,0);
+		this->move(move_z,CAR_FORWARD);
 	}
 	else
 	{
 		//the target too close to the camera
 		uint16_t move_z = ceil(abs(distance - img_exp_dis));
 		printf("Motion_controller::zoom_in_out() moving backward %lf\n",move_z);
-		this->move(move_z,1);
+		this->move(move_z,CAR_BACKWARD);
 	}
 }
 
@@ -336,13 +336,13 @@ void Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double &d
 	{
 		//the face is too large
 		printf("Motion_controller::zoom_in_out_by_face: moving backward %u mm, face detect size(%d,%d)\n",move_z,face.width,face.height);
-		this->move(move_z,1);
+		this->move(move_z,CAR_BACKWARD);
 	}
 	else
 	{
 		//the face is too small
 		printf("Motion_controller::zoom_in_out_by_face: moving forward %u mm, face detect size(%d,%d)\n",move_z,face.width,face.height);
-		this->move(move_z,0);
+		this->move(move_z,CAR_FORWARD);
 	}
 	printf("Motion_controller::zoom_in_out_by_face exiting\n");
 	return ;
@@ -369,14 +369,14 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		//move right
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
 		printf("\n\n\nMotion_controller adjusting(): moving right %d mm\n\n\n",move_x);
-		this->move(move_x,3);
+		this->move(move_x,CAR_RIGHT);
 	}
 	else
 	{
 		//move left
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
 		printf("\n\n\nMotion_controller adjusting(): moving left %d mm\n\n\n",move_x);
-		this->move(move_x,2);
+		this->move(move_x,CAR_LEFT);
 	}
 
 	int diff_y = detect.y - img_exp_pos_y;
@@ -419,14 +419,14 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 		//the target is on the right w.r.t the expected region
 		//move right
 		printf("Motion_controller::adjusting_by_face() moving right %u mm\n",move_x);
-		this->move(move_x,3);
+		this->move(move_x,CAR_RIGHT);
 	}
 	else if(abs(diff_x) > threshold_face_x)
 	{
 		//the target is on the left w.r.t the expected region
 		//move left
 		printf("Motion_controller::adjusting_by_face() moving left %u mm\n",move_x);
-		this->move(move_x,2);
+		this->move(move_x,CAR_LEFT);
 	}
 	
 	//move vertically
@@ -553,7 +553,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	uint8_t count_msg = 0;
 	switch(dir)
 	{
-		case 0://forward
+		case CAR_FORWARD://forward
 			if(mm > segment)
 			{
 				for(count_msg = 0;count_msg < count;count_msg++)
@@ -572,7 +572,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 			}
 		break;
 			
-		case 1://backward
+		case CAR_BACKWARD://backward
 			if(mm > segment)
 			{
 				for(count_msg = 0;count_msg < count;count_msg++)
@@ -591,7 +591,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 			}
 		break;
 
-		case 2://left
+		case CAR_LEFT://left
 			if(mm > segment)
 			{
 				for(count_msg = 0;count_msg < count;count_msg++)
@@ -610,7 +610,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 			}
 		break;
 
-		case 3://right
+		case CAR_RIGHT://right
 			if(mm > segment)
 			{
 				for(count_msg = 0;count_msg < count;count_msg++)
