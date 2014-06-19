@@ -68,6 +68,9 @@ enum ROBOT_MODE{
 
 #define AUTOFOCUS
 
+#define ENABLE_BODY_DETECT 0x01
+#define ENABLE_FACE_DETECT 0x02
+
 #define PIXEL_HEIGHT 127/480 //127mm for a 480 pixel height
 #define PIXEL_WIDTH PIXEL_HEIGHT //consider PIXEL as a square
 #define FOCAL_LENGTH 43 //43 mm for 

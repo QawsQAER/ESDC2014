@@ -449,6 +449,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	printf("Motion_controller::adjusting_by_face() exiting\n");
 	return 1;
 }
+
 /*ADJUSTING FUNCTION IMPLEMENTATION END*/
 /*ADJUSTING FUNCTION IMPLEMENTATION END*/
 /*ADJUSTING FUNCTION IMPLEMENTATION END*/

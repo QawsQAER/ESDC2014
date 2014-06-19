@@ -56,9 +56,7 @@ private:
 	uint8_t eval_state;
 	uint16_t lifter_pos; //unit mm.
 	
-	uint8_t need_to_center;
-	uint8_t need_to_zoom;
-	uint8_t need_to_adjust;
+
 	/*
 	variable for reference in image evaluation:
 
@@ -101,6 +99,9 @@ public:
 	cv::Rect ref;
 	cv::Rect face_ref;
 	Controller_Com *Com;
+	uint8_t need_to_center;
+	uint8_t need_to_zoom;
+	uint8_t need_to_adjust;
 	
 	Motion_controller();
 	~Motion_controller();

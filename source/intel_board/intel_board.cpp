@@ -149,7 +149,13 @@ uint8_t intel_board::main_function()
 					this->robot_approach_ref();
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
-					while(this->image_processor->one_target_in_scope() == 0)
+					uint8_t flags;
+					if( !this->motion_controller->need_to_center && (*this->motion_controller->waist_shot))
+						flags = ENABLE_FACE_DETECT;
+					else
+						flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
+
+					while(this->image_processor->one_target_in_scope(flags) == 0)
 					{
 						if(this->waist_shot)
 							this->image_processor->mark_exp_region(this->motion_controller->face_ref);
@@ -244,7 +250,7 @@ uint8_t intel_board::robot_find_target()
 	uint8_t sec = 0;
 
 	this->robot_countdown(sec);	
-	while(!this->image_processor->one_target_in_scope())
+	while(!this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT))
 	{
 		if(this->waist_shot)
 			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
@@ -342,8 +348,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//TODO:
 	//should be waiting for adjustment here.
 
-	this->image_processor->cam->save_photo_af();
-	this->image_processor->one_target_in_scope();
+	//this->image_processor->cam->save_photo_af();
+	this->image_processor->one_target_in_scope(ENABLE_FACE_DETECT);
 	if(this->waist_shot)
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		

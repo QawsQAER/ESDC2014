@@ -258,6 +258,7 @@ cv::Mat Image_processor::edge_detection(const cv::Mat &img)
  //TODO: understand this function
  uint8_t Image_processor::run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect)
  {
+ 	printf("Image_processor::run_body_detection() running\n");
  	body_detect.clear();
  	std::vector<cv::Rect> found;
  	this->hog.detectMultiScale(source_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
@@ -284,6 +285,7 @@ cv::Mat Image_processor::edge_detection(const cv::Mat &img)
  			body_detect.push_back(r);
  		}
  	}
+ 	printf("Image_processor::run_body_detection() exiting\n");
  	return 1;
  }
 
@@ -324,6 +326,7 @@ uint8_t Image_processor::basic_pedestrain_detection()
 
 uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect)
 {
+	printf("Image_processor::run_face_detection() running\n");
 	face_detect.clear();
 	
 	//this->eyes_detect.clear();
@@ -334,8 +337,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	cv::equalizeHist(frame_gray, frame_gray);
 	//doing face detection
 	this->face_cascade.detectMultiScale(frame_gray, face_detect, 1.1, 2, 0, cv::Size(10, 10));
-	printf("run_face_detection: detect %d faces\n",face_detect.size());
-
+	printf("Image_processor::run_face_detection: detect %d faces\n",face_detect.size());
 
 	//TODO: use color detection to filtered out the non-human color face
 	std::vector<cv::Rect> tmp(face_detect);
@@ -656,8 +658,14 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	return 1;
 }
 		
-uint8_t Image_processor::one_target_in_scope()
+uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 {
+	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
+	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
+	
+	this->body_detect.clear();
+	this->face_detect.clear();
+
 	printf("Image_processor::one_target_in_scope() running\n");
 	if(!this->capture_image())
 	{
@@ -667,10 +675,19 @@ uint8_t Image_processor::one_target_in_scope()
 	
 	//if an image is captured, run basic analysis
 	//this->analyzed_img is the initial detection result image
-	this->run_body_detection(this->current_img,this->body_detect);
-	this->run_face_detection(this->current_img,this->face_detect);
-	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);
-	this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
+	this->analyzed_img = this->current_img.clone();
+
+	if(enable_body_detect)
+	{
+		this->run_body_detection(this->current_img,this->body_detect);
+		this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
+	}
+	if(enable_face_detect)
+	{
+		this->run_face_detection(this->current_img,this->face_detect);
+		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+		
+	}
 	
 	//get the skin color detection result, and store it into skin_img
 	this->getSkin(this->current_img,this->skin_img);

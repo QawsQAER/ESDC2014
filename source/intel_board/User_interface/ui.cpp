@@ -801,7 +801,11 @@ int UI::update_degree()
 
 int UI::init_server_socket(){
 
-	int sd=socket(AF_INET,SOCK_STREAM,0);
+	int sd = socket(AF_INET,SOCK_STREAM,0);
+	if(sd == -1)
+	{
+		perror("UI::init_server_socket: socket error:");
+	}
 	struct sockaddr_in server_addr;
 
 	long val=1;
