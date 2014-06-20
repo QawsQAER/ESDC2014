@@ -113,10 +113,10 @@ int Message::receiveACK(int fd)
 	}
 	else if(_ACK->starter == STARTER )
 	{
-		short temp_degree;
-		memcpy(&temp_degree,_ACK->O,1);
-		memcpy(&temp_degree+1,_ACK->K,1);
-		car_degree=(int)temp_degree;
+		uint16_t temp_degree;
+		memcpy((void *)&temp_degree,&_ACK->O,1);
+		memcpy((void *)&temp_degree+1,&_ACK->K,1);
+		this->car_degree= temp_degree;
 		return 1;
 	}
 	printf("int Message::receiveACK(int fd) error: ACK is invalid!\n");
@@ -248,6 +248,7 @@ void Message::calCheckSum()
 				+ (_IntelCarCmd->move_dis & 0x00ff) + _IntelCarCmd->move_dir + (_IntelCarCmd->rotate_dis >> 8)
 				+ (_IntelCarCmd->rotate_dis & 0x00ff) + _IntelCarCmd->rotate_dir;
 }
+
 void Message::resetStruct()
 {
 	_IntelCarCmd->starter = STARTER;
@@ -261,9 +262,9 @@ void Message::resetStruct()
 
 
 
-void Message::CampassRequest()
+void Message::CompassRequest()
 {
 	resetStruct();
-	_IntelCarCmd->action_type = CAMPASS_REQUEST;
+	_IntelCarCmd->action_type = COMPASS_REQUEST;
 	calCheckSum();
 }

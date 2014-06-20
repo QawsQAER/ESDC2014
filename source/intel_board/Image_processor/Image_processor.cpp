@@ -345,7 +345,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	for(size_t count = 0;count < tmp.size();count++)
 	{
 		cv::Mat subImage = source_img(tmp[count]);
-		if(getSkin(subImage,subImage)[0] > 150)
+		if(getSkin(subImage,subImage)[0] > 120)
 		{
 			face_detect.push_back(tmp[count]);
 		}

@@ -206,6 +206,11 @@ uint8_t intel_board::robot_ready()
 		printf("intel_board: the robot is in ready state\n");
 	//fetch degree
 	ui->update_degree();
+	Message msg;
+	msg.CompassRequest();
+	printf("intel_board::robot_ready() sending compass request\n");
+	msg.sendMessage(this->motion_controller->Com->fd);
+	printf("intel_board::robot_ready() get degree from compass %d\n",msg.car_degree);
 	this->waist_shot = 1;
 
 	command_type cmd;

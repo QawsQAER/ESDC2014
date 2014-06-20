@@ -30,7 +30,7 @@ All the code with this header are under GPL open source license.
 #define CAR_ACTION 0
 #define LIFTER_ACTION 1
 #define CAM_PLATFORM_ACTION 2
-#define CAMPASS_REQUEST 3
+#define COMPASS_REQUEST 3
 
 #define STARTER 0x7E
 
@@ -51,7 +51,7 @@ struct IntelCarCmd
 	0 indicates car movement, with rotation
 	1 indicates lifter movement. only up and down
 	2 indicates camera platform movement, with roll/pitch/yaw
-	3 indicates campass request
+	3 indicates compass request
 	*/
 	uint8_t action_type;
 	 
@@ -133,9 +133,9 @@ public:
 	void CameraPlatformYawClk(uint16_t _degree);
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
-	void CampassRequest();
+	void CompassRequest();
 
-	int car_degree;
+	int32_t car_degree;
 
 private:
 	struct IntelCarCmd* _IntelCarCmd;
