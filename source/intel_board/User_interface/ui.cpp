@@ -124,17 +124,16 @@ void UI::contention()
 
 
 	struct sockaddr_in client_addr;
-
-		socklen_t addr_len=sizeof(struct sockaddr_in);
+	socklen_t addr_len=sizeof(struct sockaddr_in);
 
 				// printf("before accept client\n");
 
 	
-		if((client_sd=accept(server_socket,(struct sockaddr *) &client_addr,&addr_len))<0)
-		{
-			printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
-			exit(0);
-		}
+	if((client_sd=accept(server_socket,(struct sockaddr *) &client_addr,&addr_len))<0)
+	{
+		printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
+		exit(0);
+	}
 
 		// printf("after accept client\n");
 	if(wait_command()!=connect_request)
@@ -143,7 +142,7 @@ void UI::contention()
 		exit(0);
 	};
 
-	get_degree();
+	//get_degree();
 }			
 
 
@@ -783,20 +782,17 @@ int UI::update_degree()
 	int degree_temp=0;
 
 	degree_temp=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
-	printf("calculated campass degree %d\n", degree_temp);
+	printf("UI::get_degree() calculated compass degree %d\n", degree_temp);
 
 	degree=degree_temp;
 	return degree;
 
 }
 
-
-
-	 int UI::get_degree(){
-
-	 	update_degree();
-	 	return degree;
-	 }
+int UI::get_degree(){
+	update_degree();
+	return degree;
+}
 
 
 

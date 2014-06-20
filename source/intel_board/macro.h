@@ -63,6 +63,13 @@ enum ROBOT_MODE{
 	AUTO_MODE, MANUAL_MODE, IMG_ANALYSIS_MODE
 };
 
+enum Direction{
+	UPPER_LEFT,
+	LOWER_LEFT,
+	UPPER_RIGHT,
+	LOWER_RIGHT,
+	null
+};
 /* enum type definition END */
 /* enum type definition END */
 /* enum type definition END */
@@ -162,6 +169,9 @@ enum ROBOT_MODE{
 #define CAR_BACKWARD 1
 #define CAR_LEFT 2
 #define CAR_RIGHT 3
+
+#define CAR_ROTATE_RIGHT 0
+#define CAR_ROTATE_LEFT 1
 //
 //
 //

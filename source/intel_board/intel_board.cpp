@@ -205,12 +205,24 @@ uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
 	//fetch degree
-	ui->update_degree();
+	int32_t phone_degree = ui->update_degree();
 	Message msg;
 	msg.CompassRequest();
 	printf("intel_board::robot_ready() sending compass request\n");
 	msg.sendMessage(this->motion_controller->Com->fd);
+	
+	int32_t degree,dir;
+	degree_rotation(phone_degree,msg.car_degree,&degree,&dir);
+
+	printf("intel_board::robot_ready() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_ready() get degree from compass %d\n",msg.car_degree);
+	printf("intel_board::robot_ready() dir is %d, degree is %d\n",dir,degree);
+
+	if(dir > 0)
+		this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
+	else
+		this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
+	
 	this->waist_shot = 1;
 
 	command_type cmd;
@@ -476,3 +488,183 @@ void intel_board::robot_act_by_cmd(const command_type & cmd)
 		break;	
 	}
 }
+
+
+void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *direction)
+{
+	Direction phone_angle=null;
+	Direction car_angle=null;
+
+	int32_t rotate_degree=0;//postive means clockwise
+
+	if(phone<=90)
+		phone_angle=LOWER_LEFT;
+	else if(phone<=180)
+		phone_angle=UPPER_LEFT;
+	else if(phone<=270)
+		phone_angle=UPPER_RIGHT;
+	else 
+		phone_angle=LOWER_RIGHT;
+
+
+	if(car<=90)
+		car_angle=LOWER_LEFT;
+	else if(car<=180)
+		car_angle=UPPER_LEFT;
+	else if(car<=270)
+		car_angle=UPPER_RIGHT;
+	else 
+		car_angle=LOWER_RIGHT;
+
+
+		switch(car_angle)
+		{
+			case UPPER_LEFT:
+			if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=180-car;
+				int32_t temp_phone=360-phone;
+				rotate_degree=temp_car-temp_phone;
+				break;
+			}
+			else if(phone_angle==LOWER_LEFT)
+			{
+
+				rotate_degree=(180-car)+phone;
+				break;
+			}
+
+			else if(phone_angle==UPPER_LEFT)
+			{
+
+				rotate_degree=360-((180-phone)+car);
+				break;
+			}
+			else
+			{
+
+				rotate_degree=360-(car-(phone-180));
+				break;
+			}
+
+			case UPPER_RIGHT:
+
+			if(phone_angle==LOWER_LEFT)
+			{
+				int32_t temp_car=car-180;
+				int32_t temp_phone=phone;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==UPPER_LEFT)
+			{
+
+				int32_t temp_car=270-car;
+				int32_t temp_phone=phone-90;
+				rotate_degree=temp_phone+temp_car;
+				break;
+			}
+			else if(phone_angle==UPPER_RIGHT)
+			{
+
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone;
+				rotate_degree=temp_phone+temp_car;
+				break;
+			}
+			else
+			{
+
+				int32_t temp_car=car-180;
+				int32_t temp_phone=360-phone;
+				rotate_degree=360-(temp_phone+temp_car);
+				break;
+			}
+
+			case LOWER_LEFT:
+			if(phone_angle==UPPER_RIGHT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=phone-180;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180-(360-phone);
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==LOWER_LEFT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180+phone;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+
+			else 
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180-phone;
+				rotate_degree=360-(temp_phone+temp_car);
+				break;
+			}
+
+			case LOWER_RIGHT:
+			if(phone_angle==UPPER_LEFT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=180-phone;
+				rotate_degree=temp_car-temp_phone;
+				break;
+			}
+			else if(phone_angle==UPPER_RIGHT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone-180;
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+			else if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=180-(360-phone);
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+			else
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone+180;
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+
+
+		}//end switch
+
+
+	if((rotate_degree>=0)&&(rotate_degree<=180))
+ 	{
+ 			*degree=rotate_degree;
+ 			*direction=1;
+ 	}
+ 	else if((rotate_degree>=180)&&(rotate_degree<=360))
+ 	{
+ 		*degree=360-rotate_degree;
+ 		*direction=-1;
+ 	}
+ 	else if((rotate_degree>=-360)&&(rotate_degree<=-180))
+ 	{
+ 		*degree=360-abs(rotate_degree);
+ 		*direction=1;
+ 	}
+ 	else if((rotate_degree>=-180)&&(rotate_degree<=0))
+ 	{
+ 		*degree=abs(rotate_degree);
+ 		*direction=-1;
+ 	}
+
+}//end void
