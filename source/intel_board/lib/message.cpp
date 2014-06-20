@@ -25,7 +25,7 @@ This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
 ******************************************************/
 #include "message.h"
-#define DEBUG_MODE 0
+#define DEBUG_MODE 1
 
 //public
 Message::Message()
@@ -125,11 +125,11 @@ int Message::receiveACK(int fd)
 	else if(_ACK->starter == COMPASS_STARTER )
 	{
 		uint16_t temp_degree;
-		memcpy((void *)&temp_degree,&_ACK->O,1);
 		printf("****************************************\n");
-		printf("temp_degree :%d   _ACK->O :%d \n", temp_degree,ACK->O);
-		memcpy((void *)&temp_degree+1,&_ACK->K,1);
-		printf("temp_degree+1 :%d   _ACK->K :%d \n", temp_degree,_ACK->K);
+		memcpy((void *)&temp_degree,buff+1,1);
+		printf("temp_degree :%d   _ACK->O :%d \n",temp_degree,buff[1]);
+		memcpy((void *)&temp_degree+1,buff+2,1);
+		printf("temp_degree+1 :%d   _ACK->K :%d \n",temp_degree,buff[2]);
 
 		this->car_degree= temp_degree;
 		printf("car_degree :%d   temp_degree :%d \n", car_degree,temp_degree);
