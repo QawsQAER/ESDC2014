@@ -20,7 +20,14 @@
 
 #define FILENAME_LENGTH 128
 
-#define PATH_TO_FACE_CASCADE "lbpcascade_frontalface.xml"
+
+#define LBP_FACE_CASCADE "/home/root/lbpcascade_frontalface.xml"
+#define HAAR_FACE_CASCADE "/home/root/haarcascade_frontface_default.xml"
+#define HAAR_FACE_CASCADE1 "/home/root/haarcascade_frontface_alt.xml"
+#define HAAR_FACE_CASCADE2 "/home/root/haarcascade_frontface_alt2.xml"
+
+
+#define PATH_TO_FACE_CASCADE HAAR_FACE_CASCADE
 #define PATH_TO_EYES_CASCADE "haarcascade_eye_tree_eyeglasses.xml"
 
 #define IP "192.168.1.101"
@@ -120,8 +127,15 @@ enum Direction{
 //face related
 #define IMG_FACE_ACTUAL_HEIGHT 230 //mm
 #define IMG_fACE_ACTUAL_WIDTH IMG_FACE_ACTUAL_HEIGHT //mm
+
+
 #define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 6)
 #define IMG_EXP_FACE_WIDTH IMG_EXP_FACE_HEIGHT
+#define IMG_FACE_WIDTH_MIN 20
+#define IMG_FACE_WIDTH_MAX IMG_EXP_FACE_HEIGHT + IMG_VERT_THRESHOLD_FACE
+#define IMG_FACE_HEIGHT_MIN IMG_FACE_WIDTH_MIN
+#define IMG_FACE_HEIGHT_MAX IMG_FACE_WIDTH_MAX
+
 
 #define IMG_EXP_FACE_POS_X ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
 #define IMG_EXP_FACE_POS_Y (IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15))))
