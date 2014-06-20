@@ -24,7 +24,7 @@ class UI{
 	int get_degree();
 
 	int update_degree();
-
+	
 	
 	//use this when 
 	command_type wait_command();

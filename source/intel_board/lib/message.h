@@ -33,7 +33,7 @@ All the code with this header are under GPL open source license.
 #define COMPASS_REQUEST 3
 
 #define STARTER 0x7E
-
+#define COMPASS_STARTER 0x7D
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

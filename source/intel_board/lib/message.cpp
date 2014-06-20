@@ -25,7 +25,7 @@ This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
 ******************************************************/
 #include "message.h"
-
+#define DEBUG_MODE 1
 
 //public
 Message::Message()
@@ -90,27 +90,33 @@ int Message::receiveACK(int fd)
 		}
 
 		read_num += temp;
+		printf("while loop\n");
 	}
 
-/*
-	for(int i = 0; i < 4; i++)
+	if(DEBUG_MODE)
 	{
-		printf("%x ", buff[i]);
-	}
-*/
+		for(int i = 0; i < 4; i++)
+		{
+			printf("%x ", buff[i]);
+		}
 
-	//printf("\nMessage::receiveACK() exiting loop.\n");
+			printf("\nMessage::receiveACK() exiting loop.\n");
+
+	}
+	
+
+
 	
 	_ACK->starter = buff[0];
 	_ACK->O = buff[1];
 	_ACK->K = buff[2];
 	_ACK->check_sum = buff[3];
 
-	//printf("Message::receiveACK() exiting assignment.\n");
+	if(DEBUG_MODE)printf("Message::receiveACK() exiting assignment.\n");
 
 	if(_ACK->starter == STARTER && _ACK->O == 0x4f && _ACK->K == 0x4b && _ACK->check_sum == 0x9a)
 	{
-		//printf("Message::receiveACK() returning 1.\n");
+		if(DEBUG_MODE)printf("Message::receiveACK() returning 1.\n");
 		return 1;
 	}
 	else if(_ACK->starter == STARTER )
