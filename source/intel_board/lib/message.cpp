@@ -76,13 +76,18 @@ int Message::receiveACK(int fd)
 	uint8_t buff[4];
 	uint8_t read_num = 0;
 
-	//printf("Message::receiveACK() looping.\n");
+	if(DEBUG_MODE)
+	{
+		printf("Message::receiveACK() looping.\n");
+	}
 	while(read_num < sizeof(struct ACK))
 	{
 		int temp = read(fd, buff + read_num, sizeof(struct ACK));
 
-		//printf("Message::receiveACK() temp = %d.\n", temp);
-		
+		if(DEBUG_MODE)
+		{
+			printf("Message::receiveACK() temp = %d.\n", temp);
+		}
 		if(temp == -1)
 		{
 			printf("int Message::receiveACK(int fd) error: error happened when reading bytes from the file descriptor!\n");
@@ -90,7 +95,6 @@ int Message::receiveACK(int fd)
 		}
 
 		read_num += temp;
-		printf("while loop\n");
 	}
 
 	if(DEBUG_MODE)
@@ -100,8 +104,7 @@ int Message::receiveACK(int fd)
 			printf("%x ", buff[i]);
 		}
 
-			printf("\nMessage::receiveACK() exiting loop.\n");
-
+		printf("\nMessage::receiveACK() exiting loop.\n");
 	}
 	
 
@@ -119,7 +122,7 @@ int Message::receiveACK(int fd)
 		if(DEBUG_MODE)printf("Message::receiveACK() returning 1.\n");
 		return 1;
 	}
-	else if(_ACK->starter == STARTER )
+	else if(_ACK->starter == COMPASS_STARTER )
 	{
 		uint16_t temp_degree;
 		memcpy((void *)&temp_degree,&_ACK->O,1);
