@@ -677,6 +677,8 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 	//this->analyzed_img is the initial detection result image
 	this->analyzed_img = this->current_img.clone();
 
+	//get the skin color detection result, and store it into skin_img
+	this->getSkin(this->current_img,this->skin_img);
 	if(enable_body_detect)
 	{
 		this->run_body_detection(this->current_img,this->body_detect);
@@ -687,10 +689,10 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 	{
 		this->run_face_detection(this->current_img,this->face_detect);
 		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+		this->skin_img = this->mark_detected_face(this->skin_img,this->face_detect);
 	}
 	
-	//get the skin color detection result, and store it into skin_img
-	this->getSkin(this->current_img,this->skin_img);
+
 	
 	//run basic filter;
 	this->basic_filter();
@@ -698,7 +700,6 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 	//this->analyzed_img_filtered is the final detection result image
 	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
-	
 	if(this->final_body_detect.size() >= 1)
 	{	
 		printf("Image_processor::one_target_in_scope() returning\n");
