@@ -318,6 +318,7 @@ uint8_t intel_board::robot_find_target()
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
+	
 	this->image_processor->show_analyzed_img();
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
 	return 1;
