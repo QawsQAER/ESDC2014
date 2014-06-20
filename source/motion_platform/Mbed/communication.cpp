@@ -409,6 +409,16 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
+    else if(action_type == 3)
+    {
+
+    putByte(STARTER ,1); //1 means IntelToMbed
+    putByte(0x4f ,1); //O
+    putByte(0x4b ,1); //K
+    putByte(0x9a ,1); //check_sum = 0xaf + 0x4b = 0x9a
+    
+    return;
+    } 
     putByte(STARTER ,1); //1 means IntelToMbed
     putByte(0x4f ,1); //O
     putByte(0x4b ,1); //K
