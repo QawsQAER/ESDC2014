@@ -23,9 +23,9 @@
 #define PATH_TO_FACE_CASCADE "lbpcascade_frontalface.xml"
 #define PATH_TO_EYES_CASCADE "haarcascade_eye_tree_eyeglasses.xml"
 
-#define IP "192.168.43.1"
+#define IP "192.168.1.101"
 #define PORT "8080"
-#define IP_PORT "192.168.43.1:8080"
+#define IP_PORT "192.168.1.101:8080"
 
 extern char *PATH_TEMP;
 extern unsigned char continuity;
