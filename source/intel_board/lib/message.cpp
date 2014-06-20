@@ -126,8 +126,15 @@ int Message::receiveACK(int fd)
 	{
 		uint16_t temp_degree;
 		memcpy((void *)&temp_degree,&_ACK->O,1);
+		printf("****************************************\n");
+		printf("temp_degree :%d   _ACK->O :%d \n", temp_degree,ACK->O);
 		memcpy((void *)&temp_degree+1,&_ACK->K,1);
+		printf("temp_degree+1 :%d   _ACK->K :%d \n", temp_degree,_ACK->K);
+
 		this->car_degree= temp_degree;
+		printf("car_degree :%d   temp_degree :%d \n", car_degree,temp_degree);
+
+		printf("****************************************\n");
 		return 1;
 	}
 	printf("int Message::receiveACK(int fd) error: ACK is invalid!\n");
