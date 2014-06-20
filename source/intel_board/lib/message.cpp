@@ -25,7 +25,7 @@ This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
 ******************************************************/
 #include "message.h"
-#define DEBUG_MODE 1
+#define DEBUG_MODE 0
 
 //public
 Message::Message()
