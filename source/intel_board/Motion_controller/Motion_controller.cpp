@@ -94,15 +94,15 @@ uint8_t Motion_controller::init()
 	printf("Motion_controller::init() running\n");
 	Message msg;
 
-	msg.CameraPlatformYawClk(30);
-	msg.sendMessage(this->Com->fd);
-	sleep(1);
-	msg.CameraPlatformYawCounterClk(60);
-	msg.sendMessage(this->Com->fd);
-	sleep(1);
-	msg.CameraPlatformYawClk(30);
-	msg.sendMessage(this->Com->fd);
-	sleep(1);
+	//msg.CameraPlatformYawClk(30);
+	//msg.sendMessage(this->Com->fd);
+	//sleep(1);
+	//msg.CameraPlatformYawCounterClk(60);
+	//msg.sendMessage(this->Com->fd);
+	//sleep(1);
+	//msg.CameraPlatformYawClk(30);
+	//msg.sendMessage(this->Com->fd);
+	//sleep(1);
 	this->reset_lifter();
 	printf("Motion_controller::init() returning\n");
 	return 1;
@@ -158,12 +158,13 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		if(abs(diff_x) > threshold_x && need_to_center)
 		{
-			this->centering(detect,face);
+			//this->centering(detect,face);
+			this->centering_by_face(face);
 			return 0;
 		}
 		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
 		{
-			this->need_to_center = 0;
+			//this->need_to_center = 0;
 			this->zoom_in_out_by_face(face,distance);
 			return 0;
 		}
@@ -471,27 +472,49 @@ void Motion_controller::set_pattern(uint8_t pattern)
 		case(1):
 			this->img_exp_pos_x = IMG_EXP_POS1_X;
 			this->img_exp_pos_y = IMG_EXP_POS1_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
 		break;
 		case(2):
 			this->img_exp_pos_x = IMG_EXP_POS2_X;
 			this->img_exp_pos_y = IMG_EXP_POS2_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
 		break;
 		case(3):
 			this->img_exp_pos_x = IMG_EXP_POS3_X;
 			this->img_exp_pos_y = IMG_EXP_POS3_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS3_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS3_Y;
 		break;
 		case(4):
 			this->img_exp_pos_x = IMG_EXP_POS4_X;
 			this->img_exp_pos_y = IMG_EXP_POS4_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS4_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS4_Y;
 		break;
 		default:
 			printf("Motion_controller::set_pattern() pattern undefined\n");
 		break;
 	}
-	printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
-	printf("Motion_controller::set_pattern() exiting\n");
 
-	this->ref = cv::Rect(this->img_exp_pos_x - this->exp_width / 2,this->img_exp_pos_y,this->exp_width,this->exp_height);
+	if(!(*this->waist_shot))
+		printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
+	else
+		printf("Motion_controller::set_pattern() the img_exp_face_pos_x is %u,img_exp_face_pos_y is %u\n",this->img_exp_face_pos_x,this->img_exp_face_pos_y);
+	
+
+	this->ref = cv::Rect(this->img_exp_pos_x - this->exp_width / 2,
+			this->img_exp_pos_y,
+			this->exp_width,
+			this->exp_height);
+
+	this->face_ref = cv::Rect(this->img_exp_face_pos_x - this->exp_face_width / 2,
+			this->img_exp_face_pos_y,
+			this->exp_face_width,
+			this->exp_face_height);
+
+	printf("Motion_controller::set_pattern() exiting\n");
 	return ;
 }
 

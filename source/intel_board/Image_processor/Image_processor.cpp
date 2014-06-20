@@ -345,7 +345,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	for(size_t count = 0;count < tmp.size();count++)
 	{
 		cv::Mat subImage = source_img(tmp[count]);
-		if(getSkin(subImage,subImage)[0] > 100)
+		if(getSkin(subImage,subImage)[0] > 150)
 		{
 			face_detect.push_back(tmp[count]);
 		}
@@ -355,12 +355,12 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 
 cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 {
-	int32_t Y_MIN = 0;
-	int32_t Y_MAX = 255;
-	int32_t Cr_MIN = 133;
-	int32_t Cr_MAX = 173;
-	int32_t Cb_MIN = 77;
-	int32_t Cb_MAX = 140;
+	int32_t Y_MIN = IMG_Y_MIN;
+	int32_t Y_MAX = IMG_Y_MAX;
+	int32_t Cr_MIN = IMG_Cr_MIN;
+	int32_t Cr_MAX = IMG_Cr_MAX;
+	int32_t Cb_MIN = IMG_Cb_MIN;
+	int32_t Cb_MAX = IMG_Cb_MAX;
 	cv::Mat result = source_img.clone();
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
