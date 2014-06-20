@@ -56,7 +56,7 @@ Image_processor::Image_processor(uint8_t img_source)
 	{
 		printf("Image_processor: Using CELL PHONE\n");
 		this->cam = new Camera();
-		std::string ip("192.168.43.1:8080");
+		std::string ip(IP_PORT);
 		this->cam->setip(ip);
 	}
 	//check the existence of the directory for storing the capture image
