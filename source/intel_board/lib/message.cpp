@@ -42,6 +42,7 @@ Message::~Message()
 
 void Message::sendMessage(int fd)
 {
+	printf("Message::sending Message\n");
 	int write_error = 0;
 	uint8_t move_dis_upper_8 = (_IntelCarCmd->move_dis) >> 8;
 	uint8_t move_dis_lower_8 = (_IntelCarCmd->move_dis) & 0x00ff;
@@ -65,11 +66,12 @@ void Message::sendMessage(int fd)
 	}
 
 	receiveACK(fd);
+	printf("Message::sendMessage() exiting\n");
 }
 
 int Message::receiveACK(int fd)
 {
-	//printf("Message::receiveACK() entering.\n");
+	printf("Message::receiveACK() entering.\n");
 	memset(_ACK, 0 , sizeof(struct ACK));
 	uint8_t buff[4];
 	uint8_t read_num = 0;

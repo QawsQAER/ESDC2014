@@ -203,7 +203,7 @@ uint8_t intel_board::robot_init()
 
 uint8_t intel_board::robot_ready()
 {
-		printf("intel_board: the robot is in ready state\n");
+	printf("intel_board: the robot is in ready state\n");
 	//fetch degree
 	ui->update_degree();
 	Message msg;
