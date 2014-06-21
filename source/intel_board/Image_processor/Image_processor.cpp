@@ -336,7 +336,13 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	cv::cvtColor(source_img, frame_gray,cv::COLOR_BGR2GRAY );
 	cv::equalizeHist(frame_gray, frame_gray);
 	//doing face detection
-	this->face_cascade.detectMultiScale(frame_gray, face_detect, 1.1, 2, 0, cv::Size(10, 10));
+
+	//the minimum face is (20,20)
+	this->face_cascade.detectMultiScale(frame_gray,
+		face_detect,
+		1.1,2, 0,
+		cv::Size(IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN),
+		cv::Size(IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX));
 	printf("Image_processor::run_face_detection: detect %d faces\n",face_detect.size());
 
 	//TODO: use color detection to filtered out the non-human color face
