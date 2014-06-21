@@ -340,6 +340,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	//the minimum face is (IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN)
 	//the maximum face is (IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX)
 	//the scaleFactor is 1.1 as default
+	//the flag is 0 as default, possible value is CV_HAAR_DO_CANNY_PRUNING
 	//the minNeighbour is 4 for higher accruacy
 	//flags NA in new cascade classifier
 	this->face_cascade.detectMultiScale(frame_gray,

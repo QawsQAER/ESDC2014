@@ -20,7 +20,14 @@
 
 #define FILENAME_LENGTH 128
 
-#define PATH_TO_FACE_CASCADE "lbpcascade_frontalface.xml"
+
+#define LBP_FACE_CASCADE "/home/root/lbpcascade_frontalface.xml"
+#define HAAR_FACE_CASCADE "/home/root/haarcascade_frontface_default.xml"
+#define HAAR_FACE_CASCADE1 "/home/root/haarcascade_frontface_alt.xml"
+#define HAAR_FACE_CASCADE2 "/home/root/haarcascade_frontface_alt2.xml"
+
+
+#define PATH_TO_FACE_CASCADE HAAR_FACE_CASCADE
 #define PATH_TO_EYES_CASCADE "haarcascade_eye_tree_eyeglasses.xml"
 
 #define IP "192.168.1.101"
