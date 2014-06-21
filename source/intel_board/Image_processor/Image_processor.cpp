@@ -337,10 +337,14 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	cv::equalizeHist(frame_gray, frame_gray);
 	//doing face detection
 
-	//the minimum face is (20,20)
+	//the minimum face is (IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN)
+	//the maximum face is (IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX)
+	//the scaleFactor is 1.1 as default
+	//the minNeighbour is 4 for higher accruacy
+	//flags NA in new cascade classifier
 	this->face_cascade.detectMultiScale(frame_gray,
 		face_detect,
-		1.1,2, 0,
+		1.1, 4, 0,
 		cv::Size(IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN),
 		cv::Size(IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX));
 	printf("Image_processor::run_face_detection: detect %d faces\n",face_detect.size());
