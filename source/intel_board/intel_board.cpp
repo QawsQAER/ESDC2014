@@ -150,7 +150,7 @@ uint8_t intel_board::main_function()
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
 					uint8_t flags;
-					if( !this->motion_controller->need_to_center && (*this->motion_controller->waist_shot))
+					if((*this->motion_controller->waist_shot))
 						flags = ENABLE_FACE_DETECT;
 					else
 						flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
@@ -217,6 +217,7 @@ uint8_t intel_board::robot_ready()
 	printf("intel_board::robot_ready() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_ready() get degree from compass %d\n",msg.car_degree);
 	printf("intel_board::robot_ready() dir is %d, degree is %d\n",dir,degree);
+
 
 	if(dir > 0)
 		this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);

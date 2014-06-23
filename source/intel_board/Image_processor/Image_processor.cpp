@@ -82,9 +82,7 @@ uint8_t Image_processor::init()
 	this->eyes_cascade_name = PATH_TO_EYES_CASCADE;
 	//setting the cascade classifier for face detection
 	printf("Image_processor init(): setting the default face detector\n");
-	if( !this->face_cascade.load(this->face_cascade_name) ){ printf("--(!)Error loading face cascade\n"); exit(-1); };
-	if( !this->eyes_cascade.load(this->eyes_cascade_name) ){ printf("--(!)Error loading eyes cascade\n"); exit(-1); };
-
+	if( !this->face_cascade.load(this->face_cascade_name) ){ printf("--(!)Error loading face cascade\n");std::cout<<this->face_cascade_name<<endl; exit(-1); };
 	return 1;
 }
 IMAGE_PROCESS_STATE Image_processor::get_state()

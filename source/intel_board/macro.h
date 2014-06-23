@@ -22,9 +22,9 @@
 
 
 #define LBP_FACE_CASCADE "/home/root/opencv/lbpcascade_frontalface.xml"
-#define HAAR_FACE_CASCADE "/home/root/opencv/haarcascade_frontface_default.xml"
-#define HAAR_FACE_CASCADE1 "/home/root/opencv/haarcascade_frontface_alt.xml"
-#define HAAR_FACE_CASCADE2 "/home/root/opencv/haarcascade_frontface_alt2.xml"
+#define HAAR_FACE_CASCADE "/home/root/opencv/haarcascade_frontalface_default.xml"
+#define HAAR_FACE_CASCADE1 "/home/root/opencv/haarcascade_frontalface_alt.xml"
+#define HAAR_FACE_CASCADE2 "/home/root/opencv/haarcascade_frontalface_alt2.xml"
 
 
 #define PATH_TO_FACE_CASCADE HAAR_FACE_CASCADE

@@ -278,9 +278,9 @@ void Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const doub
 	//the car need to adjust the position according to the detection result
 	int32_t diff_y = detect.height - this->ref.height;
 	uint16_t move_z = 0;
-	if(distance > 5000)
+	if(distance > 3000)
 		move_z = DEFAULT_DIS_LARGE;
-	else if(distance > 3000)
+	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
 	else
 		move_z = DEFAULT_DIS_SMALL;
@@ -528,10 +528,10 @@ void Motion_controller::reset_lifter()
 	printf("Motion_controller::reset_lifter() running\n");
 	Message msg;
 	msg.LifterMoveDownMM(LIFTER_MAX);
-	//msg.sendMessage(this->Com->fd);
+	msg.sendMessage(this->Com->fd);
 	
 	msg.LifterMoveUpMM(LIFTER_INIT_POS);
-	//msg.sendMessage(this->Com->fd);
+	msg.sendMessage(this->Com->fd);
 	this->lifter_pos = LIFTER_INIT_POS;
 	printf("Motion_controller::reset_lifter() exiting\n");
 }
@@ -558,7 +558,7 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
-	//msg.sendMessage(this->Com->fd);
+	msg.sendMessage(this->Com->fd);
 
 }
 
