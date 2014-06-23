@@ -279,57 +279,11 @@ uint8_t intel_board::robot_find_target()
 	uint16_t degree = 30;
 	uint8_t sec = 0;
 
-	this->robot_countdown(sec);	
 	while(!this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT))
 	{
-		if(this->waist_shot)
-			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-		else
-			this->image_processor->mark_exp_region(this->motion_controller->ref);
-		this->image_processor->show_analyzed_img();
-		//TODO: may adjust the position according to the initial detection results
+		//this->robot_find_target_strategy1(state,counter);
+		this->robot_find_target_strategy2(state);
 		this->robot_countdown(sec);
-		//rotate 30 degree every time if no target is detected
-		printf("intel_board::robot_find_target(): finding target again\n");
-
-		switch(state)
-		{
-			case 0://repeat state
-				if(counter < 2)
-				//do nothing
-					counter++;
-				else
-					state = 1;
-				break;
-			case 1://forward [dis] mm
-				this->motion_controller->move(dis,0);
-				state = 2;
-				break;
-			case 2://backward [dis] mm
-				this->motion_controller->move(dis * 2,1);
-				state = 3;
-				break;
-			case 3: //right side [dis] mm
-				this->motion_controller->move(dis,0);
-				this->motion_controller->move(dis,2);
-				state = 4;
-				break;
-			case 4: //left side [dis * 2] mm
-				this->motion_controller->move(dis * 2,3);
-				state = 5;
-				break;
-			case 5:
-				//move right [dis] mm
-				this->motion_controller->move(dis,2);
-				//rotate 30 degree
-				this->motion_controller->rotate(degree,0);
-				state = 0;
-				counter = 0;
-				break;
-			default:
-			break;
-		}
-		printf("intel_board: sleep till the camera is stable\n");
 	}
 
 	if(this->waist_shot)
@@ -342,6 +296,76 @@ uint8_t intel_board::robot_find_target()
 	return 1;
 }
 
+uint8_t intel_board::robot_find_target_strategy1(uint8_t &state,uint8_t &counter)
+{
+	if(this->waist_shot)
+		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+	else
+		this->image_processor->mark_exp_region(this->motion_controller->ref);
+	this->image_processor->show_analyzed_img();
+	
+	//TODO: may adjust the position according to the initial detection results
+	printf("intel_board::robot_find_target(): finding target again\n");
+	
+	switch(state)
+	{
+		case 0://repeat state
+			if(counter < 2)
+			//do nothing
+				counter++;
+			else
+				state = 1;
+		break;
+		
+		case 1://forward [dis] mm
+			this->motion_controller->move(DEFAULT_DIS_SMALL,0);
+			state = 2;
+		break;
+		
+		case 2://backward [dis] mm
+			this->motion_controller->move(DEFAULT_DIS_SMALL * 2,1);
+			state = 3;
+		break;
+		
+		case 3: //right side [dis] mm
+			this->motion_controller->move(DEFAULT_DIS_SMALL,0);
+			this->motion_controller->move(DEFAULT_DIS_SMALL,2);
+			state = 4;
+		break;
+		
+		case 4: //left side [dis * 2] mm
+			this->motion_controller->move(DEFAULT_DIS_SMALL * 2,3);
+			state = 5;
+		break;
+		
+		case 5:
+			//move right [dis] mm
+			this->motion_controller->move(DEFAULT_DIS_SMALL,2);
+			//rotate 30 degree
+			this->motion_controller->rotate(DEFAULT_DEGREE,CAR_ROTATE_RIGHT);
+			state = 0;
+			counter = 0;
+		break;
+		
+		default:
+		break;
+	}
+	return 1;
+}
+
+uint8_t intel_board::robot_find_target_strategy2(uint8_t &state)
+{
+	if(state < 2)
+	{
+		state++;
+	}
+	else
+	{
+		this->motion_controller->rotate(DEFAULT_DEGREE,CAR_ROTATE_RIGHT);
+		this->state = 0;
+	}
+	return 0;
+}
 uint8_t intel_board::robot_evaluate_image()
 {
 	printf("intel_board: robot_evaluate_image() running\n");

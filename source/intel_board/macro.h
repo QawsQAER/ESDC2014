@@ -179,6 +179,7 @@ enum Direction{
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 800
 #define DEFAULT_DIS_SMALL 275
+#define DEFAULT_DEGREE 30
 #define CAR_FORWARD 0
 #define CAR_BACKWARD 1
 #define CAR_LEFT 2

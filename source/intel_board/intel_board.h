@@ -91,7 +91,12 @@ public:
 	uint8_t robot_no_target();
 	
 	//this function will be called to find a target 
+	
 	uint8_t robot_find_target();
+
+	uint8_t robot_find_target_strategy1(uint8_t &state, uint8_t &counter);
+	uint8_t robot_find_target_strategy2(uint8_t &state);
+	
 	uint8_t robot_evaluate_image();
 	uint8_t robot_analyze_image();
 	uint8_t robot_approach_ref();
