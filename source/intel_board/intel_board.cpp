@@ -212,7 +212,7 @@ uint8_t intel_board::robot_ready()
 	msg.sendMessage(this->motion_controller->Com->fd);
 	
 	int32_t degree,dir;
-	degree_rotation(phone_degree,msg.car_degree,&degree,&dir);
+	degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
 
 	printf("intel_board::robot_ready() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_ready() get degree from compass %d\n",msg.car_degree);
