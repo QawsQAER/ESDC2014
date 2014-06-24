@@ -210,7 +210,7 @@ void intel_board::robot_orientation_adjust()
 	while(true)
 	{
 		printf("intel_board::robot_orientation_adjust() sending compass request\n");
-		msg.sendMessage(this->motion_controller->Com->fd);
+		msg.safe_sendMessage(this->motion_controller->Com->fd);
 		phone_degree = ui->update_degree();
 		degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
 		printf("intel_board::robot_orientation_adjust() get degree from phone %d\n",phone_degree);

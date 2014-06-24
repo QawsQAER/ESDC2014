@@ -96,13 +96,13 @@ uint8_t Motion_controller::init()
 
 	//Message msg;
 	//msg.CameraPlatformYawClk(30);
-	//msg.sendMessage(this->Com->fd);
+	//msg.safe_sendMessage(this->Com->fd);
 	//sleep(1);
 	//msg.CameraPlatformYawCounterClk(60);
-	//msg.sendMessage(this->Com->fd);
+	//msg.safe_sendMessage(this->Com->fd);
 	//sleep(1);
 	//msg.CameraPlatformYawClk(30);
-	//msg.sendMessage(this->Com->fd);
+	//msg.safe_sendMessage(this->Com->fd);
 	//sleep(1);
 	this->reset_lifter();
 	printf("Motion_controller::init() returning\n");
@@ -531,10 +531,12 @@ void Motion_controller::reset_lifter()
 	printf("Motion_controller::reset_lifter() running\n");
 	Message msg;
 	msg.LifterMoveDownMM(LIFTER_MAX);
-	msg.sendMessage(this->Com->fd);
+	while(msg.safe_sendMessage(this->Com->fd) < 0)
+		;
 	
 	msg.LifterMoveUpMM(LIFTER_INIT_POS);
-	msg.sendMessage(this->Com->fd);
+	while(msg.safe_sendMessage(this->Com->fd) < 0)
+		;
 	this->lifter_pos = LIFTER_INIT_POS;
 	printf("Motion_controller::reset_lifter() exiting\n");
 }
@@ -561,7 +563,8 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
-	msg.sendMessage(this->Com->fd);
+	while(msg.safe_sendMessage(this->Com->fd) < 0)
+		;
 
 }
 
@@ -592,16 +595,19 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveUpMM(segment);
-					msg.sendMessage(this->Com->fd);
+					while(msg.safe_sendMessage(this->Com->fd) < 0)
+						;
 				}
 				dis = mm - count * segment;
 				msg.CarMoveUpMM(dis);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 			else
 			{
 				msg.CarMoveUpMM(mm);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 		break;
 			
@@ -611,16 +617,19 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveDownMM(segment);
-					msg.sendMessage(this->Com->fd);
+					while(msg.safe_sendMessage(this->Com->fd) < 0)
+						;
 				}
 				dis = mm - count * segment;
 				msg.CarMoveDownMM(dis);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 			else
 			{
 				msg.CarMoveDownMM(mm);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 		break;
 
@@ -630,16 +639,19 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveLeftMM(segment);
-					msg.sendMessage(this->Com->fd);
+					while(msg.safe_sendMessage(this->Com->fd) < 0)
+						;
 				}
 				dis = mm - count * segment;
 				msg.CarMoveLeftMM(dis);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 			else
 			{
 				msg.CarMoveLeftMM(mm);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 		break;
 
@@ -649,16 +661,19 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveRightMM(segment);
-					msg.sendMessage(this->Com->fd);
+					while(msg.safe_sendMessage(this->Com->fd) < 0)
+						;
 				}
 				dis = mm - count * segment;
 				msg.CarMoveRightMM(dis);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 			else
 			{
 				msg.CarMoveRightMM(mm);
-				msg.sendMessage(this->Com->fd);
+				while(msg.safe_sendMessage(this->Com->fd) < 0)
+					;
 			}
 		break;
 
@@ -679,7 +694,8 @@ void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 	{
 		msg.CarRotateLeftDegree(degree);
 	}
-	msg.sendMessage(this->Com->fd);
+	while(msg.safe_sendMessage(this->Com->fd) < 0)
+		;
 	return ;
 }
 

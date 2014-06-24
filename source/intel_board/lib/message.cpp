@@ -40,7 +40,34 @@ Message::~Message()
 	free(_ACK);
 }
 
-void Message::sendMessage(int fd)
+int32_t Message::safe_sendMessage(int fd)
+{
+	uint8_t count = 0;
+	int32_t rv = 0;
+	while(count < MSG_MAX_ATTEMPT && (rv = this->sendMessage(fd)) < 0)
+	{
+		printf("Message::safe_sendMessage() going to resend message for the %u time\n",count);
+		count++;
+	}
+	if(rv > 0)
+		return 1;
+	else if(count == MSG_MAX_ATTEMPT)
+	{
+		
+		printf("!!!!!!!!!!!!!!\n");
+		printf("!!!!!!!!!!!!!!\n");
+		printf("Message::safe_sendMessage() attempted 10 times without response\n");
+		printf("Message::safe_sendMessage() attempted 10 times without response\n");
+		printf("Message::safe_sendMessage() attempted 10 times without response\n");
+		printf("!!!!!!!!!!!!!!\n");
+		printf("!!!!!!!!!!!!!!\n");
+		printf("Message::safe_sendMessage() terminating program\n");
+		exit(-1);
+		return -1;
+	}
+}
+
+int32_t Message::sendMessage(int fd)
 {
 	printf("Message::sending Message\n");
 	int write_error = 0;
@@ -62,11 +89,16 @@ void Message::sendMessage(int fd)
 	if(write_error != 9)
 	{
 		printf("void Message::sendMessage(int fd) error: error happened when writing bytes to the file descriptor!\n");
-		return;
+		return -1;
 	}
 
-	receiveACK(fd);
+	if(receiveACK(fd) < 0)
+	{
+		printf("Message::sendMessage() receiveACK return -1;\n");
+		return -1;
+	}
 	printf("Message::sendMessage() exiting\n");
+	return 1;
 }
 
 int Message::receiveACK(int fd)
@@ -82,7 +114,18 @@ int Message::receiveACK(int fd)
 	}
 	while(read_num < sizeof(struct ACK))
 	{
-		int temp = read(fd, buff + read_num, sizeof(struct ACK));
+		struct pollfd ufds;
+		ufds.fd = fd;
+		ufds.events = POLLIN | POLLPRI;
+		if(poll(&ufds,1,3500) <= 0)
+		{
+			printf("Message::receiveACK() possible timeout or\n");
+			perror("Message::receiveACK() ");
+			printf("Message::receiveACK() file descriptor is %d\n",fd);
+			return -1;
+		}
+
+		int32_t temp = read(fd, buff + read_num, sizeof(struct ACK));
 
 		if(DEBUG_MODE)
 		{
@@ -128,7 +171,7 @@ int Message::receiveACK(int fd)
 		printf("****************************************\n");
 		memcpy((void *)&temp_degree,buff+1,1);
 		printf("temp_degree :%d   _ACK->O :%d \n",temp_degree,buff[1]);
-		memcpy((void *)&temp_degree+1,buff+2,1);
+		memcpy(((void *)&temp_degree)+1,buff+2,1);
 		printf("temp_degree+1 :%d   _ACK->K :%d \n",temp_degree,buff[2]);
 
 		this->car_degree= temp_degree;

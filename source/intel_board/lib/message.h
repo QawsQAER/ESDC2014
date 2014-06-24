@@ -1,3 +1,4 @@
+
 /******************************************************
 
 ***┏┓           ┏┓
@@ -34,11 +35,16 @@ All the code with this header are under GPL open source license.
 
 #define STARTER 0x7E
 #define COMPASS_STARTER 0x7D
+#define MSG_MAX_ATTEMPT 10
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
 #include <unistd.h>
 #include <string.h>
+
+//for poll() function
+#include <poll.h>
+//
 
 struct IntelCarCmd
 {
@@ -112,7 +118,8 @@ class Message
 public:
 	Message();
 	~Message();
-	void sendMessage(int fd);
+	int32_t sendMessage(int fd);
+	int32_t safe_sendMessage(int fd);
 	int receiveACK(int fd);
 
 	void CarMoveUpMM(uint16_t _mm);
