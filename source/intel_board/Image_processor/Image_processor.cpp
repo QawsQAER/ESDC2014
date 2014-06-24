@@ -652,6 +652,7 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	return 1;
 }
 		
+		
 uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 {
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 

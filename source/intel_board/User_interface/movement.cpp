@@ -3,7 +3,7 @@ enum Direction{
 	LOWER_LEFT,
 	UPPER_RIGHT,
 	LOWER_RIGHT,
-	null;
+	null
 };
 
 
