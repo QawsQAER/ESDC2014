@@ -117,6 +117,7 @@ enum Direction{
 
 #define IMG_HORI_THRESHOLD 50
 #define IMG_VERT_THRESHOLD 25
+#define BODY_FACE_RATIO 7.5
 
 #define IMG_BODY_ACTUAL_HEIGHT 1700 //mm -> 170cm
 #define IMG_EXP_HEIGHT 300
@@ -176,6 +177,9 @@ enum Direction{
 #define IMG_EXP_POS4_X IMG_WIDTH - 20
 #define IMG_EXP_POS4_Y IMG_EXP_POS3_Y
 
+
+
+//MOVEMENT RELATED
 #define DEFAULT_DIS 400
 #define DEFAULT_DIS_LARGE 800
 #define DEFAULT_DIS_SMALL 275
@@ -187,9 +191,7 @@ enum Direction{
 
 #define CAR_ROTATE_RIGHT 0
 #define CAR_ROTATE_LEFT 1
-//
-//
-//
+
 #define LIFTER_UP 0
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
