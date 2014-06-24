@@ -1,3 +1,4 @@
+
 #include "fourPointAlgo.h"
 #include "camshiftdemo.h"
 #include <iostream>
@@ -23,7 +24,7 @@ CascadeClassifier eyes_cascade;
 String window_name = "Face Detection";
 /*-------------------------------*/
 
-
+/*
 int main(int argc, char ** argv)
 {
 
@@ -65,7 +66,7 @@ int main(int argc, char ** argv)
 	}
 	return 0;
 }
-
+*/
 int faceDetectInit()
 {
 	//-- 1. Load the cascade
@@ -112,3 +113,4 @@ void detectAndDisplay( Mat frame )
     //-- Show what you got
     imshow( window_name, frame );
 }
+

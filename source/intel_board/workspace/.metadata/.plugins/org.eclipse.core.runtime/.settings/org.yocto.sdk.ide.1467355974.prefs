@@ -1,6 +1,0 @@
-SDKMode=false
-Sysroot=/home/edward/ESDC/yoctoproject/tmp/sysroots/valleyisland-64
-TargetMode=false
-eclipse.preferences.version=1
-toolChainRoot=/home/edward/ESDC/yoctoproject
-toolchainTriplet=core2_64-poky-linux

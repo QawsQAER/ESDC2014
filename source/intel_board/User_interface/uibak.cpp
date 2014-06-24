@@ -123,7 +123,7 @@ void send_lift_down_ack();
 
 
 
-
+/*
 int main(int argc, char** argv){
 	
 	int server_socket = init_server_socket();
@@ -177,11 +177,11 @@ int main(int argc, char** argv){
 
 			case 2:
 			printf("Command: start movement\n");
-			break
+			break;
 
 			case 3:
 			printf("Command: confirm picture\n");
-			break
+			break;
 
 
 			case 4:
@@ -256,7 +256,7 @@ int main(int argc, char** argv){
 	close(server_socket);
 	return 0;
 }
-
+*/
 
 
 

@@ -1,9 +1,9 @@
 #include <iostream>
 #include <cstdlib>
- #include <cstring>
- using namespace std;
+#include <cstring>
+using namespace std;
 
-
+/*
 int my_itoa(int val, char* buf)
 {
 		const unsigned int radix = 10;
@@ -42,7 +42,7 @@ int my_itoa(int val, char* buf)
 }
 
 int main()
- 	{
+{
  
  	char buffer[20];       
  	int  i = 1234;   
@@ -50,5 +50,5 @@ int main()
  	string s(buffer); 
  	cout<<s<<endl;
  	return 0;
- 	
- 	}
+}
+*/

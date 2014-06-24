@@ -1,1 +1,0 @@
-/home/edward/ESDC/yoctoproject/tmp/sysroots/x86_64-linux/usr/share/libtool/config/ltmain.sh
