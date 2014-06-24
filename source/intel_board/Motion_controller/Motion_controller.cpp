@@ -308,20 +308,20 @@ void Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const dou
 	double img_exp_dis = IMG_EXP_DIS;
 	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",img_exp_dis);
 	printf("Motion_controller::zoom_in_out() the diff is %lf\n",distance - img_exp_dis);
-	printf("Motion_controller::zoom_in_out() the abs diff is %lf\n",abs(distance - img_exp_dis));
-	printf("Motion_controller::zoom_in_out() the ceil abs diff is %ud\n",ceil(abs(distance - img_exp_dis)));
+	printf("Motion_controller::zoom_in_out() the abs diff is %u\n",abs(distance - img_exp_dis));
+	printf("Motion_controller::zoom_in_out() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
 	if(distance > img_exp_dis)
 	{
 		//the target too far away from the camera
 		uint16_t move_z = ceil(abs(distance - img_exp_dis));
-		printf("Motion_controller::zoom_in_out() moving forward %lf\n",move_z);
+		printf("Motion_controller::zoom_in_out() moving forward %u\n",move_z);
 		this->move(move_z,CAR_FORWARD);
 	}
 	else
 	{
 		//the target too close to the camera
 		uint16_t move_z = ceil(abs(distance - img_exp_dis));
-		printf("Motion_controller::zoom_in_out() moving backward %lf\n",move_z);
+		printf("Motion_controller::zoom_in_out() moving backward %u\n",move_z);
 		this->move(move_z,CAR_BACKWARD);
 	}
 }

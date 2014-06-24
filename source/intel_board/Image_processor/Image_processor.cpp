@@ -237,7 +237,7 @@ cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,u
  */
 uint8_t Image_processor::analyze_image()
 {
-
+	return 1;
 }
 
 /*
@@ -304,7 +304,7 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 	//for every detected face
 	for(size_t count = 0;count < body_detect.size();count++)
 	{
-		printf("mark_detected_body() [%d] body: (%d,%d,%d,%d)\n",
+		printf("mark_detected_body() [%lu] body: (%u,%u,%u,%u)\n",
 			count + 1,
 			body_detect[count].x,
 			body_detect[count].y,
@@ -347,7 +347,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 		1.1, 4, 0,
 		cv::Size(IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN),
 		cv::Size(IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX));
-	printf("Image_processor::run_face_detection: detect %d faces\n",face_detect.size());
+	printf("Image_processor::run_face_detection: detect %lu faces\n",face_detect.size());
 
 	//TODO: use color detection to filtered out the non-human color face
 	std::vector<cv::Rect> tmp(face_detect);
@@ -636,7 +636,7 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 	cv::Mat subImage = source_img(roi);
 	cv::Mat resulted_img;
 	this->run_body_detection(subImage,body_detect);
-	printf("find_body_in_roi(): find %u body\n",body_detect.size());
+	printf("find_body_in_roi(): find %lu body\n",body_detect.size());
 	resulted_img = this->mark_detected_body(subImage,body_detect);
 
 	cv::destroyWindow(this->winname);

@@ -12,6 +12,7 @@
 using namespace std;
 using namespace cv;
 
+/*
 int main()
 {
 
@@ -35,3 +36,4 @@ printf("Expect 4500m,%lf\n", runCAMShift(a6));
 
 	return 0;
 }
+*/

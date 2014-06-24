@@ -6,7 +6,7 @@ INTEL_BOARD_DEPEND_OBJECT+= message.o ui.o camshiftdemo.o Controller_Com.o
 export RM=rm
 export CP=cp
 export MV=mv
-export CPPFLAGS = -lstdc++
+export CPPFLAGS = -lstdc++ -lm
 all: intel_board.o
 
 intel_board.o: $(INTEL_BOARD_DEPEND)
