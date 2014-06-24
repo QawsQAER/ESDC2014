@@ -362,7 +362,7 @@ uint8_t intel_board::robot_find_target_strategy2(uint8_t &state)
 	else
 	{
 		this->motion_controller->rotate(DEFAULT_DEGREE,CAR_ROTATE_RIGHT);
-		this->state = 0;
+		state = 0;
 	}
 	return 0;
 }
