@@ -32,12 +32,15 @@ The communication protocol is inside source/intel_board/lib/message.h
 #include "lifter.h"
 #include "camera_platform.h"
 #include "mbed.h"
+#include "HMC5883L.h"
 
 #ifndef _COMMUNICATION_H
 #define _COMMUNICATION_H
 
 #define BUFFER_SIZE 1024
 #define STARTER 0x7e
+#define COMPASS_STARTER 0x7d
+
 
 #define DEBUG_ON 0
 class Communication
@@ -62,6 +65,8 @@ public:
     uint8_t getMoveDir();
     uint8_t getRotateDir();
 
+    unsigned short campass_degree;
+    HMC5883L compass;
 private:
     void init();
     uint8_t* buffer_IntelToMbed;
