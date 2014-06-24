@@ -92,8 +92,9 @@ Motion_controller::~Motion_controller()
 uint8_t Motion_controller::init()
 {
 	printf("Motion_controller::init() running\n");
-	Message msg;
+	
 
+	//Message msg;
 	//msg.CameraPlatformYawClk(30);
 	//msg.sendMessage(this->Com->fd);
 	//sleep(1);
@@ -132,6 +133,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->ref.height);
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
+	
 	if(!(*this->waist_shot))
 	{
 		//if not taking waist shot
@@ -185,9 +187,10 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 {
 
 	printf("\nMotion_controller::centering() running\n");
-	if(face.height > this->face_ref.height + this->threshold_face_y)
+	if(face.height > IMG_EXP_HEIGHT / IMG_BODY_FACE_RATIO + this->threshold_face_y)
 	{
 		printf("Motion_controller::centering() face too large\n");
+		this->move(DEFAULT_DIS,CAR_BACKWARD);
 		return 0;
 	}
 	uint8_t okay_image = 1;
@@ -332,9 +335,9 @@ void Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double &d
 	uint16_t move_z = DEFAULT_DIS;
 	printf("Motion_controller::zoom_in_out_by_face() running\n");
 	
-	if(distance > 5000)
+	if(distance > 3000)
 		move_z = DEFAULT_DIS_LARGE;
-	else if(distance > 3000)
+	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
 	else
 		move_z = DEFAULT_DIS_SMALL;

@@ -117,7 +117,7 @@ enum Direction{
 
 #define IMG_HORI_THRESHOLD 50
 #define IMG_VERT_THRESHOLD 25
-#define BODY_FACE_RATIO 7.5
+#define IMG_BODY_FACE_RATIO 7.5
 
 #define IMG_BODY_ACTUAL_HEIGHT 1700 //mm -> 170cm
 #define IMG_EXP_HEIGHT 300
@@ -198,5 +198,7 @@ enum Direction{
 #define LIFTER_MAX 700 //the maximun height of the lifter in mm
 #define LIFTER_INIT_POS 250
 #define LIFTER_SEG 50
+
+#define ORIENTATION_THRESHOLD 5
 #endif
 // 27828986

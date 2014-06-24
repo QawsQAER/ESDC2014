@@ -201,29 +201,40 @@ uint8_t intel_board::robot_init()
 	return 1;
 }
 
+void intel_board::robot_orientation_adjust()
+{
+	printf("intel_board::robot_orientation_adjust() entering\n");
+	int32_t phone_degree,degree,dir;
+	Message msg;
+	msg.CompassRequest();
+	while(true)
+	{
+		printf("intel_board::robot_orientation_adjust() sending compass request\n");
+		msg.sendMessage(this->motion_controller->Com->fd);
+		phone_degree = ui->update_degree();
+		degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
+		printf("intel_board::robot_orientation_adjust() get degree from phone %d\n",phone_degree);
+		printf("intel_board::robot_orientation_adjust() get degree from compass %d\n",msg.car_degree);
+		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %d\n",dir,degree);
+		if(degree > ORIENTATION_THRESHOLD)
+		{
+			if(dir > 0)
+				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
+			else
+				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
+		}
+		else
+		{
+			printf("intel_board::robot_orientation_adjust() exiting\n\n\n");
+			break;
+		}
+	}
+}
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
 	//fetch degree
-	int32_t phone_degree = ui->update_degree();
-	Message msg;
-	msg.CompassRequest();
-	printf("intel_board::robot_ready() sending compass request\n");
-	msg.sendMessage(this->motion_controller->Com->fd);
-	
-	int32_t degree,dir;
-	degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
-
-	printf("intel_board::robot_ready() get degree from phone %d\n",phone_degree);
-	printf("intel_board::robot_ready() get degree from compass %d\n",msg.car_degree);
-	printf("intel_board::robot_ready() dir is %d, degree is %d\n",dir,degree);
-
-
-	if(dir > 0)
-		this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
-	else
-		this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
-	
+	this->robot_orientation_adjust();
 	this->waist_shot = 1;
 
 	command_type cmd;

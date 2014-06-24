@@ -108,6 +108,7 @@ public:
 	uint8_t robot_only_image_analysis();
 
 	void robot_act_by_cmd(const command_type &cmd);
+	void robot_orientation_adjust();
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
