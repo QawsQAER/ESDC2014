@@ -28,6 +28,7 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 #include <communication.h>
 
 Communication::Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino)
+:compass(SDA, SCL)
 {
     this->_DEBUG = _DEBUG;
     this->_IntelToMbed = _IntelToMbed;
@@ -148,7 +149,7 @@ void Communication::parseMessage()
                 }
                 check_sum = 0;
 
-                if(_x == STARTER)
+                if(_x == STARTER || _x == COMPASS_STARTER)
                 {
                     state_IntelToMbed++;
                 }
@@ -167,7 +168,7 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 action_type = _x;
-                if(action_type == 0 || action_type == 1 || action_type == 2)
+                if(action_type == 0 || action_type == 1 || action_type == 2 || action_type == 3)
                 {
                     state_IntelToMbed++;
                 }
@@ -210,7 +211,7 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 move_dir = _x;
-                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)) || action_type == 2)
+                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)) || action_type == 2 || action_type == 3)
                 {
                     state_IntelToMbed++;
                 }
@@ -253,7 +254,7 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 rotate_dir = _x;
-                if((action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
+                if(action_type == 3 || (action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
                 {
                     state_IntelToMbed++;
                 }
@@ -284,6 +285,10 @@ void Communication::parseMessage()
 
                         case 2: //camera platform
                         info_ok_IntelToMbed = 3;
+                        break;
+                        
+                        case 3: //compass
+                        info_ok_IntelToMbed = 4;
                         break;
 
                         default:
@@ -394,6 +399,7 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
+    
     else if(action_type == 1) //lifter
     {
         uint32_t pulseCountOld = 0;
@@ -409,16 +415,29 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
+    
     else if(action_type == 3)
     {
+     HMC5883L compasss(SDA, SCL);
+     campass_degree=0;
+    campass_degree=compasss.get_degree();  
+    Serial pc(USBTX, USBRX);
+    
+    pc.printf("degree: %i  \t\r\n", campass_degree);
 
-    putByte(STARTER ,1); //1 means IntelToMbed
-    putByte(0x4f ,1); //O
-    putByte(0x4b ,1); //K
+    uint8_t temp1,temp2;
+   // memcpy(&temp1,&campass_degree,1);
+//    memcpy(&temp2,&campass_degree+1,1);
+    temp1=campass_degree;
+    temp2=campass_degree>>8;
+    putByte(COMPASS_STARTER ,1); //1 means IntelToMbed
+    putByte(temp1 ,1); //O
+    putByte(temp2 ,1); //K
     putByte(0x9a ,1); //check_sum = 0xaf + 0x4b = 0x9a
     
     return;
     } 
+    
     putByte(STARTER ,1); //1 means IntelToMbed
     putByte(0x4f ,1); //O
     putByte(0x4b ,1); //K

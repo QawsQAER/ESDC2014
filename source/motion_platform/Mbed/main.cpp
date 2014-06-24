@@ -28,11 +28,12 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 #include "mbed.h"
 #include "communication.h"
 #include "port.h"
+#include "HMC5883L.h"
 
 int main()
 {
     init_PORT();
-        
+  
     while(1)
     {
         com.parseMessage();
@@ -57,5 +58,15 @@ int main()
             com.resetInfoOK(0);
             com.resetInfoOK(1);
         }
+         else if(com.getInfoOK(0) == 4) //compass
+        {
+            com.ACK(&lifter, &camera_platform);
+            com.resetInfoOK(0);
+            com.resetInfoOK(1);
+        }
     }
 }
+
+
+
+
