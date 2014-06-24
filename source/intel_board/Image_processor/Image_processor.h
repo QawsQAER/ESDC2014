@@ -109,7 +109,6 @@ public:
 
 	//this function will get an image from either cam or cap, and store the image into the current_img
 	uint8_t capture_image();
-	uint8_t load_current_img_to_analyzed_img();
 
 	//this function will stored the image into the hard disk,
 	//naming it according to the time since Epoch
@@ -127,7 +126,6 @@ public:
 		body detection related functions
 	
 	*/
-	uint8_t basic_pedestrain_detection();
 	uint8_t run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect);
 	cv::Mat mark_detected_body(const cv::Mat &source_img,const std::vector<cv::Rect> &body_detect);
 
@@ -136,7 +134,6 @@ public:
 		face detection related functions
 	
 	*/
-	uint8_t basic_face_detection();
 	uint8_t run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect);
 	cv::Scalar getSkin(const cv::Mat &source_img,cv::Mat &dest_img);
 	

@@ -445,7 +445,7 @@ uint8_t intel_board::robot_only_image_analysis()
 		printf("Openning %s\n",filename);
 		Image_processor *ptr = this->image_processor;
 		ptr->read_image(filename);
-		ptr->load_current_img_to_analyzed_img();
+		ptr->analyzed_img = ptr->current_img.clone();
 
 		//run the basic body detection algorithm
 		//ptr->run_body_detection(ptr->current_img,ptr->body_detect);

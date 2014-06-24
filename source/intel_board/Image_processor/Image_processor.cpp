@@ -80,11 +80,13 @@ uint8_t Image_processor::init()
 	//setting the path to the cascade classifier
 	this->face_cascade_name = PATH_TO_FACE_CASCADE;
 	this->eyes_cascade_name = PATH_TO_EYES_CASCADE;
+
 	//setting the cascade classifier for face detection
 	printf("Image_processor init(): setting the default face detector\n");
 	if( !this->face_cascade.load(this->face_cascade_name) ){ printf("--(!)Error loading face cascade\n");std::cout<<this->face_cascade_name<<endl; exit(-1); };
 	return 1;
 }
+
 IMAGE_PROCESS_STATE Image_processor::get_state()
 {
 	return this->state;
@@ -98,6 +100,7 @@ uint8_t Image_processor::get_image_from_cellphone()
 #else
 	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 #endif
+
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
@@ -114,7 +117,7 @@ uint8_t Image_processor::get_image_from_cellphone()
 
 uint8_t Image_processor::get_image_from_webcam()
 {
-	for(uint8_t count_frame = 0;count_frame < 255;count_frame++)
+	for(uint8_t count_frame = 0;count_frame < 30;count_frame++)
 	{
 		if(!this->cap->grab())
 		{
@@ -134,8 +137,10 @@ uint8_t Image_processor::get_image_from_webcam()
 		printf("Image_processor::get_image_from_webcam(): Error, get cols = rows = 0\n");
 		return 0;
 	}
+
 	return 1;
 }
+
 /*
  * Implementation of capture_image()
  */
@@ -169,8 +174,9 @@ uint8_t Image_processor::get_image_and_show()
 	cv::waitKey(0);
 	return 1;
 }
+
 /*
- *	Implementation of stored_current_image()
+ *	Implementation of save_current_image()
  *
  */
 uint8_t Image_processor::save_current_image(uint16_t task_counter)
@@ -225,6 +231,7 @@ cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,u
 	printf("Image_processor::concat_image exiting\n");
 	return result;
 }
+
 /*
  * Implementation of basic analysis
  */
@@ -246,7 +253,8 @@ cv::Mat Image_processor::edge_detection(const cv::Mat &img)
 	cv::Canny(gray_img,result,threadhold1,threadhold2,apertureSize);
 
 	return result;
-}	
+}
+
 /*
  *
  * Implementation of basic pedestrain detection algorithm
@@ -309,13 +317,6 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 	return marked_img;
 }
 
-uint8_t Image_processor::basic_pedestrain_detection()
-{
-	this->run_body_detection(this->current_img,this->body_detect);
-	printf("basic_pedestrain_detection: %lu body detected\n",this->body_detect.size());
-	this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
-	return 1;
-}
 /*
  *
  * Implementation of basic face detection
@@ -403,17 +404,6 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 	return marked_img;
 }
 
-uint8_t Image_processor::basic_face_detection()
-{
-	printf("Image_processor::basic_face_detection(): Entering basic_face_detection\n");
-	if(!this->run_face_detection(this->current_img,this->face_detect))
-	{
-		printf("Image_processor::basic_face_detection(): Image_processor basic_face_detection ERROR\n");
-		return -1;
-	}
-	this->analyzed_img = this->mark_detected_face(this->current_img,this->face_detect);
-	return 1;
-}
 /*
  *
  */
@@ -456,6 +446,7 @@ uint8_t Image_processor::show_analyzed_img()
 	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
 }
+
 /*
  * Implementation of test()
  */
@@ -492,12 +483,6 @@ void Image_processor::test()
 uint8_t Image_processor::read_image(const char* filename)
 {
 	this->current_img = cv::imread(filename,CV_LOAD_IMAGE_COLOR);
-	return 1;
-}
-
-uint8_t Image_processor::load_current_img_to_analyzed_img()
-{
-	this->analyzed_img = this->current_img.clone();
 	return 1;
 }
 
