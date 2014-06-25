@@ -705,10 +705,10 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 		printf("Image_processor::one_target_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
-	else if(this->face_detect.size() == 0)
+	else if(this->final_face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::one_target_in_scope() returning\n");
+		printf("Image_processor::one_target_in_scope() returning without any found\n");
 		remove(this->current_img_path);
 		return 0;
 	}
@@ -735,5 +735,6 @@ cv::Rect Image_processor::get_face_detection_result()
 
 double Image_processor::get_distance(const cv::Rect &face)
 {	
+	printf("Image_processor::get_distance() running\n");
 	return runCAMShift(face);
 }

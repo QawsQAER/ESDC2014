@@ -124,9 +124,9 @@ uint8_t intel_board::main_function()
 					//working on finding the target
 					if(this->robot_find_target())
 					{
+						this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
 						this->state = ROBOT_EVALUATE_IMAGE;
 						//get the distance according to the face detection result (running four point algorithm)
-						this->distance = this->image_processor->get_distance(this->image_processor->final_face_detect[0]);
 					}
 				break;
 
@@ -156,8 +156,9 @@ uint8_t intel_board::main_function()
 						flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
 
 					int8_t rv = 0;
-					while((rv = this->image_processor->one_target_in_scope(flags)))
+					while(true)
 					{
+						rv = this->image_processor->one_target_in_scope(flags);
 						if(rv < 0)
 							continue;
 						if(rv == 0)
@@ -241,7 +242,7 @@ void intel_board::robot_orientation_adjust()
 		}
 		else
 		{
-			printf("intel_board::robot_orientation_adjust() exiting\n\n\n");
+			printf("intel_board::robot_orientation_adjust() exiting\n");
 			break;
 			return ;
 		}
@@ -312,8 +313,10 @@ uint8_t intel_board::robot_find_target()
 	uint8_t sec = 0;
 	int8_t rv = 0;
 
-	while((rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT)))
+	while(true)
 	{
+		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
+		printf("intel_board::robot_find_target rv is %d\n",rv);
 		if(rv < 0)
 			continue;
 
@@ -321,11 +324,12 @@ uint8_t intel_board::robot_find_target()
 			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 		else
 			this->image_processor->mark_exp_region(this->motion_controller->ref);
-
 		this->image_processor->show_analyzed_img();
+
 		//this->robot_find_target_strategy1(state,counter);
 		if(rv == 0)
 		{
+			printf("intel+board::robot_find_target going to execute startegy\n");
 			this->robot_find_target_strategy2(state);
 			this->robot_countdown(sec);
 		}
@@ -335,6 +339,7 @@ uint8_t intel_board::robot_find_target()
 
 	
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
+	printf("intel_board::robot_find_target() exiting\n");
 	return 1;
 }
 

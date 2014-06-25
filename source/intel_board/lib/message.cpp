@@ -46,8 +46,8 @@ int32_t Message::safe_sendMessage(int fd)
 	int32_t rv = 0;
 	while(count < MSG_MAX_ATTEMPT && (rv = this->sendMessage(fd)) < 0)
 	{
-		printf("Message::safe_sendMessage() going to resend message for the %u time\n",count);
 		count++;
+		printf("Message::safe_sendMessage() going to resend message for the %u time\n",count);
 	}
 	if(rv > 0)
 		return 1;
