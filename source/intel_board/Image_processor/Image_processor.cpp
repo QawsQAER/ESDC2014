@@ -426,10 +426,11 @@ uint8_t Image_processor::show_analyzed_img()
 	cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 	cv::moveWindow(this->winname,0,0);
 	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
-	cv::imshow(this->winname,concat_image);
-
-	printf("Image_processor::show_analyzed_img() showing skin_img\n");
-	cv::imshow(this->skinwin,this->skin_img);
+	//cv::imshow(this->winname,concat_image);
+	cv::imshow(this->winname,this->analyzed_img_filtered);
+	
+	//printf("Image_processor::show_analyzed_img() showing skin_img\n");
+	//cv::imshow(this->skinwin,this->skin_img);
 
 	//cv::imshow(this->edgewin,this->edge_img);
 	if(continuity == 0)
@@ -501,7 +502,7 @@ uint8_t Image_processor::basic_filter()
 
 uint8_t Image_processor::basic_filter_with_dergee(const uint16_t &degree)
 {
-	
+
 }
 uint8_t Image_processor::basic_filter_default()
 {
