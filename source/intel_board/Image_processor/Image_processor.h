@@ -166,7 +166,7 @@ public:
 	*/
 	//this function will take a picture of the current scope,
 	//and analyze whether there is a person/target in the picture.
-	uint8_t one_target_in_scope(const uint8_t &flags);
+	int8_t one_target_in_scope(const uint8_t &flags);
 	cv::Rect get_detection_result();
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);

@@ -104,6 +104,11 @@ uint8_t Image_processor::get_image_from_cellphone()
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+	if(this->current_img.cols  == 0 && this->current_img.rows == 0)
+	{
+		printf("Image_processor::get_image_from_cellphone: open an empty image\n");
+		return 0;
+	}
 	cv::resize(this->current_img,this->current_img,cv::Size(IMG_WIDTH,IMG_HEIGHT));
 	printf("Image_processor::get_image_from_cellphone: current size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
 	if(!this->current_img.data)
@@ -653,7 +658,7 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 }
 		
 		
-uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
+int8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 {
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
@@ -665,7 +670,7 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 	if(!this->capture_image())
 	{
 		printf("Image_processor Error: cannot capture valid image\n");
-		return 0;
+		return -1;
 	}
 	
 	//if an image is captured, run basic analysis

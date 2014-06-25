@@ -487,14 +487,14 @@ void Motion_controller::set_pattern(uint8_t pattern)
 		case(3):
 			this->img_exp_pos_x = IMG_EXP_POS3_X;
 			this->img_exp_pos_y = IMG_EXP_POS3_Y;
-			this->img_exp_face_pos_x = IMG_EXP_FACE_POS3_X;
-			this->img_exp_face_pos_y = IMG_EXP_FACE_POS3_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
 		break;
 		case(4):
 			this->img_exp_pos_x = IMG_EXP_POS4_X;
 			this->img_exp_pos_y = IMG_EXP_POS4_Y;
-			this->img_exp_face_pos_x = IMG_EXP_FACE_POS4_X;
-			this->img_exp_face_pos_y = IMG_EXP_FACE_POS4_Y;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
+			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
 		break;
 		default:
 			printf("Motion_controller::set_pattern() pattern undefined\n");
@@ -531,12 +531,11 @@ void Motion_controller::reset_lifter()
 	printf("Motion_controller::reset_lifter() running\n");
 	Message msg;
 	msg.LifterMoveDownMM(LIFTER_MAX);
-	while(msg.safe_sendMessage(this->Com->fd) < 0)
-		;
-	
+	msg.safe_sendMessage(this->Com->fd);
+
 	msg.LifterMoveUpMM(LIFTER_INIT_POS);
-	while(msg.safe_sendMessage(this->Com->fd) < 0)
-		;
+	msg.safe_sendMessage(this->Com->fd);
+
 	this->lifter_pos = LIFTER_INIT_POS;
 	printf("Motion_controller::reset_lifter() exiting\n");
 }
@@ -563,9 +562,7 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
-	while(msg.safe_sendMessage(this->Com->fd) < 0)
-		;
-
+	msg.safe_sendMessage(this->Com->fd);
 }
 
 void Motion_controller::set_lifter(const uint16_t &mm)
@@ -595,19 +592,16 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveUpMM(segment);
-					while(msg.safe_sendMessage(this->Com->fd) < 0)
-						;
+					msg.safe_sendMessage(this->Com->fd);
 				}
 				dis = mm - count * segment;
 				msg.CarMoveUpMM(dis);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 			else
 			{
 				msg.CarMoveUpMM(mm);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 		break;
 			
@@ -617,19 +611,16 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveDownMM(segment);
-					while(msg.safe_sendMessage(this->Com->fd) < 0)
-						;
+					msg.safe_sendMessage(this->Com->fd);
 				}
 				dis = mm - count * segment;
 				msg.CarMoveDownMM(dis);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 			else
 			{
 				msg.CarMoveDownMM(mm);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 		break;
 
@@ -639,19 +630,16 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveLeftMM(segment);
-					while(msg.safe_sendMessage(this->Com->fd) < 0)
-						;
+					msg.safe_sendMessage(this->Com->fd);
 				}
 				dis = mm - count * segment;
 				msg.CarMoveLeftMM(dis);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 			else
 			{
 				msg.CarMoveLeftMM(mm);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 		break;
 
@@ -661,19 +649,16 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 				for(count_msg = 0;count_msg < count;count_msg++)
 				{
 					msg.CarMoveRightMM(segment);
-					while(msg.safe_sendMessage(this->Com->fd) < 0)
-						;
+					msg.safe_sendMessage(this->Com->fd);
 				}
 				dis = mm - count * segment;
 				msg.CarMoveRightMM(dis);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 			else
 			{
 				msg.CarMoveRightMM(mm);
-				while(msg.safe_sendMessage(this->Com->fd) < 0)
-					;
+				msg.safe_sendMessage(this->Com->fd);
 			}
 		break;
 

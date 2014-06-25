@@ -146,7 +146,7 @@ uint8_t intel_board::main_function()
 					break;
 				
 				case ROBOT_APPROACH_REF:
-					this->robot_approach_ref();
+				{	this->robot_approach_ref();
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
 					uint8_t flags;
@@ -155,13 +155,21 @@ uint8_t intel_board::main_function()
 					else
 						flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
 
-					while(this->image_processor->one_target_in_scope(flags) == 0)
+					int8_t rv = 0;
+					while((rv = this->image_processor->one_target_in_scope(flags)))
 					{
-						if(this->waist_shot)
-							this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-						else		
-							this->image_processor->mark_exp_region(this->motion_controller->ref);
-						this->image_processor->show_analyzed_img();
+						if(rv < 0)
+							continue;
+						if(rv == 0)
+						{
+							if(this->waist_shot)
+								this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+							else		
+								this->image_processor->mark_exp_region(this->motion_controller->ref);
+							this->image_processor->show_analyzed_img();
+						}
+						else if(rv > 0)
+							break;
 					}
 					
 					if(this->waist_shot)
@@ -177,11 +185,18 @@ uint8_t intel_board::main_function()
 					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
 					//go back for evaulat image
 					this->state = ROBOT_EVALUATE_IMAGE;
-					break;
+				}
+				break;
+
 				case ROBOT_WAIT_FOR_ADJUSTMENT:
 					this->robot_wait_for_adjustment();
 					this->state = ROBOT_READY;
-					break;
+				break;
+				
+				default:
+					printf("Intel_board:: default case in state machine\n");
+					exit(-1);
+				break;
 			}
 		}
 	}
@@ -207,15 +222,16 @@ void intel_board::robot_orientation_adjust()
 	int32_t phone_degree,degree,dir;
 	Message msg;
 	msg.CompassRequest();
+	phone_degree = ui->update_degree();
 	while(true)
 	{
 		printf("intel_board::robot_orientation_adjust() sending compass request\n");
 		msg.safe_sendMessage(this->motion_controller->Com->fd);
-		phone_degree = ui->update_degree();
+		
 		degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
 		printf("intel_board::robot_orientation_adjust() get degree from phone %d\n",phone_degree);
 		printf("intel_board::robot_orientation_adjust() get degree from compass %d\n",msg.car_degree);
-		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %d\n",dir,degree);
+		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
 		if(degree > ORIENTATION_THRESHOLD)
 		{
 			if(dir > 0)
@@ -227,6 +243,7 @@ void intel_board::robot_orientation_adjust()
 		{
 			printf("intel_board::robot_orientation_adjust() exiting\n\n\n");
 			break;
+			return ;
 		}
 	}
 }
@@ -238,7 +255,7 @@ uint8_t intel_board::robot_ready()
 	this->waist_shot = 1;
 
 	command_type cmd;
-
+	printf("intel_board::robot_ready() waiting for user command\n");
 	while(cmd = ui->wait_command())
 	{
 		if(cmd == start_movement)
@@ -293,20 +310,30 @@ uint8_t intel_board::robot_find_target()
 	uint16_t dis = 350;
 	uint16_t degree = 30;
 	uint8_t sec = 0;
+	int8_t rv = 0;
 
-	while(!this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT))
+	while((rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT)))
 	{
+		if(rv < 0)
+			continue;
+
+		if(this->waist_shot)
+			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+		else
+			this->image_processor->mark_exp_region(this->motion_controller->ref);
+
+		this->image_processor->show_analyzed_img();
 		//this->robot_find_target_strategy1(state,counter);
-		this->robot_find_target_strategy2(state);
-		this->robot_countdown(sec);
+		if(rv == 0)
+		{
+			this->robot_find_target_strategy2(state);
+			this->robot_countdown(sec);
+		}
+		else 
+			break;
 	}
 
-	if(this->waist_shot)
-		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-	else
-		this->image_processor->mark_exp_region(this->motion_controller->ref);
-
-	this->image_processor->show_analyzed_img();
+	
 	printf("intel_board::robot_find_target(): TARGET FOUND!\n");
 	return 1;
 }
@@ -418,6 +445,13 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//TODO:
 	//should be waiting for adjustment here.
 
+
+	command_type cmd;
+	while((cmd = ui->wait_command()) != confirm_picture)
+	{
+		this->robot_act_by_cmd(cmd);
+	}
+
 	this->image_processor->cam->save_photo_af();
 	this->image_processor->one_target_in_scope(ENABLE_FACE_DETECT);
 	if(this->waist_shot)
@@ -426,14 +460,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
 	this->image_processor->show_analyzed_img();
 	this->image_processor->save_current_image(this->task_counter);	
-	
 	this->ui->send_finished_ack();
-	command_type cmd;
-	while((cmd = ui->wait_command()) != confirm_picture)
-	{
-		this->robot_act_by_cmd(cmd);
-	}
-
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 	return 1;

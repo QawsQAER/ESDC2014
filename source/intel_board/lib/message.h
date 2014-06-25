@@ -35,7 +35,8 @@ All the code with this header are under GPL open source license.
 
 #define STARTER 0x7E
 #define COMPASS_STARTER 0x7D
-#define MSG_MAX_ATTEMPT 10
+#define MSG_MAX_ATTEMPT 3
+#define TIMEOUT 10000 //timeout as 10 second
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>

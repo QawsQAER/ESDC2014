@@ -117,7 +117,7 @@ int Message::receiveACK(int fd)
 		struct pollfd ufds;
 		ufds.fd = fd;
 		ufds.events = POLLIN | POLLPRI;
-		if(poll(&ufds,1,3500) <= 0)
+		if(poll(&ufds,1,TIMEOUT) <= 0)
 		{
 			printf("Message::receiveACK() possible timeout or\n");
 			perror("Message::receiveACK() ");
