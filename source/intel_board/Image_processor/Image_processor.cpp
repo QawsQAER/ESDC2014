@@ -491,7 +491,19 @@ uint8_t Image_processor::read_image(const char* filename)
 	return 1;
 }
 
+/* IMPLEMENTATION OF BASIC FILTER START*/
+/* IMPLEMENTATION OF BASIC FILTER START*/
+/* IMPLEMENTATION OF BASIC FILTER START*/
 uint8_t Image_processor::basic_filter()
+{
+	return basic_filter_default();
+}
+
+uint8_t Image_processor::basic_filter_with_dergee(const uint16_t &degree)
+{
+	
+}
+uint8_t Image_processor::basic_filter_default()
 {
 	printf("Image_processor::basic_filter() working\n");
 	this->final_body_detect.clear();
@@ -543,7 +555,9 @@ uint8_t Image_processor::basic_filter()
 	}
 	printf("Image_processor::basic_filter() exiting\n");
 }
-
+/* IMPLEMENTATION OF BASIC FILTER END*/
+/* IMPLEMENTATION OF BASIC FILTER END*/
+/* IMPLEMENTATION OF BASIC FILTER END*/
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
 {
 	float face_body_height_ratio = 0.20;

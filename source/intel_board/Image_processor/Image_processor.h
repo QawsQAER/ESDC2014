@@ -148,7 +148,9 @@ public:
 	*/
 	//this function will do basic filtering, eliminate body detected result without face detection
 	uint8_t basic_filter();
-
+	uint8_t basic_filter_default();
+	uint8_t basic_filter_with_dergee(const uint16_t &degree);
+	//-------------------------------//
 	uint8_t find_body_according_to_face(const cv::Mat &source_img,
 		const std::vector<cv::Rect> &face_detect);
 	uint8_t find_body_in_roi(const cv::Mat &source_img,const cv::Rect roi,std::vector<cv::Rect> &body_detect);

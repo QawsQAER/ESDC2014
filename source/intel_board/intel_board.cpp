@@ -146,7 +146,8 @@ uint8_t intel_board::main_function()
 					break;
 				
 				case ROBOT_APPROACH_REF:
-				{	this->robot_approach_ref();
+				{	
+					this->robot_approach_ref();
 					//take another picture and check whether the target is in scope
 					printf("intel_board: ROBOT_APPROACH_REF finished\n");
 					uint8_t flags;
@@ -223,22 +224,24 @@ void intel_board::robot_orientation_adjust()
 	int32_t phone_degree,degree,dir;
 	Message msg;
 	msg.CompassRequest();
-	phone_degree = ui->update_degree();
+	
 	while(true)
 	{
 		printf("intel_board::robot_orientation_adjust() sending compass request\n");
 		msg.safe_sendMessage(this->motion_controller->Com->fd);
-		
+		phone_degree = ui->update_degree();
 		degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
 		printf("intel_board::robot_orientation_adjust() get degree from phone %d\n",phone_degree);
 		printf("intel_board::robot_orientation_adjust() get degree from compass %d\n",msg.car_degree);
 		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
 		if(degree > ORIENTATION_THRESHOLD)
 		{
+			/*
 			if(dir > 0)
 				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
 			else
 				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
+			*/
 		}
 		else
 		{
