@@ -109,6 +109,7 @@ public:
 
 	void robot_act_by_cmd(const command_type &cmd);
 	void robot_orientation_adjust();
+	void robot_get_degree(int32_t *degree,int32_t *dir);
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
