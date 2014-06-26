@@ -324,8 +324,8 @@ uint8_t intel_board::robot_find_target()
 	while(true)
 	{
 		int32_t degree = 0,dir = 0;
-		this->robot_get_degree(&degree,&dir);
-		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT,degree,dir);
+		//this->robot_get_degree(&degree,&dir);
+		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
 		printf("intel_board::robot_find_target rv is %d\n",rv);
 		if(rv < 0)
 			continue;

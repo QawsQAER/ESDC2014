@@ -497,7 +497,7 @@ uint8_t Image_processor::read_image(const char* filename)
 /* IMPLEMENTATION OF BASIC FILTER START*/
 uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 {
-	this->basic_filter_with_degree(degree,dir);
+	//this->basic_filter_with_degree(degree,dir);
 	return basic_filter_default();
 }
 
