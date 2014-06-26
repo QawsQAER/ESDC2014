@@ -1,6 +1,8 @@
 #ifndef _MACRO_H
 #define _MACRO_H
 
+//#define _USE_OPENCL
+
 #include "stdint.h"
 
 #define MAX_COUNT	4			// max. no. of points being tracked

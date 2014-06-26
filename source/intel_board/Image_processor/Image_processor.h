@@ -55,8 +55,11 @@ private:
 	//body_detect stores the rectangle of the body detected in the current_img
 
 	//the HOG for body detection
+#ifdef _USE_OPENCL
+	cv::ocl::HOGDescriptor::HOGDescriptor hog;
+#else
 	cv::HOGDescriptor hog;
-
+#endif
 //------------------FACE DETECTION RELATED VARIABLE------------------------------------------
 	//face_detect stores the rectangle of the face detected in the current_img
 
