@@ -117,7 +117,12 @@ int Message::receiveACK(int fd)
 		struct pollfd ufds;
 		ufds.fd = fd;
 		ufds.events = POLLIN | POLLPRI;
-		if(poll(&ufds,1,TIMEOUT) <= 0)
+		int32_t timeout = TIMEOUT;
+		if(this->_IntelCarCmd->action_type == LIFTER_ACTION)
+		{
+			timeout = LIFTER_TIMEOUT;
+		}
+		if(poll(&ufds,1,timeout) <= 0)
 		{
 			printf("Message::receiveACK() possible timeout or\n");
 			perror("Message::receiveACK() ");
