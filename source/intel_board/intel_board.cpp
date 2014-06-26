@@ -218,21 +218,26 @@ uint8_t intel_board::robot_init()
 	return 1;
 }
 
+void intel_board::robot_get_degree(int32_t *degree,int32_t *dir)
+{
+	Message msg;
+	msg.CompassRequest();
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+	int32_t phone_degree = ui->update_degree();
+	printf("intel_board::robot_get_degree() get degree from phone %d\n",phone_degree);
+	printf("intel_board::robot_get_degree() get degree from compass %d\n",msg.car_degree);
+	degree_rotation(msg.car_degree,phone_degree,degree,dir);
+}
+
 void intel_board::robot_orientation_adjust()
 {
 	printf("intel_board::robot_orientation_adjust() entering\n");
-	int32_t phone_degree,degree,dir;
-	Message msg;
-	msg.CompassRequest();
+	int32_t degree,dir;
 	
 	while(true)
 	{
 		printf("intel_board::robot_orientation_adjust() sending compass request\n");
-		msg.safe_sendMessage(this->motion_controller->Com->fd);
-		phone_degree = ui->update_degree();
-		degree_rotation(msg.car_degree,phone_degree,&degree,&dir);
-		printf("intel_board::robot_orientation_adjust() get degree from phone %d\n",phone_degree);
-		printf("intel_board::robot_orientation_adjust() get degree from compass %d\n",msg.car_degree);
+		this->robot_get_degree(&degree,&dir);
 		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
 		if(degree > ORIENTATION_THRESHOLD)
 		{
@@ -318,7 +323,9 @@ uint8_t intel_board::robot_find_target()
 
 	while(true)
 	{
-		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
+		int32_t degree = 0,dir = 0;
+		this->robot_get_degree(&degree,&dir);
+		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT,degree,dir);
 		printf("intel_board::robot_find_target rv is %d\n",rv);
 		if(rv < 0)
 			continue;
@@ -508,7 +515,7 @@ uint8_t intel_board::robot_only_image_analysis()
 		//show the analyzed img after basic detection algorithm
 		//ptr->show_analyzed_img();
 		//run a basic filter 
-		ptr->basic_filter();
+		ptr->basic_filter(0,0);
 		//mark the face and body after basic filter
 		ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->final_body_detect);
 		ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);

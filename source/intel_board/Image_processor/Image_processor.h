@@ -15,7 +15,7 @@
 #include <time.h>
 #include "../camera/camera.h"
 #include <string>
-
+#include <math.h>
 
 #include "camshiftdemo.h"
 #include "fourPointAlgo.h"
@@ -150,9 +150,9 @@ public:
 	
 	*/
 	//this function will do basic filtering, eliminate body detected result without face detection
-	uint8_t basic_filter();
+	uint8_t basic_filter(const int32_t &degree,const int32_t &dir);
 	uint8_t basic_filter_default();
-	uint8_t basic_filter_with_dergee(const uint16_t &degree);
+	uint8_t basic_filter_with_degree(const int32_t &degree, const int32_t &dir);
 	//-------------------------------//
 	uint8_t find_body_according_to_face(const cv::Mat &source_img,
 		const std::vector<cv::Rect> &face_detect);
@@ -171,7 +171,7 @@ public:
 	*/
 	//this function will take a picture of the current scope,
 	//and analyze whether there is a person/target in the picture.
-	int8_t one_target_in_scope(const uint8_t &flags);
+	int8_t one_target_in_scope(const uint8_t &flags,int32_t degree = 0,int32_t dir = 0);
 	cv::Rect get_detection_result();
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
