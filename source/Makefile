@@ -6,8 +6,12 @@ all: ESDC
 
 ESDC: ESDC.o Makefile
 	cd intel_board;make all
-	$(CC) -o ESDC ESDC.o $(ESDC_LDOBJECTS) $(CFLAGS)
+	$(CC) -o ~/Desktop/ESDC ESDC.o $(ESDC_LDOBJECTS) $(CFLAGS)
 
 ESDC.o:
 	$(CC) -o ESDC.o -c ESDC.cpp $(CFLAGS)
 
+clean:
+	cd intel_board;make clean
+	rm *.o
+	rm ~/Desktop/ESDC

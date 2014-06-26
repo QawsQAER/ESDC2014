@@ -23,11 +23,10 @@
 #define FILENAME_LENGTH 128
 
 
-#define LBP_FACE_CASCADE "/home/root/opencv/lbpcascade_frontalface.xml"
-#define HAAR_FACE_CASCADE "/home/root/opencv/haarcascade_frontalface_default.xml"
-#define HAAR_FACE_CASCADE1 "/home/root/opencv/haarcascade_frontalface_alt.xml"
-#define HAAR_FACE_CASCADE2 "/home/root/opencv/haarcascade_frontalface_alt2.xml"
-
+#define LBP_FACE_CASCADE "opencv/lbpcascade_frontalface.xml"
+#define HAAR_FACE_CASCADE "opencv/haarcascade_frontalface_default.xml"
+#define HAAR_FACE_CASCADE1 "opencv/haarcascade_frontalface_alt.xml"
+#define HAAR_FACE_CASCADE2 "opencv/haarcascade_frontalface_alt2.xml"
 
 #define PATH_TO_FACE_CASCADE HAAR_FACE_CASCADE
 #define PATH_TO_EYES_CASCADE "haarcascade_eye_tree_eyeglasses.xml"
@@ -201,7 +200,7 @@ enum Direction{
 #define LIFTER_INIT_POS 250
 #define LIFTER_SEG 50
 
-#define ORIENTATION_THRESHOLD 0
+#define ORIENTATION_THRESHOLD 180
 
 #endif
 // 27828986
