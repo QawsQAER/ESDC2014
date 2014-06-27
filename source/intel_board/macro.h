@@ -39,6 +39,7 @@
 extern char *PATH_TEMP;
 extern unsigned char continuity;
 
+// #define PATH_TEMP "capture_image/"
 #define PATH_CAPTURE "../../Photos/Capture"
 
 #define PHONE 0
