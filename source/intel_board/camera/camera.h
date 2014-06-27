@@ -14,7 +14,6 @@ All the code with this header are under GPL open source license.
 
 #include "../macro.h"
 
-extern char *PATH_TEMP;
 
 
 class Camera

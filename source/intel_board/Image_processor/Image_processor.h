@@ -24,6 +24,10 @@
 extern char *dir_path;
 extern char *PATH_TEMP;
 
+/*use phone or canon*/
+// int source_mode;
+
+
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT

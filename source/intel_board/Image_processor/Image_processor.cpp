@@ -56,11 +56,11 @@ Image_processor::Image_processor(uint8_t img_source)
 	{
 		printf("Image_processor: Using CELL PHONE\n");
 		this->cam = new Camera();
-		source_mode=PHONE;
-		this->cam->set_mode(source_mode);
+		// source_mode=PHONE;
+		// this->cam->set_mode(source_mode);
 
-		// std::string ip(IP_PORT);
-		// this->cam->setip(ip);
+		std::string ip(IP_PORT);
+		this->cam->setip(ip);
 	}
 	//check the existence of the directory for storing the capture image
 	this->current_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
