@@ -262,7 +262,6 @@ uint8_t intel_board::robot_ready()
 	//fetch degree
 	this->robot_orientation_adjust();
 	this->waist_shot = 1;
-	ui->send_notification();
 	command_type cmd;
 	printf("intel_board::robot_ready() waiting for user command\n");
 	while(cmd = ui->wait_command())
@@ -460,6 +459,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//TODO:
 	//should be waiting for adjustment here.
 
+	ui->send_notification();
 
 	command_type cmd;
 	while((cmd = ui->wait_command()) != confirm_picture)
