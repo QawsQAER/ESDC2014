@@ -44,7 +44,7 @@ unsigned char continuity = 1;
 
 
 /*use phone or canon*/
-int source_mode;
+unsigned char source_mode=0;
 
 intel_board *robot;
 
@@ -54,8 +54,8 @@ int main(int argc, char ** argv)
 
 	if(argc!=2)
 	{
-		printf("Usage: 1./ESDC 0 for PHONE\n");
-		printf("Usage: 2./ESDC 1 for CANON\n");
+		printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
+		printf("Usage: 2./ESDC 1 [mode]for CANON\n");
 		exit(0);
 	}
 
@@ -73,9 +73,9 @@ int main(int argc, char ** argv)
 	generate_dir();
 	signal(SIGTERM,exit_routine);
 	signal(SIGINT,exit_routine);
-	if(argc >= 2)//the user has set the mode
+	if(argc >= 3)//the user has set the mode
 	{
-		mode = atoi(argv[1]);
+		mode = atoi(argv[2]);
 		switch(mode)
 		{
 			case 0://case for auto mode
