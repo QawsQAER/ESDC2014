@@ -609,7 +609,9 @@ void Camera::init_phone()
 void Camera::My_popen(std::string cmd)
 {
      const char* command=cmd.c_str();
-    if ((fp = popen(command, "r")) == NULL) 
+         // if ((fp = popen(command, "r")) == NULL) 
+
+    if ((fp = popen(command, "w")) == NULL) 
     {
           perror("popen failed");
                 // return -1;
