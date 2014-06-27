@@ -91,7 +91,7 @@ up ack		  lu
 down ack      ld
 
 send_finished_ack  fa
-
+send_notification  nn
 */
 
 
@@ -320,6 +320,15 @@ void UI::send_finished_ack()
 	char temp[]="fa";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
 	printf("send_finished_ack\n");
+	send_msg();
+}
+
+void UI::send_notification()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="nn";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+	printf("send_notification\n");
 	send_msg();
 }
 

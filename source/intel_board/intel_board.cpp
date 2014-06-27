@@ -460,7 +460,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//TODO:
 	//should be waiting for adjustment here.
 
-
+	this->ui->send_notification();
 	command_type cmd;
 	while((cmd = ui->wait_command()) != confirm_picture)
 	{

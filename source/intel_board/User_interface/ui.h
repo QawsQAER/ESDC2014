@@ -63,6 +63,8 @@ class UI{
 
 	//use this when the car finish moving by itself
 	void send_finished_ack();
+	void send_notification();
+
 	
 	command_type pattern;
 
