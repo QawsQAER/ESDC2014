@@ -41,7 +41,7 @@ void exit_routine(int arg);
 char *dir_path;
 char *PATH_TEMP = NULL;
 unsigned char continuity = 1;
-
+int source_mode;
 
 
 intel_board *robot;
@@ -50,7 +50,7 @@ int main(int argc, char ** argv)
 {
 	/* prints Hello World */
 
-	if(argc!=2)
+	if(argc<2)
 	{
 		printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
 		printf("Usage: 2./ESDC 1 [mode]for CANON\n");
@@ -58,7 +58,7 @@ int main(int argc, char ** argv)
 	}
 
 	/*use phone or canon*/
-	source_mode_temp=argv[1];
+	source_mode=atoi(argv[1]);
 
 	cout << "Hello Intel ESDC" << endl;
 	/*

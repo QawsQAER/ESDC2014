@@ -38,7 +38,7 @@
 
 extern char *PATH_TEMP;
 extern unsigned char continuity;
-extern unsigned char source_mode_flag;
+extern int source_mode;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 

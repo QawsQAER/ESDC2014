@@ -178,7 +178,6 @@ public:
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
 
-	int source_mode;
 	
 };
 

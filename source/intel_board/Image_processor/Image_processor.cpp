@@ -57,7 +57,7 @@ Image_processor::Image_processor(uint8_t img_source)
 		printf("Image_processor: Using CELL PHONE\n");
 		this->cam = new Camera();
 			// this->source_mode=CANON;
-		this->cam->set_mode(this->source_mode);
+		this->cam->set_mode(source_mode);
 		// std::string ip(IP_PORT);
 		// this->cam->setip(ip);
 	}
