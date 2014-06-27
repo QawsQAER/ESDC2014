@@ -64,6 +64,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
 	printf("Creating Image_processor()\n");
 	this->image_processor = new Image_processor(img_source);
+	this->image_processor->source_mode=source_mode_temp;
 
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();

@@ -51,6 +51,8 @@
 //this is defined, declared and allocated space in ESDC.cpp
 extern char *dir_path;
 
+int source_mode_temp;
+
 class intel_board
 {
 private:

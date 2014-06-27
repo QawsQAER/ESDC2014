@@ -43,8 +43,6 @@ char *PATH_TEMP = NULL;
 unsigned char continuity = 1;
 
 
-/*use phone or canon*/
-unsigned char source_mode_flag=0;
 
 intel_board *robot;
 
@@ -59,8 +57,8 @@ int main(int argc, char ** argv)
 		exit(0);
 	}
 
-	
-	source_mode_flag=argv[1];
+	/*use phone or canon*/
+	source_mode_temp=argv[1];
 
 	cout << "Hello Intel ESDC" << endl;
 	/*
