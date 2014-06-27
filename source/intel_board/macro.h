@@ -44,8 +44,6 @@ extern unsigned char continuity;
 #define PHONE 0
 #define CANON 1
 
-
-
 /* enum type definition START */
 /* enum type definition START */
 /* enum type definition START */

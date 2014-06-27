@@ -24,8 +24,7 @@
 extern char *dir_path;
 extern char *PATH_TEMP;
 
-/*use phone or canon*/
-// int source_mode;
+
 
 
 enum IMAGE_PROCESS_STATE
@@ -179,6 +178,10 @@ public:
 	cv::Rect get_detection_result();
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
+
+
+	/*use phone or canon*/
+	int source_mode;
 };
 
 #endif
