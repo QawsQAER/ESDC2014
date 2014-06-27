@@ -117,7 +117,7 @@ void generate_dir()
 	time_t timestamp = time(NULL);
 	struct tm *current_time = gmtime(&timestamp);
 	//get the filename in format of month-day_hour:minute:second
-	sprintf(filename,"%d_%d_%d_%d_%d",
+	sprintf(filename,"/home/intelcup/Desktop/%d_%d_%d_%d_%d",
 		current_time->tm_mon,
 		current_time->tm_mday,
 		current_time->tm_hour,
