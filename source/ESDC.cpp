@@ -44,7 +44,7 @@ unsigned char continuity = 1;
 
 
 /*use phone or canon*/
-unsigned char source_mode=0;
+unsigned char source_mode_flag=0;
 
 intel_board *robot;
 
@@ -60,7 +60,7 @@ int main(int argc, char ** argv)
 	}
 
 	
-	source_mode=argv[1];
+	source_mode_flag=argv[1];
 
 	cout << "Hello Intel ESDC" << endl;
 	/*
