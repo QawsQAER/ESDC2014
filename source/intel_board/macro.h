@@ -12,7 +12,7 @@
 #define GUESS		3000*MMtoP		// initial value of l[0], l[1], l[2], l[3]
 #define ERROR		0.1			// lower bound of the errors' value
 #define Focal		460		// focal length of webcam
-#define MaxIter		50			// upper bound of number of iteration of the algorithm
+#define MaxIter		50	 		// upper bound of number of iteration of the algorithm
 #define A(i, j)		A.at<double>(i, j)
 #define a(i, j)		a.at<double>(i, j)
 #define DEG_TO_RAD(degree) (degree) * PI / 180  
@@ -38,6 +38,7 @@
 
 extern char *PATH_TEMP;
 extern unsigned char continuity;
+extern int source_mode;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 
