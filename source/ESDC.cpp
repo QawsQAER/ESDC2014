@@ -42,11 +42,26 @@ char *dir_path;
 char *PATH_TEMP = NULL;
 unsigned char continuity = 1;
 
+
+/*use phone or canon*/
+int source_mode;
+
 intel_board *robot;
 
 int main(int argc, char ** argv) 
 {
 	/* prints Hello World */
+
+	if(argc!=2)
+	{
+		printf("Usage: 1./ESDC 0 for PHONE\n");
+		printf("Usage: 2./ESDC 1 for CANON\n");
+		exit(0);
+	}
+
+	
+	source_mode=argv[1];
+
 	cout << "Hello Intel ESDC" << endl;
 	/*
 	   mode, default value MANUAL MODE

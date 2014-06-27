@@ -23,7 +23,7 @@
 
 extern char *dir_path;
 extern char *PATH_TEMP;
-
+extern int source_mode;
 
 
 
@@ -180,8 +180,7 @@ public:
 	double get_distance(const cv::Rect &face);
 
 
-	/*use phone or canon*/
-	int source_mode;
+	
 };
 
 #endif
