@@ -14,6 +14,10 @@ All the code with this header are under GPL open source license.
 
 #include "../macro.h"
 
+
+#define PHONE 0
+#define CANON 1
+
 class Camera
 {
 public:
@@ -22,11 +26,14 @@ public:
 
 	void setip(std::string ip_address);
 
-	std::string photo();
+	void set_mode(int mode);
+	void init_canon();
+	void init_phone();
+
 	std::string photo_af();
 	std::string photo_frame();
 
-	std::string take_photo_af();
+	
 	void save_photo_af();
 	void save_photo();
 
@@ -35,10 +42,17 @@ public:
 	void flash_open();
 	void flash_close();
 
-	void af_open();
-	void af_close();
+
+	// void af_open();
+	// void af_close();
+	// std::string take_photo_af();
+	// std::string photo();
+
 
 	int test_connection();
+
+
+
 
 
 private:
@@ -54,6 +68,12 @@ private:
 	int count_temp_photo;
 	int count_capture_photo;
 
+	int mode;
+
+	std::string gphoto_cmd;
+
+
+	void My_popen(std::string cmd);
 	
 };
 
