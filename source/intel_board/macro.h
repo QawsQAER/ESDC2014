@@ -41,6 +41,11 @@ extern unsigned char continuity;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 
+#define PHONE 0
+#define CANON 1
+
+int source_mode;/*use phone or canon*/
+
 
 /* enum type definition START */
 /* enum type definition START */
