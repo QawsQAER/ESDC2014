@@ -4,11 +4,11 @@ ESDC_LDOBJECTS=intel_board/intel_board.o intel_board/Image_processor.o intel_boa
 
 all: ESDC
 
-ESDC: ESDC.o Makefile
+ESDC: ESDC.o Makefile 
 	cd intel_board;make all
 	$(CC) -o ~/Desktop/ESDC ESDC.o $(ESDC_LDOBJECTS) $(CFLAGS)
 
-ESDC.o:
+ESDC.o: ESDC.cpp
 	$(CC) -o ESDC.o -c ESDC.cpp $(CFLAGS)
 
 clean:

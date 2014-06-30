@@ -41,12 +41,25 @@ void exit_routine(int arg);
 char *dir_path;
 char *PATH_TEMP = NULL;
 unsigned char continuity = 1;
+int source_mode;
+
 
 intel_board *robot;
 
 int main(int argc, char ** argv) 
 {
 	/* prints Hello World */
+
+	if(argc<2)
+	{
+		printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
+		printf("Usage: 2./ESDC 1 [mode]for CANON\n");
+		exit(0);
+	}
+
+	/*use phone or canon*/
+	source_mode=atoi(argv[1]);
+
 	cout << "Hello Intel ESDC" << endl;
 	/*
 	   mode, default value MANUAL MODE
@@ -58,9 +71,9 @@ int main(int argc, char ** argv)
 	generate_dir();
 	signal(SIGTERM,exit_routine);
 	signal(SIGINT,exit_routine);
-	if(argc >= 2)//the user has set the mode
+	if(argc >= 3)//the user has set the mode
 	{
-		mode = atoi(argv[1]);
+		mode = atoi(argv[2]);
 		switch(mode)
 		{
 			case 0://case for auto mode
@@ -117,7 +130,7 @@ void generate_dir()
 	time_t timestamp = time(NULL);
 	struct tm *current_time = gmtime(&timestamp);
 	//get the filename in format of month-day_hour:minute:second
-	sprintf(filename,"%d_%d_%d_%d_%d",
+	sprintf(filename,"/home/intelcup/Desktop/%d_%d_%d_%d_%d",
 		current_time->tm_mon,
 		current_time->tm_mday,
 		current_time->tm_hour,

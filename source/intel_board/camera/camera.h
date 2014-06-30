@@ -15,8 +15,6 @@ All the code with this header are under GPL open source license.
 #include "../macro.h"
 
 
-#define PHONE 0
-#define CANON 1
 
 class Camera
 {

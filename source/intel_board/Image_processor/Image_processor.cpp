@@ -56,9 +56,8 @@ Image_processor::Image_processor(uint8_t img_source)
 	{
 		printf("Image_processor: Using CELL PHONE\n");
 		this->cam = new Camera();
-		source_mode=PHONE;
+			// this->source_mode=CANON;
 		this->cam->set_mode(source_mode);
-
 		// std::string ip(IP_PORT);
 		// this->cam->setip(ip);
 	}
@@ -107,6 +106,11 @@ uint8_t Image_processor::get_image_from_cellphone()
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+	if(this->current_img.cols  == 0 && this->current_img.rows == 0)
+	{
+		printf("Image_processor::get_image_from_cellphone: open an empty image\n");
+		return 0;
+	}
 	cv::resize(this->current_img,this->current_img,cv::Size(IMG_WIDTH,IMG_HEIGHT));
 	printf("Image_processor::get_image_from_cellphone: current size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
 	if(!this->current_img.data)
@@ -424,10 +428,11 @@ uint8_t Image_processor::show_analyzed_img()
 	cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 	cv::moveWindow(this->winname,0,0);
 	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
-	cv::imshow(this->winname,concat_image);
-
-	printf("Image_processor::show_analyzed_img() showing skin_img\n");
-	cv::imshow(this->skinwin,this->skin_img);
+	//cv::imshow(this->winname,concat_image);
+	cv::imshow(this->winname,this->analyzed_img_filtered);
+	
+	//printf("Image_processor::show_analyzed_img() showing skin_img\n");
+	//cv::imshow(this->skinwin,this->skin_img);
 
 	//cv::imshow(this->edgewin,this->edge_img);
 	if(continuity == 0)
@@ -473,7 +478,7 @@ void Image_processor::test()
 		this->show_analyzed_img();
 
 		//run basic filter;
-		this->basic_filter();
+		this->basic_filter(0,0);
 
 		//mark the detected results
 		this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
@@ -489,9 +494,65 @@ uint8_t Image_processor::read_image(const char* filename)
 	return 1;
 }
 
-uint8_t Image_processor::basic_filter()
+/* IMPLEMENTATION OF BASIC FILTER START*/
+/* IMPLEMENTATION OF BASIC FILTER START*/
+/* IMPLEMENTATION OF BASIC FILTER START*/
+uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 {
-	printf("Image_processor::basic_filter() working\n");
+	//this->basic_filter_with_degree(degree,dir);
+	return basic_filter_default();
+}
+
+/*
+	@param: degree is the angle detected between the user and the robot 
+*/
+uint8_t Image_processor::basic_filter_with_degree(const int32_t &degree,const int32_t &dir)
+{
+	printf("Image_processor::basic_filter_with_degree running\n");
+	this->final_face_detect.clear();
+	this->final_body_detect.clear();
+	printf("Image_processor::basic_filter_with_degree degree is %d, dir is %d\n",degree,dir);
+
+	if(degree > 45)
+	{
+		return 0;
+	}
+
+
+	uint16_t x_begin = 0, x_end = 0;
+	uint8_t degree_error = 5;
+	// for every face, see whether it's within the degree range.
+	std::vector<cv::Rect> tmp = this->face_detect;
+	this->face_detect.clear();
+
+	for(size_t count_face = 0;count_face < tmp.size();count_face++)
+	{
+		double distance_mm = this->get_distance(tmp[count_face]);
+		double x_begin_actual, x_end_actual;
+		double mm_per_pixel = IMG_FACE_ACTUAL_HEIGHT;
+		// the target should be at the right half of the image.
+		// tan(-x) = -tan(x)
+		x_begin_actual = dir ? distance_mm * tan(DEG_TO_RAD(degree - degree_error)) : distance_mm * tan(DEG_TO_RAD(degree + degree_error)); 
+		x_end_actual = dir ? distance_mm * tan(DEG_TO_RAD(degree + degree_error)) : distance_mm * tan(DEG_TO_RAD(degree - degree_error));
+
+		x_begin = dir ? (uint16_t) ceil(IMG_CENTER_X + x_begin_actual / mm_per_pixel):(uint16_t) ceil(IMG_CENTER_X - x_begin_actual / mm_per_pixel);
+		x_end = dir ? (uint16_t) ceil(IMG_CENTER_X + x_end_actual / mm_per_pixel) : (uint16_t) ceil(IMG_CENTER_X - x_end_actual / mm_per_pixel);
+		printf("Image_processor::basic_filter_with_degree() face (%u,%u,%u,%u)\n",tmp[count_face].x,tmp[count_face].y,tmp[count_face].width,tmp[count_face].height);
+		printf("Image_processor::basic_filter_with_degree() x_begin_actual %lf, x_end_actual %lf\n",x_begin_actual,x_end_actual);
+		printf("Image_processor::basic_filter_with_degree begin %u, end %u \n",x_begin,x_end);
+
+		if((tmp[count_face].x + tmp[count_face].width / 2) > x_begin && (tmp[count_face].x + tmp[count_face].width / 2) < x_end)
+		{
+			printf("Image_processor::basic_filter_with_degree() this face is possily the true one\n");
+			this->face_detect.push_back(tmp[count_face]);
+		}
+	}
+	return 1;
+}
+
+uint8_t Image_processor::basic_filter_default()
+{
+	printf("Image_processor::basic_filter_default() working\n");
 	this->final_body_detect.clear();
 	this->final_face_detect.clear();
 	//for each body deteced, try to find a face detected in the body region
@@ -502,7 +563,7 @@ uint8_t Image_processor::basic_filter()
 		{
 			if(this->face_body_related(body_detect[count_body],face_detect[count_face]))
 			{
-				printf("Image_processor basic_filter():a person is detected\n");
+				printf("Image_processor basic_filter_default():a person is detected\n");
 				//adjust the body_detect to better match the face
 				body_detect[count_body].height+=body_detect[count_body].y - face_detect[count_face].y;
 				body_detect[count_body].y = face_detect[count_face].y;
@@ -539,9 +600,11 @@ uint8_t Image_processor::basic_filter()
 
 		this->final_body_detect.push_back(rect);
 	}
-	printf("Image_processor::basic_filter() exiting\n");
+	printf("Image_processor::basic_filter_default() exiting\n");
 }
-
+/* IMPLEMENTATION OF BASIC FILTER END*/
+/* IMPLEMENTATION OF BASIC FILTER END*/
+/* IMPLEMENTATION OF BASIC FILTER END*/
 uint8_t Image_processor::face_body_related(const cv::Rect &body,const cv::Rect &face)
 {
 	float face_body_height_ratio = 0.20;
@@ -656,7 +719,7 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 }
 		
 		
-uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
+int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,int32_t dir)
 {
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
@@ -668,7 +731,7 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 	if(!this->capture_image())
 	{
 		printf("Image_processor Error: cannot capture valid image\n");
-		return 0;
+		return -1;
 	}
 	
 	//if an image is captured, run basic analysis
@@ -693,7 +756,7 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 
 	
 	//run basic filter;
-	this->basic_filter();
+	this->basic_filter(degree,dir);
 	//mark the detected results
 	//this->analyzed_img_filtered is the final detection result image
 	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
@@ -703,10 +766,10 @@ uint8_t Image_processor::one_target_in_scope(const uint8_t &flags)
 		printf("Image_processor::one_target_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
-	else if(this->face_detect.size() == 0)
+	else if(this->final_face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::one_target_in_scope() returning\n");
+		printf("Image_processor::one_target_in_scope() returning without any found\n");
 		remove(this->current_img_path);
 		return 0;
 	}
@@ -733,5 +796,6 @@ cv::Rect Image_processor::get_face_detection_result()
 
 double Image_processor::get_distance(const cv::Rect &face)
 {	
+	printf("Image_processor::get_distance() running\n");
 	return runCAMShift(face);
 }

@@ -24,6 +24,8 @@
 extern char *dir_path;
 extern char *PATH_TEMP;
 
+
+
 enum IMAGE_PROCESS_STATE
 {
 	IMAGE_PROCESS_INIT
@@ -175,6 +177,8 @@ public:
 	cv::Rect get_detection_result();
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
+
+	
 };
 
 #endif

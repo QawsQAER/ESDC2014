@@ -139,7 +139,7 @@ string Camera::photo_af()
     else if  (mode==CANON)
 
 
-        {  gphoto_cmd="gphoto2 --capture-image-and-download filename="+path_temp_function; //640*480
+        {  gphoto_cmd="gphoto2 --capture-image-and-download --filename "+path_temp_function; //640*480
                   My_popen(gphoto_cmd);
         
                 return path_temp_function;}
@@ -187,7 +187,7 @@ string Camera::photo_frame()
      else if(mode==CANON)
 
 
-         { gphoto_cmd="gphoto2 --capture-image-and-download filename="+path_temp_function; //640*480
+         { gphoto_cmd="gphoto2 --capture-image-and-download --filename "+path_temp_function; //640*480
                    My_popen(gphoto_cmd);
          
                  return path_temp_function;}
@@ -609,7 +609,9 @@ void Camera::init_phone()
 void Camera::My_popen(std::string cmd)
 {
      const char* command=cmd.c_str();
-    if ((fp = popen(command, "r")) == NULL) 
+         // if ((fp = popen(command, "r")) == NULL) 
+
+    if ((fp = popen(command, "w")) == NULL) 
     {
           perror("popen failed");
                 // return -1;
