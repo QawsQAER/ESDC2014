@@ -36,7 +36,7 @@ int my_itoa(int val, char* buf);
 
 Camera::Camera()
 {
-    path_temp = PATH_TEMP;
+    path_temp = glo_PATH_TEMP;
     path_capture = PATH_CAPTURE;
     count_temp_photo=0;
     count_capture_photo=0;

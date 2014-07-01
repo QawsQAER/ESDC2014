@@ -21,9 +21,9 @@
 #include "fourPointAlgo.h"
 
 
-extern char *dir_path;
-extern char *PATH_TEMP;
-
+extern char *glo_dir_path;
+extern char *glo_PATH_TEMP;
+extern cv::Rect glo_prev_face;
 
 
 enum IMAGE_PROCESS_STATE
@@ -155,6 +155,7 @@ public:
 	uint8_t basic_filter(const int32_t &degree,const int32_t &dir);
 	uint8_t basic_filter_default();
 	uint8_t basic_filter_with_degree(const int32_t &degree, const int32_t &dir);
+	uint8_t basic_filter_with_memory();
 	//-------------------------------//
 	uint8_t find_body_according_to_face(const cv::Mat &source_img,
 		const std::vector<cv::Rect> &face_detect);

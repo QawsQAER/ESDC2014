@@ -38,8 +38,9 @@ using namespace std;
 
 void generate_dir();
 void exit_routine(int arg);
-char *dir_path;
-char *PATH_TEMP = NULL;
+char *glo_dir_path;
+char *glo_PATH_TEMP = NULL;
+cv::Rect glo_prev_face;
 unsigned char continuity = 1;
 int source_mode;
 
@@ -67,7 +68,7 @@ int main(int argc, char ** argv)
 	*/
 	uint8_t mode = 1;
 	uint8_t img_source = 0;
-	PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	glo_PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	generate_dir();
 	signal(SIGTERM,exit_routine);
 	signal(SIGINT,exit_routine);
@@ -93,8 +94,8 @@ int main(int argc, char ** argv)
 				}
 				else
 				{
-					dir_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
-					strcpy(dir_path,argv[2]);
+					glo_dir_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+					strcpy(glo_dir_path,argv[2]);
 				}
 				break;
 			default://a undefined mode
@@ -117,8 +118,8 @@ void exit_routine(int arg)
 {
         printf("\n\n\n\nExecuting the pre-registered exit routine\n");
         delete robot;
-        free(dir_path);
-        free(PATH_TEMP);
+        free(glo_dir_path);
+        free(glo_PATH_TEMP);
         exit(0);
 }
 
@@ -136,13 +137,13 @@ void generate_dir()
 		current_time->tm_hour,
 		current_time->tm_min,
 		current_time->tm_sec);
-	strcpy(PATH_TEMP,filename);
+	strcpy(glo_PATH_TEMP,filename);
 	free(filename);
-	printf("creating dir named as %s\n",PATH_TEMP);
-	if(mkdir(PATH_TEMP,S_IRWXU) < 0)
+	printf("creating dir named as %s\n",glo_PATH_TEMP);
+	if(mkdir(glo_PATH_TEMP,S_IRWXU) < 0)
 	{
-		printf("fail to create dir %s\n",PATH_TEMP);
+		printf("fail to create dir %s\n",glo_PATH_TEMP);
 		exit(0);
 	}
-	strcat(PATH_TEMP,"/");
+	strcat(glo_PATH_TEMP,"/");
 }

@@ -57,6 +57,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	this->state = ROBOT_INIT;
 	this->photo_mode = SINGLE_PHOTO;
 	this->waist_shot = 0;
+	this->flag_target_found = 0;
 	//SUBMODULE
 	//SUBMODULE
 	//SUBMODULE
@@ -122,11 +123,13 @@ uint8_t intel_board::main_function()
 				
 				case ROBOT_FIND_TARGET:
 					//working on finding the target
+
 					if(this->robot_find_target())
 					{
+						//get the distance according to the face detection result (running four point algorithm)
 						this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
 						this->state = ROBOT_EVALUATE_IMAGE;
-						//get the distance according to the face detection result (running four point algorithm)
+						this->flag_target_found = 1;
 					}
 				break;
 
@@ -137,56 +140,30 @@ uint8_t intel_board::main_function()
 						this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
 					else
 						//let the system analyze the image and find out possible method to make it better
+						glo_prev_face = this->motion_controller->prev_face;
 						this->state = ROBOT_ANALYZE_IMAGE;
 				break;
 				
 				case ROBOT_ANALYZE_IMAGE:
 					this->robot_analyze_image();
-					this->state = ROBOT_APPROACH_REF;
+					this->state = ROBOT_EVALUATE_MOVEMENT;
 					break;
 				
-				case ROBOT_APPROACH_REF:
+				case ROBOT_EVALUATE_MOVEMENT:
 				{	
-					this->robot_approach_ref();
-					//take another picture and check whether the target is in scope
-					printf("intel_board: ROBOT_APPROACH_REF finished\n");
-					uint8_t flags;
-					if((*this->motion_controller->waist_shot))
-						flags = ENABLE_FACE_DETECT;
-					else
-						flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
-
-					int8_t rv = 0;
-					while(true)
+					if(this->robot_evaluate_movement())
 					{
-						rv = this->image_processor->one_target_in_scope(flags);
-						if(rv < 0)
-							continue;
-						if(rv == 0)
-						{
-							if(this->waist_shot)
-								this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-							else		
-								this->image_processor->mark_exp_region(this->motion_controller->ref);
-							this->image_processor->show_analyzed_img(this->task_counter);
-						}
-						else if(rv > 0)
-							break;
+						// if the robot_evaluate_movement() return 1 -> does not find target in scope repeatedly 3 times 
+						this->state = ROBOT_FIND_TARGET;
+						this->flag_target_found = 0;
 					}
-					
-					if(this->waist_shot)
-						this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-					else		
-						this->image_processor->mark_exp_region(this->motion_controller->ref);
-					this->image_processor->show_analyzed_img(this->task_counter);
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-					//go back for evaulat image
-					this->state = ROBOT_EVALUATE_IMAGE;
+					else
+					{
+						// if the robot_evaluate_movement() return 0 -> does find target in scope
+						this->state = ROBOT_EVALUATE_IMAGE;
+					}
+					//take another picture and check whether the target is in scope
+					printf("intel_board: ROBOT_EVALUATE_MOVEMENT finished\n");
 				}
 				break;
 
@@ -262,6 +239,7 @@ uint8_t intel_board::robot_ready()
 	//fetch degree
 	this->robot_orientation_adjust();
 	this->waist_shot = 1;
+	this->flag_target_found = 0;
 	command_type cmd;
 	printf("intel_board::robot_ready() waiting for user command\n");
 	while(cmd = ui->wait_command())
@@ -444,12 +422,44 @@ uint8_t intel_board::robot_analyze_image()
 	return 1;
 }
 
-uint8_t intel_board::robot_approach_ref()
+uint8_t intel_board::robot_evaluate_movement()
 {
-	printf("intel_board::robot_approach_ref() running\n");
-	//have the motion_controller send the command to the car
-	printf("intel_board::robot_approach_ref() send cmd finished\n");
-	return 1;
+	printf("intel_board::robot_evaluate_movement() running\n");
+	uint8_t flags;
+	if((*this->motion_controller->waist_shot))
+		flags = ENABLE_FACE_DETECT;
+	else
+		flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
+	
+	int8_t rv = 0;
+	uint8_t count_retry = 0,find_target_again = 0;
+	while(true)
+	{
+		rv = this->image_processor->one_target_in_scope(flags);
+		if(rv < 0)
+			continue;
+		if(rv == 0)
+		{
+			if(count_retry < 3)
+				count_retry++;
+			else
+			{
+				find_target_again = 1;
+				break;
+			}	
+			this->robot_show_image();
+		}
+		else if(rv > 0)
+			break;
+	}
+	
+	this->robot_show_image();
+	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
+
+	//whether go back to find target
+	return find_target_again;
 }
 
 uint8_t intel_board::robot_wait_for_adjustment()
@@ -469,11 +479,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 
 	this->image_processor->cam->save_photo_af();
 	this->image_processor->one_target_in_scope(ENABLE_FACE_DETECT);
-	if(this->waist_shot)
-		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-	else		
-		this->image_processor->mark_exp_region(this->motion_controller->ref);
-	this->image_processor->show_analyzed_img(this->task_counter);
+	this->robot_show_image();
 	
 	this->ui->send_finished_ack();
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
@@ -485,7 +491,7 @@ uint8_t intel_board::robot_only_image_analysis()
 {
 	DIR *dir;
 	struct dirent *ent;
-	if((dir = opendir(dir_path)) == NULL)
+	if((dir = opendir(glo_dir_path)) == NULL)
 	{
 		perror("");
 		return EXIT_FAILURE;
@@ -496,7 +502,7 @@ uint8_t intel_board::robot_only_image_analysis()
 		if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
 			continue;
 		char filename[64];
-		strcpy(filename,dir_path);
+		strcpy(filename,glo_dir_path);
 		strcat(filename,"/");
 		strcat(filename,ent->d_name);
 		printf("Openning %s\n",filename);
@@ -750,3 +756,13 @@ void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *directio
  	}
 
 }//end void
+
+void intel_board::robot_show_image()
+{
+	if(this->waist_shot)
+		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
+	else		
+		this->image_processor->mark_exp_region(this->motion_controller->ref);
+	this->image_processor->show_analyzed_img(this->task_counter);
+	return ;
+}

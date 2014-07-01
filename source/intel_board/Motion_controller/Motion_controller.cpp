@@ -125,6 +125,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 */
 	
 	//find out the center of the detected region
+	this->prev_face = face;
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
 	int32_t diff_x = center.x - this->center_x;
 	int32_t diff_y = detect.height - this->ref.height;

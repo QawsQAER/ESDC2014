@@ -98,6 +98,7 @@ public:
 	uint8_t *waist_shot;
 	cv::Rect ref;
 	cv::Rect face_ref;
+	cv::Rect prev_face;
 	Controller_Com *Com;
 	uint8_t need_to_center;
 	uint8_t need_to_zoom;
@@ -108,7 +109,7 @@ public:
 
 	uint8_t init();
 	//this function will only be called when a target is detected by the Image processor
-	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &ref,const double &distance);
+	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &face,const double &distance);
 
 
 	void set_pattern(uint8_t pattern);

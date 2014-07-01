@@ -36,7 +36,7 @@
 #define PORT "8080"
 #define IP_PORT "192.168.1.101:8080"
 
-extern char *PATH_TEMP;
+extern char *glo_PATH_TEMP;
 extern unsigned char continuity;
 extern int source_mode;
 
@@ -68,7 +68,7 @@ enum ROBOT_STATE {
 	ROBOT_INIT, ROBOT_READY, //actually waiting for command
 	ROBOT_NO_TARGET, ROBOT_FIND_TARGET,
 	ROBOT_EVALUATE_IMAGE, ROBOT_ANALYZE_IMAGE,
-	ROBOT_APPROACH_REF, ROBOT_WAIT_FOR_ADJUSTMENT,
+	ROBOT_EVALUATE_MOVEMENT, ROBOT_WAIT_FOR_ADJUSTMENT,
 };
 
 enum ROBOT_MODE{
@@ -90,6 +90,7 @@ enum Direction{
 
 #define ENABLE_BODY_DETECT 0x01
 #define ENABLE_FACE_DETECT 0x02
+#define ENABLE_SIDE_FILTERING 0x04
 
 #define PIXEL_HEIGHT 127/480 //127mm for a 480 pixel height
 #define PIXEL_WIDTH PIXEL_HEIGHT //consider PIXEL as a square

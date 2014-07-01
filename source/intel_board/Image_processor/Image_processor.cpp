@@ -192,7 +192,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 
-	sprintf(filename,"%s%u",PATH_TEMP,task_counter);
+	sprintf(filename,"%s%u",glo_PATH_TEMP,task_counter);
 	strcpy(analyzed_filename,filename);
 	strcat(analyzed_filename,"_ana.jpg");
 
@@ -467,6 +467,10 @@ uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 	return basic_filter_default();
 }
 
+uint8_t Image_processor::basic_filter_with_memory()
+{
+
+}
 /*
 	@param: degree is the angle detected between the user and the robot 
 */
@@ -687,6 +691,7 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 {
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
+	uint8_t enable_side_filtering = ((flags & ENABLE_SIDE_FILTERING) == ENABLE_SIDE_FILTERING);
 	
 	this->body_detect.clear();
 	this->face_detect.clear();
