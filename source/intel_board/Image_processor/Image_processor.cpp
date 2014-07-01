@@ -204,7 +204,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	std::vector<int> compression_params;
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
-	cv::imwrite(filename,this->current_img,compression_params);
+	//cv::imwrite(filename,this->current_img,compression_params);
 	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
 	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
 
