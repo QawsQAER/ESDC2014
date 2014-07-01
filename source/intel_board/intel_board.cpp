@@ -168,7 +168,7 @@ uint8_t intel_board::main_function()
 								this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 							else		
 								this->image_processor->mark_exp_region(this->motion_controller->ref);
-							this->image_processor->show_analyzed_img();
+							this->image_processor->show_analyzed_img(this->task_counter);
 						}
 						else if(rv > 0)
 							break;
@@ -178,7 +178,7 @@ uint8_t intel_board::main_function()
 						this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 					else		
 						this->image_processor->mark_exp_region(this->motion_controller->ref);
-					this->image_processor->show_analyzed_img();
+					this->image_processor->show_analyzed_img(this->task_counter);
 					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
 					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
 					printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
@@ -333,7 +333,7 @@ uint8_t intel_board::robot_find_target()
 			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 		else
 			this->image_processor->mark_exp_region(this->motion_controller->ref);
-		this->image_processor->show_analyzed_img();
+		this->image_processor->show_analyzed_img(this->task_counter);
 
 		//this->robot_find_target_strategy1(state,counter);
 		if(rv == 0)
@@ -358,7 +358,7 @@ uint8_t intel_board::robot_find_target_strategy1(uint8_t &state,uint8_t &counter
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
-	this->image_processor->show_analyzed_img();
+	this->image_processor->show_analyzed_img(this->task_counter);
 	
 	//TODO: may adjust the position according to the initial detection results
 	printf("intel_board::robot_find_target(): finding target again\n");
@@ -473,8 +473,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
-	this->image_processor->show_analyzed_img();
-	this->image_processor->save_current_image(this->task_counter);	
+	this->image_processor->show_analyzed_img(this->task_counter);
+	
 	this->ui->send_finished_ack();
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
@@ -513,7 +513,7 @@ uint8_t intel_board::robot_only_image_analysis()
 		//ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->body_detect);
 		//ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->face_detect);
 		//show the analyzed img after basic detection algorithm
-		//ptr->show_analyzed_img();
+		//ptr->show_analyzed_img(this->task_counter);
 		//run a basic filter 
 		ptr->basic_filter(0,0);
 		//mark the face and body after basic filter
@@ -521,7 +521,7 @@ uint8_t intel_board::robot_only_image_analysis()
 		ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);
 		//show the analyzed img after basic filter
 		this->robot_evaluate_image();
-		ptr->show_analyzed_img();
+		ptr->show_analyzed_img(this->task_counter);
 	}
 }
 

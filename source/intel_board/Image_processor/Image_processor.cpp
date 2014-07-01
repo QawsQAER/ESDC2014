@@ -192,10 +192,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 
-	time_t timestamp = time(NULL);
-	struct tm *current_time = gmtime(&timestamp);
-	//get the filename in format of month-day_hour:minute:second
-	sprintf(filename,"%u",task_counter);
+	sprintf(filename,"%s%u",PATH_TEMP,task_counter);
 	strcpy(analyzed_filename,filename);
 	strcat(analyzed_filename,"_ana.jpg");
 
@@ -414,7 +411,7 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 /*
  *
  */
-uint8_t Image_processor::show_analyzed_img()
+uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 {
 	printf("\nImage_processor::show_analyzed_img() working\n");
 	//cv::destroyWindow(this->winname);
@@ -430,7 +427,7 @@ uint8_t Image_processor::show_analyzed_img()
 	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
 	//cv::imshow(this->winname,concat_image);
 	cv::imshow(this->winname,this->analyzed_img_filtered);
-	
+	this->save_current_image(task_counter);
 	//printf("Image_processor::show_analyzed_img() showing skin_img\n");
 	//cv::imshow(this->skinwin,this->skin_img);
 
@@ -453,39 +450,6 @@ uint8_t Image_processor::show_analyzed_img()
 	}
 	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
-}
-
-/*
- * Implementation of test()
- */
-void Image_processor::test()
-{
-	//create a window named as this->winname
-	while(true)
-	{
-		if(!this->capture_image())
-		{
-			printf("Image_processor Error: cannot capture valid image\n");
-			continue;
-		}
-		//if image is capture, run basic analysis
-		this->run_body_detection(this->current_img,this->body_detect);
-		this->run_face_detection(this->current_img,this->face_detect);
-
-		//mark the detected results
-		this->analyzed_img = this->mark_detected_body(this->current_img,this->body_detect);
-		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
-		this->show_analyzed_img();
-
-		//run basic filter;
-		this->basic_filter(0,0);
-
-		//mark the detected results
-		this->analyzed_img = this->mark_detected_body(this->current_img,this->final_body_detect);
-		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->final_face_detect);
-		this->show_analyzed_img();
-	}
-	return ;
 }
 
 uint8_t Image_processor::read_image(const char* filename)
