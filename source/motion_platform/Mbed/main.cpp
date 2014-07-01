@@ -28,7 +28,6 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 #include "mbed.h"
 #include "communication.h"
 #include "port.h"
-#include "HMC5883L.h"
 
 int main()
 {
@@ -39,34 +38,38 @@ int main()
         com.parseMessage();
         if(com.getInfoOK(0) == 1) //car
         {
+            buzzer.buzzerON();
             com.forwardMessage();
             com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
+            buzzer.buzzerOFF();
         }
         else if(com.getInfoOK(0) == 2) //lifter
         {
+            buzzer.buzzerON();
             lifter.lifterMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
             com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
+            buzzer.buzzerOFF();
         }
         else if(com.getInfoOK(0) == 3) //camera_platform
         {
+            buzzer.buzzerON();
             camera_platform.cameraPlatformMove(com.getMoveDis(), com.getMoveDir(), com.getRotateDis(), com.getRotateDir());
             com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
+            buzzer.buzzerOFF();
         }
-         else if(com.getInfoOK(0) == 4) //compass
+        else if(com.getInfoOK(0) == 4) //compass
         {
+            buzzer.buzzerON();
             com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);
+            buzzer.buzzerOFF();
         }
     }
 }
-
-
-
-

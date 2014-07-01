@@ -69,7 +69,7 @@ uint8_t Communication::getByte(uint8_t communication_type)
         _x = buffer_IntelToMbed[out_IntelToMbed++];
         if(out_IntelToMbed == BUFFER_SIZE)
         {
-            out_IntelToMbed &= 0x00;
+            out_IntelToMbed &= 0x0000;
         }
     }
     else if(communication_type == 1)
@@ -77,7 +77,7 @@ uint8_t Communication::getByte(uint8_t communication_type)
         _x = buffer_MbedToArduino[out_MbedToArduino++];
         if(out_MbedToArduino == BUFFER_SIZE)
         {
-            out_MbedToArduino &= 0x00;
+            out_MbedToArduino &= 0x0000;
         }
     }
     return _x;
@@ -145,7 +145,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('0', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking STARTER...\r\n");
                 }
                 check_sum = 0;
 
@@ -156,6 +156,10 @@ void Communication::parseMessage()
                 else
                 {
                     state_IntelToMbed = 0;
+                    if(DEBUG_ON)
+                    {
+                        _DEBUG->printf("Communication::parseMessage(). ERROR when checking STARTER: %x.\r\n", _x);
+                    }
                 }
                 break;
             }
@@ -164,7 +168,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('1', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking ACTION_TYPE...\r\n");
                 }
                 check_sum += _x;
                 action_type = _x;
@@ -175,6 +179,10 @@ void Communication::parseMessage()
                 else
                 {
                     state_IntelToMbed = 0;
+                    if(DEBUG_ON)
+                    {
+                        _DEBUG->printf("Communication::parseMessage(). ERROR when checking ACTION_TYPE: %x.\r\n", action_type);
+                    }
                 }
                 break;
             }
@@ -183,7 +191,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('2', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking MOVE_DIS upper 4 bits...\r\n");
                 }
                 check_sum += _x;
                 move_dis = _x << 8;
@@ -195,7 +203,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('3', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking MOVE_DIS lower 4 bits...\r\n");
                 }
                 check_sum += _x;
                 move_dis |=  _x;
@@ -207,7 +215,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('4', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking MOVE_DIR...\r\n");
                 }
                 check_sum += _x;
                 move_dir = _x;
@@ -218,6 +226,10 @@ void Communication::parseMessage()
                 else
                 {
                     state_IntelToMbed = 0;
+                    if(DEBUG_ON)
+                    {
+                        _DEBUG->printf("Communication::parseMessage(). ERROR when checking MOVE_DIR: %x.\r\n", move_dir);
+                    }
                 }
                 break;
             }
@@ -226,7 +238,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('5', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking ROTATE_DIS upper 4 bits...\r\n");
                 }
                 check_sum += _x;
                 rotate_dis = _x << 8;
@@ -238,7 +250,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('6', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking ROTATE_DIS lower 4 bits...\r\n");
                 }
                 check_sum += _x;
                 rotate_dis |= _x;
@@ -250,7 +262,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('7', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking MOVE_DIR...\r\n");
                 }
                 check_sum += _x;
                 rotate_dir = _x;
@@ -261,6 +273,10 @@ void Communication::parseMessage()
                 else
                 {
                     state_IntelToMbed = 0;
+                    if(DEBUG_ON)
+                    {
+                        _DEBUG->printf("Communication::parseMessage(). ERROR when checking ROTATE_DIR: %x.\r\n", rotate_dir);
+                    }
                 }
                 break;
             }
@@ -269,7 +285,7 @@ void Communication::parseMessage()
             {
                 if(DEBUG_ON)
                 {
-                    putByte('8', 1);
+                    _DEBUG->printf("Communication::parseMessage(). Checking CHECK_SUM...\r\n");
                 }
                 if(check_sum == _x)
                 {
@@ -294,6 +310,13 @@ void Communication::parseMessage()
                         default:
                         info_ok_IntelToMbed = 0; //not ok
                         break;
+                    }
+                }
+                else
+                {
+                    if(DEBUG_ON)
+                    {
+                        _DEBUG->printf("Communication::parseMessage(). ERROR when checking CHECK_SUM: %x.\r\n", check_sum);
                     }
                 }
                 state_IntelToMbed  = 0;
@@ -399,7 +422,6 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
-    
     else if(action_type == 1) //lifter
     {
         uint32_t pulseCountOld = 0;
@@ -415,27 +437,25 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
-    
     else if(action_type == 3)
     {
-     HMC5883L compasss(SDA, SCL);
-     campass_degree=0;
-    campass_degree=compasss.get_degree();  
-    Serial pc(USBTX, USBRX);
-    
-    pc.printf("degree: %i  \t\r\n", campass_degree);
+        HMC5883L compasss(SDA, SCL);
+        campass_degree = 0;
+        unsigned short data1 = compasss.get_degree(); 
+        wait(0.5);
+        unsigned short data2 = compasss.get_degree(); 
 
-    uint8_t temp1,temp2;
-   // memcpy(&temp1,&campass_degree,1);
-//    memcpy(&temp2,&campass_degree+1,1);
-    temp1=campass_degree;
-    temp2=campass_degree>>8;
-    putByte(COMPASS_STARTER ,1); //1 means IntelToMbed
-    putByte(temp1 ,1); //O
-    putByte(temp2 ,1); //K
-    putByte(0x9a ,1); //check_sum = 0xaf + 0x4b = 0x9a
+        campass_degree = (data1 + data2) / 2;
+
+        uint8_t temp1,temp2;
+        temp1 = campass_degree;
+        temp2 = campass_degree>>8;
+        putByte(COMPASS_STARTER ,1); //1 means IntelToMbed
+        putByte(temp1 ,1); //O
+        putByte(temp2 ,1); //K
+        putByte(0x9a ,1); //check_sum = 0xaf + 0x4b = 0x9a
     
-    return;
+        return;
     } 
     
     putByte(STARTER ,1); //1 means IntelToMbed

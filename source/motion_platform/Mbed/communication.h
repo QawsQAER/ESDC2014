@@ -32,7 +32,8 @@ The communication protocol is inside source/intel_board/lib/message.h
 #include "lifter.h"
 #include "camera_platform.h"
 #include "mbed.h"
-#include "HMC5883L.h"
+#include "compass.h"
+#include "buzzer.h"
 
 #ifndef _COMMUNICATION_H
 #define _COMMUNICATION_H
@@ -41,8 +42,8 @@ The communication protocol is inside source/intel_board/lib/message.h
 #define STARTER 0x7e
 #define COMPASS_STARTER 0x7d
 
+#define DEBUG_ON 1
 
-#define DEBUG_ON 0
 class Communication
 {
 public:

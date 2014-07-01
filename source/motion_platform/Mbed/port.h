@@ -36,17 +36,18 @@ MyDigitalOut MbedToArduino_LED(LED2); //uart port LED between Mbed and Arduino
 MySerial DEBUG(USBTX, USBRX); //usb serial port between computer and Mbed
 MySerial IntelToMbed(p13, p14); //uart port between Intel Board and Mbed
 MySerial MbedToArduino(p28, p27); //uart port between Mbed and Arduino
-
 MyPwmOut lifter_pwmUp(p21);
 MyPwmOut lifter_pwmDown(p22);
 MyDigitalOut lifter_enable(p23);
-
 MyInterruptIn lifter_encoder_A(p18);
 MyDigitalIn lifter_encoder_B(p17);
 
-MyPwmOut camera_platform_pwmRoll(p24);
-MyPwmOut camera_platform_pwmPitch(p26);
-MyPwmOut camera_platform_pwmYaw(p25);
+MyPwmOut camera_platform_pwmRoll(p24);//roll            min counter clockwise, max clockwise 
+MyPwmOut camera_platform_pwmPitch(p26);//pitch           min down,  max up,  mid 1700
+MyPwmOut camera_platform_pwmYaw(p25);//yaw             min right, max left, mid 1500
+
+MyDigitalOut buzzer_pin(p29);
+Buzzer buzzer(&buzzer_pin);
 
 Communication com(&DEBUG, &IntelToMbed, &MbedToArduino);
 Lifter lifter(&lifter_enable, &lifter_pwmUp, &lifter_pwmDown, &lifter_encoder_A, &lifter_encoder_B);
@@ -104,8 +105,9 @@ void init_PORT() //used in main() function
     camera_platform_pwmRoll.period_ms(20); //20ms periodic, 1000us to 2000us
     camera_platform_pwmPitch.period_ms(20); //20ms periodic, 1000us to 2000us
     camera_platform_pwmYaw.period_ms(20); //20ms periodic, 1000us to 2000us
-    camera_platform_pwmRoll.pulsewidth_us(1500); //left or right
-    camera_platform_pwmPitch.pulsewidth_us(PITCH_MID); //
+    
+     camera_platform_pwmRoll.pulsewidth_us(ROLL_MID);
+    camera_platform_pwmPitch.pulsewidth_us(PITCH_MID);
     camera_platform_pwmYaw.pulsewidth_us(YAW_MID);
 }
 
