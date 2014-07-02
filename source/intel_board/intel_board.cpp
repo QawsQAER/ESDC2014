@@ -58,6 +58,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	this->photo_mode = SINGLE_PHOTO;
 	this->waist_shot = 0;
 	this->flag_target_found = 0;
+	this->rv_evaluate_image = 0;
 	//SUBMODULE
 	//SUBMODULE
 	//SUBMODULE
@@ -92,7 +93,7 @@ intel_board::~intel_board()
 uint8_t intel_board::main_function()
 {
 	printf("Intel board is going to execute its main functionality\n");
-	char key;
+	
 	if(this->mode == IMG_ANALYSIS_MODE)
 	{
 		this->robot_only_image_analysis();
@@ -134,14 +135,20 @@ uint8_t intel_board::main_function()
 				break;
 
 				case ROBOT_EVALUATE_IMAGE:
-					if(this->robot_evaluate_image())
+				{	
+					if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_ADJUSTING)
+					{	
 						//if the image is good enough
 						//store the image and go back wait for the next command
 						this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
+					}
 					else
+					{	
 						//let the system analyze the image and find out possible method to make it better
 						glo_prev_face = this->motion_controller->prev_face;
 						this->state = ROBOT_ANALYZE_IMAGE;
+					}
+				}
 				break;
 				
 				case ROBOT_ANALYZE_IMAGE:
@@ -424,12 +431,20 @@ uint8_t intel_board::robot_analyze_image()
 
 uint8_t intel_board::robot_evaluate_movement()
 {
+	//evaluate movement do the following works
 	printf("intel_board::robot_evaluate_movement() running\n");
 	uint8_t flags;
 	if((*this->motion_controller->waist_shot))
 		flags = ENABLE_FACE_DETECT;
 	else
 		flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
+
+	if(this->rv_evaluate_image == EVAL_CENTERING)
+		flags = flags | ENABLE_SIDE_FILTERING;
+	else if(this->rv_evaluate_image == EVAL_ZOOM_IN)
+		flags = flags | ENABLE_SIZE_FILTERING_SMALL;
+	else if(this->rv_evaluate_image == EVAL_ZOOM_OUT)
+		flags = flags | ENABLE_SIZE_FILTERING_LARGE;
 	
 	int8_t rv = 0;
 	uint8_t count_retry = 0,find_target_again = 0;

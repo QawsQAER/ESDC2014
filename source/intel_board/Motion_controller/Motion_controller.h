@@ -43,10 +43,11 @@
 #include "../macro.h"
 
 
-#define EVAL_CENTERING 0
-#define EVAL_ZOOMING 1
-#define EVAL_ADJUSTING 2
-#define EVAL_COMPLETE 3
+#define EVAL_CENTERING 1
+#define EVAL_ZOOM_IN 2
+#define EVAL_ZOOM_OUT 3
+#define EVAL_ADJUSTING 4
+#define EVAL_COMPLETE 5
 
 class Motion_controller
 {
@@ -88,9 +89,9 @@ private:
 
 	uint16_t bound_dis(const uint32_t &dis);
 
-	void zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
-	void zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
-	void zoom_in_out_by_face(const cv::Rect &face,const double &distance);
+	uint8_t zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
+	uint8_t zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
+	uint8_t zoom_in_out_by_face(const cv::Rect &face,const double &distance);
 
 	
 public:

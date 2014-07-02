@@ -78,6 +78,7 @@ private:
 	//MISC
 	double distance;
 	uint8_t flag_target_found;
+	uint8_t rv_evaluate_image;
 public:
 	intel_board(uint8_t mode,uint8_t img_source);
 	~intel_board();

@@ -91,18 +91,12 @@ enum Direction{
 #define ENABLE_BODY_DETECT 0x01
 #define ENABLE_FACE_DETECT 0x02
 #define ENABLE_SIDE_FILTERING 0x04
+#define ENABLE_SIZE_FILTERING_SMALL 0x08
+#define ENABLE_SIZE_FILTERING_LARGE 0x10
 
 #define PIXEL_HEIGHT 127/480 //127mm for a 480 pixel height
 #define PIXEL_WIDTH PIXEL_HEIGHT //consider PIXEL as a square
 #define FOCAL_LENGTH 43 //43 mm for 
-
-
-#define E970_F_NUMBER 2.4
-#define E970_SENSOR_SIZE 1/3.2
-#define E970_SENSOR_DIAGONAL 5.68
-#define E970_SENSOR_WIDTH 4.54
-#define E970_SENSOR_HEIGHT 3.42
- 
 
 
 #define F_NUMBER 2.4
