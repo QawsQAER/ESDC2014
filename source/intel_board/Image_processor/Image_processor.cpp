@@ -828,3 +828,72 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 		}
 	}
 }
+
+/*
+	this function works for detecting multiple targets in the scope
+	@params: flags -> still, indicates whether face or body detection is enabled
+	@params: num -> indicates the number of people taking the photo
+*/
+int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_t &num)
+{
+
+	this->body_detect.clear();
+	this->face_detect.clear();
+	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
+	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
+
+	printf("Image_processor::multi_target_in_scope() running\n");
+	label1:
+	if(!this->capture_image())
+	{
+		printf("Image_processor Error: cannot capture valid image\n");
+		return -1;
+	}
+	//if an image is captured, run basic analysis
+	//this->analyzed_img is the initial detection result image
+	this->analyzed_img = this->current_img.clone();
+
+	//get the skin color detection result, and store it into skin_img
+	this->getSkin(this->current_img,this->skin_img);
+	if(enable_body_detect)
+	{
+		this->run_body_detection(this->current_img,this->body_detect);
+		this->analyzed_img = this->mark_detected_body(this->analyzed_img,this->body_detect);
+	}
+	if(enable_face_detect)
+	{
+		this->run_face_detection(this->current_img,this->face_detect);
+		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
+		this->skin_img = this->mark_detected_face(this->skin_img,this->face_detect);
+	}
+	
+	if(face_detect.size() < num)
+		goto label1;
+	//run filter designed for multiple people 
+
+	this->multi_targets_filter(num);
+
+	//mark the detected results
+	//this->analyzed_img_filtered is the final detection result image
+	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
+	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
+	if(this->final_body_detect.size() >= 1)
+	{	
+		printf("Image_processor::multi_target_in_scope() returning\n");
+		return this->final_body_detect.size();			
+	}
+	else if(this->final_face_detect.size() == 0)
+	{
+		//delete the current image if no faces is found in the scope
+		printf("Image_processor::multi_target_in_scope() returning without any found\n");
+		remove(this->current_img_path);
+		return 0;
+	}
+	
+	return 0;
+}
+
+uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
+{
+	return 0;
+}
