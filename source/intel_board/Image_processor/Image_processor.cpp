@@ -699,7 +699,7 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	uint8_t enable_side_filtering = ((flags & ENABLE_SIDE_FILTERING) == ENABLE_SIDE_FILTERING);
 	uint8_t enable_size_filtering_small = ((flags & ENABLE_SIZE_FILTERING_SMALL) == ENABLE_SIZE_FILTERING_SMALL);
 	uint8_t enable_size_filtering_large = ((flags & ENABLE_SIZE_FILTERING_LARGE) == ENABLE_SIZE_FILTERING_LARGE);
-	
+
 	this->body_detect.clear();
 	this->face_detect.clear();
 
@@ -733,6 +733,14 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	
 	//run basic filter;
 	this->basic_filter(degree,dir);
+	if(enable_side_filtering)
+		this->side_filtering(glo_prev_face);
+
+	if(enable_size_filtering_small)
+		this->size_filtering(0,glo_prev_face);
+	if(enable_size_filtering_large)
+		this->size_filtering(1,glo_prev_face);
+
 	//mark the detected results
 	//this->analyzed_img_filtered is the final detection result image
 	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
@@ -774,4 +782,49 @@ double Image_processor::get_distance(const cv::Rect &face)
 {	
 	printf("Image_processor::get_distance() running\n");
 	return runCAMShift(face);
+}
+
+
+void Image_processor::side_filtering(const cv::Rect &prev_face)
+{
+	uint8_t face_width_threshold = 5;
+	uint8_t face_pox_x_threshold = 50;
+	//filter out faces that are not roughly the size of prev_face and located about at the center
+	for(size_t count_face = 0;count_face < this->face_detect.size();)
+	{
+		if(abs(this->face_detect[count_face].width - prev_face.width) > face_width_threshold)
+			this->face_detect.erase(this->face_detect.begin() + count_face);
+		else if(abs(this->face_detect[count_face].x + this->face_detect[count_face].width / 2 - IMG_CENTER_X) > face_pox_x_threshold)
+			this->face_detect.erase(this->face_detect.begin() + count_face);
+		else
+			count_face++;
+	}
+}
+
+void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_face)
+{
+	if(flags)
+	{
+		//filter out faces that are larger than prev_face
+		uint8_t face_width_threshold = 5;
+		for(size_t count_face = 0;count_face < this->face_detect.size();)
+		{
+			if(this->face_detect[count_face].width > prev_face.width + face_width_threshold)
+				this->face_detect.erase(this->face_detect.begin() + count_face);
+			else
+				count_face++;
+		}
+	}
+	else
+	{
+		//filter out faces that are smaller than prev_face
+		uint8_t face_width_threshold = 5;
+		for(size_t count_face = 0;count_face < this->face_detect.size();)
+		{
+			if(this->face_detect[count_face].width < prev_face.width - (face_width_threshold))
+				this->face_detect.erase(this->face_detect.begin() + count_face);
+			else
+				count_face++;
+		}
+	}
 }

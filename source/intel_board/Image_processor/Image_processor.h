@@ -81,7 +81,8 @@ private:
 	uint8_t get_image_from_webcam();
 
 	//this function will run analysis on the current_img
-	
+	void side_filtering(const cv::Rect &prev_face);
+	void size_filtering(const uint8_t &flags, const cv::Rect &prev_face);
 
 public:	
 	Image_processor(uint8_t img_source);
