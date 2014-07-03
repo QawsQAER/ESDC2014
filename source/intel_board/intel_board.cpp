@@ -795,8 +795,16 @@ void intel_board::robot_show_image()
 
 uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
+	uint8_t rv = 0;
 	if(glo_multi_target)
-		return this->image_processor->multi_targets_in_scope(flags,glo_num_target);
+		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
 	else
-		return this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
+		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
+	if(rv == 0)
+	{
+		Message msg;
+		msg.BuzzerRequest();
+		msg.safe_sendMessage(this->motion_controller->Com->fd);
+	}
+	return rv;
 }
