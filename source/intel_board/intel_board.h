@@ -125,4 +125,6 @@ public:
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
+void generate_dir();
+
 #endif

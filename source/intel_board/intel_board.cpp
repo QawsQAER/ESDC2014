@@ -198,6 +198,7 @@ uint8_t intel_board::robot_init()
 		return 0;
 	if(!this->motion_controller->init())
 		return 0;
+	generate_dir();
 	printf("intel_board: initilization done\n");
 	return 1;
 }
@@ -211,12 +212,13 @@ void intel_board::robot_get_degree(int32_t *degree,int32_t *dir)
 	printf("intel_board::robot_get_degree() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_get_degree() get degree from compass %d\n",msg.car_degree);
 	degree_rotation(msg.car_degree,phone_degree,degree,dir);
+	printf("intel_board::robot_get_degree() degree is %d dir is %d\n",*degree,*dir);
 }
 
 void intel_board::robot_orientation_adjust()
 {
 	printf("intel_board::robot_orientation_adjust() entering\n");
-	int32_t degree,dir;
+	int32_t degree = 0,dir = 0;
 	
 	while(true)
 	{
@@ -807,4 +809,29 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		msg.safe_sendMessage(this->motion_controller->Com->fd);
 	}
 	return rv;
+}
+
+void generate_dir()
+{
+	printf("generate_dir running\n");
+	
+	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	time_t timestamp = time(NULL);
+	struct tm *current_time = gmtime(&timestamp);
+	//get the filename in format of month-day_hour:minute:second
+	sprintf(filename,"/home/intelcup/Desktop/%d_%d_%d_%d_%d",
+		current_time->tm_mon,
+		current_time->tm_mday,
+		current_time->tm_hour,
+		current_time->tm_min,
+		current_time->tm_sec);
+	strcpy(glo_PATH_TEMP,filename);
+	free(filename);
+	printf("creating dir named as %s\n",glo_PATH_TEMP);
+	if(mkdir(glo_PATH_TEMP,S_IRWXU) < 0)
+	{
+		printf("fail to create dir %s\n",glo_PATH_TEMP);
+		exit(0);
+	}
+	strcat(glo_PATH_TEMP,"/");
 }

@@ -36,7 +36,6 @@
 #include <signal.h>
 using namespace std;
 
-void generate_dir();
 void exit_routine(int arg);
 char *glo_dir_path;
 char *glo_PATH_TEMP = NULL;
@@ -70,7 +69,8 @@ int main(int argc, char ** argv)
 	uint8_t mode = 1;
 	uint8_t img_source = 0;
 	glo_PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
-	generate_dir();
+	
+	//generate_dir();
 	signal(SIGTERM,exit_routine);
 	signal(SIGINT,exit_routine);
 	if(argc >= 3)//the user has set the mode
@@ -124,27 +124,4 @@ void exit_routine(int arg)
         exit(0);
 }
 
-void generate_dir()
-{
-	printf("generate_dir running\n");
-	
-	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
-	time_t timestamp = time(NULL);
-	struct tm *current_time = gmtime(&timestamp);
-	//get the filename in format of month-day_hour:minute:second
-	sprintf(filename,"/home/intelcup/Desktop/%d_%d_%d_%d_%d",
-		current_time->tm_mon,
-		current_time->tm_mday,
-		current_time->tm_hour,
-		current_time->tm_min,
-		current_time->tm_sec);
-	strcpy(glo_PATH_TEMP,filename);
-	free(filename);
-	printf("creating dir named as %s\n",glo_PATH_TEMP);
-	if(mkdir(glo_PATH_TEMP,S_IRWXU) < 0)
-	{
-		printf("fail to create dir %s\n",glo_PATH_TEMP);
-		exit(0);
-	}
-	strcat(glo_PATH_TEMP,"/");
-}
+
