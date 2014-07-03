@@ -202,6 +202,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
 	printf("\n\nMotion_controller::centering() length per pixel is %f.\n\n",p);
 	uint16_t move_x = 0;
+
 	if(abs(diff_x) > threshold_x)
 	{
 		okay_image = 0;
@@ -221,6 +222,24 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
 			this->move(move_x,CAR_RIGHT);
 		}
+	}
+
+	diff_y = detect.y - img_exp_pos_y;
+	printf("Motion_controller centering(): detect.y is %d\n",detect.y);
+	printf("Motion_controller centering(): img_exp_pos_y is %d\n",img_exp_pos_y);
+	uint16_t move_y = ceil(abs(diff_y) * p);
+	printf("Motion_controller centering(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	if(diff_y > 0)
+	{
+		//moving down
+		printf("\n\n\nMotion_controller centering(): moving down %d mm\n\n\n",move_y);
+		this->lift(move_y,LIFTER_DOWN);
+	}
+	else
+	{
+		//moving up
+		printf("\n\n\nMotion_controller centering(): moving up %d mm\n\n\n",move_y);
+		this->lift(move_y,LIFTER_UP);
 	}
 	return okay_image;
 }
@@ -393,7 +412,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		this->move(move_x,CAR_LEFT);
 	}
 
-	int diff_y = detect.y - img_exp_pos_y;
+	int32_t diff_y = detect.y - img_exp_pos_y;
 	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
 	printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
 	uint16_t move_y = ceil(abs(diff_y) * p);
