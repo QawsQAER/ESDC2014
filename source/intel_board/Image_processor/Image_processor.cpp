@@ -463,6 +463,7 @@ uint8_t Image_processor::read_image(const char* filename)
 /* IMPLEMENTATION OF BASIC FILTER START*/
 uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 {
+	// does not apply filter by compass now
 	//this->basic_filter_with_degree(degree,dir);
 	return basic_filter_default();
 }
@@ -570,6 +571,7 @@ uint8_t Image_processor::basic_filter_default()
 	}
 	printf("Image_processor::basic_filter_default() exiting\n");
 }
+
 /* IMPLEMENTATION OF BASIC FILTER END*/
 /* IMPLEMENTATION OF BASIC FILTER END*/
 /* IMPLEMENTATION OF BASIC FILTER END*/
@@ -819,7 +821,7 @@ void Image_processor::side_filtering(const cv::Rect &prev_face)
 
 void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_face)
 {
-	printf("Image_processor::SIZE_filtering running\n")
+	printf("Image_processor::SIZE_filtering running\n");
 	if(flags)
 	{
 		//filter out faces that are larger than prev_face
@@ -876,7 +878,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
 
-	printf("Image_processor::multi_target_in_scope() running\n");
+	printf("Image_processor::multi_targets_in_scope() running\n");
 	label1:
 	if(!this->capture_image())
 	{
@@ -926,6 +928,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	
 	return 0;
 }
+
 
 uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 {

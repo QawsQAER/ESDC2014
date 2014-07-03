@@ -309,7 +309,8 @@ uint8_t intel_board::robot_find_target()
 	{
 		int32_t degree = 0,dir = 0;
 		//this->robot_get_degree(&degree,&dir);
-		rv = this->image_processor->one_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
+		rv = this->robot_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
+
 		printf("intel_board::robot_find_target rv is %d\n",rv);
 		if(rv < 0)
 			continue;
@@ -460,7 +461,7 @@ uint8_t intel_board::robot_evaluate_movement()
 	uint8_t count_retry = 0,find_target_again = 0;
 	while(true)
 	{
-		rv = this->image_processor->one_target_in_scope(flags);
+		rv = this->robot_target_in_scope(flags);
 		if(rv < 0)
 			continue;
 		if(rv == 0)
@@ -503,7 +504,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	}
 
 	this->image_processor->cam->save_photo_af();
-	this->image_processor->one_target_in_scope(ENABLE_FACE_DETECT);
+	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	this->robot_show_image();
 	
 	this->ui->send_finished_ack();
@@ -790,4 +791,12 @@ void intel_board::robot_show_image()
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
 	this->image_processor->show_analyzed_img(this->task_counter);
 	return ;
+}
+
+uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
+{
+	if(glo_multi_target)
+		return this->image_processor->multi_targets_in_scope(flags,glo_num_target);
+	else
+		return this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 }

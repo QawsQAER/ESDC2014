@@ -52,6 +52,11 @@
 extern char *glo_dir_path;
 extern cv::Rect glo_prev_face;
 extern int source_mode;
+extern uint8_t glo_multi_target;
+extern uint8_t glo_num_target;
+extern int32_t glo_degree;
+extern int32_t glo_dir;
+//------------------------------------------------------//
 
 class intel_board
 {
@@ -110,10 +115,13 @@ public:
 	void robot_countdown(uint8_t sec);
 	uint8_t robot_only_image_analysis();
 
+
 	void robot_act_by_cmd(const command_type &cmd);
 	void robot_orientation_adjust();
 	void robot_get_degree(int32_t *degree,int32_t *dir);
 	void robot_show_image();
+
+	uint8_t robot_target_in_scope(const uint8_t &flags);
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);

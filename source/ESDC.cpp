@@ -43,7 +43,8 @@ char *glo_PATH_TEMP = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
 int source_mode;
-
+uint8_t glo_multi_target = 0;
+uint8_t glo_num_target = 1;
 
 intel_board *robot;
 
