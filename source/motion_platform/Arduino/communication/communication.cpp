@@ -53,7 +53,7 @@ uint8_t Communication::getByte()
 	uint8_t _x = buffer[out++];
 	if(out == BUFFER_SIZE)
 	{
-		out &= 0x00;
+		out &= 0x0000;
 	}
 	return _x;
 }
@@ -81,7 +81,7 @@ void Communication::putToBuffer(uint8_t _x)
 	buffer[in++] = _x;
 	if(in == BUFFER_SIZE)
 	{
-		in &= 0x00;
+		in &= 0x0000;
 	}
 }
 
@@ -94,6 +94,7 @@ void Communication::parseMessage()
 		{
 			case 0: //checking starter
 			{
+				putByte(0);
 				check_sum = 0;
 
 				if(_x == STARTER)
@@ -109,6 +110,7 @@ void Communication::parseMessage()
 
 			case 1: //checking action_type
 			{
+				putByte(1);
 				check_sum += _x;
 				action_type = _x;
 				if(action_type == 0 || action_type == 1 || action_type == 2)
@@ -124,6 +126,7 @@ void Communication::parseMessage()
 
 			case 2: //move_dis upper 4 bits
 			{
+				putByte(2);
 				check_sum += _x;
 				move_dis = _x << 8;
 				state++;
@@ -132,6 +135,7 @@ void Communication::parseMessage()
 
 			case 3: //move_dis lower 4 bits
 			{
+				putByte(3);
 				check_sum += _x;
 				move_dis |=  _x;
 				state++;
@@ -140,9 +144,10 @@ void Communication::parseMessage()
 
 			case 4: //move_dir
 			{
+				putByte(4);
 				check_sum += _x;
 				move_dir = _x;
-				if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)))
+				if(action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3))
 				{
 					state++;
 				}
@@ -155,6 +160,7 @@ void Communication::parseMessage()
 
 			case 5: //rotate_dis upper 4 bits
 			{
+				putByte(5);
 				check_sum += _x;
 				rotate_dis = _x << 8;
 				state++;
@@ -163,6 +169,7 @@ void Communication::parseMessage()
 
 			case 6: //rotate_dis lower 4 bits
 			{
+				putByte(6);
 				check_sum += _x;
 				rotate_dis |= _x;
 				state++;
@@ -171,6 +178,7 @@ void Communication::parseMessage()
 
 			case 7: //rotate_dir
 			{
+				putByte(7);
 				check_sum += _x;
 				rotate_dir = _x;
 				if((action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
@@ -186,6 +194,7 @@ void Communication::parseMessage()
 
 			case 8: //check_sum
 			{
+				putByte(8);
 				if(check_sum == _x)
 				{
 					switch(action_type)
