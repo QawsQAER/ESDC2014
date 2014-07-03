@@ -196,7 +196,7 @@ enum Direction{
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
 #define LIFTER_MAX 700 //the maximun height of the lifter in mm
-#define LIFTER_INIT_POS 250
+#define LIFTER_INIT_POS 100
 #define LIFTER_SEG 50
 
 #define ORIENTATION_THRESHOLD 999999

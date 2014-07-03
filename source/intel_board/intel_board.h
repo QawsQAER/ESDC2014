@@ -49,13 +49,13 @@
 #include <dirent.h>
 
 //this is defined, declared and allocated space in ESDC.cpp
-extern char *glo_dir_path;
 extern cv::Rect glo_prev_face;
 extern int source_mode;
 extern uint8_t glo_multi_target;
 extern uint8_t glo_num_target;
 extern int32_t glo_degree;
 extern int32_t glo_dir;
+extern uint8_t glo_test_mbed;
 //------------------------------------------------------//
 
 class intel_board
@@ -113,7 +113,6 @@ public:
 	uint8_t robot_exit();
 
 	void robot_countdown(uint8_t sec);
-	uint8_t robot_only_image_analysis();
 
 
 	void robot_act_by_cmd(const command_type &cmd);
@@ -122,6 +121,8 @@ public:
 	void robot_show_image();
 
 	uint8_t robot_target_in_scope(const uint8_t &flags);
+
+	void robot_test_mbed();
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);

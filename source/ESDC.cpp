@@ -38,14 +38,13 @@ using namespace std;
 
 void exit_routine(int arg);
 void generate_dir();
-char *glo_dir_path;
 char *glo_PATH_TEMP = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
 int source_mode;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
-
+uint8_t glo_test_mbed = 0;
 intel_board *robot;
 
 int main(int argc, char ** argv) 
@@ -77,34 +76,11 @@ int main(int argc, char ** argv)
 	if(argc >= 3)//the user has set the mode
 	{
 		mode = atoi(argv[2]);
-		switch(mode)
+		if(mode == 2)
 		{
-			case 0://case for auto mode
-				printf("The robot is going to initiate in default mode\n");
-			break;
-	
-			case 1://case for manual mode
-				if(argc >= 3)//if the user has specify the img_source
-					img_source = atoi(argv[2]);
-			break;
-
-			case 2://case for image processing mode
-				if(argc != 3)
-				{
-					printf("Please specify the directory for image processing\n");
-					exit(-1);
-				}
-				else
-				{
-					glo_dir_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
-					strcpy(glo_dir_path,argv[2]);
-				}
-				break;
-			default://a undefined mode
-				printf("Invalid mode specified by the user\n");
-				exit(-1);
-			break; 
-        }
+			printf("The robot is going to launch as mbed debug mode\n")
+			glo_test_mbed = 1;
+		}
     }
     else // the user has not set the mode
     	printf("The robot is going to initiate in default mode\n");
@@ -120,11 +96,9 @@ void exit_routine(int arg)
 {
         printf("\n\n\n\nExecuting the pre-registered exit routine\n");
         delete robot;
-        free(glo_dir_path);
         free(glo_PATH_TEMP);
         exit(0);
 }
-
 
 void generate_dir()
 {

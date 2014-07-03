@@ -94,96 +94,91 @@ uint8_t intel_board::main_function()
 {
 	printf("Intel board is going to execute its main functionality\n");
 	
-	if(this->mode == IMG_ANALYSIS_MODE)
+	// the main state machine
+	if(glo_test_mbed)
+		this->robot_test_mbed();
+
+	while(1)
 	{
-		this->robot_only_image_analysis();
-	}
-	else
-	{
-		// the main state machine
-		while(1)
+		switch(this->state)
 		{
-			switch(this->state)
-			{
-				case ROBOT_INIT:
-					if(this->robot_init())
-					{
-						this->state = ROBOT_READY;
-					}
-					else
-					{	
-						printf("intel_board robot_init() return 0\n");
-						exit(-1);
-					}
-				break;
-				
-				case ROBOT_READY:
-					//the robot will be waiting for user's specific command to continue
-					this->robot_ready();
-				break;
-				
-				case ROBOT_FIND_TARGET:
-					//working on finding the target
-
-					if(this->robot_find_target())
-					{
-						//get the distance according to the face detection result (running four point algorithm)
-						this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
-						this->state = ROBOT_EVALUATE_IMAGE;
-						this->flag_target_found = 1;
-					}
-				break;
-
-				case ROBOT_EVALUATE_IMAGE:
-				{	
-					if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_ADJUSTING)
-					{	
-						//if the image is good enough
-						//store the image and go back wait for the next command
-						this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
-					}
-					else
-					{	
-						//let the system analyze the image and find out possible method to make it better
-						glo_prev_face = this->motion_controller->prev_face;
-						this->state = ROBOT_ANALYZE_IMAGE;
-					}
-				}
-				break;
-				
-				case ROBOT_ANALYZE_IMAGE:
-					this->robot_analyze_image();
-					this->state = ROBOT_EVALUATE_MOVEMENT;
-					break;
-				
-				case ROBOT_EVALUATE_MOVEMENT:
-				{	
-					if(this->robot_evaluate_movement())
-					{
-						// if the robot_evaluate_movement() return 1 -> does not find target in scope repeatedly 3 times 
-						this->state = ROBOT_FIND_TARGET;
-						this->flag_target_found = 0;
-					}
-					else
-					{
-						// if the robot_evaluate_movement() return 0 -> does find target in scope
-						this->state = ROBOT_EVALUATE_IMAGE;
-					}
-					//take another picture and check whether the target is in scope
-					printf("intel_board: ROBOT_EVALUATE_MOVEMENT finished\n");
-				}
-				break;
-
-				case ROBOT_WAIT_FOR_ADJUSTMENT:
-					this->robot_wait_for_adjustment();
+			case ROBOT_INIT:
+				if(this->robot_init())
+				{
 					this->state = ROBOT_READY;
-				break;
-				
-				default:
-					printf("Intel_board:: default case in state machine\n");
+				}
+				else
+				{	
+					printf("intel_board robot_init() return 0\n");
 					exit(-1);
-				break;
+				}
+			break;
+			
+			case ROBOT_READY:
+				//the robot will be waiting for user's specific command to continue
+				this->robot_ready();
+			break;
+			
+			case ROBOT_FIND_TARGET:
+				//working on finding the target
+				if(this->robot_find_target())
+				{
+					//get the distance according to the face detection result (running four point algorithm)
+					this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
+					this->state = ROBOT_EVALUATE_IMAGE;
+					this->flag_target_found = 1;
+				}
+			break;
+
+			case ROBOT_EVALUATE_IMAGE:
+			{	
+				if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_ADJUSTING)
+				{	
+					//if the image is good enough
+					//store the image and go back wait for the next command
+					this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
+				}
+				else
+				{	
+					//let the system analyze the image and find out possible method to make it better
+					glo_prev_face = this->motion_controller->prev_face;
+					this->state = ROBOT_ANALYZE_IMAGE;
+				}
 			}
+			break;
+			
+			case ROBOT_ANALYZE_IMAGE:
+				this->robot_analyze_image();
+				this->state = ROBOT_EVALUATE_MOVEMENT;
+				break;
+			
+			case ROBOT_EVALUATE_MOVEMENT:
+			{	
+				if(this->robot_evaluate_movement())
+				{
+					// if the robot_evaluate_movement() return 1 -> does not find target in scope repeatedly 3 times 
+					this->state = ROBOT_FIND_TARGET;
+					this->flag_target_found = 0;
+				}
+				else
+				{
+					// if the robot_evaluate_movement() return 0 -> does find target in scope
+					this->state = ROBOT_EVALUATE_IMAGE;
+				}
+				//take another picture and check whether the target is in scope
+				printf("intel_board: ROBOT_EVALUATE_MOVEMENT finished\n");
+			}
+			break;
+
+			case ROBOT_WAIT_FOR_ADJUSTMENT:
+				this->robot_wait_for_adjustment();
+				this->state = ROBOT_READY;
+			break;
+	
+			default:
+				printf("Intel_board:: default case in state machine\n");
+				exit(-1);
+			break;
 		}
 	}
 	return 1;
@@ -514,50 +509,6 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	return 1;
 }
 
-uint8_t intel_board::robot_only_image_analysis()
-{
-	DIR *dir;
-	struct dirent *ent;
-	if((dir = opendir(glo_dir_path)) == NULL)
-	{
-		perror("");
-		return EXIT_FAILURE;
-	}
-	while((ent = readdir(dir)) != NULL)
-	{
-		this->image_processor->init();
-		if(strcmp(ent->d_name,".") == 0 || strcmp(ent->d_name,"..") == 0)
-			continue;
-		char filename[64];
-		strcpy(filename,glo_dir_path);
-		strcat(filename,"/");
-		strcat(filename,ent->d_name);
-		printf("Openning %s\n",filename);
-		Image_processor *ptr = this->image_processor;
-		ptr->read_image(filename);
-		ptr->analyzed_img = ptr->current_img.clone();
-
-		//run the basic body detection algorithm
-		//ptr->run_body_detection(ptr->current_img,ptr->body_detect);
-		//run the basic face detection algorithm
-		ptr->run_body_detection(ptr->current_img,ptr->body_detect);
-		ptr->run_face_detection(ptr->current_img,ptr->face_detect);
-		//mark the face and body after basic detection algorithm
-		//ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->body_detect);
-		//ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->face_detect);
-		//show the analyzed img after basic detection algorithm
-		//ptr->show_analyzed_img(this->task_counter);
-		//run a basic filter 
-		ptr->basic_filter(0,0);
-		//mark the face and body after basic filter
-		ptr->analyzed_img = ptr->mark_detected_body(ptr->current_img,ptr->final_body_detect);
-		ptr->analyzed_img = ptr->mark_detected_face(ptr->analyzed_img,ptr->final_face_detect);
-		//show the analyzed img after basic filter
-		this->robot_evaluate_image();
-		ptr->show_analyzed_img(this->task_counter);
-	}
-}
-
 void intel_board::robot_countdown(uint8_t sec)
 {
 	useconds_t usec = 1000000;
@@ -808,4 +759,45 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		msg.safe_sendMessage(this->motion_controller->Com->fd);
 	}
 	return rv;
+}
+
+
+void intel_board::robot_test_mbed()
+{
+	uint8_t state = 0;
+	while(true)
+	{
+		switch(state)
+		{
+			case 0:
+				this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
+				state++;
+			break;
+			case 1:
+				this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
+				state++;
+			break;
+			case 2:
+				this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
+				state++;
+			break;
+			case 3:
+				this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
+				state++;
+			break;
+			case 4:
+				this->motion_controller->set_lifter(0);
+				state++;
+			break;
+			case 5:
+				this->motion_controller->set_lifter(LIFTER_INIT_POS);
+				state++;
+			break;
+			case 6:
+				this->motion_controller->rotate(30,0);
+				state = 0;
+			break;
+		}
+	}
+	return ;
 }

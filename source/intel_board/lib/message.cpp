@@ -56,9 +56,9 @@ int32_t Message::safe_sendMessage(int fd)
 		
 		printf("!!!!!!!!!!!!!!\n");
 		printf("!!!!!!!!!!!!!!\n");
-		printf("Message::safe_sendMessage() attempted 10 times without response\n");
-		printf("Message::safe_sendMessage() attempted 10 times without response\n");
-		printf("Message::safe_sendMessage() attempted 10 times without response\n");
+		printf("Message::safe_sendMessage() attempted %d times without response\n",MSG_MAX_ATTEMPT);
+		printf("Message::safe_sendMessage() attempted %d times without response\n",MSG_MAX_ATTEMPT);
+		printf("Message::safe_sendMessage() attempted %d times without response\n",MSG_MAX_ATTEMPT);
 		printf("!!!!!!!!!!!!!!\n");
 		printf("!!!!!!!!!!!!!!\n");
 		printf("Message::safe_sendMessage() terminating program\n");

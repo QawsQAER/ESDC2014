@@ -20,8 +20,6 @@
 #include "camshiftdemo.h"
 #include "fourPointAlgo.h"
 
-
-extern char *glo_dir_path;
 extern char *glo_PATH_TEMP;
 extern cv::Rect glo_prev_face;
 
