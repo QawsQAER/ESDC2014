@@ -55,6 +55,8 @@ int main(int argc, char ** argv)
 	{
 		printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
 		printf("Usage: 2./ESDC 1 [mode]for CANON\n");
+		printf("[mode] = 1 or non specified -> normal mode\n");
+		printf("[mode] = 2 -> mbed debugging\n");
 		exit(0);
 	}
 
@@ -78,7 +80,7 @@ int main(int argc, char ** argv)
 		mode = atoi(argv[2]);
 		if(mode == 2)
 		{
-			printf("The robot is going to launch as mbed debug mode\n")
+			printf("The robot is going to launch as mbed debug mode\n");
 			glo_test_mbed = 1;
 		}
     }
