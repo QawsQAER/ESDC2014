@@ -40,7 +40,7 @@ All the code with this header are under GPL open source license.
 #define BUZZER_STARTER 0x7C
 
 #define MSG_MAX_ATTEMPT 5
-#define TIMEOUT 5000 
+#define TIMEOUT 5000
 #define LIFTER_TIMEOUT 15000 //timeout as 10 second
 #include <stdio.h>
 #include <stdlib.h>
