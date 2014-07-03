@@ -787,22 +787,39 @@ double Image_processor::get_distance(const cv::Rect &face)
 
 void Image_processor::side_filtering(const cv::Rect &prev_face)
 {
+	printf("Image_processor::side_filtering running\n");
 	uint8_t face_width_threshold = 5;
 	uint8_t face_pox_x_threshold = 50;
 	//filter out faces that are not roughly the size of prev_face and located about at the center
 	for(size_t count_face = 0;count_face < this->face_detect.size();)
 	{
 		if(abs(this->face_detect[count_face].width - prev_face.width) > face_width_threshold)
+		{
+			printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to size\n",
+				this->face_detect[count_face].x,
+				this->face_detect[count_face].y,
+				this->face_detect[count_face].width,
+				this->face_detect[count_face].height);
 			this->face_detect.erase(this->face_detect.begin() + count_face);
+		}
 		else if(abs(this->face_detect[count_face].x + this->face_detect[count_face].width / 2 - IMG_CENTER_X) > face_pox_x_threshold)
+		{
+			printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to position\n",
+				this->face_detect[count_face].x,
+				this->face_detect[count_face].y,
+				this->face_detect[count_face].width,
+				this->face_detect[count_face].height);
 			this->face_detect.erase(this->face_detect.begin() + count_face);
+		}
 		else
 			count_face++;
 	}
+	printf("Image_processor::side_filtering exiting\n");
 }
 
 void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_face)
 {
+	printf("Image_processor::SIZE_filtering running\n")
 	if(flags)
 	{
 		//filter out faces that are larger than prev_face
@@ -810,7 +827,15 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 		for(size_t count_face = 0;count_face < this->face_detect.size();)
 		{
 			if(this->face_detect[count_face].width > prev_face.width + face_width_threshold)
+			{
+				printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because larger than %d\n",
+				this->face_detect[count_face].x,
+				this->face_detect[count_face].y,
+				this->face_detect[count_face].width,
+				this->face_detect[count_face].height,
+				prev_face.width + face_width_threshold);
 				this->face_detect.erase(this->face_detect.begin() + count_face);
+			}
 			else
 				count_face++;
 		}
@@ -822,11 +847,20 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 		for(size_t count_face = 0;count_face < this->face_detect.size();)
 		{
 			if(this->face_detect[count_face].width < prev_face.width - (face_width_threshold))
+			{
+				printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because smaller than %d\n",
+				this->face_detect[count_face].x,
+				this->face_detect[count_face].y,
+				this->face_detect[count_face].width,
+				this->face_detect[count_face].height,
+				prev_face.width - (face_width_threshold));
 				this->face_detect.erase(this->face_detect.begin() + count_face);
+			}
 			else
 				count_face++;
 		}
 	}
+	printf("Image_processor::SIZE_filtering exiting\n");
 }
 
 /*

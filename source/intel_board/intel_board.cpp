@@ -433,6 +433,7 @@ uint8_t intel_board::robot_evaluate_movement()
 {
 	//evaluate movement do the following works
 	printf("intel_board::robot_evaluate_movement() running\n");
+	
 	uint8_t flags;
 	if((*this->motion_controller->waist_shot))
 		flags = ENABLE_FACE_DETECT;
@@ -440,11 +441,20 @@ uint8_t intel_board::robot_evaluate_movement()
 		flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
 
 	if(this->rv_evaluate_image == EVAL_CENTERING)
+	{
 		flags = flags | ENABLE_SIDE_FILTERING;
+		printf("intel_board::robot_evaluate_movement() last movement is centering\n");
+	}
 	else if(this->rv_evaluate_image == EVAL_ZOOM_IN)
+	{
 		flags = flags | ENABLE_SIZE_FILTERING_SMALL;
+		printf("intel_board::robot_evaluate_movement() last movement is zoom in\n");
+	}
 	else if(this->rv_evaluate_image == EVAL_ZOOM_OUT)
+	{
 		flags = flags | ENABLE_SIZE_FILTERING_LARGE;
+		printf("intel_board::robot_evaluate_movement() last movement is zoom out\n");
+	}
 	
 	int8_t rv = 0;
 	uint8_t count_retry = 0,find_target_again = 0;
