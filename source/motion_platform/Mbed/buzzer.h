@@ -32,15 +32,25 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 #include "define.h"
 #include "mbed.h"
 
+#define TIME_OUT 5 //8 seconds
+
 class Buzzer
 {
 public:
     Buzzer(MyDigitalOut* buzzer);
     ~Buzzer();
-    void buzzerON();
-    void buzzerOFF();
+    void ON();
+    void OFF();
+    void setFlag();
+    void cleanFlag();
+    
+    void check_time_out();
+    void time_out_init();
+    
 private:
     MyDigitalOut* _buzzer; 
+    uint8_t flag;
+    Timeout time_out;
 };
 
 #endif

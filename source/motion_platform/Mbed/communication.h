@@ -41,13 +41,14 @@ The communication protocol is inside source/intel_board/lib/message.h
 #define BUFFER_SIZE 1024
 #define STARTER 0x7e
 #define COMPASS_STARTER 0x7d
+#define BUZZER_STARTER 0x7c
 
 #define DEBUG_ON 1
 
 class Communication
 {
 public:
-    Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino);
+    Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, COMPASS *_compass);
     ~Communication();
 
     void putToBuffer(uint8_t _x, uint8_t communication_type); //0 is IntelToMbed, 1 is MbedTOArduino
@@ -66,12 +67,14 @@ public:
     uint8_t getMoveDir();
     uint8_t getRotateDir();
 
-    unsigned short campass_degree;
-    HMC5883L compass;
+    uint16_t campass_degree;
+    COMPASS *compass;
+    
 private:
     void init();
     uint8_t* buffer_IntelToMbed;
     uint8_t* buffer_MbedToArduino;
+    uint8_t* forward_msg_buffer; //for forwarding message to the car
     uint16_t in_IntelToMbed;
     uint16_t out_IntelToMbed;
     uint16_t in_MbedToArduino;
@@ -91,6 +94,7 @@ private:
     MySerial *_DEBUG;
     MySerial *_IntelToMbed;
     MySerial *_MbedToArduino;
+    COMPASS *_compass;
 };
 
 #endif

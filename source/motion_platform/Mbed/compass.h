@@ -1,54 +1,65 @@
-#ifndef HMC5883L_H
-#define HMC5883L_H
+#ifndef COMPASS_H
+#define COMPASS_H
 
 #include "mbed.h"
+#include "define.h"
 
-#define HMC5883L_IDENT_A        0x0A // In this case the identification register A is used to identify the devide. ASCII value H
-#define HMC5883L_I2C            0x1E // 7-bit address. 0x3C write, 0x3D read.
-#define HMC5883L_I2C_WRITE      0x3C // Same as (& 0xFE), ensure that the MSB bit is being set to zero (RW=0 -> Writing)
-#define HMC5883L_I2C_READ       0x3D // Same as (| 0x01), ensure that the MSB bit is being set to one  (RW=1 -> Reading)
+#define RUN_MSB          0xC7
+#define RUN_LSB          0x10
 
-#define HMC5883L_CONFIG_A       0x00
-#define HMC5883L_CONFIG_B       0x01
-#define HMC5883L_MODE           0x02
-#define HMC5883L_STATUS         0x09
+#define STOP_MSB          0xC6
+#define STOP_LSB          0x10
 
-#define HMC5883L_X_MSB          0x03
-#define HMC5883L_X_LSB          0x04
-#define HMC5883L_Z_MSB          0x05
-#define HMC5883L_Z_LSB          0x06
-#define HMC5883L_Y_MSB          0x07
-#define HMC5883L_Y_LSB          0x08
-#define PI       3.14159265
-#define SDA      p9
-#define SCL      p10
+#define RESUME_MSB          0xD1
+#define RESUME_LSB          0x10
+
+#define RST_MSB          0xC2
+#define RST_LSB          0x10
+
+#define RESUME_MSB          0xD1
+#define RESUME_LSB          0x10
+
+#define COMPASS_TX      p9
+#define COMPASS_RX      p10
+
+#define _BUFFER_SIZE 512
 
 #define DECLINATIONANGLE  -0.0457
 #define OFFSET 0
 
 #include <math.h>
 
-class HMC5883L 
+class COMPASS 
 {
-
 public:
+    COMPASS(MySerial* serial);
+    uint16_t read();
+    void putToBuffer(uint8_t data);
 
-    HMC5883L(PinName sda, PinName scl);
-    float getMx();
-    float getMy();
-    float getMz();
     
-    void setDeclination(float declinationAngle);
-    void setOffset(int offset);
-    
-    unsigned short get_degree();
 private:
-    void Write(char reg_address, char data);
-    char Read(char data);
-    void MultiByteRead(char address, char* output, int size); 
-    I2C i2c;
+    MySerial* _serial;
+    uint16_t _degree;
+    uint8_t flag;
+    uint8_t count;
     float declinationAngle;
     int offset;
+    uint16_t buffer_count;
+    char temp[2];
+    char buffer[_BUFFER_SIZE];
+    uint16_t twobytes;
+    uint8_t hundreds,tens,digits;
+    
+    void init();
+    void write2Bytes(char msb, char lsb);
+    
+    void run();
+    void stop();
+    void resume();
+    void reset();
+    
+  //  void check_time_out();
+//    void time_out_init();
 };
 
-#endif /* HMC5883L_H */
+#endif /* COMPASS_H */

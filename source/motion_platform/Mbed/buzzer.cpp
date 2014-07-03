@@ -28,20 +28,63 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 
 #include "buzzer.h"
 
+extern "C" void mbed_reset();
+ 
 Buzzer::Buzzer(MyDigitalOut* buzzer)
 {
     this->_buzzer = buzzer;
-    *_buzzer = 1;
+    ON();
+    wait(0.1);
+    OFF();
+    wait(0.1);
+    ON();
+    wait(0.1);
+    OFF();
+    wait(0.1);
+    ON();
+    wait(0.2);
+    OFF();
 }
 
 Buzzer::~Buzzer(){}
 
-void Buzzer::buzzerON()
+void Buzzer::ON()
 {
     *_buzzer = 0;
 }
 
-void Buzzer::buzzerOFF()
+void Buzzer::OFF()
 {
     *_buzzer = 1;
+}
+
+void Buzzer::setFlag()
+{
+    flag=1;
+}
+
+void Buzzer::cleanFlag()
+{
+    flag=0;
+}
+
+void Buzzer::check_time_out()
+{
+    if(flag == 1)
+    {
+        ON();
+        wait(5);
+        mbed_reset();
+    }
+    else
+    {
+        OFF();
+    }
+}
+
+void Buzzer::time_out_init()
+{
+    setFlag();
+    time_out.detach();
+    time_out.attach(this, &Buzzer::check_time_out, TIME_OUT);
 }

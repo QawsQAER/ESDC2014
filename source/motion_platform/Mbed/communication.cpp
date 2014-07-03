@@ -27,13 +27,12 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 **********************************************************/
 #include <communication.h>
 
-Communication::Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino)
-:compass(SDA, SCL)
+Communication::Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, COMPASS* _compass)
 {
     this->_DEBUG = _DEBUG;
     this->_IntelToMbed = _IntelToMbed;
     this->_MbedToArduino = _MbedToArduino;
-    
+    this->_compass = _compass;
     init();
 }
 
@@ -41,15 +40,20 @@ Communication::~Communication()
 {
     delete[] buffer_IntelToMbed;
     delete[] buffer_MbedToArduino;
+    delete[] forward_msg_buffer;
     delete _DEBUG;
     delete _IntelToMbed;
     delete _MbedToArduino;
+    delete _compass;
 }
 
 void Communication::init()
 {
     buffer_IntelToMbed = new uint8_t[BUFFER_SIZE];
     buffer_MbedToArduino = new uint8_t[BUFFER_SIZE];
+    
+    forward_msg_buffer = new uint8_t[9]; //the message struct is 9 byte
+    
     in_IntelToMbed = 0;
     out_IntelToMbed = 0;
     in_MbedToArduino = 0;
@@ -121,7 +125,7 @@ void Communication::putToBuffer(uint8_t _x, uint8_t communication_type)
         buffer_IntelToMbed[in_IntelToMbed++] = _x;
         if(in_IntelToMbed == BUFFER_SIZE)
         {
-            in_IntelToMbed &= 0x00;
+            in_IntelToMbed &= 0x0000;
         }
     }
     else if(communication_type == 1)
@@ -129,7 +133,7 @@ void Communication::putToBuffer(uint8_t _x, uint8_t communication_type)
         buffer_MbedToArduino[in_MbedToArduino++] = _x;
         if(in_MbedToArduino == BUFFER_SIZE)
         {
-            in_MbedToArduino &= 0x00;
+            in_MbedToArduino &= 0x0000;
         }
     }
 }
@@ -152,6 +156,7 @@ void Communication::parseMessage()
                 if(_x == STARTER || _x == COMPASS_STARTER)
                 {
                     state_IntelToMbed++;
+                    forward_msg_buffer[0] = _x;
                 }
                 else
                 {
@@ -172,9 +177,10 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 action_type = _x;
-                if(action_type == 0 || action_type == 1 || action_type == 2 || action_type == 3)
+                if(action_type == 0 || action_type == 1 || action_type == 2 || action_type == 3 || action_type == 4)
                 {
                     state_IntelToMbed++;
+                    forward_msg_buffer[1] = _x;
                 }
                 else
                 {
@@ -196,6 +202,7 @@ void Communication::parseMessage()
                 check_sum += _x;
                 move_dis = _x << 8;
                 state_IntelToMbed++;
+                forward_msg_buffer[2] = _x;
                 break;
             }
 
@@ -208,6 +215,7 @@ void Communication::parseMessage()
                 check_sum += _x;
                 move_dis |=  _x;
                 state_IntelToMbed++;
+                forward_msg_buffer[3] = _x;
                 break;
             }
 
@@ -219,9 +227,10 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 move_dir = _x;
-                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)) || action_type == 2 || action_type == 3)
+                if((action_type == 0 && (move_dir == 0 || move_dir == 1 || move_dir == 2 || move_dir == 3)) || (action_type == 1 && (move_dir == 0 || move_dir == 2)) || action_type == 2 || action_type == 3 || action_type == 4)
                 {
                     state_IntelToMbed++;
+                    forward_msg_buffer[4] = _x;
                 }
                 else
                 {
@@ -243,6 +252,7 @@ void Communication::parseMessage()
                 check_sum += _x;
                 rotate_dis = _x << 8;
                 state_IntelToMbed++;
+                forward_msg_buffer[5] = _x;
                 break;
             }
 
@@ -255,6 +265,7 @@ void Communication::parseMessage()
                 check_sum += _x;
                 rotate_dis |= _x;
                 state_IntelToMbed++;
+                forward_msg_buffer[6] = _x;
                 break;
             }
 
@@ -266,9 +277,10 @@ void Communication::parseMessage()
                 }
                 check_sum += _x;
                 rotate_dir = _x;
-                if(action_type == 3 || (action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
+                if(action_type == 3 || action_type == 4 || (action_type == 1 && ((rotate_dir >> 6) == 0)) || ((action_type == 0 || action_type == 2) && ((rotate_dir >> 6) == 3)))
                 {
                     state_IntelToMbed++;
+                    forward_msg_buffer[7] = _x;
                 }
                 else
                 {
@@ -289,6 +301,7 @@ void Communication::parseMessage()
                 }
                 if(check_sum == _x)
                 {
+                    forward_msg_buffer[8] = _x;
                     switch(action_type)
                     {
                         case 0: //car movement
@@ -305,6 +318,10 @@ void Communication::parseMessage()
                         
                         case 3: //compass
                         info_ok_IntelToMbed = 4;
+                        break;
+                        
+                        case 4: //buzzer
+                        info_ok_IntelToMbed = 5;
                         break;
 
                         default:
@@ -335,22 +352,27 @@ void Communication::parseMessage()
 void Communication::forwardMessage()
 {
     //message structure is defined in source/motion_platform/intel_board/lib/message.h
-    uint8_t i = out_IntelToMbed - 9; //message size is 9 bytes
-    putByte(buffer_IntelToMbed[i++], 2); //starter, 2 means MbedToArduino
-    putByte(buffer_IntelToMbed[i++], 2); //action_type
-    putByte(buffer_IntelToMbed[i++], 2); //move_dis
-    putByte(buffer_IntelToMbed[i++], 2);
-    putByte(buffer_IntelToMbed[i++], 2); //move_dir
-    putByte(buffer_IntelToMbed[i++], 2); //rotate_dis
-    putByte(buffer_IntelToMbed[i++], 2);
-    putByte(buffer_IntelToMbed[i++], 2); //rotate_dir
-    putByte(buffer_IntelToMbed[i++], 2); //checksum
+    putByte(forward_msg_buffer[0], 2); //starter, 2 means MbedToArduino
+    putByte(forward_msg_buffer[1], 2); //action_type
+    putByte(forward_msg_buffer[2], 2); //move_dis
+    putByte(forward_msg_buffer[3], 2);
+    putByte(forward_msg_buffer[4], 2); //move_dir
+    putByte(forward_msg_buffer[5], 2); //rotate_dis
+    putByte(forward_msg_buffer[6], 2);
+    putByte(forward_msg_buffer[7], 2); //rotate_dir
+    putByte(forward_msg_buffer[8], 2); //checksum
 }
 
 void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
 {
     if(action_type == 0) //car movement
     {
+        for(int i = 0; i < 9; i++)
+        {
+            uint8_t _y = getByte(1);
+            printf("Communication::ACK(). Get byte: %x\r\n", _y);
+        }
+        
         while(info_ok_MbedToArduino != 1)
         {
             if(in_MbedToArduino != out_MbedToArduino)
@@ -360,13 +382,21 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
                 {
                     case 0: //checking starter
                     {
-                        //putByte('0', 1);
+                        if(DEBUG_ON)
+                        {
+                            _DEBUG->printf("Communication::ACK(). Checking SARTER...\r\n");
+                        }
+                        
                         if(_x == STARTER)
                         {
                             state_MbedToArduino++;
                         }
                         else
                         {
+                            if(DEBUG_ON)
+                            {
+                                _DEBUG->printf("Communication::ACK(). ERROR when checking SARTER: %x\r\n", _x);
+                            }
                             state_MbedToArduino = 0;
                         }
                         break;
@@ -374,13 +404,21 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
 
                     case 1: //checking 'O'
                     {
-                        //putByte('1', 1);
+                        if(DEBUG_ON)
+                        {
+                            _DEBUG->printf("Communication::ACK(). Checking O...\r\n");
+                        }
+                        
                         if(_x == 0x4f) //O
                         {
                             state_MbedToArduino++;
                         }
                         else
                         {
+                            if(DEBUG_ON)
+                            {
+                                _DEBUG->printf("Communication::ACK(). ERROR when checking O: %x\r\n", _x);
+                            }
                             state_MbedToArduino = 0;
                         }
                         break;
@@ -388,13 +426,21 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
 
                     case 2: //checking 'K'
                     {
-                        //putByte('2', 1);
+                        if(DEBUG_ON)
+                        {
+                            _DEBUG->printf("Communication::ACK(). Checking K...\r\n");
+                        }
+                        
                         if(_x == 0x4b) //K
                         {
                             state_MbedToArduino++;
                         }
                         else
                         {
+                            if(DEBUG_ON)
+                            {
+                                _DEBUG->printf("Communication::ACK(). ERROR when checking K: %x\r\n", _x);
+                            }
                             state_MbedToArduino = 0;
                         }
                         break;
@@ -402,10 +448,21 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
 
                     case 3: //checking check_sum_MbedToArduino
                     {
-                        //putByte('3', 1);
+                        if(DEBUG_ON)
+                        {
+                            _DEBUG->printf("Communication::ACK(). Checking CHECK_SUM...\r\n");
+                        }
+                        
                         if(_x == 0x9a) //checksum
                         {
                             info_ok_MbedToArduino = 1;
+                        }
+                        else
+                        {
+                            if(DEBUG_ON)
+                            {
+                                _DEBUG->printf("Communication::ACK(). ERROR when checking CHECK_SUM: %x\r\n", _x);
+                            }
                         }
                         
                         state_MbedToArduino = 0;
@@ -439,13 +496,8 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
     }
     else if(action_type == 3)
     {
-        HMC5883L compasss(SDA, SCL);
-        campass_degree = 0;
-        unsigned short data1 = compasss.get_degree(); 
-        wait(0.5);
-        unsigned short data2 = compasss.get_degree(); 
-
-        campass_degree = (data1 + data2) / 2;
+        
+        campass_degree = compass->read();
 
         uint8_t temp1,temp2;
         temp1 = campass_degree;
@@ -454,6 +506,16 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
         putByte(temp1 ,1); //O
         putByte(temp2 ,1); //K
         putByte(0x9a ,1); //check_sum = 0xaf + 0x4b = 0x9a
+    
+        return;
+    } 
+     else if(action_type == 4)
+    {
+        
+        putByte(BUZZER_STARTER ,1); //1 means IntelToMbed
+        putByte(0,1); //O
+        putByte(0,1); //K
+        putByte(0,1); //check_sum = 0xaf + 0x4b = 0x9a
     
         return;
     } 

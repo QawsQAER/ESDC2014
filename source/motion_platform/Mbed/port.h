@@ -34,6 +34,7 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 MyDigitalOut IntelToMbed_LED(LED1); //uart port LED between Intel Board and Mbed
 MyDigitalOut MbedToArduino_LED(LED2); //uart port LED between Mbed and Arduino
 MySerial DEBUG(USBTX, USBRX); //usb serial port between computer and Mbed
+MySerial CompassData(p9, p10); ////uart port between compass and Mbed
 MySerial IntelToMbed(p13, p14); //uart port between Intel Board and Mbed
 MySerial MbedToArduino(p28, p27); //uart port between Mbed and Arduino
 MyPwmOut lifter_pwmUp(p21);
@@ -48,8 +49,9 @@ MyPwmOut camera_platform_pwmYaw(p25);//yaw             min right, max left, mid 
 
 MyDigitalOut buzzer_pin(p29);
 Buzzer buzzer(&buzzer_pin);
+COMPASS compass(&CompassData);
 
-Communication com(&DEBUG, &IntelToMbed, &MbedToArduino);
+Communication com(&DEBUG, &IntelToMbed, &MbedToArduino, &compass);
 Lifter lifter(&lifter_enable, &lifter_pwmUp, &lifter_pwmDown, &lifter_encoder_A, &lifter_encoder_B);
 Camera_platform camera_platform(&camera_platform_pwmRoll, &camera_platform_pwmPitch, &camera_platform_pwmYaw);
 
@@ -65,6 +67,13 @@ void MbedToArduinoRxHandler()
     //__disable_irq();//disable interupt when receiving data from XBEE_UART
     uint8_t _x = MbedToArduino.getc();
     com.putToBuffer(_x, 1); //function inside Communication::
+    //__enable_irq();
+}
+void compassHandler()
+{
+    //__disable_irq();//disable interupt when receiving data from XBEE_UART
+    uint8_t _x = CompassData.getc();
+    compass.putToBuffer(_x); //function inside Communication::
     //__enable_irq();
 }
 
@@ -99,6 +108,9 @@ void init_PORT() //used in main() function
     
     MbedToArduino.baud(9600);
     MbedToArduino.attach(&MbedToArduinoRxHandler); //serial interrupt function
+    
+    CompassData.baud(56000);
+    CompassData.attach(&compassHandler);
     
     lifter_encoder_A.fall(&LifterPulseHandler); //interrupt
     

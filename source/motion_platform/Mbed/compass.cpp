@@ -1,180 +1,186 @@
 #include "compass.h"
+/*
+Serial pc(USBTX, USBRX);
 
-HMC5883L::HMC5883L(PinName sda, PinName scl): i2c(sda, scl)
+
+*/
+
+COMPASS::COMPASS(MySerial* serial)
 {
-    //100KHz, as specified by the datasheet.
-    char rx;
+   this->_serial = serial;
+   
+   serial->baud(56000);
+   serial->format(8,SerialBase::None, 1);
+   
+   init();
+}
+
+uint16_t COMPASS::read()
+{
+    printf("before resume  \r\n");
+    resume();
+    printf("after resume \r\n");
+
+    wait(0.5);
+         printf("before run \r\n");
+
+    run();
+             printf("after run \r\n");
+
+    printf("enter while buffer_count: %d \r\n",buffer_count);
 
     
-    i2c.frequency(100000);
-    //Testar depois com 400KHz
-    //==========================================================================================================
-    // Read chip_id
-    //==========================================================================================================
-    rx = Read(HMC5883L_IDENT_A);
-    if (rx != 0x48)//ID do chip
-        printf("\ninvalid chip id %d\r\n", rx); 
+    
+    printf("enter while 1 \r\n");
+    while(1)
+    {
+          if(buffer_count<=2)
+         {
+             buffer_count=0;
+             break;
+         }
+         
+         buffer_count--;
+         uint8_t tempc1=buffer[buffer_count];
+         buffer_count--;
+         uint8_t tempc2=buffer[buffer_count];
+         
+                 temp[0]= tempc1;
+                 temp[1]= tempc2;
+                 
+                 if( 0xa0==( (temp[0]) & 0xe0))
+                 { 
+                    flag=1;
+                    printf("match !!!!!\r\n");
+                 }
+             
+            
+            
+        
+        
+        if(flag==1)
+        {
+                      twobytes=(temp[0])*256+(uint8_t)(temp[1]);
+            
+                     digits= temp[1] & 0x0f;
+            
+                      tens= (temp[1]>>4) & 0x0f;
+            
+                      hundreds= temp[0] & 0x07;
+        
+                     _degree=100*hundreds+10*tens+digits;
+                      printf("buffer[0]: %x\r\n",temp[0]);
+                      printf("buffer[1]: %x\r\n",temp[1]);
+                     temp[0]=0;
+                     temp[1]=0;
+                     flag=0;
+           
+            buffer_count=0;
+            
+             
+             // printf("hundreds: %d\r\n",hundreds);
+//              printf("tens: %d\r\n",tens);
+//              printf("digits: %d\r\n",digits);
+          
+               resume();
+               
+               
+               _degree+=90;
+               
+               if(_degree>=360)
+               _degree-=360;
+              
+                   printf("degree: %d\r\n",_degree);
+              printf("----------------------\r\n");
+               return _degree;
+//            break;
+        }
+   
+    }
+     // printf("leave while 1 \r\n");
+//       wait(0.5);
+//       
+//     printf("before resume2 \r\n");
+//
+//     
+//           printf("after resume2 \r\n");
+
+           
+         
+    return 0;
+}
+
+void COMPASS::init() 
+{
+    buffer[0]=0;
+    buffer[1]=0;
+    count=0;
+    flag=0;
+    buffer_count=0;
+    for(int i=0;i<_BUFFER_SIZE;i++)
+    {
+        buffer[i]=0;
+    }
+}
+
+void COMPASS::run() 
+{
+    write2Bytes(RUN_MSB,RUN_LSB);
+}
+
+void COMPASS::stop() 
+{
+    write2Bytes(STOP_MSB,STOP_LSB);
+}
+
+void COMPASS::resume() 
+{
+    write2Bytes(RESUME_MSB,RESUME_LSB);
+}
+
+void COMPASS::reset() 
+{
+    write2Bytes(RST_MSB,RST_LSB);
+}
+
+void COMPASS::write2Bytes(char msb, char lsb) 
+{
+    _serial->putc(lsb);
+    _serial->putc(msb);
+    
+}
+
+void COMPASS::putToBuffer(uint8_t data) 
+{
+    if(buffer_count<_BUFFER_SIZE-10)
+    buffer_count++;
+    else
+     {
+     printf("Error full buffer \r\n");
+     buffer_count=0;
+     }
      
-    //==========================================================================================================
-    // Let's set the Configuration Register A
-    //==========================================================================================================
-    // This register set's the number of samples averaged per measurement output, the rate at which data is written
-    // to all three data output registers and the measurement flow of the device.
-    // -------------------------------------------------------
-    // |CRA7 CRA6   CRA5   CRA4   CRA3   CRA2   CRA1   CRA0  |
-    // |(1)  MA1(1) MA0(1) DO2(1) DO1(0) DO0(0) MS1(0) MS0(0)| -> This is the default value
-    // -------------------------------------------------------
-    // CRA7 -> we have to clear this bit for correct operation                                      (0)
-    // CRA6 to CRA5 -> Let's select the maximum number of samples averaged per measurement output   (11)
-    // CRA4 to CRA2 -> Also let's select the maximum data output rate                               (110)
-    // CRA1 to CRA0 -> The measurement flow is defined to normal                                    (00)
-    // -------------------------------------------------------
-    // |CRA7 CRA6   CRA5   CRA4   CRA3   CRA2   CRA1   CRA0  |
-    // |(0)  MA1(1) MA0(1) DO2(1) DO1(1) DO0(0) MS1(0) MS0(0)| -> This is the new value, 0x78 in hex
-    // -------------------------------------------------------
-    //Write(HMC5883L_CONFIG_A,0x78);
-    //Write(HMC5883L_CONFIG_A,0x70);
-        
-    //==========================================================================================================
-    // The Configuration Register B is set to 0010 0000 by default, this is a +/- 1.3 Ga sensor field range and
-    // the gain of LSB/gauss is 1090. This is the maximum value, so let's leave it like that.
-    //==========================================================================================================
-    //Datasheet page 13. I will explain later
-    //Write(HMC5883L_CONFIG_B,0x20);
-    //Write(HMC5883L_CONFIG_B,0xA0);
-  
-    //==========================================================================================================
-    // Let's set the Mode Register
-    //==========================================================================================================
-    // This register set's the operation mode, from continuous-measurements mode, single-measurement mode and idle mode.
-    // We will set to Continuouse-measurement mode, so the device continuously performs measurements and places the
-    // result in the data register
-    // ---------------------------------------------
-    // |MR7  MR6  MR5  MR4  MR3  MR2  MR1    MR0   |  -> This is the new value, 0x78 in hex, we are going to change
-    // |(1)  (0)  (0)  (0)  (0)  (0)  MD1(0) MD0(1)|     the MD1 and MD0 to 00 and clear the MR7 for correct operation.
-    // ---------------------------------------------     The final value is 0000 0000 (0x00).
-    Write(HMC5883L_MODE,0x00);
-     wait(1);
-     setDeclination(DECLINATIONANGLE);
-}
-
-
-void HMC5883L::Write(char reg_address, char data)
-{
-    char tx[2];
-    tx[0]=reg_address;
-    tx[1]=data;
-
-    i2c.write(HMC5883L_I2C_WRITE,tx,2);
-}
-
-char HMC5883L::Read(char data)
-{
-    char tx = data;
-    char rx;
-
-    i2c.write(HMC5883L_I2C_WRITE, &tx, 1);
-    i2c.read(HMC5883L_I2C_READ, &rx, 1);
-    return rx;
-}
-
-void HMC5883L::MultiByteRead(char address, char* output, int size) 
-{
-    i2c.write(HMC5883L_I2C_WRITE, &address, 1);      //tell it where to read from
-    i2c.read(HMC5883L_I2C_READ, output, size);     //tell it where to store the data read
-}
-
-float HMC5883L::getMx()
-{
-    //return (x * m_Scale);
-    char lsb_byte = 0;
-    signed short msb_byte;
-
-    lsb_byte = Read(HMC5883L_X_MSB);
-    msb_byte = lsb_byte << 8;
-    msb_byte |= Read(HMC5883L_X_LSB);
-    return (float)msb_byte;
-    /*
-    char tx[1];
-    char rx[2];
-
-
-    tx[0]=HMC5883L_X_MSB;
-    i2c.write(HMC5883L_I2C_READ,tx,1);
-    i2c.read(HMC5883L_I2C_READ,rx,2);
-    return ((int)rx[0]<<8|(int)rx[1]);
-    */
-
-}
-
-float HMC5883L::getMy()
-{
-    //return (y * m_Scale);
-
-    char lsb_byte = 0;
-    signed short msb_byte;
-
-    lsb_byte = Read(HMC5883L_Y_MSB);
-    msb_byte = lsb_byte << 8;
-    msb_byte |= Read(HMC5883L_Y_LSB);
-    return (float)msb_byte;
-}
-
-
-float HMC5883L::getMz()
-{
-    //return (z * m_Scale);
+    buffer[buffer_count]=data;
     
-    char lsb_byte = 0;
-    signed short msb_byte;
-
-    lsb_byte = Read(HMC5883L_Z_MSB);
-    msb_byte = lsb_byte << 8;
-    msb_byte |= Read(HMC5883L_Z_LSB);
-    return (float)msb_byte;
- }
- 
-
-void HMC5883L::setDeclination(float declinationAngle)
-{
-   this->declinationAngle=declinationAngle;
- }
- 
- void HMC5883L::setOffset(int offset)
-{
-   this->offset=offset;
- }
- 
-unsigned short HMC5883L::get_degree()
-{
-    //return (z * m_Scale);
-    wait_ms(200);     
-
-        float x, y, z, heading;
-      x = getMx();
-        y = getMy();
-        z = getMz();
-        heading += declinationAngle;
-        
-        heading = atan2(y, x);
-        if(heading < 0) 
-            heading += 2*PI;
-        if(heading > 2*PI) 
-            heading -= 2*PI;
-        
-        heading = heading * 180 / PI;
-        
-//        heading+=90;
-        
-        heading+=offset;
-        if(heading>=360)
-        heading-=360;
-        
-        if(heading<180)
-        heading+=180;
-        else
-        heading-=180;
-        return heading;
- }
- 
- 
+}
+//
+//void COMPASS::check_time_out()
+//{
+//    if(flag == 1)
+//    {
+//        ON();
+//        wait(5);
+//        mbed_reset();
+//    }
+//    else
+//    {
+//        OFF();
+//    }
+//}
+//
+//void COMPASS::time_out_init()
+//{
+//    setFlag();
+//    time_out.detach();
+//    time_out.attach(this, &Buzzer::check_time_out, TIME_OUT);
+//}
