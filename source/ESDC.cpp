@@ -78,6 +78,7 @@ int main(int argc, char ** argv)
 	if(argc >= 3)//the user has set the mode
 	{
 		mode = atoi(argv[2]);
+		printf("mode is %u\n",mode);
 		if(mode == 2)
 		{
 			printf("The robot is going to launch as mbed debug mode\n");

@@ -765,6 +765,7 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 void intel_board::robot_test_mbed()
 {
 	uint8_t state = 0;
+	this->motion_controller->reset_lifter();
 	while(true)
 	{
 		switch(state)
@@ -786,11 +787,11 @@ void intel_board::robot_test_mbed()
 				state++;
 			break;
 			case 4:
-				this->motion_controller->set_lifter(0);
+				//this->motion_controller->set_lifter(0);
 				state++;
 			break;
 			case 5:
-				this->motion_controller->set_lifter(LIFTER_INIT_POS);
+				//this->motion_controller->set_lifter(LIFTER_INIT_POS);
 				state++;
 			break;
 			case 6:
