@@ -37,7 +37,7 @@ All the code with this header are under GPL open source license.
 
 #define STARTER 0x7E
 #define COMPASS_STARTER 0x7D
-#define BUZZER_STARTER 0x7F
+#define BUZZER_STARTER 0x7C
 
 #define MSG_MAX_ATTEMPT 3
 #define TIMEOUT 5000 

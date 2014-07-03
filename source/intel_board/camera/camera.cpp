@@ -571,6 +571,7 @@ int my_itoa(int val, char* buf)
             // INIT CANON SETTINGS
            init_canon();
 
+
         } 
         else if(mode==PHONE)
         {
@@ -593,7 +594,8 @@ void Camera::init_canon()
              
             My_popen(gphoto_cmd);
 
-
+             /*3.set light=off*/
+            flash_close();
 
 
 }
