@@ -81,7 +81,7 @@ private:
 	//this function will run analysis on the current_img
 	void side_filtering(const cv::Rect &prev_face);
 	void size_filtering(const uint8_t &flags, const cv::Rect &prev_face);
-
+	cv::Rect body_by_face(const cv::Rect &face);
 public:	
 	Image_processor(uint8_t img_source);
 	~Image_processor();
@@ -104,7 +104,7 @@ public:
 	
 	cv::Point point;
 	cv::Rect expected_region; //
-
+	cv::Rect face_region;
 	int32_t diff_x;
 	int32_t diff_y;
 	

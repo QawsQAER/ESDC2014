@@ -179,9 +179,40 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	return EVAL_ADJUSTING;
 }
 
+uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region)
+{
+	return multi_face_centering(faces,face_region);
+}
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
+uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &faces,const cv::Rect &face_region)
+{
+	double mm_per_pixel = IMG_FACE_ACTUAL_HEIGHT/(double)faces[0].height;
+	int32_t diff_x = face_region.x + face_region.width / 2 - IMG_CENTER_X;
+	printf("Motion_controller::multi_face_centering() length per pixel is %f\n",mm_per_pixel);
+	uint16_t move_x = 0;
+	if(abs(diff_x) > threshold_x)
+	{
+		printf("Motion_controller multi_face_centering(): diff_x is %d\n",diff_x);
+		if(diff_x < 0)
+		{	
+			//should move left
+			move_x = this->bound_dis(ceil(abs(diff_x) * mm_per_pixel));
+			printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
+			this->move(move_x,CAR_LEFT);
+		}
+		else
+		{
+			//should move right
+			move_x = this->bound_dis(ceil(abs(diff_x) * mm_per_pixel));
+			printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
+			this->move(move_x,CAR_RIGHT);
+		}
+		return 0;
+	}
+	return 1;
+}
 uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
 
@@ -200,7 +231,7 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 	int32_t diff_y = center.y - this->center_y;
 	//compute length per pixel 
 	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
-	printf("\n\nMotion_controller::centering() length per pixel is %f.\n\n",p);
+	printf("\n\nMotion_controller::centering() length per pixel is %f.\n",p);
 	uint16_t move_x = 0;
 
 	if(abs(diff_x) > threshold_x)

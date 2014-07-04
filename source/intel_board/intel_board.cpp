@@ -311,11 +311,7 @@ uint8_t intel_board::robot_find_target()
 		if(rv < 0)
 			continue;
 
-		if(this->waist_shot)
-			this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-		else
-			this->image_processor->mark_exp_region(this->motion_controller->ref);
-		this->image_processor->show_analyzed_img(this->task_counter);
+		this->robot_show_image();
 
 		//this->robot_find_target_strategy1(state,counter);
 		if(rv == 0)
@@ -336,12 +332,7 @@ uint8_t intel_board::robot_find_target()
 
 uint8_t intel_board::robot_find_target_strategy1(uint8_t &state,uint8_t &counter)
 {
-	if(this->waist_shot)
-		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
-	else
-		this->image_processor->mark_exp_region(this->motion_controller->ref);
-	this->image_processor->show_analyzed_img(this->task_counter);
-	
+	this->robot_show_image();	
 	//TODO: may adjust the position according to the initial detection results
 	printf("intel_board::robot_find_target(): finding target again\n");
 	
@@ -737,7 +728,9 @@ void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *directio
 
 void intel_board::robot_show_image()
 {
-	if(this->waist_shot)
+	if(glo_multi_target)
+		this->image_processor->mark_exp_region(this->image_processor->face_region);
+	else if(this->waist_shot)
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		
 		this->image_processor->mark_exp_region(this->motion_controller->ref);

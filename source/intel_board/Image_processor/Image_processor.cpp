@@ -548,26 +548,9 @@ uint8_t Image_processor::basic_filter_default()
 	{
 		uint8_t factor = 1;
 		float height_factor = 7.5;
-		cv::Rect rect = face_detect[0];
-
-		//if the face is at the lower section of the image
-		if(rect.y > IMG_CENTER_Y)
-			return 0;
-		
-		this->final_face_detect.push_back(rect);
-
-		rect.x = std::max(rect.x - factor * rect.width,0);
-		if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
-			rect.width = this->current_img.cols - rect.x;
-		else
-			rect.width = rect.width * (factor * 2 + 1);
-
-		if(rect.y + rect.height * height_factor > this->current_img.rows)
-			rect.height = this->current_img.rows - rect.y;
-		else
-			rect.height = ceil(rect.height * height_factor);
-
-		this->final_body_detect.push_back(rect);
+		cv::Rect rect = this->body_by_face(this->face_detect[0]);
+		if(rect != face_detect[0])
+			this->final_body_detect.push_back(rect);
 	}
 	printf("Image_processor::basic_filter_default() exiting\n");
 }
@@ -865,6 +848,15 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 	printf("Image_processor::SIZE_filtering exiting\n");
 }
 
+bool compare_face_x(const cv::Rect &face1, const cv::Rect &face2)
+{
+	return face1.x < face2.x;
+}
+
+bool compare_face_y(const cv::Rect &face1,const cv::Rect &face2)
+{
+	return face1.y < face2.y;
+}
 /*
 	this function works for detecting multiple targets in the scope
 	@params: flags -> still, indicates whether face or body detection is enabled
@@ -879,7 +871,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
 
 	printf("Image_processor::multi_targets_in_scope() running\n");
-	label1:
+	multi_targets_begin:
 	if(!this->capture_image())
 	{
 		printf("Image_processor Error: cannot capture valid image\n");
@@ -902,17 +894,28 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
 		this->skin_img = this->mark_detected_face(this->skin_img,this->face_detect);
 	}
-	
+
+	//ensure that the number of face is at least the expected number	
 	if(face_detect.size() < num)
-		goto label1;
+		goto multi_targets_begin;
 	//run filter designed for multiple people 
 
 	this->multi_targets_filter(num);
 
 	//mark the detected results
 	//this->analyzed_img_filtered is the final detection result image
+	std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_x);
+	size_t size = this->final_face_detect.size();
+	this->face_region.x = this->final_face_detect[0].x;
+	this->face_region.width = (this->final_face_detect[0].x + this->final_face_detect[size - 1].width) - this->final_face_detect[0].x;
+
+	std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_y);
+	this->face_region.y = this->final_face_detect[0].y;
+	this->face_region.height = (this->final_face_detect[size - 1].y + this->final_face_detect[size - 1].height) - this->final_face_detect[0].y;
+	
 	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
+
 	if(this->final_body_detect.size() >= 1)
 	{	
 		printf("Image_processor::multi_target_in_scope() returning\n");
@@ -929,8 +932,41 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	return 0;
 }
 
-
+//num should be used when clustering is available
 uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 {
+	for(size_t count_face = 0;count_face < this->face_detect.size();count_face++)
+	{
+		cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
+		if(rect != this->face_detect[count_face])
+		{
+			this->final_face_detect.push_back(this->face_detect[count_face]);
+			this->final_body_detect.push_back(rect);
+		}
+	}
 	return 0;
+}
+
+cv::Rect Image_processor::body_by_face(const cv::Rect &face)
+{
+	uint8_t factor = 1;
+	float height_factor = 7.5;
+	cv::Rect rect = face;
+	
+	//if the face is at the lower section of the image
+	if(rect.y > IMG_CENTER_Y)
+		return rect;
+	
+	this->final_face_detect.push_back(rect);
+
+	rect.x = std::max(rect.x - factor * rect.width,0);
+	if(rect.x + rect.width * (factor * 2 + 1) > this->current_img.cols)
+		rect.width = this->current_img.cols - rect.x;
+	else
+		rect.width = rect.width * (factor * 2 + 1);
+	if(rect.y + rect.height * height_factor > this->current_img.rows)
+		rect.height = this->current_img.rows - rect.y;
+	else
+		rect.height = ceil(rect.height * height_factor);	
+	return rect;
 }

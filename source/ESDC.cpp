@@ -36,8 +36,10 @@
 #include <signal.h>
 using namespace std;
 
-void exit_routine(int arg);
+void exit_routine(int32_t arg);
 void generate_dir();
+void print_usage_and_exit();
+
 char *glo_PATH_TEMP = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
@@ -45,19 +47,17 @@ int source_mode;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
 uint8_t glo_test_mbed = 0;
+int32_t glo_argc;
+
 intel_board *robot;
 
-int main(int argc, char ** argv) 
+int main(int32_t argc, char ** argv) 
 {
 	/* prints Hello World */
-
+	glo_argc = argc;
 	if(argc<2)
 	{
-		printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
-		printf("Usage: 2./ESDC 1 [mode]for CANON\n");
-		printf("[mode] = 1 or non specified -> normal mode\n");
-		printf("[mode] = 2 -> mbed debugging\n");
-		exit(0);
+		print_usage_and_exit();
 	}
 
 	/*use phone or canon*/
@@ -83,6 +83,14 @@ int main(int argc, char ** argv)
 		{
 			printf("The robot is going to launch as mbed debug mode\n");
 			glo_test_mbed = 1;
+		}
+		else if(mode ==3)
+		{
+			glo_multi_target = 1;
+			if(argc < 4)
+				print_usage_and_exit();
+			else
+				glo_num_target = atoi(argv[3]);
 		}
     }
     else // the user has not set the mode
@@ -126,4 +134,14 @@ void generate_dir()
 		exit(0);
 	}
 	strcat(glo_PATH_TEMP,"/");
+}
+
+void print_usage_and_exit()
+{
+	printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
+	printf("Usage: 2./ESDC 1 [mode]for CANON\n");
+	printf("[mode] = 1 or non specified -> normal mode\n");
+	printf("[mode] = 2 -> mbed debugging\n");
+	printf("[mode] = 3 -> multi targets, please indicates target number in the 3th arguemment\n");
+	exit_routine(glo_argc);
 }
