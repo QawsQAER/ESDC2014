@@ -185,6 +185,11 @@ int Message::receiveACK(int fd)
 		printf("****************************************\n");
 		return 1;
 	}
+	else if(_ACK->starter == BUZZER_STARTER )
+	{
+		if(DEBUG_MODE)printf("Message::BUZZER receiveACK() returning 1.\n");
+		return 1;
+	}
 	printf("int Message::receiveACK(int fd) error: ACK is invalid!\n");
 	return 0;
 }
@@ -332,5 +337,12 @@ void Message::CompassRequest()
 {
 	resetStruct();
 	_IntelCarCmd->action_type = COMPASS_REQUEST;
+	calCheckSum();
+}
+
+void Message::BuzzerRequest()
+{
+	resetStruct();
+	_IntelCarCmd->action_type = BUZZER_REQUEST;
 	calCheckSum();
 }

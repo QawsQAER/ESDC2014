@@ -31,10 +31,14 @@ All the code with this header are under GPL open source license.
 #define CAR_ACTION 0
 #define LIFTER_ACTION 1
 #define CAM_PLATFORM_ACTION 2
+
 #define COMPASS_REQUEST 3
+#define BUZZER_REQUEST 4
 
 #define STARTER 0x7E
 #define COMPASS_STARTER 0x7D
+#define BUZZER_STARTER 0x7F
+
 #define MSG_MAX_ATTEMPT 3
 #define TIMEOUT 5000 
 #define LIFTER_TIMEOUT 15000 //timeout as 10 second
@@ -143,6 +147,7 @@ public:
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
 	void CompassRequest();
+	void BuzzerRequest();
 
 	int32_t car_degree;
 
