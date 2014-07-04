@@ -98,7 +98,7 @@ send_notification  nn
 UI::UI()
 {
 	pattern=undefined;
-	contention();
+	connection();
 }
 
 
@@ -110,7 +110,7 @@ UI::~UI()
 
 
 
-void UI::contention()
+void UI::connection()
 {
 	server_socket = init_server_socket();
 

@@ -201,7 +201,9 @@ void intel_board::robot_get_degree(int32_t *degree,int32_t *dir)
 {
 	Message msg;
 	msg.CompassRequest();
+	printf("intel_board::robot_get_degree() getting degree from car\n");
 	msg.safe_sendMessage(this->motion_controller->Com->fd);
+	printf("intel_board::robot_get_degree() getting degree from phone\n");
 	int32_t phone_degree = ui->update_degree();
 	printf("intel_board::robot_get_degree() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_get_degree() get degree from compass %d\n",msg.car_degree);
@@ -221,12 +223,10 @@ void intel_board::robot_orientation_adjust()
 		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
 		if(degree > ORIENTATION_THRESHOLD)
 		{
-			/*
 			if(dir > 0)
 				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
 			else
 				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
-			*/
 		}
 		else
 		{

@@ -94,7 +94,7 @@ class UI{
 	int read_msg();
 	void send_msg();
 
-	void contention();
+	void connection();
 
 	void send_established();
 	void send_start_ack();
