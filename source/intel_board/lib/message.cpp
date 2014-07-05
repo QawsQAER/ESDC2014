@@ -336,9 +336,11 @@ void Message::CompassRequest()
 	calCheckSum();
 }
 
-void Message::BuzzerRequest()
+void Message::BuzzerRequest(uint8_t type)
 {
 	resetStruct();
 	_IntelCarCmd->action_type = BUZZER_REQUEST;
+	_IntelCarCmd->move_dir = type;
 	calCheckSum();
+
 }

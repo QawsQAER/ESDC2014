@@ -33,11 +33,16 @@ All the code with this header are under GPL open source license.
 #define CAM_PLATFORM_ACTION 2
 
 #define COMPASS_REQUEST 3
+
 #define BUZZER_REQUEST 4
 
 #define STARTER 0x7E
 #define COMPASS_STARTER 0x7D
+
 #define BUZZER_STARTER 0x7C
+#define BUZZER_TARGET_NOT_FOUND 0x01
+#define BUZZER_TAKE_PHOTO 0x02
+
 
 #define MSG_MAX_ATTEMPT 5
 #define TIMEOUT 5000
@@ -147,7 +152,7 @@ public:
 	void CameraPlatformYawCounterClk(uint16_t _degree);
 
 	void CompassRequest();
-	void BuzzerRequest();
+	void BuzzerRequest(uint8_t type);
 
 	int32_t car_degree;
 

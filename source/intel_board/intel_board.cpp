@@ -123,6 +123,7 @@ uint8_t intel_board::main_function()
 				//working on finding the target
 				if(this->robot_find_target())
 				{
+
 					//get the distance according to the face detection result (running four point algorithm)
 					this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
 					this->state = ROBOT_EVALUATE_IMAGE;
@@ -303,6 +304,7 @@ uint8_t intel_board::robot_find_target()
 
 	while(true)
 	{
+
 		int32_t degree = 0,dir = 0;
 		//this->robot_get_degree(&degree,&dir);
 		rv = this->robot_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
@@ -766,14 +768,19 @@ void intel_board::robot_show_image()
 uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	uint8_t rv = 0;
+	Message msg;
+	
+	msg.BuzzerRequest(BUZZER_TAKE_PHOTO);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
 	else
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 	if(rv == 0)
 	{
-		Message msg;
-		msg.BuzzerRequest();
+		
+		msg.BuzzerRequest(BUZZER_TARGET_NOT_FOUND);
 		msg.safe_sendMessage(this->motion_controller->Com->fd);
 	}
 	return rv;
