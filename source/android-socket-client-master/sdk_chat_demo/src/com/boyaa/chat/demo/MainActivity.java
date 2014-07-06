@@ -1,12 +1,20 @@
 package com.boyaa.chat.demo;
 	import android.R.bool;
+
+import com.android.test.ClientSocket;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;  
 import android.content.Context;
 
 import java.net.HttpURLConnection;
 import java.net.URL;  
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -23,6 +31,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -38,6 +47,7 @@ import android.view.KeyEvent;
 import android.view.View.OnClickListener;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
 import android.view.WindowManager;
 import android.widget.EditText;
 
@@ -82,9 +92,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //	private EditText ip;
 	private TextView status;
 	private WebView myWebView;
+	private WebView myWebView2;
 	
-	private String camera_ip="192.168.43.1";
-	private String board_ip="192.168.1.101";
+	 private String savePath = "/mnt/sdcard/intelcup.jpg";  
+	
+	private String camera_ip="192.168.1.101";
+	private String board_ip="192.168.1.100";
 	SoundPool player,play;
 	HashMap<Integer,Integer> soundMap;
 	
@@ -96,6 +109,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	float[] magneticFieldValues = new float[3];
 	private static final String TAG = "sensor";
 
+	int cuhk_logo;
 	int flag;
 	int mode;
 	int viewcount;
@@ -105,6 +119,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	 
 	ImageView imageView;
    
+	   private ClientSocket cs = null;  
+	   
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,7 +129,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 		
 		
-		  
+		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_main);
 		
 
@@ -127,6 +143,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //		ip.setText(board_ip);
 		status.setText("off");
 		
+		cuhk_logo=1;
 		flag=0;
 		mode=0;
 		viewcount=1;
@@ -278,6 +295,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	     
 	      values[0] = (float) Math.toDegrees(values[0]);
 	      degree=(int)values[0];
+	      degree+=90;
 	      if(degree <0)
 	    	  degree = 360+degree;
 	      
@@ -299,7 +317,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //		ip.setText(board_ip);
 		
 		 imageView = (ImageView)findViewById(R.id.image_view);
-		 imageView.setImageResource(R.drawable.cuhk);  
+		 
+		 if(cuhk_logo==1)
+		 {imageView.setImageResource(R.drawable.cuhk);  
+		 
+		 cuhk_logo=0;
+		 }
 
 		 imageView.post(new Runnable(){   
 	        	  
@@ -364,6 +387,65 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		    
 		    
 			
+		    
+		    
+		    myWebView2 = (WebView) findViewById(R.id.webView2);
+			
+			WebSettings setting=myWebView2.getSettings();
+			
+              setting.setJavaScriptEnabled(true);     
+              setting.setPluginState(PluginState.ON);
+              setting.setAllowFileAccess(true);
+              setting.setSupportZoom(true); //可以缩放
+              setting.setBuiltInZoomControls(true); //显示放大缩小 controler                //设置出现缩放工具
+              
+              setting.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+
+              myWebView2.setWebViewClient(new WebViewClient(){  
+                  @Override  
+                  public boolean shouldOverrideUrlLoading(WebView view, String url) {  
+                      view.loadUrl(url);  
+                      return true;  
+                  }  
+              });  
+              
+              
+              myWebView2.addJavascriptInterface(new Object() {         
+                  public void clickOnAndroid() {         
+                      View mHandler = null;
+					mHandler.post(new Runnable() {         
+                          public void run() {         
+                        	  myWebView2.loadUrl("javascript:wave()");         
+                          }         
+                      });         
+                  }         
+              }, "demo"); 
+//			
+              
+//            
+//            	  WebView mWebFlash = (WebView) findViewById(R.id.WebView);
+//            	 WebSettings settings = mWebFlash.getSettings();
+//            	 settings.setPluginState(PluginState.ON);
+//            	 settings.setJavaScriptEnabled(true);
+//            	 settings.setAllowFileAccess(true);
+//            	 settings.setDefaultTextEncodingName("GBK");
+//            	  mWebFlash.setBackgroundColor(0);
+            	String urlweb="http://"+camera_ip.toString()+":8080/jsfs.html";
+//            	  mWebFlash.loadUrl(urlweb);
+//            	 
+//              
+              
+		
+            	myWebView2.loadUrl(urlweb);
+		    
+		    
+		    
+		    
+		    
+        		findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
+
+		    
+		    
 		    
 		    
 		    
@@ -739,8 +821,58 @@ public class MainActivity extends Activity  implements OnTouchListener{
     }
 	
 	
+	private void getMessage() {  
+		
+        if (cs == null)  
+            return;  
+        DataInputStream inputStream = null;  
+        inputStream = cs.getMessageStream();  
+        try {  
+           
+            int bufferSize = 8192;  
+            byte[] buf = new byte[bufferSize];  
+            int passedlen = 0;  
+            long len = 0;  
+              
+            Log.d("AndroidClient","@@@savePath"+savePath);  
+            DataOutputStream fileOut = new DataOutputStream(  
+                    new BufferedOutputStream(new BufferedOutputStream(  
+                            new FileOutputStream(savePath))));  
+//            len = inputStream.readLong();  
+            Log.d("AndoridClient","文件的长度为:"+len);  
+            Log.d("AndroidClient","开始接收文件");  
+            while(true) {  
+                int read = 0;  
+                if (inputStream != null) {  
+                    read = inputStream.read(buf);  
+                }  
+                passedlen += read;  
+                if (read == -1) {  
+                    break;  
+                }  
+//                Log.d("AndroidClient","文件接收了"+(passedlen*100/len)+"%/n");  
+                fileOut.write(buf,0,read);  
+            }  
+            Log.d("AndroidClient","@@@文件接收完成"+savePath);  
+            fileOut.close();  
+        } catch (IOException e) {  
+            // TODO Auto-generated catch block  
+            e.printStackTrace();  
+        }  
+    }  
 	
-	
+   
+    
+    private boolean createConnection() {  
+    	Log.v("before", "before");  
+        cs = new ClientSocket(board_ip, 12315);  
+        Log.v("new", "new"); 
+        
+        cs.createConnection();  
+        
+        Log.v("after", "after");  
+        return true;  
+    }  
 	
 	private ISocketResponse socketListener=new ISocketResponse() {
 		
@@ -763,8 +895,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("sm"))
 					{
 						status.setText("start");
+						
 						flag=3;
 						initView();
+		        		findViewById(R.id.webView2).setVisibility(View.VISIBLE);
+		        		findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
 					}
 					
 					//fetch degree notice
@@ -937,56 +1072,67 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("lift right");
 					}
 					*/
-					
-					
-				else if(txt.equals("fa"))
+					else if(txt.equals("nn"))
 					{
 					player.play(soundMap.get(1), 1, 1, 10,0, 1);
-					if(viewcount==1){
-					status.setText("finished_ack");
-					
-					
-					
-					try {
-						Thread.currentThread();
-						Thread.sleep(2000);
-					} catch (InterruptedException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
+					findViewById(R.id.comfrim).setVisibility(View.VISIBLE);
 					}
 					
 					
+					else if(txt.equals("fa"))
+					{
+					
+						if(viewcount==1)
+						{
+							status.setText("finished_ack");
+							
+							findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
+		
+//							
+//							try {
+//								Thread.currentThread();
+//								Thread.sleep(2000);
+//							} catch (InterruptedException e) {
+//								// TODO Auto-generated catch block
+//								e.printStackTrace();
+//							}
 					
 					
-				    
-				    SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd_HH-mm");
-			
-				    Log.v("url",dateformat.format(new Date()).toString());
-				  String urlStr  =  "http://"+camera_ip.toString()+":8080/v/photo/photo_"+dateformat.format(new Date()).toString()+".jpg";
-//				  System.out.println(urlStr); 
-				  //	"http://192.168.43.1:8080/photoaf.jpg";
-				  
-				    
-//				    String urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
-				    Log.v("url",urlStr);
-				 Bitmap bitmap = getHttpBitmap(urlStr);
-				 
-				 if(bitmap==null)
-				 {
-					 urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
-					 bitmap = getHttpBitmap(urlStr);
-				 }
-				 
-					 imageView.setImageBitmap(bitmap);
-					 
-					 
-					 
-//					 saveBitmap(bitmap);
-					 
-				}
+//							SystemClock.sleep(1);
+							  if (createConnection()) {  
+						            getMessage();  
+						        }  
+							Bitmap bitmap = getLoacalBitmap(savePath);
+								    
+//								    SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd_HH-mm");
+//							
+//								    Log.v("url",dateformat.format(new Date()).toString());
+//								  String urlStr  =  "http://"+camera_ip.toString()+":8080/v/photo/photo_"+dateformat.format(new Date()).toString()+".jpg";
+//				//				  System.out.println(urlStr); 
+//								  //	"http://192.168.43.1:8080/photoaf.jpg";
+//								  
+//								    
+//				//				    String urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
+//								    Log.v("url",urlStr);
+//								 Bitmap bitmap = getHttpBitmap(urlStr);
+//								 
+//								 if(bitmap==null)
+//								 {
+//									 urlStr  ="http://"+camera_ip.toString()+":8080/photoaf.jpg";
+//									 bitmap = getHttpBitmap(urlStr);
+//								 }
+								 
+									 imageView.setImageBitmap(bitmap);
+									 
+									 
+//									 SystemClock.sleep(4);		 
+				//					 saveBitmap(bitmap);
+									 
+							}
 				
-					
-				}
+						
+						
+					}
 				}
 			});
 		}
@@ -1022,6 +1168,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 				case R.id.start:	
 					packet.pack("sm");
 					user.send(packet);
+					
 					break;
 					
 				
@@ -1400,7 +1547,16 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	}
 	
 	
-	
+	   public static Bitmap getLoacalBitmap(String url) {
+	         try {
+	              FileInputStream fis = new FileInputStream(url);
+	              return BitmapFactory.decodeStream(fis);  ///把流转化为Bitmap图片        
+
+	           } catch (FileNotFoundException e) {
+	              e.printStackTrace();
+	              return null;
+	         }
+	    }
 	public void saveBitmap( Bitmap bitmap) {
 		String picName="pic.JPG";
 		  File f = new File("/sdcard/DCIM/intelcup/", picName);

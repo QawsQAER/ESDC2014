@@ -85,7 +85,6 @@ public class Client {
 	
 	public Client(Context context,ISocketResponse respListener)
 	{
-		this.context=context;
 		this.respListener=respListener;
 	}
 	
@@ -350,13 +349,13 @@ Log.v(TAG,"Send ::End");
 	private class Rec implements Runnable
 	{
 		public void run() {
-Log.v(TAG,"Rec :Start");
+			Log.v(TAG,"Rec :Start");
 			
 			try {
 				
 				while(state!=STATE_CLOSE&&((state==99)||(state==STATE_CONNECT_SUCCESS))&&null!=inStream)
 					{
-Log.v(TAG,"Rec :---------");
+							Log.v(TAG,"Rec :---------");
 							int num=2;
 							byte[] bodyBytes=new byte[num];
 							int offset=0;

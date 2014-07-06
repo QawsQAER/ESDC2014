@@ -22,12 +22,14 @@
                     android:id="@+id/Back"
                     android:layout_width="84dp"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.59"
                     android:text="Back" />
 
                 <TextView
                     android:id="@+id/text_car"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_weight="0.64"
                     android:ems="10"
                     android:gravity="center"
                     android:hint="car"
@@ -70,8 +72,8 @@
 
                     <TextView
                         android:id="@+id/text_lift"
-                        android:layout_width="42dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="65dp"
+                        android:layout_height="match_parent"
                         android:ems="10"
                         android:gravity="center"
                         android:hint="lift"
@@ -91,8 +93,8 @@
 
                     <TextView
                         android:id="@+id/text_camera"
-                        android:layout_width="100dp"
-                        android:layout_height="wrap_content"
+                        android:layout_width="87dp"
+                        android:layout_height="match_parent"
                         android:ems="10"
                         android:gravity="center"
                         android:hint="camera"
@@ -125,8 +127,8 @@
 
                 <WebView
                     android:id="@+id/WebView"
-                    android:layout_width="469dp"
-                    android:layout_height="match_parent"
+                    android:layout_width="match_parent"
+                    android:layout_height="275dp"
                     android:src="@drawable/ic_cu" />
             </LinearLayout>
         </LinearLayout>

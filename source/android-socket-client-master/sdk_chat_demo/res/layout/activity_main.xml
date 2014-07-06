@@ -28,7 +28,7 @@
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5.0dp"
-                android:layout_weight="0.46"
+                android:layout_weight="0.25"
                 android:text="CONN" />
 
             <FrameLayout
@@ -47,7 +47,7 @@
                 <Button
                     android:id="@+id/compass"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_marginTop="5.0dp"
                     android:layout_weight="0.89"
                     android:text="compass" />
@@ -217,21 +217,33 @@
                 <Button
                     android:id="@+id/pattern4"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="34dp"
                     android:text="pattern4" />
 
                 <Button
                     android:id="@+id/pdiy"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="32dp"
                     android:text="DIY" />
+
             </LinearLayout>
 
-            <ImageView
-                android:id="@+id/image_view"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:src="@drawable/cuhk" />
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" >
+
+                <ImageView
+                    android:id="@+id/image_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@drawable/cuhk" />
+
+                <WebView
+                    android:id="@+id/webView2"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+
+            </FrameLayout>
         </LinearLayout>
 
     </LinearLayout>
