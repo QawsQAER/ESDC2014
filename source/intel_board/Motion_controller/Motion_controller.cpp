@@ -136,6 +136,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	
 	uint8_t flag_done_centering = 0;
+	uint8_t flag_done_zooming = 0;
 	if(!(*this->waist_shot))
 	{
 		//if not taking waist shot
@@ -143,17 +144,22 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		{
 			//doing centering
 			this->centering(detect,face);
-			flag_done_centering = 1;
-		}	
+			flag_done_centering = 0;
+		}
+		else
+			flag_done_centering = 1;	
 		
 		if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming
 			return this->zoom_in_out(detect,distance);
 		}
-		else if(flag_done_centering)
+		else if(flag_done_centering == 0)
 			return EVAL_CENTERING;
-		else if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y)
+		else
+			flag_done_zooming = 1;
+
+		if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y || (flag_done_centering && flag_done_zooming))
 		{
 			this->adjusting(detect);
 			return EVAL_ADJUSTING;
@@ -162,6 +168,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	else
 	{
 		uint8_t flag_done_centering = 0;
+		uint8_t flag_done_zooming = 0;
 		//if taking waist shot
 		diff_y = face.height - this->face_ref.height;
 
@@ -171,14 +178,19 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			this->centering_by_face(face);
 			flag_done_centering = 0;
 		}
+		else
+			flag_done_centering = 1;
 		
 		if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			return this->zoom_in_out_by_face(face,distance);
-		}else if(flag_done_centering)
+		}else if(flag_done_centering == 0)
 			return EVAL_CENTERING;
-		else if(flag_done_centering == 0)
+		else
+			flag_done_zooming = 1;
+
+		if(flag_done_centering && flag_done_zooming)
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
@@ -754,7 +766,12 @@ void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 void Motion_controller::Buzzer(const uint8_t &type)
 {
 	Message msg;
-	msg.BuzzerRequest(BUZZER_TAKE_PHOTO);
+	msg.BuzzerRequest(type);
 	msg.safe_sendMessage(this->Com->fd);
+	return ;
+}
+
+void Motion_controller::platform_init()
+{
 	return ;
 }

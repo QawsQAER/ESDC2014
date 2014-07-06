@@ -353,7 +353,14 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 		cv::Size(IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX));
 	printf("Image_processor::run_face_detection: detect %lu faces\n",face_detect.size());
 
+	this->skin_filter();
+
+	printf("Image_processor::run_face_detection: detect %lu faces after skin filter\n",face_detect.size());
 	//TODO: use color detection to filtered out the non-human color face
+	return 1;
+}
+void Image_processor::skin_filter()
+{
 	std::vector<cv::Rect> tmp(face_detect);
 	face_detect.clear();
 	for(size_t count = 0;count < tmp.size();count++)
@@ -364,7 +371,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 			face_detect.push_back(tmp[count]);
 		}
 	}
-	return 1;
+	return ;
 }
 
 cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
@@ -425,8 +432,8 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 	cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 	cv::moveWindow(this->winname,0,0);
 	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
-	//cv::imshow(this->winname,concat_image);
-	cv::imshow(this->winname,this->analyzed_img_filtered);
+	cv::imshow(this->winname,concat_image);
+	//cv::imshow(this->winname,this->analyzed_img_filtered);
 	this->save_current_image(task_counter);
 	//printf("Image_processor::show_analyzed_img() showing skin_img\n");
 	//cv::imshow(this->skinwin,this->skin_img);
@@ -712,7 +719,6 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	{
 		this->run_face_detection(this->current_img,this->face_detect);
 		this->analyzed_img = this->mark_detected_face(this->analyzed_img,this->face_detect);
-		this->skin_img = this->mark_detected_face(this->skin_img,this->face_detect);
 	}
 	
 

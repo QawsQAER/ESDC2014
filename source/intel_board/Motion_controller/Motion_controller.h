@@ -124,7 +124,12 @@ public:
 	void reset_lifter();
 	void set_lifter(const uint16_t &mm);
 	void lift(const uint16_t &mm, const uint8_t &dir);
+
+	//Buzzer related functions
 	void Buzzer(const uint8_t &type);
+
+	//Platform related functions
+	void Platform_init();
 };
 
 #endif

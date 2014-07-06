@@ -61,7 +61,7 @@ int main(int32_t argc, char ** argv)
 	}
 
 	/*use phone or canon*/
-	source_mode=atoi(argv[1]);
+	source_mode = atoi(argv[1]);
 
 	cout << "Hello Intel ESDC" << endl;
 	/*
