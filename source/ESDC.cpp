@@ -61,7 +61,7 @@ int main(int32_t argc, char ** argv)
 	}
 
 	/*use phone or canon*/
-	source_mode=atoi(argv[1]);
+	source_mode = atoi(argv[1]);
 
 	cout << "Hello Intel ESDC" << endl;
 	/*
@@ -84,7 +84,7 @@ int main(int32_t argc, char ** argv)
 			printf("The robot is going to launch as mbed debug mode\n");
 			glo_test_mbed = 1;
 		}
-		else if(mode ==3)
+		else if(mode == 3)
 		{
 			glo_multi_target = 1;
 			if(argc < 4)

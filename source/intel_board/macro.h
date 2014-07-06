@@ -158,7 +158,7 @@ enum Direction{
 #define IMG_Cr_MIN 133
 #define IMG_Cr_MAX 173
 #define IMG_Cb_MIN 77
-#define IMG_Cb_MAX 127
+#define IMG_Cb_MAX 140
 
 //body related
 #define IMG_EXP_DIS 4887.5
@@ -199,7 +199,7 @@ enum Direction{
 #define LIFTER_INIT_POS 100
 #define LIFTER_SEG 50
 
-#define ORIENTATION_THRESHOLD 999
+#define ORIENTATION_THRESHOLD 10
 
 #endif
 // 27828986

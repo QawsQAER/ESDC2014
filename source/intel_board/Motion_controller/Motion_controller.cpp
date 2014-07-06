@@ -35,7 +35,12 @@ Motion_controller::Motion_controller()
 {
 	printf("Motion_controller(): Constructing new Motion_controller\n");
 
+
+	//initialize the states value
 	this->lifter_pos = 0;
+	this->car_orientation = 0;
+	this->car_original_orientation = 0;
+	this->phone_orientation = 0;
 	//initialize threshold value
 	this->threshold_x = IMG_HORI_THRESHOLD;
 	this->threshold_y = IMG_VERT_THRESHOLD;
@@ -135,19 +140,31 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	
+	uint8_t flag_done_centering = 0;
+	uint8_t flag_done_zooming = 0;
 	if(!(*this->waist_shot))
 	{
 		//if not taking waist shot
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
+			//doing centering
 			this->centering(detect,face);
-			return EVAL_CENTERING;
-		}	
-		else if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
+			flag_done_centering = 0;
+		}
+		else
+			flag_done_centering = 1;	
+		
+		if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
 		{
+			//doing zooming
 			return this->zoom_in_out(detect,distance);
 		}
-		else if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y)
+		else if(flag_done_centering == 0)
+			return EVAL_CENTERING;
+		else
+			flag_done_zooming = 1;
+
+		if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y || (flag_done_centering && flag_done_zooming))
 		{
 			this->adjusting(detect);
 			return EVAL_ADJUSTING;
@@ -155,6 +172,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	}
 	else
 	{
+		uint8_t flag_done_centering = 0;
+		uint8_t flag_done_zooming = 0;
 		//if taking waist shot
 		diff_y = face.height - this->face_ref.height;
 
@@ -162,14 +181,21 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		{
 			//this->centering(detect,face);
 			this->centering_by_face(face);
-			return EVAL_CENTERING;
+			flag_done_centering = 0;
 		}
-		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
+		else
+			flag_done_centering = 1;
+		
+		if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			return this->zoom_in_out_by_face(face,distance);
-		}
-		else if(true)
+		}else if(flag_done_centering == 0)
+			return EVAL_CENTERING;
+		else
+			flag_done_zooming = 1;
+
+		if(flag_done_centering && flag_done_zooming)
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
@@ -722,22 +748,293 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	return ;
 }
 
-void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
+int8_t Motion_controller::orientation_adjust(const uint16_t &phone_ori)
 {
-	Message msg;
-	if(dir == 0)
+	uint16_t exp_orientation = phone_ori + 180;
+	
+	if(exp_orientation >= 360)
 	{
-		msg.CarRotateRightDegree(degree);
+		exp_orientation-=360;
+	}
+
+	int32_t car_degree = (int32_t) this->car_orientation;
+	int32_t phone_degree = (int32_t) phone_ori;
+	int32_t degree = 0, dir = 0;
+	degree_rotation(car_degree,phone_degree,&degree,&dir);
+
+	if(degree > ORIENTATION_THRESHOLD)
+	{	
+		if(dir > 0)
+			this->rotate((uint16_t)degree,CAR_ROTATE_RIGHT);
+		else
+			this->rotate((uint16_t)degree,CAR_ROTATE_LEFT);
+		return 1;
 	}
 	else
+		return 0;
+}
+
+void Motion_controller::set_initial_car_orientation(const uint16_t &car_ori)
+{
+	printf("Motion_controller::setting initial car orientation as %u\n",car_ori);
+	uint16_t initial_ori = car_ori + 180;
+	if(initial_ori >= 360)
 	{
+		initial_ori-=360;
+	}
+
+	this->car_orientation = initial_ori;
+	this->car_original_orientation = initial_ori;
+}
+
+void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
+{
+	int16_t target_degree = dir ? this->car_orientation - degree : this->car_orientation + degree;
+	printf("Motion_controller::rotate start with degree %u, rotate %u, ",this->car_orientation,degree);
+
+	if(target_degree >= 360)
+		this->car_orientation = target_degree - 360;
+	else if(target_degree < 0)
+		this->car_orientation = target_degree + 360;
+	else 
+		this->car_orientation = target_degree;
+
+	Message msg;
+	if(dir == CAR_ROTATE_RIGHT)
+	{
+		printf("right ");
+		msg.CarRotateRightDegree(degree);
+	}
+	else if(dir == CAR_ROTATE_LEFT)
+	{
+		printf("left ");
 		msg.CarRotateLeftDegree(degree);
 	}
-	while(msg.safe_sendMessage(this->Com->fd) < 0)
-		;
+	printf("to be %u\n",this->car_orientation);
+
+	msg.safe_sendMessage(this->Com->fd);
 	return ;
 }
 
 /*MOVEMENT FUNCTION END*/
 /*MOVEMENT FUNCTION END*/
 /*MOVEMENT FUNCTION END*/
+
+void Motion_controller::buzzer(const uint8_t &type)
+{
+	Message msg;
+	msg.BuzzerRequest(type);
+	msg.safe_sendMessage(this->Com->fd);
+	return ;
+}
+
+void Motion_controller::platform_init()
+{
+	return ;
+}
+
+
+
+void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *direction)
+{
+	Direction phone_angle=null;
+	Direction car_angle=null;
+
+	int32_t rotate_degree=0;//postive means clockwise
+
+	if(phone<=90)
+		phone_angle=LOWER_LEFT;
+	else if(phone<=180)
+		phone_angle=UPPER_LEFT;
+	else if(phone<=270)
+		phone_angle=UPPER_RIGHT;
+	else 
+		phone_angle=LOWER_RIGHT;
+
+
+	if(car<=90)
+		car_angle=LOWER_LEFT;
+	else if(car<=180)
+		car_angle=UPPER_LEFT;
+	else if(car<=270)
+		car_angle=UPPER_RIGHT;
+	else 
+		car_angle=LOWER_RIGHT;
+
+
+		switch(car_angle)
+		{
+			case UPPER_LEFT:
+			if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=180-car;
+				int32_t temp_phone=360-phone;
+				rotate_degree=temp_car-temp_phone;
+				break;
+			}
+			else if(phone_angle==LOWER_LEFT)
+			{
+
+				rotate_degree=(180-car)+phone;
+				break;
+			}
+
+			else if(phone_angle==UPPER_LEFT)
+			{
+
+				rotate_degree=360-((180-phone)+car);
+				break;
+			}
+			else
+			{
+
+				rotate_degree=360-(car-(phone-180));
+				break;
+			}
+
+			case UPPER_RIGHT:
+
+			if(phone_angle==LOWER_LEFT)
+			{
+				int32_t temp_car=car-180;
+				int32_t temp_phone=phone;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==UPPER_LEFT)
+			{
+
+				int32_t temp_car=270-car;
+				int32_t temp_phone=phone-90;
+				rotate_degree=temp_phone+temp_car;
+				break;
+			}
+			else if(phone_angle==UPPER_RIGHT)
+			{
+
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone-180;/*int32_t temp_phone=phone is wrong*/
+				rotate_degree=temp_phone+temp_car;
+				break;
+			}
+			else
+			{
+
+				int32_t temp_car=car-180;
+				int32_t temp_phone=360-phone;
+				rotate_degree=360-(temp_phone+temp_car);
+				break;
+			}
+
+			case LOWER_LEFT:
+			if(phone_angle==UPPER_RIGHT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=phone-180;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180-(360-phone);
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+			else if(phone_angle==LOWER_LEFT)
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180+phone;
+				rotate_degree=temp_phone-temp_car;
+				break;
+			}
+
+			else 
+			{
+				int32_t temp_car=car;
+				int32_t temp_phone=180-phone;
+				rotate_degree=360-(temp_phone+temp_car);
+				break;
+			}
+
+			case LOWER_RIGHT:
+			if(phone_angle==UPPER_LEFT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=180-phone;
+				rotate_degree=temp_car-temp_phone;
+				break;
+			}
+			else if(phone_angle==UPPER_RIGHT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone-180;
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+			else if(phone_angle==LOWER_RIGHT)
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=180-(360-phone);
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+			else
+			{
+				int32_t temp_car=360-car;
+				int32_t temp_phone=phone+180;
+				rotate_degree=temp_car+temp_phone;
+				break;
+			}
+
+
+		}//end switch
+
+
+	if((rotate_degree>=0)&&(rotate_degree<=180))
+ 	{
+ 			*degree=rotate_degree;
+ 			*direction=1;
+ 	}
+ 	else if((rotate_degree>=180)&&(rotate_degree<=360))
+ 	{
+ 		*degree=360-rotate_degree;
+ 		*direction=-1;
+ 	}
+ 	else if((rotate_degree>=-360)&&(rotate_degree<=-180))
+ 	{
+ 		*degree=360-abs(rotate_degree);
+ 		*direction=1;
+ 	}
+ 	else if((rotate_degree>=-180)&&(rotate_degree<=0))
+ 	{
+ 		*degree=abs(rotate_degree);
+ 		*direction=-1;
+ 	}
+
+
+/*
+ 		int temp=180-car+phone;
+ 		if(temp<0)
+ 		{
+ 			*degree=abs(temp);
+ 			*direction=-1;
+ 		}
+ 		else if (temp<180)
+ 		{
+ 			*degree=temp;
+ 			*direction=1;
+ 		}
+ 		else if (temp<360)
+ 		{
+ 			*degree=360-temp;
+ 			*direction=-1;
+ 		}
+ 		else if (temp<540)
+ 		{
+ 			*degree=temp-360;
+ 			*direction=1;
+ 		}
+*/
+
+}//end void

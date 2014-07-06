@@ -156,6 +156,7 @@ public:
 	uint8_t basic_filter_with_degree(const int32_t &degree, const int32_t &dir);
 	uint8_t basic_filter_with_memory();
 
+	void skin_filter(const cv::Mat &source_img);
 	uint8_t multi_targets_filter(const uint8_t &num);
 	//-------------------------------//
 	uint8_t find_body_according_to_face(const cv::Mat &source_img,
