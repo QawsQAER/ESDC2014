@@ -135,18 +135,24 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	
+	uint8_t flag_done_centering = 0;
 	if(!(*this->waist_shot))
 	{
 		//if not taking waist shot
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
+			//doing centering
 			this->centering(detect,face);
-			return EVAL_CENTERING;
+			flag_done_centering = 1;
 		}	
-		else if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
+		
+		if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
 		{
+			//doing zooming
 			return this->zoom_in_out(detect,distance);
 		}
+		else if(flag_done_centering)
+			return EVAL_CENTERING;
 		else if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y)
 		{
 			this->adjusting(detect);
@@ -155,6 +161,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	}
 	else
 	{
+		uint8_t flag_done_centering = 0;
 		//if taking waist shot
 		diff_y = face.height - this->face_ref.height;
 
@@ -162,14 +169,16 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		{
 			//this->centering(detect,face);
 			this->centering_by_face(face);
-			return EVAL_CENTERING;
+			flag_done_centering = 0;
 		}
-		else if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
+		
+		if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			return this->zoom_in_out_by_face(face,distance);
-		}
-		else if(true)
+		}else if(flag_done_centering)
+			return EVAL_CENTERING;
+		else if(flag_done_centering == 0)
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
