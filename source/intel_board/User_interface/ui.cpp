@@ -314,7 +314,7 @@ void UI::send_msg()
 
 
 
-void UI::send_finished_ack()
+void UI::old_send_finished_ack()
 {
 	memset(msg_code,0,MESSAGELENGTH);
 	char temp[]="fa";
@@ -912,40 +912,63 @@ int UI::init_server_socket(){
 }
 
 
- void UI::file_transfer(char *file_name_parameter)
+ void UI::send_finished_ack(char *file_name_parameter)
  {
  			printf("--------------------------------------------\n");
  			printf("Enter file_transfer \n");
-		 	int transfer_sd = socket(AF_INET,SOCK_STREAM,0);
+
+		 	
+ 			/*set up server*/
+			printf("set up server for file transfering\n");
+			 transfer_sd = socket(AF_INET,SOCK_STREAM,0);
 			if(transfer_sd == -1)
 			{
 				perror("UI::transfer_sd: socket error:");
 				exit(-1);
 			}
-			struct sockaddr_in server_addr;
+
+			struct sockaddr_in transfer_server_addr;
 
 			long val=1;
 			if(setsockopt(transfer_sd,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
 				perror("setsockopt");
 				exit(1);
 			}
-			memset(&server_addr,0,sizeof(server_addr));
 
-			server_addr.sin_family=AF_INET;
-			server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-			server_addr.sin_port=htons(TRANSFER_PORT);
+			memset(&transfer_server_addr,0,sizeof(transfer_server_addr));
+
+			transfer_server_addr.sin_family=AF_INET;
+			transfer_server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
+			transfer_server_addr.sin_port=htons(TRANSFER_PORT);
 			
-			if(bind(transfer_sd,(struct sockaddr *) &server_addr,sizeof(server_addr))<0){
+			printf("before bind\n");
+			if(bind(transfer_sd,(struct sockaddr *) &transfer_server_addr,sizeof(transfer_server_addr))<0){
 				printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
 				exit(0);
 			}
 			
+			printf("before listen\n");
 			if(listen(transfer_sd,1)<0){
 				printf("listen error: %s (Errno:%d)\n",strerror(errno),errno);
 				exit(0);
 			}
 
+			printf("file transfering Standby\n");
+			
+				
+			
 
+			struct sockaddr_in transfer_client_addr;
+			socklen_t addr_len=sizeof(struct sockaddr_in);
+
+				// printf("before accept client\n");
+			old_send_finished_ack();
+			printf("before accept\n");
+			if((transfer_client_sd=accept(transfer_sd,(struct sockaddr *) &transfer_client_addr,&addr_len))<0)
+			{
+				printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
+				exit(0);
+			}
 
 
 			printf("conneted... start transfering\n");
@@ -972,7 +995,7 @@ int UI::init_server_socket(){
                 printf("file_block_length = %d\n", file_block_length); 
   
                 // 发送buffer中的字符串到new_server_socket,实际上就是发送给客户端 
-                if (send(client_sd, buffer, file_block_length, 0) < 0) 
+                if (send(transfer_client_sd, buffer, file_block_length, 0) < 0) 
                 { 
                     printf("Send File:\t%s Failed!\n", file_name); 
                     break; 
@@ -990,7 +1013,7 @@ int UI::init_server_socket(){
             printf("File:\t%s Transfer Finished!\n", file_name); 
         } 
 
-
+        close(transfer_client_sd);
         printf("Leave file_transfer \n");
         printf("--------------------------------------------\n");
 

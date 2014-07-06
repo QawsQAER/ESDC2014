@@ -245,6 +245,7 @@ void intel_board::robot_orientation_adjust()
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
+
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	this->robot_orientation_adjust();
@@ -502,8 +503,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	this->robot_show_image();
 	
-	this->ui->send_finished_ack();
-	ui->file_transfer(this->image_processor->current_img_path);
+	this->ui->send_finished_ack(this->image_processor->current_img_path);
+
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 	return 1;

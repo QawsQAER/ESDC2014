@@ -5,7 +5,7 @@
 
 
 #define UI_PORT 60000
-#define TRANSFER_PORT 60001
+#define TRANSFER_PORT 12315
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
 #define COMPASSLENGTH 
@@ -65,7 +65,7 @@ class UI{
 
 
 	//use this when the car finish moving by itself
-	void send_finished_ack();
+	void old_send_finished_ack();
 	void send_notification();
 
 	
@@ -77,7 +77,7 @@ class UI{
 	int ratioheight;
 
 	
-	void file_transfer(char *file_name_parameter);
+	void send_finished_ack(char *file_name_parameter);
 
 
 	char buffer[BUFFER_SIZE]; 
@@ -92,6 +92,9 @@ class UI{
 
 	int server_socket;
 	int client_sd;
+
+	int transfer_sd;
+	int transfer_client_sd;
 
 
 	void diy_data();
