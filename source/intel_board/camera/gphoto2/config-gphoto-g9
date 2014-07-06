@@ -156,7 +156,7 @@ Choice: 2 AV
 Choice: 3 Manual
 
 /main/capturesettings/aperture
-Label: Aperture                                                                
+Label: Aperture(guang quan)                                                                
 Type: RADIO
 Current: 4
 Choice: 0 auto

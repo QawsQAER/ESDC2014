@@ -139,7 +139,7 @@ string Camera::photo_af()
     else if  (mode==CANON)
 
 
-        {  gphoto_cmd="gphoto2 --capture-image-and-download --filename "+path_temp_function; //640*480
+        {  gphoto_cmd="gphoto2 --capture-image-and-download --no-keep --filename "+path_temp_function; //640*480
                   My_popen(gphoto_cmd);
         
                 return path_temp_function;}
@@ -187,7 +187,7 @@ string Camera::photo_frame()
      else if(mode==CANON)
 
 
-         { gphoto_cmd="gphoto2 --capture-image-and-download --filename "+path_temp_function; //640*480
+         { gphoto_cmd="gphoto2 --capture-image-and-download --no-keep --filename "+path_temp_function; //640*480
                    My_popen(gphoto_cmd);
          
                  return path_temp_function;}
@@ -403,7 +403,7 @@ void Camera::save_photo_af()
             My_popen(gphoto_cmd);
      
             /*capture and keep*/
-            gphoto_cmd="gphoto2 --keep --capture-image-and-download"; 
+            gphoto_cmd="gphoto2 --no-keep --capture-image-and-download"; 
             My_popen(gphoto_cmd);
       }
         else
@@ -584,18 +584,35 @@ int my_itoa(int val, char* buf)
 
 void Camera::init_canon()
 {
-            /*1.set imagesize=640*480*/
-           gphoto_cmd="gphoto2 --set-config d008=2"; //640*480
+
+
+            /*0.turn on camera*/
+            gphoto_cmd="gphoto2 --capture-image";
             My_popen(gphoto_cmd);
 
+            /*1.set imagesize=640*480*/
+            gphoto_cmd="gphoto2 --set-config d008=2"; //640*480
+            My_popen(gphoto_cmd);
 
             /*2.set zoom=normal*/
             gphoto_cmd="gphoto2 --set-config d02a=0";
-             
             My_popen(gphoto_cmd);
 
              /*3.set light=off*/
             flash_close();
+
+            /*4.set iso=auto*/
+            gphoto_cmd="gphoto2 --set-config iso=0";
+            My_popen(gphoto_cmd);
+
+
+            /*5.set imagequality=normal*/
+            gphoto_cmd="gphoto2 --set-config imagequality=2";
+            My_popen(gphoto_cmd);
+            
+            /*6.set imagesize=Small*/
+            gphoto_cmd="gphoto2 --set-config imagesize=4";
+            My_popen(gphoto_cmd);
 
 
 }
