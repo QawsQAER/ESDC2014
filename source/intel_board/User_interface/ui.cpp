@@ -914,11 +914,49 @@ int UI::init_server_socket(){
 
  void UI::file_transfer(char *file_name_parameter)
  {
+ 			printf("--------------------------------------------\n");
+ 			printf("Enter file_transfer \n");
+		 	int transfer_sd = socket(AF_INET,SOCK_STREAM,0);
+			if(transfer_sd == -1)
+			{
+				perror("UI::transfer_sd: socket error:");
+				exit(-1);
+			}
+			struct sockaddr_in server_addr;
+
+			long val=1;
+			if(setsockopt(transfer_sd,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
+				perror("setsockopt");
+				exit(1);
+			}
+			memset(&server_addr,0,sizeof(server_addr));
+
+			server_addr.sin_family=AF_INET;
+			server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
+			server_addr.sin_port=htons(TRANSFER_PORT);
+			
+			if(bind(transfer_sd,(struct sockaddr *) &server_addr,sizeof(server_addr))<0){
+				printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
+				exit(0);
+			}
+			
+			if(listen(transfer_sd,1)<0){
+				printf("listen error: %s (Errno:%d)\n",strerror(errno),errno);
+				exit(0);
+			}
+
+
+
+
+			printf("conneted... start transfering\n");
+
+
+
   		char file_name[MAX_SIZE + 1]; 
         memset(file_name,0,sizeof(file_name)); 
         strcpy(file_name,file_name_parameter); 
         strncpy(file_name, buffer, 
-                strlen(buffer) > MAX_SIZE ? MAX_SIZE : strlen(buffer)); 
+        strlen(buffer) > MAX_SIZE ? MAX_SIZE : strlen(buffer)); 
   
         FILE *fp = fopen(file_name, "r"); 
         if (fp == NULL) 
@@ -942,7 +980,18 @@ int UI::init_server_socket(){
   
                 memset(buffer,0,sizeof(buffer)); 
             } 
-            fclose(fp); 
+
+            if(fclose(fp))      
+            {         
+            	printf("file close error\n");        
+            	exit(1);      
+    		} 
+
             printf("File:\t%s Transfer Finished!\n", file_name); 
         } 
+
+
+        printf("Leave file_transfer \n");
+        printf("--------------------------------------------\n");
+
  }
