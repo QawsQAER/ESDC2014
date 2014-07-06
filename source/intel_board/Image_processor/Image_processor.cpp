@@ -679,7 +679,8 @@ uint8_t Image_processor::find_body_in_roi(const cv::Mat &source_img,const cv::Re
 */
 int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,int32_t dir)
 {
-	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
+	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT);
+	enable_face_detect = 0;
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
 	uint8_t enable_side_filtering = ((flags & ENABLE_SIDE_FILTERING) == ENABLE_SIDE_FILTERING);
 	uint8_t enable_size_filtering_small = ((flags & ENABLE_SIZE_FILTERING_SMALL) == ENABLE_SIZE_FILTERING_SMALL);
