@@ -832,7 +832,7 @@ int UI::init_server_socket(){
 		exit(0);
 	}
 	
-	if(listen(sd,10)<0){
+	if(listen(sd,1)<0){
 		printf("listen error: %s (Errno:%d)\n",strerror(errno),errno);
 		exit(0);
 	}
