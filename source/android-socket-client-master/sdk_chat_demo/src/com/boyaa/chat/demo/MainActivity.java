@@ -1,16 +1,5 @@
 package com.boyaa.chat.demo;
-	import android.R.bool;
-
-import com.android.test.ClientSocket;
-
-import android.annotation.SuppressLint;
-import android.app.Activity;  
-import android.content.Context;
-
-import java.net.HttpURLConnection;
-import java.net.URL;  
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
+	import java.io.BufferedOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.File;
@@ -18,12 +7,24 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;  
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff.Mode;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
+import android.graphics.RectF;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -31,10 +32,15 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.view.View.OnTouchListener;
+import android.view.ViewGroup.LayoutParams;
+import android.view.Window;
+import android.view.WindowManager;
 import android.webkit.WebSettings;
 import android.webkit.WebSettings.LayoutAlgorithm;
 import android.webkit.WebSettings.PluginState;
@@ -43,24 +49,13 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.view.KeyEvent;
-import android.view.View.OnClickListener;
-import android.view.View.OnTouchListener;
-import android.view.ViewGroup.LayoutParams;
-import android.view.Window;
-import android.view.WindowManager;
-import android.widget.EditText;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-
+import com.android.test.ClientSocket;
 import com.boyaa.chat.R;
 import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
 import com.view.MyView;
-
 
 
 
@@ -305,7 +300,29 @@ public class MainActivity extends Activity  implements OnTouchListener{
 
 	    }
 	
-	     
+	   public static Bitmap getRoundCornerImage(Bitmap bitmap, int roundPixels)
+	    {
+	        //创建一个和原始图片一样大小位图
+	        Bitmap roundConcerImage = Bitmap.createBitmap(bitmap.getWidth(),
+	                bitmap.getHeight(), Config.ARGB_8888);
+	        //创建带有位图roundConcerImage的画布
+	        Canvas canvas = new Canvas(roundConcerImage);
+	        //创建画笔
+	        Paint paint = new Paint();
+	        //创建一个和原始图片一样大小的矩形
+	        Rect rect = new Rect(0, 0, bitmap.getWidth(), bitmap.getHeight());
+	        RectF rectF = new RectF(rect);
+	        // 去锯齿 
+	        paint.setAntiAlias(true);
+	        //画一个和原始图片一样大小的圆角矩形
+	        canvas.drawRoundRect(rectF, roundPixels, roundPixels, paint);
+	        //设置相交模式
+	        paint.setXfermode(new PorterDuffXfermode(Mode.SRC_IN));
+	        //把图片画到矩形去
+	        canvas.drawBitmap(bitmap, null, rect, paint);
+	        return roundConcerImage;
+	    }
+	
 
 	
 	private void initView()
@@ -319,11 +336,15 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		 imageView = (ImageView)findViewById(R.id.image_view);
 		 
 		 if(cuhk_logo==1)
-		 {imageView.setImageResource(R.drawable.cuhk);  
+		 {
+			 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cuhk);
+			 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70));  
 		 
 		 cuhk_logo=0;
 		 }
 
+		 																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
+		    
 		 imageView.post(new Runnable(){   
 	        	  
 	            @Override  
