@@ -9,6 +9,8 @@
 #define MESSAGELENGTH 2
 #define COMPASSLENGTH 
 
+#define BUFFER_SIZE 1024 
+#define MAX_SIZE 512 
 
 class UI{
 
@@ -74,8 +76,10 @@ class UI{
 	int ratioheight;
 
 	
+	void file_transfer(char *file_name_parameter);
 
 
+	char buffer[BUFFER_SIZE]; 
 
 	private:
 

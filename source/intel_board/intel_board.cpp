@@ -503,6 +503,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	this->robot_show_image();
 	
 	this->ui->send_finished_ack();
+	ui->file_transfer(this->image_processor->current_img_path);
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 	return 1;

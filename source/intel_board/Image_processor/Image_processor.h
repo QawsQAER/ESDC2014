@@ -42,7 +42,7 @@ private:
 	//the boolean variable which indicates whether there exist a window
 	bool win_exist;
 	
-	char* current_img_path;
+	
 	//this variable indicates where the frame for analysis comes from
 	//it's either equal to IMG_SOURCE_CELLPHONE, or IMG_SOURCE_WEBCAM
 	uint8_t img_source;
@@ -88,7 +88,7 @@ public:
 
 	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
 	Camera *cam;
-	
+	char* current_img_path;
 	//these variables stores the detection results
 	std::vector<cv::Rect> body_detect;
 	std::vector<cv::Rect> face_detect;

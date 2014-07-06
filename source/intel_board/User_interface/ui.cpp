@@ -912,4 +912,37 @@ int UI::init_server_socket(){
 }
 
 
-
+ void UI::file_transfer(char *file_name_parameter)
+ {
+  		char file_name[MAX_SIZE + 1]; 
+        memset(file_name,0,sizeof(file_name)); 
+        strcpy(file_name,file_name_parameter); 
+        strncpy(file_name, buffer, 
+                strlen(buffer) > MAX_SIZE ? MAX_SIZE : strlen(buffer)); 
+  
+        FILE *fp = fopen(file_name, "r"); 
+        if (fp == NULL) 
+        { 
+            printf("File:\t%s Not Found!\n", file_name); 
+        } 
+        else 
+        { 
+            memset(buffer,0, BUFFER_SIZE); 
+            int file_block_length = 0; 
+            while( (file_block_length = fread(buffer, sizeof(char), BUFFER_SIZE, fp)) > 0) 
+            { 
+                printf("file_block_length = %d\n", file_block_length); 
+  
+                // 发送buffer中的字符串到new_server_socket,实际上就是发送给客户端 
+                if (send(client_sd, buffer, file_block_length, 0) < 0) 
+                { 
+                    printf("Send File:\t%s Failed!\n", file_name); 
+                    break; 
+                } 
+  
+                memset(buffer,0,sizeof(buffer)); 
+            } 
+            fclose(fp); 
+            printf("File:\t%s Transfer Finished!\n", file_name); 
+        } 
+ }
