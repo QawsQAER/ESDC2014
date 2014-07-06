@@ -124,6 +124,7 @@ public:
 	void reset_lifter();
 	void set_lifter(const uint16_t &mm);
 	void lift(const uint16_t &mm, const uint8_t &dir);
+	void Buzzer(const uint8_t &type);
 };
 
 #endif

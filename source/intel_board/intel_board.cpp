@@ -768,20 +768,15 @@ void intel_board::robot_show_image()
 uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	uint8_t rv = 0;
-	Message msg;
-	
-	msg.BuzzerRequest(BUZZER_TAKE_PHOTO);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
+	this->motion_controller->Buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
 	else
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 	if(rv == 0)
-	{
-		
-		msg.BuzzerRequest(BUZZER_TARGET_NOT_FOUND);
-		msg.safe_sendMessage(this->motion_controller->Com->fd);
+	{	
+		this->motion_controller->Buzzer(BUZZER_TARGET_NOT_FOUND);
 	}
 	return rv;
 }

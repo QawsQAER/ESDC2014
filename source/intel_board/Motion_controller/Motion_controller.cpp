@@ -750,3 +750,11 @@ void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 /*MOVEMENT FUNCTION END*/
 /*MOVEMENT FUNCTION END*/
 /*MOVEMENT FUNCTION END*/
+
+void Motion_controller::Buzzer(const uint8_t &type)
+{
+	Message msg;
+	msg.BuzzerRequest(BUZZER_TAKE_PHOTO);
+	msg.safe_sendMessage(this->Com->fd);
+	return ;
+}
