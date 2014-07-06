@@ -199,7 +199,7 @@ enum Direction{
 #define LIFTER_INIT_POS 100
 #define LIFTER_SEG 50
 
-#define ORIENTATION_THRESHOLD 999
+#define ORIENTATION_THRESHOLD 10
 
 #endif
 // 27828986

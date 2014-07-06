@@ -56,7 +56,9 @@ private:
 	std::queue<Message> cmd_queue;
 	uint8_t eval_state;
 	uint16_t lifter_pos; //unit mm.
-	
+	uint16_t car_orientation;//unit degree
+	uint16_t car_original_orientation;//unit degree
+	uint16_t phone_orientation;//unit degree
 
 	/*
 	variable for reference in image evaluation:
@@ -126,10 +128,14 @@ public:
 	void lift(const uint16_t &mm, const uint8_t &dir);
 
 	//Buzzer related functions
-	void Buzzer(const uint8_t &type);
+	void buzzer(const uint8_t &type);
 
 	//Platform related functions
-	void Platform_init();
+	void platform_init();
+
+	int8_t orientation_adjust(const uint16_t &phone_ori);
+	void set_initial_car_orientation(const uint16_t &car_ori);
 };
 
+void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
 #endif

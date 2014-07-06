@@ -125,6 +125,6 @@ public:
 	void robot_test_mbed();
 };
 
-void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
+
 void make_dir();
 #endif

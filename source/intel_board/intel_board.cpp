@@ -219,6 +219,11 @@ void intel_board::robot_orientation_adjust()
 	
 	while(true)
 	{
+		uint16_t phone_ori = (uint16_t) this->ui->update_degree();
+		if(!this->motion_controller->orientation_adjust(phone_ori))
+			break;
+		//original implementation of robot_orientation_adjust
+		/*
 		printf("intel_board::robot_orientation_adjust() sending compass request\n");
 		this->robot_get_degree(&degree,&dir);
 		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
@@ -234,13 +239,14 @@ void intel_board::robot_orientation_adjust()
 			printf("intel_board::robot_orientation_adjust() exiting\n");
 			break;
 			return ;
-		}
+		}*/
 	}
 }
 uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
 	//fetch degree
+	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	this->robot_orientation_adjust();
 	this->waist_shot = 1;
 	this->flag_target_found = 0;
@@ -549,211 +555,7 @@ void intel_board::robot_act_by_cmd(const command_type & cmd)
 }
 
 
-void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *direction)
-{
-	Direction phone_angle=null;
-	Direction car_angle=null;
 
-	int32_t rotate_degree=0;//postive means clockwise
-
-	if(phone<=90)
-		phone_angle=LOWER_LEFT;
-	else if(phone<=180)
-		phone_angle=UPPER_LEFT;
-	else if(phone<=270)
-		phone_angle=UPPER_RIGHT;
-	else 
-		phone_angle=LOWER_RIGHT;
-
-
-	if(car<=90)
-		car_angle=LOWER_LEFT;
-	else if(car<=180)
-		car_angle=UPPER_LEFT;
-	else if(car<=270)
-		car_angle=UPPER_RIGHT;
-	else 
-		car_angle=LOWER_RIGHT;
-
-
-		switch(car_angle)
-		{
-			case UPPER_LEFT:
-			if(phone_angle==LOWER_RIGHT)
-			{
-				int32_t temp_car=180-car;
-				int32_t temp_phone=360-phone;
-				rotate_degree=temp_car-temp_phone;
-				break;
-			}
-			else if(phone_angle==LOWER_LEFT)
-			{
-
-				rotate_degree=(180-car)+phone;
-				break;
-			}
-
-			else if(phone_angle==UPPER_LEFT)
-			{
-
-				rotate_degree=360-((180-phone)+car);
-				break;
-			}
-			else
-			{
-
-				rotate_degree=360-(car-(phone-180));
-				break;
-			}
-
-			case UPPER_RIGHT:
-
-			if(phone_angle==LOWER_LEFT)
-			{
-				int32_t temp_car=car-180;
-				int32_t temp_phone=phone;
-				rotate_degree=temp_phone-temp_car;
-				break;
-			}
-			else if(phone_angle==UPPER_LEFT)
-			{
-
-				int32_t temp_car=270-car;
-				int32_t temp_phone=phone-90;
-				rotate_degree=temp_phone+temp_car;
-				break;
-			}
-			else if(phone_angle==UPPER_RIGHT)
-			{
-
-				int32_t temp_car=360-car;
-				int32_t temp_phone=phone-180;/*int32_t temp_phone=phone is wrong*/
-				rotate_degree=temp_phone+temp_car;
-				break;
-			}
-			else
-			{
-
-				int32_t temp_car=car-180;
-				int32_t temp_phone=360-phone;
-				rotate_degree=360-(temp_phone+temp_car);
-				break;
-			}
-
-			case LOWER_LEFT:
-			if(phone_angle==UPPER_RIGHT)
-			{
-				int32_t temp_car=car;
-				int32_t temp_phone=phone-180;
-				rotate_degree=temp_phone-temp_car;
-				break;
-			}
-			else if(phone_angle==LOWER_RIGHT)
-			{
-				int32_t temp_car=car;
-				int32_t temp_phone=180-(360-phone);
-				rotate_degree=temp_phone-temp_car;
-				break;
-			}
-			else if(phone_angle==LOWER_LEFT)
-			{
-				int32_t temp_car=car;
-				int32_t temp_phone=180+phone;
-				rotate_degree=temp_phone-temp_car;
-				break;
-			}
-
-			else 
-			{
-				int32_t temp_car=car;
-				int32_t temp_phone=180-phone;
-				rotate_degree=360-(temp_phone+temp_car);
-				break;
-			}
-
-			case LOWER_RIGHT:
-			if(phone_angle==UPPER_LEFT)
-			{
-				int32_t temp_car=360-car;
-				int32_t temp_phone=180-phone;
-				rotate_degree=temp_car-temp_phone;
-				break;
-			}
-			else if(phone_angle==UPPER_RIGHT)
-			{
-				int32_t temp_car=360-car;
-				int32_t temp_phone=phone-180;
-				rotate_degree=temp_car+temp_phone;
-				break;
-			}
-			else if(phone_angle==LOWER_RIGHT)
-			{
-				int32_t temp_car=360-car;
-				int32_t temp_phone=180-(360-phone);
-				rotate_degree=temp_car+temp_phone;
-				break;
-			}
-			else
-			{
-				int32_t temp_car=360-car;
-				int32_t temp_phone=phone+180;
-				rotate_degree=temp_car+temp_phone;
-				break;
-			}
-
-
-		}//end switch
-
-
-	if((rotate_degree>=0)&&(rotate_degree<=180))
- 	{
- 			*degree=rotate_degree;
- 			*direction=1;
- 	}
- 	else if((rotate_degree>=180)&&(rotate_degree<=360))
- 	{
- 		*degree=360-rotate_degree;
- 		*direction=-1;
- 	}
- 	else if((rotate_degree>=-360)&&(rotate_degree<=-180))
- 	{
- 		*degree=360-abs(rotate_degree);
- 		*direction=1;
- 	}
- 	else if((rotate_degree>=-180)&&(rotate_degree<=0))
- 	{
- 		*degree=abs(rotate_degree);
- 		*direction=-1;
- 	}
-
-
-/*
- 		int temp=180-car+phone;
- 		if(temp<0)
- 		{
- 			*degree=abs(temp);
- 			*direction=-1;
- 		}
- 		else if (temp<180)
- 		{
- 			*degree=temp;
- 			*direction=1;
- 		}
- 		else if (temp<360)
- 		{
- 			*degree=360-temp;
- 			*direction=-1;
- 		}
- 		else if (temp<540)
- 		{
- 			*degree=temp-360;
- 			*direction=1;
- 		}
-*/
-
-
-
-}//end void
 
 void intel_board::robot_show_image()
 {
@@ -770,7 +572,7 @@ void intel_board::robot_show_image()
 uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	uint8_t rv = 0;
-	this->motion_controller->Buzzer(BUZZER_TAKE_PHOTO);
+	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
@@ -778,7 +580,7 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 	if(rv == 0)
 	{	
-		this->motion_controller->Buzzer(BUZZER_TARGET_NOT_FOUND);
+		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
 	}
 	return rv;
 }
