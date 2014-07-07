@@ -144,6 +144,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	uint8_t flag_done_zooming = 0;
 	if(!(*this->waist_shot))
 	{
+		diff_y = face.height - this->face_ref.height;
 		//if not taking waist shot
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
@@ -154,10 +155,10 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		else
 			flag_done_centering = 1;	
 		
-		if(abs(diff_y) > threshold_y)//the body is too small or too large need to zoom in or zoom out
+		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming
-			return this->zoom_in_out(detect,distance);
+			return this->zoom_in_out_by_face(face,distance);
 		}
 		else if(flag_done_centering == 0)
 			return EVAL_CENTERING;
@@ -557,24 +558,28 @@ void Motion_controller::set_pattern(uint8_t pattern)
 			this->img_exp_pos_y = IMG_EXP_POS1_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
+			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH_FULL;
 		break;
 		case(2):
 			this->img_exp_pos_x = IMG_EXP_POS2_X;
 			this->img_exp_pos_y = IMG_EXP_POS2_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
+			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH_FULL;
 		break;
 		case(3):
 			this->img_exp_pos_x = IMG_EXP_POS3_X;
 			this->img_exp_pos_y = IMG_EXP_POS3_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
+			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH;
 		break;
 		case(4):
 			this->img_exp_pos_x = IMG_EXP_POS4_X;
 			this->img_exp_pos_y = IMG_EXP_POS4_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
+			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH;
 		break;
 		default:
 			printf("Motion_controller::set_pattern() pattern undefined\n");

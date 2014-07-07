@@ -132,6 +132,10 @@ enum Direction{
 
 #define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 6)
 #define IMG_EXP_FACE_WIDTH IMG_EXP_FACE_HEIGHT
+
+#define IMG_EXP_FACE_HEIGHT_FULL 30 
+#define IMG_EXP_FACE_WIDTH_FULL 30
+
 #define IMG_FACE_WIDTH_MIN 20
 #define IMG_FACE_WIDTH_MAX IMG_EXP_FACE_HEIGHT + IMG_VERT_THRESHOLD_FACE
 #define IMG_FACE_HEIGHT_MIN IMG_FACE_WIDTH_MIN
@@ -158,7 +162,7 @@ enum Direction{
 #define IMG_Cr_MIN 133
 #define IMG_Cr_MAX 173
 #define IMG_Cb_MIN 77
-#define IMG_Cb_MAX 140
+#define IMG_Cb_MAX 137
 
 //body related
 #define IMG_EXP_DIS 4887.5
