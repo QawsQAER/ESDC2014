@@ -70,9 +70,10 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
 	this->motion_controller->waist_shot = &this->waist_shot;
+	printf("notice connection request\n");
+	this->motion_controller->buzzer(BUZZER_STAND_BY);
 	printf("Creating UI()\n");
 	this->ui = new UI();
-
 	printf("hello intel board\n\n");	
 }
 
@@ -106,7 +107,7 @@ uint8_t intel_board::main_function()
 				if(this->robot_init())
 				{
 					this->state = ROBOT_READY;
-					// this->motion_controller->buzzer(BUZZER_STAND_BY);
+					
 				}
 				else
 				{	
