@@ -34,7 +34,6 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 MyDigitalOut IntelToMbed_LED(LED1); //uart port LED between Intel Board and Mbed
 MyDigitalOut MbedToArduino_LED(LED2); //uart port LED between Mbed and Arduino
 MySerial DEBUG(USBTX, USBRX); //usb serial port between computer and Mbed
-MySerial CompassData(p9, p10); ////uart port between compass and Mbed
 MySerial IntelToMbed(p13, p14); //uart port between Intel Board and Mbed
 MySerial MbedToArduino(p28, p27); //uart port between Mbed and Arduino
 MyPwmOut lifter_pwmUp(p21);
@@ -49,9 +48,11 @@ MyPwmOut camera_platform_pwmYaw(p25);//yaw             min right, max left, mid 
 
 MyDigitalOut buzzer_pin(p29);
 Buzzer buzzer(&buzzer_pin);
-COMPASS compass(&CompassData);
 
-Communication com(&DEBUG, &IntelToMbed, &MbedToArduino, &compass);
+
+MySerial CompassData(p9, p10); ////uart port between compass and Mbed
+
+Communication com(&DEBUG, &IntelToMbed, &MbedToArduino, &CompassData);
 Lifter lifter(&lifter_enable, &lifter_pwmUp, &lifter_pwmDown, &lifter_encoder_A, &lifter_encoder_B);
 Camera_platform camera_platform(&camera_platform_pwmRoll, &camera_platform_pwmPitch, &camera_platform_pwmYaw);
 
@@ -69,13 +70,14 @@ void MbedToArduinoRxHandler()
     com.putToBuffer(_x, 1); //function inside Communication::
     //__enable_irq();
 }
-void compassHandler()
+void CompassDataRxHandler()
 {
-    //__disable_irq();//disable interupt when receiving data from XBEE_UART
+    //__disable_irq();
     uint8_t _x = CompassData.getc();
-    compass.putToBuffer(_x); //function inside Communication::
+    com.putToBuffer(_x,2);
     //__enable_irq();
 }
+
 
 void LifterPulseHandler()
 {
@@ -102,7 +104,7 @@ void LifterPulseHandler()
 void init_PORT() //used in main() function
 {
     DEBUG.baud(9600);
-    
+    printf("&CompassData %p...\r\n",&CompassData);
     IntelToMbed.baud(9600);
     IntelToMbed.attach(&IntelToMbedRxHandler); //serial interrupt function
     
@@ -110,7 +112,7 @@ void init_PORT() //used in main() function
     MbedToArduino.attach(&MbedToArduinoRxHandler); //serial interrupt function
     
     CompassData.baud(56000);
-    CompassData.attach(&compassHandler);
+    CompassData.attach(&CompassDataRxHandler);
     
     lifter_encoder_A.fall(&LifterPulseHandler); //interrupt
     

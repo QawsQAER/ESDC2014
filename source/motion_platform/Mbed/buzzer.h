@@ -32,7 +32,10 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 #include "define.h"
 #include "mbed.h"
 
-#define TIME_OUT 5 //8 seconds
+#define BUZZER_TARGET_NOT_FOUND 0x01
+#define BUZZER_TAKE_PHOTO 0x02
+
+#define TIME_OUT 20 //8 seconds
 
 class Buzzer
 {
@@ -47,10 +50,15 @@ public:
     void check_time_out();
     void time_out_init();
     
+    void notice(uint8_t type);
+    void target_not_found();
+    void take_photo();
 private:
     MyDigitalOut* _buzzer; 
     uint8_t flag;
     Timeout time_out;
+    
+    void boot();
 };
 
 #endif

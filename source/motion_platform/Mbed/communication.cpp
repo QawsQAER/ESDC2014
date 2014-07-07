@@ -27,12 +27,12 @@ This program is running on Mbed Platform 'mbed LPC1768' avaliable in 'http://mbe
 **********************************************************/
 #include <communication.h>
 
-Communication::Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, COMPASS* _compass)
+Communication::Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, MySerial* CompassData)
 {
     this->_DEBUG = _DEBUG;
     this->_IntelToMbed = _IntelToMbed;
     this->_MbedToArduino = _MbedToArduino;
-    this->_compass = _compass;
+    this->CompassData = CompassData;
     init();
 }
 
@@ -40,17 +40,22 @@ Communication::~Communication()
 {
     delete[] buffer_IntelToMbed;
     delete[] buffer_MbedToArduino;
+    delete[] buffer_compass;
     delete[] forward_msg_buffer;
     delete _DEBUG;
     delete _IntelToMbed;
     delete _MbedToArduino;
-    delete _compass;
+    delete CompassData;
+    
+   
 }
 
 void Communication::init()
 {
     buffer_IntelToMbed = new uint8_t[BUFFER_SIZE];
     buffer_MbedToArduino = new uint8_t[BUFFER_SIZE];
+    buffer_compass = new uint8_t [BUFFER_SIZE];
+
     
     forward_msg_buffer = new uint8_t[9]; //the message struct is 9 byte
     
@@ -63,6 +68,15 @@ void Communication::init()
     check_sum = 0;
     info_ok_IntelToMbed = 0;
     info_ok_MbedToArduino = 0;
+    
+    buzzer_type=0;
+    
+   
+    _MSB = 0;
+    _LSB = 0;
+    _in = _out = 0;
+    
+    
 }
 
 uint8_t Communication::getByte(uint8_t communication_type)
@@ -71,7 +85,7 @@ uint8_t Communication::getByte(uint8_t communication_type)
     if(communication_type == 0)
     {
         _x = buffer_IntelToMbed[out_IntelToMbed++];
-        if(out_IntelToMbed == BUFFER_SIZE)
+        if(out_IntelToMbed == BUFFER_SIZE-1)
         {
             out_IntelToMbed &= 0x0000;
         }
@@ -79,11 +93,20 @@ uint8_t Communication::getByte(uint8_t communication_type)
     else if(communication_type == 1)
     {
         _x = buffer_MbedToArduino[out_MbedToArduino++];
-        if(out_MbedToArduino == BUFFER_SIZE)
+        if(out_MbedToArduino == BUFFER_SIZE-1)
         {
             out_MbedToArduino &= 0x0000;
         }
     }
+     else if(communication_type == 2)
+    {
+        _x = buffer_compass[_out++];
+        if(_out == BUFFER_SIZE-1)
+        {
+            _out &= 0x0000;
+        }
+    }
+ 
     return _x;
 }
 
@@ -110,6 +133,7 @@ void Communication::putByte(uint8_t _x, uint8_t _i)
     {
         _MbedToArduino->putc(_x);
     }
+   
 }
 
 void Communication::put2Bytes(uint16_t _x, uint8_t _i)
@@ -123,7 +147,7 @@ void Communication::putToBuffer(uint8_t _x, uint8_t communication_type)
     if(communication_type == 0)
     {
         buffer_IntelToMbed[in_IntelToMbed++] = _x;
-        if(in_IntelToMbed == BUFFER_SIZE)
+        if(in_IntelToMbed == BUFFER_SIZE-1)
         {
             in_IntelToMbed &= 0x0000;
         }
@@ -131,10 +155,19 @@ void Communication::putToBuffer(uint8_t _x, uint8_t communication_type)
     else if(communication_type == 1)
     {
         buffer_MbedToArduino[in_MbedToArduino++] = _x;
-        if(in_MbedToArduino == BUFFER_SIZE)
+        if(in_MbedToArduino == BUFFER_SIZE-1)
         {
             in_MbedToArduino &= 0x0000;
         }
+    }
+    else if(communication_type == 2)
+    {
+        
+            buffer_compass[_in++] = _x;
+            if(_in == BUFFER_SIZE-1)
+            {
+                _in &= 0x0000;
+            }
     }
 }
 
@@ -153,7 +186,7 @@ void Communication::parseMessage()
                 }
                 check_sum = 0;
 
-                if(_x == STARTER || _x == COMPASS_STARTER)
+                if(_x == STARTER || _x == COMPASS_STARTER || _x == BUZZER_STARTER)
                 {
                     state_IntelToMbed++;
                     forward_msg_buffer[0] = _x;
@@ -231,6 +264,7 @@ void Communication::parseMessage()
                 {
                     state_IntelToMbed++;
                     forward_msg_buffer[4] = _x;
+                    buzzer_type = _x;
                 }
                 else
                 {
@@ -479,6 +513,7 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
             }
         }
     }
+    
     else if(action_type == 1) //lifter
     {
         uint32_t pulseCountOld = 0;
@@ -497,8 +532,92 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
     else if(action_type == 3)
     {
         
-        campass_degree = compass->read();
+            printf("Entering Compass::read()...\r\n");
+            
+            stop();
+            clearBuffer();
+            
+           
+            printf("0\r\n");
+            resume();
+            if(buffer_compass[_out++] == ACK_RESUME_MSB && buffer_compass[_out++] == ACK_RESUME_LSB)
+            {
+            }
+            else
+            {
+             clearBuffer();
+            }
+            
+            printf("1\r\n");
+            run();
+            
+            if(buffer_compass[_out++] == ACK_RUN_MSB && buffer_compass[_out++] == ACK_RUN_LSB)
+            {
+            }
+            else
+            {
+                clearBuffer();
+            }
+            
+            printf("2\r\n");
+            _MSB = buffer_compass[_out++];
+            _LSB = buffer_compass[_out++];
+            
+             if( 0xa0==( (_MSB) & 0xe0))
+            { 
+                    printf("match !!!!!\r\n");
+                    uint8_t digits= _LSB & 0x0f;
+                    uint8_t tens= (_LSB>>4) & 0x0f;
+                    uint8_t hundreds= _MSB & 0x07;
+                    campass_degree=100*hundreds+10*tens+digits;
+            }
+            
+            else
+            {
+            printf("Error data !!!!!!!!!!!\r\n");
+            campass_degree=0;
+            }
 
+            printf("_MSB: %x, _LSB: %x\r\n", _MSB, _LSB);
+                        
+            printf("3\r\n");
+            stop();
+            
+            uint16_t index1=_in - 1;
+            uint16_t index2=_in;
+            
+            if(_in == 0)
+            {
+                index1=BUFFER_SIZE - 1;
+                index2=0;
+            }
+            else
+            {
+                index1=_in - 1;
+                index2=_in;
+            }
+            
+            if(buffer_compass[index1] == ACK_STOP_MSB && buffer_compass[index2] == ACK_STOP_LSB)
+            {
+            }
+            else
+            {
+            }
+            _out = _in;
+            clearBuffer();
+            
+            printf("Exiting Compass::read()...\r\n");
+
+              campass_degree+=90;
+               
+               if(campass_degree>=360)
+               campass_degree-=360;
+              
+                   printf("campass_degree: %d\r\n",campass_degree);
+              printf("----------------------\r\n");
+                    
+        
+                    
         uint8_t temp1,temp2;
         temp1 = campass_degree;
         temp2 = campass_degree>>8;
@@ -511,6 +630,9 @@ void Communication::ACK(Lifter* lifter, Camera_platform* camera_platform)
     } 
      else if(action_type == 4)
     {
+        
+        
+        
         
         putByte(BUZZER_STARTER ,1); //1 means IntelToMbed
         putByte(0,1); //O
@@ -569,4 +691,52 @@ uint8_t Communication::getMoveDir()
 uint8_t Communication::getRotateDir()
 {
     return rotate_dir;
+}
+
+
+
+void Communication::run() 
+{
+    printf("Entering Compass::run()...\r\n");
+    write2Bytes(RUN_MSB, RUN_LSB);
+}
+
+void Communication::stop() 
+{
+    printf("Entering Compass::stop()...\r\n");
+    write2Bytes(STOP_MSB, STOP_LSB);
+}
+
+void Communication::resume() 
+{
+    printf("Entering Compass::resume()...\r\n");
+    write2Bytes(RESUME_MSB, RESUME_LSB);
+}
+
+void Communication::reset() 
+{
+    printf("Entering Compass::reset()...\r\n");
+    write2Bytes(RST_MSB, RST_LSB);
+}
+
+void Communication::write2Bytes(char msb, char lsb) 
+{
+    printf("before writable...\r\n");
+    if(CompassData->writeable())
+    {
+        CompassData->putc(msb);
+    }
+    printf("_MSB = %x wrote...\r\n", msb);
+    if(CompassData->writeable())
+    {
+        CompassData->putc(lsb);
+    }
+    printf("_LSB = %x wrote...\r\n", lsb);
+    wait(0.1);
+}
+
+void Communication::clearBuffer()
+{
+    _in = _out = 0;
+    memset(buffer_compass,0,BUFFER_SIZE);
 }

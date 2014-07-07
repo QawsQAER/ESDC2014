@@ -89,12 +89,12 @@ void Lifter::lifterMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis
 {
     pulseCount = targetPulseCount = 0;
     _stop = 0;
-    
-    if(_dir = move_dir == 0x00) //up
+    _dir = move_dir ;
+    if(_dir == 0x00) //up
     {
         lifterUp(move_dis);
     }
-    else if(_dir = move_dir == 0x02) //down
+    else if(_dir == 0x02) //down
     {
         lifterDown(move_dis);
     }

@@ -33,17 +33,7 @@ extern "C" void mbed_reset();
 Buzzer::Buzzer(MyDigitalOut* buzzer)
 {
     this->_buzzer = buzzer;
-    ON();
-    wait(0.1);
-    OFF();
-    wait(0.1);
-    ON();
-    wait(0.1);
-    OFF();
-    wait(0.1);
-    ON();
-    wait(0.2);
-    OFF();
+    boot();
 }
 
 Buzzer::~Buzzer(){}
@@ -73,7 +63,7 @@ void Buzzer::check_time_out()
     if(flag == 1)
     {
         ON();
-        wait(5);
+        wait(3);
         mbed_reset();
     }
     else
@@ -88,3 +78,54 @@ void Buzzer::time_out_init()
     time_out.detach();
     time_out.attach(this, &Buzzer::check_time_out, TIME_OUT);
 }
+
+void Buzzer::target_not_found()
+{
+    ON();
+    wait(0.1);
+    OFF();
+    wait(0.1);
+    ON();
+    wait(0.2);
+    OFF();
+}
+
+
+void Buzzer::boot()
+{
+    ON();
+    wait(0.1);
+    OFF();
+    wait(0.1);
+    ON();
+    wait(0.1);
+    OFF();
+    wait(0.1);
+    ON();
+    wait(0.2);
+    OFF();
+}
+
+
+void Buzzer::take_photo()
+{
+    ON();
+    wait(0.2);
+    OFF();
+}
+
+void Buzzer::notice(uint8_t type)
+{
+    switch (type)
+    {
+     case BUZZER_TARGET_NOT_FOUND:
+        target_not_found();
+        break;
+    
+     case BUZZER_TAKE_PHOTO:
+        take_photo();
+        break;
+    }
+}
+
+ 

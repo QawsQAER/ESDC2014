@@ -35,9 +35,9 @@ int main()
    
     while(1)
     {
+        buzzer.time_out_init();
         buzzer.OFF();
         com.parseMessage();
-        buzzer.time_out_init();
         if(com.getInfoOK(0) == 1) //car
         {
             printf("main(). Car action starting...\r\n");
@@ -76,13 +76,7 @@ int main()
         else if(com.getInfoOK(0) == 5) //buzzer
         {
             printf("main(). Buzzer action starting...\r\n");
-            buzzer.ON();
-            wait(0.1);
-            buzzer.OFF();
-            wait(0.1);
-            buzzer.ON();
-            wait(0.2);
-            buzzer.OFF();
+            buzzer.notice(com.buzzer_type);
             com.ACK(&lifter, &camera_platform);
             com.resetInfoOK(0);
             com.resetInfoOK(1);

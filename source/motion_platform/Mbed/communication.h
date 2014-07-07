@@ -32,11 +32,32 @@ The communication protocol is inside source/intel_board/lib/message.h
 #include "lifter.h"
 #include "camera_platform.h"
 #include "mbed.h"
-#include "compass.h"
 #include "buzzer.h"
 
 #ifndef _COMMUNICATION_H
 #define _COMMUNICATION_H
+
+
+
+#define RUN_MSB     0xC7
+#define RUN_LSB     0x10
+#define ACK_RUN_MSB     0xC7
+#define ACK_RUN_LSB     0x10
+
+#define STOP_MSB    0xC6
+#define STOP_LSB    0x10
+#define ACK_STOP_MSB    0xD6
+#define ACK_STOP_LSB    0x01
+
+#define RESUME_MSB      0xD1
+#define RESUME_LSB      0x10
+#define ACK_RESUME_MSB      0xD1
+#define ACK_RESUME_LSB      0x10
+
+#define RST_MSB     0xC2
+#define RST_LSB     0x10    
+
+#define DECLINATIONANGLE  -0.0457
 
 #define BUFFER_SIZE 1024
 #define STARTER 0x7e
@@ -48,7 +69,7 @@ The communication protocol is inside source/intel_board/lib/message.h
 class Communication
 {
 public:
-    Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, COMPASS *_compass);
+    Communication(MySerial* _DEBUG, MySerial *_IntelToMbed, MySerial *_MbedToArduino, MySerial *CompassData);
     ~Communication();
 
     void putToBuffer(uint8_t _x, uint8_t communication_type); //0 is IntelToMbed, 1 is MbedTOArduino
@@ -68,12 +89,16 @@ public:
     uint8_t getRotateDir();
 
     uint16_t campass_degree;
-    COMPASS *compass;
+    
+      int read();
+    
+    uint8_t buzzer_type;
     
 private:
     void init();
     uint8_t* buffer_IntelToMbed;
     uint8_t* buffer_MbedToArduino;
+    uint8_t* buffer_compass;
     uint8_t* forward_msg_buffer; //for forwarding message to the car
     uint16_t in_IntelToMbed;
     uint16_t out_IntelToMbed;
@@ -91,10 +116,25 @@ private:
     uint16_t rotate_dis;
     uint8_t rotate_dir;
     
+    
+    uint8_t _MSB;
+    uint8_t _LSB;
+
+    uint16_t _in;
+    uint16_t _out;
+    
+    
+    void write2Bytes(char msb, char lsb);
+    void run();
+    void stop();
+    void resume();
+    void reset();
+    void clearBuffer();
+    
     MySerial *_DEBUG;
     MySerial *_IntelToMbed;
     MySerial *_MbedToArduino;
-    COMPASS *_compass;
+    MySerial *CompassData;
 };
 
 #endif
