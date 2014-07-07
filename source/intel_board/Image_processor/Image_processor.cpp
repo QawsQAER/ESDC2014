@@ -881,7 +881,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 
 	this->body_detect.clear();
 	this->face_detect.clear();
-	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT); 
+	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT);
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
 
 	printf("Image_processor::multi_targets_in_scope() running\n");
@@ -910,7 +910,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	}
 
 	//ensure that the number of face is at least the expected number	
-	if(face_detect.size() < num)
+	if(this->face_detect.size() < num)
 		goto multi_targets_begin;
 	//run filter designed for multiple people 
 

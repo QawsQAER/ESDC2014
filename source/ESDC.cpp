@@ -40,7 +40,9 @@ void exit_routine(int32_t arg);
 void generate_dir();
 void print_usage_and_exit();
 
+
 char *glo_PATH_TEMP = NULL;
+char *glo_DIR_NAME = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
 int source_mode;
@@ -55,7 +57,7 @@ int main(int32_t argc, char ** argv)
 {
 	/* prints Hello World */
 	glo_argc = argc;
-	if(argc<2)
+	if(argc < 2)
 	{
 		print_usage_and_exit();
 	}
@@ -71,6 +73,7 @@ int main(int32_t argc, char ** argv)
 	uint8_t mode = 1;
 	uint8_t img_source = 0;
 	glo_PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	glo_DIR_NAME = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	
 	generate_dir();
 	signal(SIGTERM,exit_routine);
@@ -114,7 +117,6 @@ void exit_routine(int arg)
 void generate_dir()
 {
 	printf("generate_dir running\n");
-	
 	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	time_t timestamp = time(NULL);
 	struct tm *current_time = gmtime(&timestamp);
@@ -126,13 +128,8 @@ void generate_dir()
 		current_time->tm_min,
 		current_time->tm_sec);
 	strcpy(glo_PATH_TEMP,filename);
+	strcpy(glo_DIR_NAME,glo_PATH_TEMP);
 	free(filename);
-	printf("creating dir named as %s\n",glo_PATH_TEMP);
-	if(mkdir(glo_PATH_TEMP,S_IRWXU) < 0)
-	{
-		printf("fail to create dir %s\n",glo_PATH_TEMP);
-		exit(0);
-	}
 	strcat(glo_PATH_TEMP,"/");
 }
 

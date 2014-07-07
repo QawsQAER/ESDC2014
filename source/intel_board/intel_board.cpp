@@ -38,17 +38,17 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	//STATE
 	switch(mode)
 	{
-	case(0):
+	case(1):
 			printf("RUNNING in AUTO MODE\n");
 			this->mode = AUTO_MODE;
 			break;
-	case(1):
-			printf("RUNNING in MANUAL MODE\n");
-			this->mode = MANUAL_MODE;
-			break;
 	case(2):
-			printf("RUNNING IN IMG_ANALYSIS_MODE\n");
-			this->mode = IMG_ANALYSIS_MODE;
+			printf("RUNNING in DEBUG MODE\n");
+			this->mode = DEBUG_MODE;
+			break;
+	case(3):
+			printf("RUNNING in multi targets mode\n");
+			this->mode = MULTI_MODE;
 			break;
 	default:
 			printf("Invalid Mode\nExiting program\n");
@@ -194,6 +194,8 @@ uint8_t intel_board::robot_init()
 		return 0;
 	if(!this->motion_controller->init())
 		return 0;
+
+	make_dir();
 	printf("intel_board: initilization done\n");
 	return 1;
 }
@@ -580,7 +582,8 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
 	else
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
-	if(rv == 0)
+
+	if(rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT)
 	{	
 		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
 	}
@@ -627,4 +630,15 @@ void intel_board::robot_test_mbed()
 		}
 	}
 	return ;
+}
+
+
+void make_dir()
+{
+	printf("make_dir running\n");
+	if(mkdir(glo_DIR_NAME,S_IRWXU) < 0)
+	{
+		printf("fail to create dir %s\n",glo_DIR_NAME);
+		exit(0);
+	}
 }

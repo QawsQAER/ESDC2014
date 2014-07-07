@@ -43,7 +43,7 @@
 #include <unistd.h>
 #include <stdint.h>
 #include <stdio.h>
-
+#include <string.h>
 //for openning a directory
 #include <sys/types.h>
 #include <dirent.h>
@@ -56,6 +56,7 @@ extern uint8_t glo_num_target;
 extern int32_t glo_degree;
 extern int32_t glo_dir;
 extern uint8_t glo_test_mbed;
+extern char * glo_DIR_NAME;
 //------------------------------------------------------//
 
 class intel_board
