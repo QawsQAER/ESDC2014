@@ -499,7 +499,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	this->image_processor->cam->save_photo_af();
+	//this->image_processor->cam->save_photo_af();
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	this->robot_show_image();
 	

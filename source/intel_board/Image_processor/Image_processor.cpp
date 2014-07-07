@@ -453,8 +453,8 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 	else
 	{
 		//imshow does not block the main process any more
-		//but instead it waits for 3 second
-		cv::waitKey(3000);
+		//but instead it waits for infinite seconds
+		cv::waitKey(0);
 	}
 	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
@@ -552,13 +552,20 @@ uint8_t Image_processor::basic_filter_default()
 	}
 
 	//if no body is detected
-	if(this->final_body_detect.size() == 0)
+	if(this->final_body_detect.size() == 0 && this->face_detect.size() != 0)
 	{
 		uint8_t factor = 1;
 		float height_factor = 7.5;
-		cv::Rect rect = this->body_by_face(this->face_detect[0]);
-		if(rect != face_detect[0])
-			this->final_body_detect.push_back(rect);
+		for(size_t count_face = 0;count_face < face_detect.size();count_face++)
+		{
+			cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
+			//if the face is not at the lower half of the picture.
+			if(rect != face_detect[count_face])
+			{
+				this->final_body_detect.push_back(rect);
+				this->final_face_detect.push_back(this->face_detect[count_face]);
+			}
+		}
 	}
 	printf("Image_processor::basic_filter_default() exiting\n");
 }
@@ -723,7 +730,6 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	}
 	
 
-	
 	//run basic filter;
 	this->basic_filter(degree,dir);
 	if(enable_side_filtering)
@@ -747,7 +753,7 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	{
 		//delete the current image if no faces is found in the scope
 		printf("Image_processor::one_target_in_scope() returning without any found\n");
-		remove(this->current_img_path);
+		//remove(this->current_img_path);
 		return 0;
 	}
 	
