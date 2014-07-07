@@ -594,6 +594,18 @@ void Motion_controller::set_pattern(uint8_t pattern)
 	return ;
 }
 
+void Motion_controller::set_pattern_diy(int32_t ratiox,int32_t ratioy,int32_t ratiowidth)
+{
+	printf("Motion_controller::set_pattern_diy() running\n");
+	printf("Motion_controller::set_pattern_diy() parameters %d %d %d\n",ratiox,ratioy,ratiowidth);
+
+	printf("Motion_controller::set_pattern_diy setting at (%u,%u,%u,%u)\n",(uint16_t) ratiox, (uint16_t) ratioy, (uint16_t) ratiowidth,(uint16_t) ratiowidth);
+	this->face_ref = cv::Rect((uint16_t) ratiox,
+		(uint16_t) ratioy,
+		(uint16_t) ratiowidth,
+		(uint16_t) ratiowidth);
+	printf("Motion_controller::set_pattern_diy() exiting\n");
+}
 
 /*MOVEMENT FUNCTION START*/
 /*MOVEMENT FUNCTION START*/

@@ -367,7 +367,7 @@ void Image_processor::skin_filter(const cv::Mat &source_img)
 	for(size_t count = 0;count < tmp.size();count++)
 	{
 		cv::Mat subImage = source_img(tmp[count]);
-		if(getSkin(subImage,subImage)[0] > 120)
+		if(getSkin(subImage,subImage)[0] > 50)
 		{
 			face_detect.push_back(tmp[count]);
 		}
@@ -430,32 +430,36 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 	//cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
-	cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
-	cv::moveWindow(this->winname,0,0);
-	printf("Image_processor::show_analyzed_img() showing analyzed_img\n");	
-	cv::imshow(this->winname,concat_image);
-	//cv::imshow(this->winname,this->analyzed_img_filtered);
-	this->save_current_image(task_counter);
-	//printf("Image_processor::show_analyzed_img() showing skin_img\n");
-	cv::imshow(this->skinwin,this->skin_img);
-
-	//cv::imshow(this->edgewin,this->edge_img);
-	if(continuity == 0)
+	if(glo_display_enable)
 	{
-		char k;
-		while( (k = cv::waitKey(0)) != 'n')
+		cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
+		cv::moveWindow(this->winname,0,0);
+		printf("Image_processor::show_analyzed_img() showing analyzed_img and analyzed_img_filtered\n");	
+		//cv::imshow(this->winname,concat_image);
+		cv::imshow(this->winname,this->analyzed_img_filtered);
+		this->save_current_image(task_counter);
+		//printf("Image_processor::show_analyzed_img() showing skin_img\n");
+		cv::imshow(this->skinwin,this->skin_img);
+
+		//cv::imshow(this->edgewin,this->edge_img);
+		if(continuity == 0)
 		{
-			if(k == 'e')
-				exit(0);
-			printf("You have pressed %c %d\n",k,k);
+			char k;
+			while( (k = cv::waitKey(0)) != 'n')
+			{
+				if(k == 'e')
+					exit(0);
+				printf("You have pressed %c %d\n",k,k);
+			}
+		}
+		else
+		{
+			//imshow does not block the main process any more
+			//but instead it waits for 30 s
+			cv::waitKey(1000);
 		}
 	}
-	else
-	{
-		//imshow does not block the main process any more
-		//but instead it waits for infinite seconds
-		cv::waitKey(0);
-	}
+	
 	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
 }
@@ -909,36 +913,40 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 		this->skin_img = this->mark_detected_face(this->skin_img,this->face_detect);
 	}
 
-	//ensure that the number of face is at least the expected number	
-	if(this->face_detect.size() < num)
-		goto multi_targets_begin;
 	//run filter designed for multiple people 
 
 	this->multi_targets_filter(num);
 
 	//mark the detected results
 	//this->analyzed_img_filtered is the final detection result image
-	std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_x);
-	size_t size = this->final_face_detect.size();
-	this->face_region.x = this->final_face_detect[0].x;
-	this->face_region.width = (this->final_face_detect[0].x + this->final_face_detect[size - 1].width) - this->final_face_detect[0].x;
+	if(this->final_face_detect.size() > 0)
+	{
+		std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_x);
+		size_t size = this->final_face_detect.size();
+		this->face_region.x = this->final_face_detect[0].x;
+		this->face_region.width = (this->final_face_detect[0].x + this->final_face_detect[size - 1].width) - this->final_face_detect[0].x;
 
-	std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_y);
-	this->face_region.y = this->final_face_detect[0].y;
-	this->face_region.height = (this->final_face_detect[size - 1].y + this->final_face_detect[size - 1].height) - this->final_face_detect[0].y;
-	
+		std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_y);
+		this->face_region.y = this->final_face_detect[0].y;
+		this->face_region.height = (this->final_face_detect[size - 1].y + this->final_face_detect[size - 1].height) - this->final_face_detect[0].y;
+	}
+	else
+	{
+		this->face_region.x = this->face_region.y = this->face_region.height = this->face_region.width = 0;
+	}
+
 	this->analyzed_img_filtered = this->mark_detected_body(this->current_img,this->final_body_detect);
 	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
-
+	
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::multi_target_in_scope() returning\n");
+		printf("Image_processor::multi_targets_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
 	else if(this->final_face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::multi_target_in_scope() returning without any found\n");
+		printf("Image_processor::multi_targets_in_scope() returning without any found\n");
 		remove(this->current_img_path);
 		return 0;
 	}
@@ -949,6 +957,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 //num should be used when clustering is available
 uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 {
+	printf("Image_processor::multi_targets_filter running\n");
 	for(size_t count_face = 0;count_face < this->face_detect.size();count_face++)
 	{
 		cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
@@ -958,6 +967,7 @@ uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 			this->final_body_detect.push_back(rect);
 		}
 	}
+	printf("Image_processor::multi_targets_filter exiting\n");
 	return 0;
 }
 

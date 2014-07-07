@@ -289,6 +289,11 @@ uint8_t intel_board::robot_ready()
 				this->motion_controller->set_pattern(4);
 			break;
 			
+			case(pattern_diy):
+				this->waist_shot = 1;
+				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
+			break;
+
 			case(set_waist_shot):
 				this->waist_shot = this->waist_shot ? 0:1;
 			break;
@@ -569,6 +574,7 @@ void intel_board::robot_show_image()
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
+	
 	this->image_processor->show_analyzed_img(this->task_counter);
 	return ;
 }
@@ -583,9 +589,10 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 	else
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 
-	if(rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT)
+	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
 	{	
 		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
+		return 0;
 	}
 	return rv;
 }

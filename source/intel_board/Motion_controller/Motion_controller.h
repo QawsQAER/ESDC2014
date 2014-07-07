@@ -120,6 +120,7 @@ public:
 
 
 	void set_pattern(uint8_t pattern);
+	void set_pattern_diy(int32_t ratiox,int32_t ratioy,int32_t ratiowidth);
 	void move(const uint16_t &mm,const uint8_t &dir);
 	void rotate(const uint16_t &degree,const uint8_t &dir);
 

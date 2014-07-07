@@ -39,17 +39,21 @@ using namespace std;
 void exit_routine(int32_t arg);
 void generate_dir();
 void print_usage_and_exit();
-
+void parameter_setting(int32_t argc,char **argv);
 
 char *glo_PATH_TEMP = NULL;
 char *glo_DIR_NAME = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
 int source_mode;
+
+uint8_t glo_test_mbed = 0;
+
+uint8_t glo_motion_enable = 1;
+uint8_t glo_display_enable = 1;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
-uint8_t glo_test_mbed = 0;
-uint8_t glo_motion_enable = 1;
+
 int32_t glo_argc;
 
 intel_board *robot;
@@ -81,27 +85,19 @@ int main(int32_t argc, char ** argv)
 	signal(SIGINT,exit_routine);
 	if(argc >= 3)//the user has set the mode
 	{
-		mode = atoi(argv[2]);
+		if(atoi(argv[2]) == 0)
+			mode = 1;
+		else
+			mode = atoi(argv[2]);
+		
 		printf("mode is %u\n",mode);
 		if(mode == 2)
 		{
 			printf("The robot is going to launch as mbed debug mode\n");
 			glo_test_mbed = 1;
 		}
-		else if(mode == 3)
-		{
-			glo_multi_target = 1;
-			if(argc < 4)
-				print_usage_and_exit();
-			else
-				glo_num_target = atoi(argv[3]);
-		}
-		else if(mode == 4)
-		{
-			printf("The robot movement is disabled\n");
-			glo_motion_enable = 0;
-    		mode = 1;
-		}
+
+		parameter_setting(argc,argv);
 	}
     else // the user has not set the mode
     	printf("The robot is going to initiate in default mode\n");
@@ -146,6 +142,47 @@ void print_usage_and_exit()
 	printf("Usage: 2./ESDC 1 [mode]for CANON\n");
 	printf("[mode] = 1 or non specified -> normal mode\n");
 	printf("[mode] = 2 -> mbed debugging\n");
-	printf("[mode] = 3 -> multi targets, please indicates target number in the 3th arguemment\n");
+	printf("-dd -> disabled display\n");
+	printf("-em [num] -> enable multi targets, with [num] targets\n");
+	printf("-dm -> disabled motion\n");
 	exit_routine(glo_argc);
+}
+
+void parameter_setting(int32_t argc,char **argv)
+{
+	for(int32_t count = 0;count < argc;count++)
+	{
+		if(strcmp(argv[count],"-dd") == 0)
+			glo_display_enable = 0;
+			
+
+		if(strcmp(argv[count],"-em") == 0)
+		{
+			glo_multi_target = 1;
+			if(count + 1 < argc)
+				glo_num_target = atoi(argv[count + 1]);
+			else
+				glo_num_target = 2;
+		}
+		if(strcmp(argv[count],"-dm") == 0)
+			glo_motion_enable = 0;
+		if(strcmp(argv[count],"-help") == 0)
+			print_usage_and_exit();
+	}
+
+	if(glo_motion_enable)
+		printf("SETTING: enable motion\n");
+	else
+		printf("SETTING: disable motion\n");
+
+	if(glo_multi_target)
+		printf("SETTING: enable multi targets\n");
+	else
+		printf("SETTING: disable multi targets\n");
+
+	if(glo_display_enable)
+		printf("SETTING: enable display\n");
+	else
+		printf("SETTING: disable display\n");
+
 }
