@@ -929,8 +929,9 @@ int UI::init_server_socket(){
 
 			struct sockaddr_in transfer_server_addr;
 
-			long val=1;
-			if(setsockopt(transfer_sd,SOL_SOCKET,SO_REUSEADDR,&val,sizeof(long))==-1){
+			unsigned int value = 1;
+			if(setsockopt(transfer_sd,SOL_SOCKET,SO_REUSEADDR,(void *)&value,sizeof(value)))
+			{
 				perror("setsockopt");
 				exit(1);
 			}
@@ -1014,6 +1015,7 @@ int UI::init_server_socket(){
         } 
 
         close(transfer_client_sd);
+
         printf("Leave file_transfer \n");
         printf("--------------------------------------------\n");
 
