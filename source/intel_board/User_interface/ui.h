@@ -137,7 +137,7 @@ class UI{
 
 	int degree;
 
-
+	bool file_transfer_connected;
 
 	
 };

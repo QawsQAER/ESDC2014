@@ -248,6 +248,9 @@ uint8_t intel_board::robot_ready()
 {
 	printf("intel_board: the robot is in ready state\n");
 
+	/*test file transfer*/
+	ui->send_finished_ack("/home/intelcup/Desktop/1.jpg");
+
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	this->robot_orientation_adjust();
