@@ -106,6 +106,7 @@ uint8_t intel_board::main_function()
 				if(this->robot_init())
 				{
 					this->state = ROBOT_READY;
+					// this->motion_controller->buzzer(BUZZER_STAND_BY);
 				}
 				else
 				{	
@@ -251,7 +252,27 @@ uint8_t intel_board::robot_ready()
 	/*test file transfer*/
 	// ui->send_finished_ack("/home/intelcup/Desktop/1.jpg");
 	// ui->send_finished_ack("/home/intelcup/Desktop/1.jpg");
-	
+
+	/*test camera platform*/
+	Message msg;
+	msg.CameraPlatformYawClk(90);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
+	msg.CameraPlatformYawCounterClk(90);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
+	msg.CameraPlatformPitchUp(45);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
+	msg.CameraPlatformPitchDown(45);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
+	msg.CameraPlatformRollLeft(45);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
+	msg.CameraPlatformRollRight(45);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
+
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	this->robot_orientation_adjust();
@@ -511,13 +532,22 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	}
 
 	//this->image_processor->cam->save_photo_af();
+	Message msg;
+	msg.CameraPlatformRollLeft(45);
+	msg.safe_sendMessage(this->motion_controller->Com->fd);
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
+	msg.CameraPlatformRollRight(45);
+		msg.safe_sendMessage(this->motion_controller->Com->fd);
+
 	this->robot_show_image();
 	
 	this->ui->send_finished_ack(this->image_processor->current_img_path);
 
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
+
+
+
 	return 1;
 }
 

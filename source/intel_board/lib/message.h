@@ -42,7 +42,7 @@ All the code with this header are under GPL open source license.
 #define BUZZER_STARTER 0x7C
 #define BUZZER_TARGET_NOT_FOUND 0x01
 #define BUZZER_TAKE_PHOTO 0x02
-
+#define BUZZER_STAND_BY 0x03
 
 #define MSG_MAX_ATTEMPT 5
 #define TIMEOUT 5000
