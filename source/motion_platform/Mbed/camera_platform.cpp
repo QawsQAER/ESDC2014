@@ -35,6 +35,9 @@ Camera_platform::Camera_platform(MyPwmOut* _pwmRoll, MyPwmOut* _pwmPitch, MyPwmO
     this->_pwmYaw = _pwmYaw;
     
     _roll_angle = _pitch_angle = _yaw_angle = 0;
+    _roll_current_pulsewidth_us = ROLL_MID;
+    _pitch_current_pulsewidth_us = PITCH_MID;
+    _yaw_current_pulsewidth_us = YAW_MID;
 }
 
 Camera_platform::~Camera_platform()
@@ -100,12 +103,10 @@ void Camera_platform::setPitchDown(float _degree)
 }
 void Camera_platform::setYawClock(float _degree)
 {
-    dir = 1;
     setPWM(computePwmValue(_degree, 1, YAW), YAW);
 }
 void Camera_platform::setYawCClock(float _degree)
 {
-    dir = 0;
     setPWM(computePwmValue(_degree, 0, YAW), YAW);
 }
 void Camera_platform::resetCameraPlatform()
@@ -121,18 +122,33 @@ void Camera_platform::setPWM(uint16_t _pwm_value_us, uint8_t _pwm_channel) //0 i
     switch(_pwm_channel)
     {
         case ROLL:
-        _pwmRoll->pulsewidth_us(_pwm_value_us);
+        for(int i = 0; i < abs(_pwm_value_us - _roll_current_pulsewidth_us); i++)
+        {
+            _pwmRoll->pulsewidth_us(_roll_current_pulsewidth_us + i);
+            wait_ms(MSPPWM);
+        }
+        _roll_current_pulsewidth_us = _pwm_value_us;
         break;
         case PITCH:
-        _pwmPitch->pulsewidth_us(_pwm_value_us);
+        for(int i = 0; i < abs(_pwm_value_us - _pitch_current_pulsewidth_us); i++)
+        {
+            _pwmPitch->pulsewidth_us(_pitch_current_pulsewidth_us + i);
+            wait_ms(MSPPWM);
+        }
+        _pitch_current_pulsewidth_us = _pwm_value_us;
         break;
         case YAW:
-        _pwmYaw->pulsewidth_us(_pwm_value_us);
+        for(int i = 0; i < abs(_pwm_value_us - _yaw_current_pulsewidth_us); i++)
+        {
+            _pwmYaw->pulsewidth_us(_yaw_current_pulsewidth_us + i);
+            wait_ms(MSPPWM);
+        }
+        _yaw_current_pulsewidth_us = _pwm_value_us;
         break;
         default:
         break;
     }
-    wait_ms(800);
+    wait_ms(100);
 }
 uint16_t Camera_platform::computePwmValue(float _degree, uint8_t _dir, uint8_t _pwm_channel) //0 is left/up/clock, 1 is right/down/cclock
 {
@@ -160,7 +176,7 @@ uint16_t Camera_platform::computePwmValue(float _degree, uint8_t _dir, uint8_t _
         return_value = (uint16_t)(ROLL_MID + _roll_angle * ROLL_USPD);
         break;
         case PITCH:
-        if(_dir == 0)
+        if(_dir == 1)
         {
             _pitch_angle -= _degree;
             if(_pitch_angle < PITCH_ANGLE_MIN)
@@ -168,7 +184,7 @@ uint16_t Camera_platform::computePwmValue(float _degree, uint8_t _dir, uint8_t _
                 _pitch_angle = PITCH_ANGLE_MIN;
             }
         }
-        else if(_dir == 1)
+        else if(_dir == 0)
         {
             _pitch_angle += _degree;
             if(_pitch_angle > PITCH_ANGLE_MAX)
@@ -179,7 +195,7 @@ uint16_t Camera_platform::computePwmValue(float _degree, uint8_t _dir, uint8_t _
         return_value = (uint16_t)(PITCH_MID + _pitch_angle * PITCH_USPD);
         break;
         case YAW:
-        if(_dir == 0)
+        if(_dir == 1)
         {
             _yaw_angle += _degree;
             if(_yaw_angle > YAW_ANGLE_MAX)
@@ -187,7 +203,7 @@ uint16_t Camera_platform::computePwmValue(float _degree, uint8_t _dir, uint8_t _
                 _yaw_angle = YAW_ANGLE_MAX;
             }
         }
-        else if(_dir == 1)
+        else if(_dir == 0)
         {
             _yaw_angle -= _degree;
             if(_yaw_angle < YAW_ANGLE_MIN)
