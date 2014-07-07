@@ -49,6 +49,8 @@
 #define EVAL_ADJUSTING 4
 #define EVAL_COMPLETE 5
 
+extern uint8_t glo_motion_enable;
+
 class Motion_controller
 {
 private:

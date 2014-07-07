@@ -49,6 +49,7 @@ int source_mode;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
 uint8_t glo_test_mbed = 0;
+uint8_t glo_motion_enable = 1;
 int32_t glo_argc;
 
 intel_board *robot;
@@ -95,7 +96,13 @@ int main(int32_t argc, char ** argv)
 			else
 				glo_num_target = atoi(argv[3]);
 		}
-    }
+		else if(mode == 4)
+		{
+			printf("The robot movement is disabled\n");
+			glo_motion_enable = 0;
+    		mode = 1;
+		}
+	}
     else // the user has not set the mode
     	printf("The robot is going to initiate in default mode\n");
 
