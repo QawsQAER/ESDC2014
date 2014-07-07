@@ -551,8 +551,8 @@ uint8_t Image_processor::basic_filter_default()
 		}
 	}
 
-	//if no body is detected after the filtering and a face is detected only once
-	if(this->final_body_detect.size() == 0 && this->face_detect.size() == 1)
+	//if no body is detected
+	if(this->final_body_detect.size() == 0)
 	{
 		uint8_t factor = 1;
 		float height_factor = 7.5;
