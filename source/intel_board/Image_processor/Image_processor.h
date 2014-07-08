@@ -181,7 +181,8 @@ public:
 	cv::Rect get_face_detection_result();
 	double get_distance(const cv::Rect &face);
 
-	
+	/*Image processing related functions*/
+	bool need_contrast(const cv::Mat &source_img);
 };
 
 #endif

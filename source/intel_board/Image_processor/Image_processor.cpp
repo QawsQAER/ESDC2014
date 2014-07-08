@@ -367,7 +367,7 @@ void Image_processor::skin_filter(const cv::Mat &source_img)
 	for(size_t count = 0;count < tmp.size();count++)
 	{
 		cv::Mat subImage = source_img(tmp[count]);
-		if(getSkin(subImage,subImage)[0] > 50)
+		if(getSkin(subImage,subImage)[0] > 100)
 		{
 			face_detect.push_back(tmp[count]);
 		}
@@ -924,8 +924,8 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 		std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_x);
 		size_t size = this->final_face_detect.size();
 		this->face_region.x = this->final_face_detect[0].x;
-		this->face_region.width = (this->final_face_detect[0].x + this->final_face_detect[size - 1].width) - this->final_face_detect[0].x;
-
+		this->face_region.width = (this->final_face_detect[size - 1].x + this->final_face_detect[size - 1].width) - this->final_face_detect[0].x;
+		
 		std::sort(this->final_face_detect.begin(),this->final_face_detect.end(),compare_face_y);
 		this->face_region.y = this->final_face_detect[0].y;
 		this->face_region.height = (this->final_face_detect[size - 1].y + this->final_face_detect[size - 1].height) - this->final_face_detect[0].y;
@@ -957,6 +957,8 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 //num should be used when clustering is available
 uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 {
+	this->final_face_detect.clear();
+	this->final_body_detect.clear();
 	printf("Image_processor::multi_targets_filter running\n");
 	for(size_t count_face = 0;count_face < this->face_detect.size();count_face++)
 	{
@@ -993,4 +995,14 @@ cv::Rect Image_processor::body_by_face(const cv::Rect &face)
 	else
 		rect.height = ceil(rect.height * height_factor);	
 	return rect;
+}
+
+
+bool Image_processor::need_contrast(const cv::Mat &source_img)
+{
+	cv::Scalar mean;
+	cv::Scalar stddev;
+	cv::meanStdDev(source_img,mean,stddev);
+
+	return true;
 }

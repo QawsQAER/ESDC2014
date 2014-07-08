@@ -226,7 +226,7 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 		}
 		return 0;
 	}
-	return 1;
+	return EVAL_ADJUSTING;
 }
 uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
@@ -616,9 +616,11 @@ void Motion_controller::reset_lifter()
 	printf("Motion_controller::reset_lifter() running\n");
 	Message msg;
 	msg.LifterMoveDownMM(LIFTER_MAX);
-	msg.safe_sendMessage(this->Com->fd);
+	if(glo_motion_enable)
+		msg.safe_sendMessage(this->Com->fd);
 
 	msg.LifterMoveUpMM(LIFTER_INIT_POS);
+	if(glo_motion_enable)
 	msg.safe_sendMessage(this->Com->fd);
 
 	this->lifter_pos = LIFTER_INIT_POS;
@@ -647,7 +649,8 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
-	msg.safe_sendMessage(this->Com->fd);
+	if(glo_motion_enable)
+		msg.safe_sendMessage(this->Com->fd);
 }
 
 void Motion_controller::set_lifter(const uint16_t &mm)
@@ -842,7 +845,8 @@ void Motion_controller::buzzer(const uint8_t &type)
 {
 	Message msg;
 	msg.BuzzerRequest(type);
-	msg.safe_sendMessage(this->Com->fd);
+	if(glo_motion_enable)
+		msg.safe_sendMessage(this->Com->fd);
 	return ;
 }
 
@@ -875,7 +879,8 @@ void Motion_controller::platform(const uint16_t &degree, const uint8_t &action)
 			msg.CameraPlatformYawClk(degree);
 		break;
 	}
-	msg.safe_sendMessage(this->Com->fd);
+	if(glo_motion_enable)
+		msg.safe_sendMessage(this->Com->fd);
 	return ;
 }
 

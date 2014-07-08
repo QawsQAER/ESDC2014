@@ -255,14 +255,6 @@ uint8_t intel_board::robot_ready()
 	// ui->send_finished_ack("/home/intelcup/Desktop/1.jpg");
 
 	/*test camera platform*/
-	Message msg;
-	this->motion_controller->platform(90,CAM_YAW_RIGHT);	
-	this->motion_controller->platform(90,CAM_YAW_LEFT);
-	this->motion_controller->platform(90,CAM_ROLL_RIGHT);
-	this->motion_controller->platform(90,CAM_ROLL_LEFT);
-	this->motion_controller->platform(90,CAM_PITCH_RIGHT);
-	this->motion_controller->platform(90,CAM_PITCH_LEFT);
-
 
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
@@ -430,11 +422,15 @@ uint8_t intel_board::robot_find_target_strategy2(uint8_t &state)
 uint8_t intel_board::robot_evaluate_image()
 {
 	printf("intel_board: robot_evaluate_image() running\n");
-	if(this->image_processor->final_face_detect.size() != 0)
+	if(this->image_processor->final_face_detect.size() != 0 && glo_multi_target == 0)
 		return this->motion_controller->evaluate_image(
 			this->image_processor->get_detection_result(),
 			this->image_processor->get_face_detection_result(),
 			this->distance);
+	else if(glo_multi_target && this->image_processor->final_face_detect.size() != 0)
+		return this->motion_controller->evaluate_image_multi_targets(
+			this->image_processor->final_face_detect,
+			this->image_processor->face_region);
 	else
 		printf("intel_board::robot_evaluate_image() error: evaluating an image without detection result!\n");
 		return 0;
@@ -522,11 +518,11 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	this->motion_controller->platform(45,CAM_ROLL_LEFT);
+	//this->motion_controller->platform(45,CAM_ROLL_LEFT);
 	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	
-	this->motion_controller->platform(45,CAM_ROLL_RIGHT);
+	//this->motion_controller->platform(45,CAM_ROLL_RIGHT);
 
 	this->robot_show_image();
 	
