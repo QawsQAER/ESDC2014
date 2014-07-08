@@ -480,9 +480,14 @@ uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 	return basic_filter_default();
 }
 
-uint8_t Image_processor::basic_filter_with_memory()
+uint8_t Image_processor::basic_filter_with_gesture()
 {
+	printf("Image_processor::basic_filter_with_gesture() running\n");
+	this->final_face_detect.clear();
+	this->final_body_detect.clear();
 
+	for(size_t )
+	printf("Image_processor::basic_filter_with_gesture() exiting\n");
 }
 /*
 	@param: degree is the angle detected between the user and the robot 
@@ -1005,4 +1010,36 @@ bool Image_processor::need_contrast(const cv::Mat &source_img)
 	cv::meanStdDev(source_img,mean,stddev);
 
 	return true;
+}
+
+bool Image_processor::need_flash(const cv::Mat &source_img)
+{
+	cv::Scalar mean;
+	cv::Scalar stddev;
+	cv::meanStdDev(source_img,mean,stddev);
+
+	double mean_all = (mean.val[0] + mean.val[1] + mean.val[2]) / 3;
+	printf("Image_processor::need_flash mean_all is %lf\n",mean_all);
+	if(mean_all < 50)
+	{
+		this->cam->flash_open();
+		return true;
+	}
+	else
+	{
+		this->cam->flash_close();
+		return false;
+	}
+}
+
+void Image_processor::flash_on()
+{
+	this->cam->flash_open();
+	return ;
+}
+
+void Image_processor::flash_off()
+{
+	this->cam->flash_close();
+	return ;
 }

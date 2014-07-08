@@ -608,6 +608,7 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 	else
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
 
+	this->image_processor->need_flash(this->image_processor->current_img);
 	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
 	{	
 		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);

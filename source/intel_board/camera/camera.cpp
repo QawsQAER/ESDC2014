@@ -275,19 +275,17 @@ int Camera::test_connection()
 void Camera::zoom(float scaler){
 // (scaler>1 in) (scaler< 1 out)
 
-
-
 //conver scaler to index
- if(mode==PHONE)
-              { int index=0;
-              
-                  if(scaler-1<0.1) index=0;  
-                 else if(scaler-1.02<0.1) index=1;  
-                 else  if(scaler-1.04<0.1) index=2;  
-                  else if(scaler-1.09<0.1) index=3;  
-                   else if(scaler-1.11<0.1) index=4;  
-                   else if(scaler-1.13<0.1) index=5;  
-                   else if(scaler-1.19<0.1) index=6;  
+	if(mode==PHONE)
+  	{
+  		int index=0;
+  		if(scaler-1<0.1) index=0;  
+		else if(scaler-1.02<0.1) index=1;  
+		else if(scaler-1.04<0.1) index=2;  
+		else if(scaler-1.09<0.1) index=3;
+		else if(scaler-1.11<0.1) index=4;  
+		else if(scaler-1.13<0.1) index=5;
+		else if(scaler-1.19<0.1) index=6;  
                     else if(scaler-1.21<0.1) index=7;  
                    else if(scaler-1.24<0.1) index=8;  
                    else if(scaler-1.31<0.1) index=9;  
@@ -368,11 +366,8 @@ void Camera::zoom(float scaler){
           Choice: 17 17
           Choice: 18 18
           Choice: 19 19*/
-
-
-      gphoto_cmd="gphoto2 --set-config d02a="+temp;
-
-  }
+		gphoto_cmd="gphoto2 --set-config d02a="+temp;
+	}
 }
 
 

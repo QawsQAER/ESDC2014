@@ -154,7 +154,7 @@ public:
 	uint8_t basic_filter(const int32_t &degree,const int32_t &dir);
 	uint8_t basic_filter_default();
 	uint8_t basic_filter_with_degree(const int32_t &degree, const int32_t &dir);
-	uint8_t basic_filter_with_memory();
+	uint8_t basic_filter_with_gesture();
 
 	void skin_filter(const cv::Mat &source_img);
 	uint8_t multi_targets_filter(const uint8_t &num);
@@ -183,6 +183,10 @@ public:
 
 	/*Image processing related functions*/
 	bool need_contrast(const cv::Mat &source_img);
+	bool need_flash(const cv::Mat &source_img);
+
+	void flash_on();
+	void flash_off();
 };
 
 #endif
