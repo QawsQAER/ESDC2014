@@ -203,6 +203,14 @@ enum Direction{
 #define LIFTER_INIT_POS 200
 #define LIFTER_SEG 50
 
+#define CAM_ROLL_LEFT 0
+#define CAM_ROLL_RIGHT 1
+#define CAM_PITCH_LEFT 2
+#define CAM_PITCH_RIGHT 3
+#define CAM_YAW_LEFT 4
+#define CAM_YAW_RIGHT 5
+
+
 #define ORIENTATION_THRESHOLD 10
 
 #endif

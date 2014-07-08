@@ -851,7 +851,33 @@ void Motion_controller::platform_init()
 	return ;
 }
 
-
+void Motion_controller::platform(const uint16_t &degree, const uint8_t &action)
+{
+	Message msg;
+	switch(action)
+	{
+		case CAM_ROLL_LEFT:
+			msg.CameraPlatformRollLeft(degree);
+		break;
+		case CAM_ROLL_RIGHT:
+			msg.CameraPlatformRollRight(degree);
+		break;
+		case CAM_PITCH_LEFT:
+			msg.CameraPlatformPitchUp(degree);
+		break;
+		case CAM_PITCH_RIGHT:
+			msg.CameraPlatformPitchDown(degree);
+		break;
+		case CAM_YAW_LEFT:
+			msg.CameraPlatformYawCounterClk(degree);
+		break;
+		case CAM_YAW_RIGHT:
+			msg.CameraPlatformYawClk(degree);
+		break;
+	}
+	msg.safe_sendMessage(this->Com->fd);
+	return ;
+}
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *direction)
 {

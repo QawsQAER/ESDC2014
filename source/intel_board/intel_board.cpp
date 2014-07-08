@@ -256,23 +256,13 @@ uint8_t intel_board::robot_ready()
 
 	/*test camera platform*/
 	Message msg;
-	msg.CameraPlatformYawClk(90);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
+	this->motion_controller->platform(90,CAM_YAW_RIGHT);	
+	this->motion_controller->platform(90,CAM_YAW_LEFT);
+	this->motion_controller->platform(90,CAM_ROLL_RIGHT);
+	this->motion_controller->platform(90,CAM_ROLL_LEFT);
+	this->motion_controller->platform(90,CAM_PITCH_RIGHT);
+	this->motion_controller->platform(90,CAM_PITCH_LEFT);
 
-	msg.CameraPlatformYawCounterClk(90);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
-
-	msg.CameraPlatformPitchUp(45);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
-
-	msg.CameraPlatformPitchDown(45);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
-
-	msg.CameraPlatformRollLeft(45);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
-
-	msg.CameraPlatformRollRight(45);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
 
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
@@ -532,13 +522,11 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	//this->image_processor->cam->save_photo_af();
-	Message msg;
-	msg.CameraPlatformRollLeft(45);
-	msg.safe_sendMessage(this->motion_controller->Com->fd);
+	this->motion_controller->platform(45,CAM_ROLL_LEFT);
+	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
-	msg.CameraPlatformRollRight(45);
-		msg.safe_sendMessage(this->motion_controller->Com->fd);
+	
+	this->motion_controller->platform(45,CAM_ROLL_RIGHT);
 
 	this->robot_show_image();
 	

@@ -136,6 +136,8 @@ public:
 	//Platform related functions
 	void platform_init();
 
+	void platform(const uint16_t &degree, const uint8_t &action);
+
 	int8_t orientation_adjust(const uint16_t &phone_ori);
 	void set_initial_car_orientation(const uint16_t &car_ori);
 };

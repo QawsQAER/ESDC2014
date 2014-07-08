@@ -51,7 +51,7 @@ public:
 
 
 
-
+	int count_temp_photo;
 
 private:
 	FILE *fp;
@@ -63,7 +63,6 @@ private:
 
 	std::string path_capture;
 
-	int count_temp_photo;
 	int count_capture_photo;
 
 	int mode;

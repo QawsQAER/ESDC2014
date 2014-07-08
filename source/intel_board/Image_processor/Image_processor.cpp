@@ -437,7 +437,7 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		printf("Image_processor::show_analyzed_img() showing analyzed_img and analyzed_img_filtered\n");	
 		//cv::imshow(this->winname,concat_image);
 		cv::imshow(this->winname,this->analyzed_img_filtered);
-		this->save_current_image(task_counter);
+		this->save_current_image(this->cam->count_temp_photo);
 		//printf("Image_processor::show_analyzed_img() showing skin_img\n");
 		cv::imshow(this->skinwin,this->skin_img);
 
