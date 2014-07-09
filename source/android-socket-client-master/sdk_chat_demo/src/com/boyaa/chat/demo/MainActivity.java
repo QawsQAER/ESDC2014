@@ -846,21 +846,25 @@ public class MainActivity extends Activity  implements OnTouchListener{
            
             int bufferSize = 8192;  
             byte[] buf = new byte[bufferSize];  
-            int passedlen = 0;  
+            long passedlen = 0;  
             long len = 0;  
               
             Log.d("AndroidClient","@@@savePath"+savePath);  
             DataOutputStream fileOut = new DataOutputStream(  
                     new BufferedOutputStream(new BufferedOutputStream(  
                             new FileOutputStream(savePath))));  
-            len = inputStream.readLong();  
+//            len = inputStream.readLong();  
             Log.d("AndoridClient","文件的长度为:"+len);  
             Log.d("AndroidClient","开始接收文件");  
             while(passedlen<len) {  
                 int read = 0;  
                 if (inputStream != null) {  
                     read = inputStream.read(buf);  
-                }  
+                }
+                else
+                {
+                 break;
+                }
                 passedlen += read;  
                 if (read == -1) {  
                     break;  

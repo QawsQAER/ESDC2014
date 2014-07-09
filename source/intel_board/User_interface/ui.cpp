@@ -1005,10 +1005,11 @@ unsigned long get_file_size(const char *path);
 		memcpy(buffer,&filesize,sizeof(filesize));
 
 
-		if (send(transfer_client_sd, buffer, sizeof(filesize), 0) < 0) 
-         { 
-             printf("Send File:\t%s Failed!  %s (Errno:%d\n", file_name,strerror(errno),errno);  
-         } 
+		// if (send(transfer_client_sd, buffer, sizeof(filesize), 0) < 0) 
+  //        { 
+  //            printf("Send File:\t%s Failed!  %s (Errno:%d\n", file_name,strerror(errno),errno);  
+  //        } 
+
 
 
   		
