@@ -981,6 +981,7 @@ int UI::init_server_socket(){
 					printf("accept erro: %s (Errno:%d)\n",strerror(errno),errno);
 					exit(0);
 				}
+				
 				file_transfer_connected=1;
 			}
 
@@ -1026,7 +1027,7 @@ int UI::init_server_socket(){
             printf("File:\t%s Transfer Finished!\n", file_name); 
         } 
 
-        close(transfer_client_sd);
+        // close(transfer_client_sd);
 
       
 
