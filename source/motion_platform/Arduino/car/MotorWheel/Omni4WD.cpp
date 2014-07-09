@@ -547,7 +547,8 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 			break;
 		}
 	}
-
+	
+	Omni->setCarStop();
 	Omni->delayMS(500); //i don't know why we need this. Otherwise, the car will not stop
 }
 /*********************************************************/
