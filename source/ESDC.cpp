@@ -31,6 +31,7 @@
 
 #include <iostream>
 #include "intel_board/intel_board.h"
+#include "macro.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
@@ -54,7 +55,7 @@ uint8_t glo_display_enable = 1;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
 uint8_t glo_high_angle_shot = 1;
-
+command_type glo_pattern;
 int32_t glo_argc;
 
 intel_board *robot;

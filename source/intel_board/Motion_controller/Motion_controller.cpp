@@ -356,13 +356,13 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 	int32_t diff_y = detect.height - this->ref.height;
 	uint16_t move_z = 0;
 	if(distance > 3000)
-		move_z = DEFAULT_DIS_LARGE;
+		move_z = DEFAULT_DIS_LARGE * (distance / 3000);
 	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
 	else if(distance > 1000)
-		move_z = DEFAULT_DIS_SMALL;
+		move_z = DEFAULT_DIS_SMALL * (distance / 1500);
 	else 
-		move_z = DEFAULT_DIS_TINY;
+		move_z = DEFAULT_DIS_TINY * (distance / 1000);
 
 	if(diff_y < 0)
 	{
@@ -416,13 +416,13 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 	printf("Motion_controller::zoom_in_out_by_face() running\n");
 	
 	if(distance > 3000)
-		move_z = DEFAULT_DIS_LARGE;
+		move_z = DEFAULT_DIS_LARGE * (distance / 3000);
 	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
 	else if(distance > 1000)
-		move_z = DEFAULT_DIS_SMALL;
+		move_z = DEFAULT_DIS_SMALL * (distance / 1500);
 	else
-		move_z = DEFAULT_DIS_TINY;
+		move_z = DEFAULT_DIS_TINY * (distance / 1000);
 
 	if(diff_y > 0)
 	{
@@ -484,7 +484,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_DOWN);
 	}
-	else if(glo_high_angle_shot == 0)
+	else if(glo_high_angle_shot == 0 && diff_y <= 0)
 	{
 		//moving up
 		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
@@ -507,7 +507,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
 	uint16_t move_x , move_y;
 	
-	move_x = abs(ceil(p * diff_x));
+	move_x = abs(ceil(p * diff_x)) * 0.8;
 	if(diff_x > 0 && abs(diff_x) > threshold_face_x)
 	{
 		//the target is on the right w.r.t the expected region
@@ -527,15 +527,16 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	int32_t diff_y = face_top.y - this->face_ref.y;
 	printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
 	printf("Motion_controller::adjusting_by_face() face_ref y is %u\n",this->face_ref.y);
-	move_y = abs(ceil(p* diff_y));
-	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y)
+	
+	move_y = abs(ceil(p* diff_y)) * 0.8;
+	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y && glo_high_angle_shot == 0)
 	{
 		//the target is too low w.r.t the expected region
 		//lower camera
 		printf("Motion_controller::adjusting_by_face() lowering lifter\n");
 		this->lift(move_y,LIFTER_DOWN);
 	}
-	else if(abs(diff_y) > this->threshold_face_y)
+	else if(abs(diff_y) > this->threshold_face_y && glo_high_angle_shot == 0)
 	{
 		//the target is too high w.r.t the expected region
 		//raising camera

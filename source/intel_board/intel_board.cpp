@@ -279,26 +279,31 @@ uint8_t intel_board::robot_ready()
 			case(pattern_1):
 				this->waist_shot = 0;
 				this->motion_controller->set_pattern(1);
+				glo_pattern = cmd;
 			break;
 
 			case(pattern_2):
 				this->waist_shot = 0;
 				this->motion_controller->set_pattern(2);
+				glo_pattern = cmd;
 			break;
 
 			case(pattern_3):
 				this->waist_shot = 1;
 				this->motion_controller->set_pattern(3);
+				glo_pattern = cmd;
 			break;
 			
 			case(pattern_4):
 				this->waist_shot = 1;
 				this->motion_controller->set_pattern(4);
+				glo_pattern = cmd;
 			break;
 			
 			case(pattern_diy):
 				this->waist_shot = 1;
 				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
+				glo_pattern = cmd;
 			break;
 
 			case(set_waist_shot):
