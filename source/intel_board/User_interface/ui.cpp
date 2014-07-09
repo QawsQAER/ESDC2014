@@ -1000,7 +1000,7 @@ int UI::init_server_socket(){
             printf("File:\t%s Not Found!\n", file_name); 
         } 
         else 
-        { 
+        {
             memset(buffer,0, BUFFER_SIZE); 
             int file_block_length = 0; 
             while( (file_block_length = fread(buffer, sizeof(char), BUFFER_SIZE, fp)) > 0) 
@@ -1010,7 +1010,7 @@ int UI::init_server_socket(){
                 // 发送buffer中的字符串到new_server_socket,实际上就是发送给客户端 
                 if (send(transfer_client_sd, buffer, file_block_length, 0) < 0) 
                 { 
-                    printf("Send File:\t%s Failed!\n", file_name); 
+                    printf("Send File:\t%s Failed!  %s (Errno:%d\n", file_name,strerror(errno),errno); 
                     break; 
                 } 
   
