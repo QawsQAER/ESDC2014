@@ -41,6 +41,7 @@ Image_processor::Image_processor(uint8_t img_source)
 	strcpy(this->edgewin,"edge window");
 	this->win_exist = 0;
 	this->img_source = img_source;
+	this->count_pic = 0;
 	if(this->img_source == IMG_SOURCE_WEBCAM)
 	{
 		printf("Image_processor: Using WEBCAM\n");
@@ -54,10 +55,10 @@ Image_processor::Image_processor(uint8_t img_source)
 	}
 	else if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
-		printf("Image_processor: Using CELL PHONE\n");
+		printf("Image_processor: Using Cell Phone OR Camera\n");
 		this->cam = new Camera();
 			// this->source_mode=CANON;
-		this->cam->set_mode(source_mode);
+		this->cam->set_mode(glo_source_mode);
 		// std::string ip(IP_PORT);
 		// this->cam->setip(ip);
 	}
@@ -125,27 +126,19 @@ uint8_t Image_processor::get_image_from_cellphone()
 
 uint8_t Image_processor::get_image_from_webcam()
 {
-	for(uint8_t count_frame = 0;count_frame < 30;count_frame++)
-	{
-		if(!this->cap->grab())
+	cv::Mat tmp;
+	uint8_t count_frame = 0;
+	while(this->cap->grab() && count_frame < 30)
+	{	
+		if(this->cap->retrieve(tmp) == false)
 		{
-			printf("Image_processor::get_image_from_webcam(): Error, Cannot grab()\n");
+			printf("Image_processor::get_image_from_webcam(): error when retrieving image\n");
 			return 0;
-		}
+		};
+		count_frame++;
 	}
 	
-	if(!this->cap->retrieve(this->current_img))
-	{
-		printf("Image_processor::get_image_from_webcam(): Error, Cannot retrieve()\n");
-		return 0;
-	}
-
-	if( (this->current_img.rows == this->current_img.cols) && (this->current_img.cols == 0))
-	{
-		printf("Image_processor::get_image_from_webcam(): Error, get cols = rows = 0\n");
-		return 0;
-	}
-
+	this->current_img = tmp;
 	return 1;
 }
 
@@ -154,6 +147,7 @@ uint8_t Image_processor::get_image_from_webcam()
  */
 uint8_t Image_processor::capture_image()
 {
+	this->count_pic++;
 	if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
 		return this->get_image_from_cellphone();
@@ -206,8 +200,8 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
 	//cv::imwrite(filename,this->current_img,compression_params);
-	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
-	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
+	//cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
+	//cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
 
 	free(filename);
 	free(analyzed_filename);
@@ -347,6 +341,7 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 	//the flag is 0 as default, possible value is CV_HAAR_DO_CANNY_PRUNING
 	//the minNeighbour is 4 for higher accruacy
 	//flags NA in new cascade classifier
+	
 	this->face_cascade.detectMultiScale(frame_gray,
 		face_detect,
 		1.1, 4, 0,
@@ -367,7 +362,7 @@ void Image_processor::skin_filter(const cv::Mat &source_img)
 	for(size_t count = 0;count < tmp.size();count++)
 	{
 		cv::Mat subImage = source_img(tmp[count]);
-		if(getSkin(subImage,subImage)[0] > 100)
+		if(getSkin(subImage,subImage)[0] > 80)
 		{
 			face_detect.push_back(tmp[count]);
 		}
@@ -435,9 +430,12 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 		cv::moveWindow(this->winname,0,0);
 		printf("Image_processor::show_analyzed_img() showing analyzed_img and analyzed_img_filtered\n");	
-		//cv::imshow(this->winname,concat_image);
-		cv::imshow(this->winname,this->analyzed_img_filtered);
-		this->save_current_image(this->cam->count_temp_photo);
+		cv::imshow(this->winname,concat_image);
+		//cv::imshow(this->winname,this->analyzed_img_filtered);
+		if(this->img_source == IMG_SOURCE_CELLPHONE)
+			this->save_current_image(this->cam->count_temp_photo);
+		else
+			this->save_current_image(this->count_pic);
 		//printf("Image_processor::show_analyzed_img() showing skin_img\n");
 		cv::imshow(this->skinwin,this->skin_img);
 
@@ -477,6 +475,7 @@ uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 {
 	// does not apply filter by compass now
 	//this->basic_filter_with_degree(degree,dir);
+	//return basic_filter_with_gesture();
 	return basic_filter_default();
 }
 
@@ -486,7 +485,39 @@ uint8_t Image_processor::basic_filter_with_gesture()
 	this->final_face_detect.clear();
 	this->final_body_detect.clear();
 
-	for(size_t )
+	for(size_t count_face = 0;count_face < this->face_detect.size();count_face++)
+	{
+		if(this->face_detect[count_face].x - this->face_detect[count_face].width < 0)
+		{
+			//if there're no space for the left side of the face
+			cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
+			//if the face is not at the lower half of the picture.
+			if(rect != face_detect[count_face])
+			{
+				this->final_body_detect.push_back(rect);
+				this->final_face_detect.push_back(this->face_detect[count_face]);
+			}
+		}	
+		else
+		{
+			cv::Rect roi(
+				this->face_detect[count_face].x - this->face_detect[count_face].width,
+				this->face_detect[count_face].y,
+				this->face_detect[count_face].width,
+				this->face_detect[count_face].height);
+			cv::Mat subImage = this->current_img(roi);
+			if(this->getSkin(subImage,subImage)[0] > 80)
+			{
+				cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
+				//if the face is not at the lower half of the picture.
+				if(rect != face_detect[count_face])
+				{
+					this->final_body_detect.push_back(rect);
+					this->final_face_detect.push_back(this->face_detect[count_face]);
+				}
+			}
+		}
+	}
 	printf("Image_processor::basic_filter_with_gesture() exiting\n");
 }
 /*
@@ -563,8 +594,6 @@ uint8_t Image_processor::basic_filter_default()
 	//if no body is detected
 	if(this->final_body_detect.size() == 0 && this->face_detect.size() != 0)
 	{
-		uint8_t factor = 1;
-		float height_factor = 7.5;
 		for(size_t count_face = 0;count_face < face_detect.size();count_face++)
 		{
 			cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
@@ -1014,6 +1043,9 @@ bool Image_processor::need_contrast(const cv::Mat &source_img)
 
 bool Image_processor::need_flash(const cv::Mat &source_img)
 {
+	if(this->img_source == IMG_SOURCE_WEBCAM)
+		return 0;
+
 	cv::Scalar mean;
 	cv::Scalar stddev;
 	cv::meanStdDev(source_img,mean,stddev);

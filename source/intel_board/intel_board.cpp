@@ -518,11 +518,12 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	//this->motion_controller->platform(45,CAM_ROLL_LEFT);
+	if(glo_high_angle_shot)
+	this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
-	
-	//this->motion_controller->platform(45,CAM_ROLL_RIGHT);
+	if(glo_high_angle_shot)
+	this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();
 	

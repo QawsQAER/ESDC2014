@@ -45,7 +45,7 @@ char *glo_PATH_TEMP = NULL;
 char *glo_DIR_NAME = NULL;
 cv::Rect glo_prev_face;
 unsigned char continuity = 1;
-int source_mode;
+uint8_t glo_source_mode;
 
 uint8_t glo_test_mbed = 0;
 
@@ -53,6 +53,7 @@ uint8_t glo_motion_enable = 1;
 uint8_t glo_display_enable = 1;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
+uint8_t glo_high_angle_shot = 1;
 
 int32_t glo_argc;
 
@@ -67,8 +68,8 @@ int main(int32_t argc, char ** argv)
 		print_usage_and_exit();
 	}
 
-	/*use phone or canon*/
-	source_mode = atoi(argv[1]);
+	/*use phone or canon or canon as video stream*/
+	glo_source_mode = atoi(argv[1]);
 
 	cout << "Hello Intel ESDC" << endl;
 	/*
@@ -77,6 +78,8 @@ int main(int32_t argc, char ** argv)
 	*/
 	uint8_t mode = 1;
 	uint8_t img_source = 0;
+	if(glo_source_mode == 3)
+		img_source = IMG_SOURCE_WEBCAM;
 	glo_PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	glo_DIR_NAME = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	
@@ -117,6 +120,7 @@ void exit_routine(int arg)
         exit(0);
 }
 
+
 void generate_dir()
 {
 	printf("generate_dir running\n");
@@ -136,6 +140,7 @@ void generate_dir()
 	strcat(glo_PATH_TEMP,"/");
 }
 
+
 void print_usage_and_exit()
 {
 	printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
@@ -147,6 +152,7 @@ void print_usage_and_exit()
 	printf("-dm -> disabled motion\n");
 	exit_routine(glo_argc);
 }
+
 
 void parameter_setting(int32_t argc,char **argv)
 {

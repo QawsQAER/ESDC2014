@@ -50,6 +50,7 @@
 #define EVAL_COMPLETE 5
 
 extern uint8_t glo_motion_enable;
+extern uint8_t glo_high_angle_shot;
 
 class Motion_controller
 {

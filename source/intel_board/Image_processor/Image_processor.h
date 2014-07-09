@@ -23,6 +23,8 @@
 extern char *glo_PATH_TEMP;
 extern cv::Rect glo_prev_face;
 extern uint8_t glo_display_enable;
+extern uint8_t glo_high_angle_shot;
+
 
 enum IMAGE_PROCESS_STATE
 {
@@ -82,6 +84,7 @@ private:
 	void side_filtering(const cv::Rect &prev_face);
 	void size_filtering(const uint8_t &flags, const cv::Rect &prev_face);
 	cv::Rect body_by_face(const cv::Rect &face);
+	uint32_t count_pic;
 public:	
 	Image_processor(uint8_t img_source);
 	~Image_processor();

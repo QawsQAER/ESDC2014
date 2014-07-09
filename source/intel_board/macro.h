@@ -38,7 +38,7 @@
 
 extern char *glo_PATH_TEMP;
 extern unsigned char continuity;
-extern int source_mode;
+extern uint8_t glo_source_mode;
 
 #define PATH_CAPTURE "../../Photos/Capture"
 
@@ -130,14 +130,14 @@ enum Direction{
 #define IMG_fACE_ACTUAL_WIDTH IMG_FACE_ACTUAL_HEIGHT //mm
 
 
-#define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 6)
+#define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 4)
 #define IMG_EXP_FACE_WIDTH IMG_EXP_FACE_HEIGHT
 
 #define IMG_EXP_FACE_HEIGHT_FULL 30 
 #define IMG_EXP_FACE_WIDTH_FULL 30
 
 #define IMG_FACE_WIDTH_MIN 20
-#define IMG_FACE_WIDTH_MAX IMG_EXP_FACE_HEIGHT + IMG_VERT_THRESHOLD_FACE
+#define IMG_FACE_WIDTH_MAX (IMG_HEIGHT / 3)
 #define IMG_FACE_HEIGHT_MIN IMG_FACE_WIDTH_MIN
 #define IMG_FACE_HEIGHT_MAX IMG_FACE_WIDTH_MAX
 
@@ -205,11 +205,12 @@ enum Direction{
 
 #define CAM_ROLL_LEFT 0
 #define CAM_ROLL_RIGHT 1
-#define CAM_PITCH_LEFT 2
-#define CAM_PITCH_RIGHT 3
+#define CAM_PITCH_UP 2
+#define CAM_PITCH_DOWN 3
 #define CAM_YAW_LEFT 4
 #define CAM_YAW_RIGHT 5
 
+#define CAM_HIGH_ANGLE 30
 
 #define ORIENTATION_THRESHOLD 10
 

@@ -527,6 +527,12 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 		printf("Motion_controller::adjusting_by_face() raising lifter\n");
 		this->lift(move_y,LIFTER_UP);
 	}
+
+	if(glo_high_angle_shot)
+	{
+		this->lift((uint16_t) LIFTER_MAX,LIFTER_UP);
+	}	
+
 	printf("Motion_controller::adjusting_by_face() exiting\n");
 	return 1;
 }
@@ -845,8 +851,7 @@ void Motion_controller::buzzer(const uint8_t &type)
 {
 	Message msg;
 	msg.BuzzerRequest(type);
-	if(glo_motion_enable)
-		msg.safe_sendMessage(this->Com->fd);
+	msg.safe_sendMessage(this->Com->fd);
 	return ;
 }
 
@@ -866,10 +871,10 @@ void Motion_controller::platform(const uint16_t &degree, const uint8_t &action)
 		case CAM_ROLL_RIGHT:
 			msg.CameraPlatformRollRight(degree);
 		break;
-		case CAM_PITCH_LEFT:
+		case CAM_PITCH_UP:
 			msg.CameraPlatformPitchUp(degree);
 		break;
-		case CAM_PITCH_RIGHT:
+		case CAM_PITCH_DOWN:
 			msg.CameraPlatformPitchDown(degree);
 		break;
 		case CAM_YAW_LEFT:

@@ -50,12 +50,13 @@
 
 //this is defined, declared and allocated space in ESDC.cpp
 extern cv::Rect glo_prev_face;
-extern int source_mode;
+extern uint8_t glo_source_mode;
 extern uint8_t glo_multi_target;
 extern uint8_t glo_num_target;
 extern int32_t glo_degree;
 extern int32_t glo_dir;
 extern uint8_t glo_test_mbed;
+extern uint8_t glo_high_angle_shot;
 extern char * glo_DIR_NAME;
 //------------------------------------------------------//
 
