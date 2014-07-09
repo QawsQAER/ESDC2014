@@ -20,6 +20,7 @@
 #include <arpa/inet.h> 
 
 
+#include <sys/stat.h>  
 
 /*
 
@@ -913,6 +914,7 @@ int UI::init_server_socket(){
 
 }
 
+unsigned long get_file_size(const char *path);
 
  void UI::send_finished_ack(char *file_name_parameter)
  {
@@ -988,12 +990,28 @@ int UI::init_server_socket(){
 			printf("conneted... start transfering\n");
 
 
-
-  		char file_name[MAX_SIZE + 1]; 
+		char file_name[MAX_SIZE + 1]; 
         memset(file_name,0,sizeof(file_name)); 
         strcpy(file_name,file_name_parameter); 
         strncpy(file_name, buffer, 
         strlen(buffer) > MAX_SIZE ? MAX_SIZE : strlen(buffer)); 
+
+		uint64_t filesize=(uint64_t)get_file_size(file_name);
+
+		printf("-------------------------------\n");
+		printf("filesize: %lu\n", filesize);
+		printf("-------------------------------\n");
+		memset(buffer,0, BUFFER_SIZE); 
+		memcpy(buffer,&filesize,sizeof(filesize));
+
+
+		if (send(transfer_client_sd, buffer, sizeof(filesize), 0) < 0) 
+         { 
+             printf("Send File:\t%s Failed!  %s (Errno:%d\n", file_name,strerror(errno),errno);  
+         } 
+
+
+  		
   
         FILE *fp = fopen(file_name, "r"); 
         if (fp == NULL) 
@@ -1003,7 +1021,13 @@ int UI::init_server_socket(){
         else 
         {
             memset(buffer,0, BUFFER_SIZE); 
+            
+
             int file_block_length = 0; 
+
+			  
+			
+
             while( (file_block_length = fread(buffer, sizeof(char), BUFFER_SIZE, fp)) > 0) 
             { 
                 printf("file_block_length = %d\n", file_block_length); 
@@ -1035,3 +1059,18 @@ int UI::init_server_socket(){
         printf("--------------------------------------------\n");
 
  }
+
+unsigned long get_file_size(const char *path)  
+{  
+  unsigned long filesize = -1;      
+  struct stat statbuff;  
+	if(stat(path, &statbuff) < 0)
+	{  
+		return filesize;  
+	}
+	else
+	{  
+		filesize = statbuff.st_size;  
+	}  
+return filesize;  
+}  
