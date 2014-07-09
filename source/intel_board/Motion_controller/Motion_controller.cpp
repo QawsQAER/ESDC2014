@@ -130,6 +130,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	
 	uint8_t flag_done_centering = 0;
 	uint8_t flag_done_zooming = 0;
+	diff_y = face.height - this->face_ref.height;
+	printf("Motion_controller::evaluate_image the diff_y is %d and the face_ref is %u\n",face.height,this->face_ref.height);
+	printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
 	if(!(*this->waist_shot))
 	{
 		diff_y = face.height - this->face_ref.height;
@@ -143,6 +146,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		else
 			flag_done_centering = 1;	
 		
+
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming
@@ -178,7 +182,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		else
 			flag_done_centering = 1;
 		
-		if(abs(diff_y) > this->threshold_face_y )//the face is too small or too large, need to zoom in or zoom out
+		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			return this->zoom_in_out_by_face(face,distance);
@@ -319,7 +323,7 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 		printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
 		this->move(move_x,CAR_LEFT);
 	}
-	return 1;
+	return EVAL_CENTERING;
 }
 /*CENTERING FUNCTION END*/
 /*CENTERING FUNCTION END*/
@@ -355,8 +359,10 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 		move_z = DEFAULT_DIS_LARGE;
 	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
-	else
+	else if(distance > 1000)
 		move_z = DEFAULT_DIS_SMALL;
+	else 
+		move_z = DEFAULT_DIS_TINY;
 
 	if(diff_y < 0)
 	{
@@ -413,8 +419,10 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 		move_z = DEFAULT_DIS_LARGE;
 	else if(distance > 1500)
 		move_z = DEFAULT_DIS;
-	else
+	else if(distance > 1000)
 		move_z = DEFAULT_DIS_SMALL;
+	else
+		move_z = DEFAULT_DIS_TINY;
 
 	if(diff_y > 0)
 	{
@@ -470,13 +478,13 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
 	uint16_t move_y = ceil(abs(diff_y) * p);
 	printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
-	if(diff_y > 0)
+	if(diff_y > 0 && glo_high_angle_shot == 0)
 	{
 		//moving down
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_DOWN);
 	}
-	else
+	else if(glo_high_angle_shot == 0)
 	{
 		//moving up
 		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);

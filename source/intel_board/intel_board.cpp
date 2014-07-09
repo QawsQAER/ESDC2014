@@ -127,7 +127,6 @@ uint8_t intel_board::main_function()
 				{
 
 					//get the distance according to the face detection result (running four point algorithm)
-					this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
 					this->state = ROBOT_EVALUATE_IMAGE;
 					this->flag_target_found = 1;
 				}
@@ -491,7 +490,9 @@ uint8_t intel_board::robot_evaluate_movement()
 			this->robot_show_image();
 		}
 		else if(rv > 0)
+		{
 			break;
+		}
 	}
 	
 	this->robot_show_image();
@@ -518,12 +519,12 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	if(glo_high_angle_shot)
-	this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
+	if(glo_high_angle_shot && this->waist_shot)
+		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
-	if(glo_high_angle_shot)
-	this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
+	if(glo_high_angle_shot && this->waist_shot)
+		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();
 	
@@ -601,13 +602,21 @@ void intel_board::robot_show_image()
 
 uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
+	printf("intel_board::robot_target_in_scope running\n");
 	uint8_t rv = 0;
 	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
 	else
+	{
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now
+		if(rv > 0)
+		{
+			this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
+			printf("\n\nintel_board::robot_target_in_scope() distance is %lf\n\n",distance);
+		}
+	}
 
 	this->image_processor->need_flash(this->image_processor->current_img);
 	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
@@ -615,6 +624,7 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
 		return 0;
 	}
+	printf("intel_board::robot_target_in_scope returning\n");
 	return rv;
 }
 

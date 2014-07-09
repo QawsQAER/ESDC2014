@@ -200,8 +200,8 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
 	//cv::imwrite(filename,this->current_img,compression_params);
-	//cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
-	//cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
+	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
+	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
 
 	free(filename);
 	free(analyzed_filename);
@@ -784,8 +784,8 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::one_target_in_scope() returning\n");
-		return this->final_body_detect.size();			
+		printf("Image_processor::one_target_in_scope() returning %lu\n",this->final_face_detect.size());
+		return this->final_face_detect.size();			
 	}
 	else if(this->final_face_detect.size() == 0)
 	{
