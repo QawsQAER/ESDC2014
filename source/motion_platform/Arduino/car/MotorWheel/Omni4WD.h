@@ -160,7 +160,7 @@ This part is added by project ESDC2014 of CUHK team.
 All the code with this header are under GPL open source license.
 ******************************************************/
 // #define moveSpeedMMPS 150
-#define moveSpeedMMPS 300
+#define moveSpeedMMPS 150
 #define rotateSpeedMMPS 200
 class Car
 {
