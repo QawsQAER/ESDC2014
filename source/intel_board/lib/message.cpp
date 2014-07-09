@@ -65,7 +65,7 @@ int32_t Message::safe_sendMessage(int fd)
 
 int32_t Message::sendMessage(int fd)
 {
-	printf("Message::sending Message\n");
+	//printf("Message::sending Message\n");
 	int write_error = 0;
 	uint8_t move_dis_upper_8 = (_IntelCarCmd->move_dis) >> 8;
 	uint8_t move_dis_lower_8 = (_IntelCarCmd->move_dis) & 0x00ff;
@@ -93,13 +93,13 @@ int32_t Message::sendMessage(int fd)
 		printf("Message::sendMessage() receiveACK return -1;\n");
 		return -1;
 	}
-	printf("Message::sendMessage() exiting\n");
+	//printf("Message::sendMessage() exiting\n");
 	return 1;
 }
 
 int Message::receiveACK(int fd)
 {
-	printf("Message::receiveACK() entering.\n");
+	//printf("Message::receiveACK() entering.\n");
 	memset(_ACK, 0 , sizeof(struct ACK));
 	uint8_t buff[4];
 	uint8_t read_num = 0;
