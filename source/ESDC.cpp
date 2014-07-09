@@ -31,7 +31,7 @@
 
 #include <iostream>
 #include "intel_board/intel_board.h"
-#include "macro.h"
+#include "intel_board/macro.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <signal.h>
