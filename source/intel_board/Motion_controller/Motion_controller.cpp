@@ -158,6 +158,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			this->adjusting(detect);
 			return EVAL_ADJUSTING;
 		}
+		else if(abs(center.x - img_exp_pos_x) < threshold_x && abs(detect.y - img_exp_pos_y) < threshold_y)
+			return EVAL_ADJUSTING;
+
 	}
 	else
 	{
@@ -184,12 +187,16 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		else
 			flag_done_zooming = 1;
 
+		diff_x = (face.x + face.width / 2) - (this->face_ref.x + this->face_ref.width / 2); 
+		diff_y = (face.y) - this->face_ref.y;
 		if(flag_done_centering && flag_done_zooming)
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
 			return EVAL_ADJUSTING;
 		}
+		else if(abs(diff_x) < threshold_face_x && abs(diff_y) < threshold_face_y)
+			return EVAL_ADJUSTING;
 	}
 	return EVAL_ADJUSTING;
 }
@@ -509,9 +516,9 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	}
 	
 	//move vertically
-	int32_t diff_y = face_top.y - this->img_exp_face_pos_y;
+	int32_t diff_y = face_top.y - this->face_ref.y;
 	printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
-	printf("Motion_controller::adjusting_by_face() img_exp_face_pos_y is %u\n",this->img_exp_face_pos_y);
+	printf("Motion_controller::adjusting_by_face() face_ref y is %u\n",this->face_ref.y);
 	move_y = abs(ceil(p* diff_y));
 	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y)
 	{
