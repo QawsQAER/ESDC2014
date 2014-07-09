@@ -63,26 +63,38 @@ import com.view.MyView;
 @SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
 public class MainActivity extends Activity  implements OnTouchListener{
 	
-	private int x;//绘画开始的横坐标
-	private int y;//绘画开始的纵坐标
-	private int m;//绘画结束的横坐标
-	private int n;//绘画结束的纵坐标
-	private int width;//绘画的宽度
-	private int height;//绘画的高度
+	private int x=0;//绘画开始的横坐标
+	private int y=0;//绘画开始的纵坐标
+	private int m=0;//绘画结束的横坐标
+	private int n=0;//绘画结束的纵坐标
+	private int width=0;//绘画的宽度
+	private int height=0;//绘画的高度
 	private Bitmap bitmap;//生成的位图
 	private MyView myView;//绘画选择区域
 	private Button button;
 	
-	private int ratiox;//绘画开始的横坐标
-	private int ratioy;//绘画开始的纵坐标
-	private int ratioheight;//绘画开始的横坐标
-	private int ratiowidth;//绘画开始的纵坐标
+	private int ratiox=0;//绘画开始的横坐标
+	private int ratioy=0;//绘画开始的纵坐标
+	private int ratioheight=0;//绘画开始的横坐标
+	private int ratiowidth=0;//绘画开始的纵坐标
 	
-	private int image_x;//绘画开始的横坐标
-	private int image_y;//绘画开始的纵坐标
-	private int image_width;//绘画结束的横坐标
-	private int image_height;//绘画结束的纵坐标
+	private int image_x=0;//绘画开始的横坐标
+	private int image_y=0;//绘画开始的纵坐标
+	private int image_width=0;//绘画结束的横坐标
+	private int image_height=0;//绘画结束的纵坐标
 
+	private int cuhk_logo=1;
+	private int flag=0;
+	
+	private int viewcount=1;
+	private int mode=0;
+
+
+	private int degree=0;
+	private int connected=0;
+	
+	private int file_transfer_connected=1;
+	
 	private Client user=null;
 //	private EditText ip;
 	private TextView status;
@@ -104,12 +116,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	float[] magneticFieldValues = new float[3];
 	private static final String TAG = "sensor";
 
-	int cuhk_logo;
-	int flag;
-	int mode;
-	int viewcount;
-	int connected;
-	 int degree;
+	
 	 Packet packet=new Packet();
 	 
 	ImageView imageView;
@@ -138,22 +145,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //		ip.setText(board_ip);
 		status.setText("off");
 		
-		cuhk_logo=1;
-		flag=0;
-		mode=0;
-		viewcount=1;
-		connected=0;
-		degree=0;
+	
 		
-		image_x=0;
-		image_y=0;
-		image_width=0;
-		image_height=0;
-		
-		ratiox=0;
-		ratioy=0;
-		ratioheight=0;
-		ratiowidth=0;
+	
 		initView();
 		
 		
@@ -859,10 +853,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
             DataOutputStream fileOut = new DataOutputStream(  
                     new BufferedOutputStream(new BufferedOutputStream(  
                             new FileOutputStream(savePath))));  
-//            len = inputStream.readLong();  
+            len = inputStream.readLong();  
             Log.d("AndoridClient","文件的长度为:"+len);  
             Log.d("AndroidClient","开始接收文件");  
-            while(true) {  
+            while(passedlen<len) {  
                 int read = 0;  
                 if (inputStream != null) {  
                     read = inputStream.read(buf);  
@@ -1120,9 +1114,19 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 					
 //							SystemClock.sleep(1);
-							  if (createConnection()) {  
+							
+							if(file_transfer_connected==1)
+							{	createConnection();
+							file_transfer_connected=0;
+							}
+							
+							
+							
+							 
 						            getMessage();  
-						        }  
+						        
+							  
+							  
 							Bitmap bitmap = getLoacalBitmap(savePath);
 								    
 //								    SimpleDateFormat dateformat=new SimpleDateFormat("yyyy-MM-dd_HH-mm");
