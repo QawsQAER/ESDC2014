@@ -83,8 +83,11 @@ int main(int32_t argc, char ** argv)
 	*/
 	uint8_t mode = 1;
 	uint8_t img_source = 0;
-	if(glo_source_mode == 3)
+
+	//use WebCam to get image for motion planing
+	if(glo_source_mode == 2 || glo_source_mode == 3)
 		img_source = IMG_SOURCE_WEBCAM;
+
 	glo_PATH_TEMP = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	glo_DIR_NAME = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	
@@ -156,6 +159,7 @@ void print_usage_and_exit()
 	printf("Usage: 1-> ./ESDC 0 [mode] [arguments] for PHONE\n");
 	printf("Usage: 2-> ./ESDC 1 [mode] [arguments] for CANON\n");
 	printf("Usage: 3-> ./ESDC 2 [mode] [arguments] for WebCam device /dev/video0 \n");
+	printf("Usage: 4-> ./ESDC 4 [mode] [arguments] for WebCam and CANON mode\n");
 	printf("[mode] = 1 or non specified -> normal mode\n");
 	printf("[mode] = 2 -> mbed debugging\n");
 	printf("[mode] = 3 -> file transfer debug mode\n");

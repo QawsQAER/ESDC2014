@@ -42,7 +42,8 @@ Image_processor::Image_processor(uint8_t img_source)
 	this->win_exist = 0;
 	this->img_source = img_source;
 	this->count_pic = 0;
-	if(this->img_source == IMG_SOURCE_WEBCAM)
+	
+	if(this->img_source == IMG_SOURCE_WEBCAM || glo_source_mode == 3)
 	{
 		printf("Image_processor: Using WEBCAM\n");
 		this->cap = new cv::VideoCapture(CV_CAP_ANY);
@@ -53,14 +54,16 @@ Image_processor::Image_processor(uint8_t img_source)
 		}
 		//cap->set(CV_CAP_PROP_POS_AVI_RATIO,1);
 	}
-	else if(this->img_source == IMG_SOURCE_CELLPHONE)
+	
+	if(this->img_source == IMG_SOURCE_CELLPHONE || glo_source_mode == 3)
 	{
 		printf("Image_processor: Using Cell Phone OR Camera\n");
 		this->cam = new Camera();
 			// this->source_mode=CANON;
-		this->cam->set_mode(glo_source_mode);
-		// std::string ip(IP_PORT);
-		// this->cam->setip(ip);
+		if(glo_source_mode == 3 || glo_source_mode == 1)
+			this->cam->set_mode(CANON);
+		else
+			this->cam->set_mode(PHONE);
 	}
 	//check the existence of the directory for storing the capture image
 	this->current_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
@@ -104,7 +107,6 @@ uint8_t Image_processor::get_image_from_cellphone()
 	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 #endif
 	
-
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
@@ -124,6 +126,12 @@ uint8_t Image_processor::get_image_from_cellphone()
 	return 1;
 }
 
+void Image_processor::camera_take_photo()
+{
+	printf("Image_processor::camera_take_photo running\n");
+	this->get_image_from_cellphone();
+	printf("Image_processor::camera_take_photo exiting\n");
+}
 uint8_t Image_processor::get_image_from_webcam()
 {
 	cv::Mat tmp;
@@ -202,7 +210,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 
-	sprintf(filename,"%s%u",glo_PATH_TEMP,task_counter);
+	sprintf(filename,"%swebcam_%u",glo_PATH_TEMP,task_counter);
 	strcpy(analyzed_filename,filename);
 	strcat(analyzed_filename,"_ana.jpg");
 

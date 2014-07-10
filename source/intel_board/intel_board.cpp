@@ -575,14 +575,31 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	if(glo_high_angle_shot && this->waist_shot)
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
-	this->robot_target_in_scope(ENABLE_FACE_DETECT);
+	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
+	printf("\n\n\n!!!!!!TAKING THE OFFICIAL PHOTO!!!\n");
+
+	char *filename = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	memset(filename,0,sizeof(char) * FILENAME_LENGTH);
+
+	if(glo_source_mode == 3)
+	{
+		this->image_processor->camera_take_photo();
+		strcpy(filename,this->image_processor->current_img_path);
+	}
+	else
+		this->image_processor->capture_image();
+
 	if(glo_high_angle_shot && this->waist_shot)
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();
 	
-	this->ui->send_finished_ack(this->image_processor->current_img_path);
-
+	if(glo_source_mode == 3)
+		this->ui->send_finished_ack(filename);
+	else
+		this->ui->send_finished_ack(this->image_processor->current_img_path);
+	
+	free(filename);
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
 

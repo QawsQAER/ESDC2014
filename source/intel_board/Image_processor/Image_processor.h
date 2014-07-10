@@ -192,6 +192,8 @@ public:
 
 	void flash_on();
 	void flash_off();
+
+	void camera_take_photo();
 };
 
 #endif
