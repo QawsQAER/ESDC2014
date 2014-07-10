@@ -356,7 +356,11 @@ uint8_t intel_board::robot_find_target()
 
 		printf("intel_board::robot_find_target rv is %d\n",rv);
 		if(rv < 0)
+		{
+			if(glo_test_filetransfer)
+				break;
 			continue;
+		}
 
 		this->robot_show_image();
 
