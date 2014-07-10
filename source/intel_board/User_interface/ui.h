@@ -5,13 +5,16 @@
 
 
 #define UI_PORT 60000
-#define TRANSFER_PORT 12315
+#define TRANSFER_PORT 12000
 #define MAX_MESSAGE_SIZE 255
 #define MESSAGELENGTH 2
 #define COMPASSLENGTH 
 
 #define BUFFER_SIZE 1024 
 #define MAX_SIZE 512 
+
+#include <pthread.h>
+
 
 class UI{
 
@@ -81,6 +84,8 @@ class UI{
 
 
 	char buffer[BUFFER_SIZE]; 
+	
+
 
 	private:
 
@@ -95,7 +100,7 @@ class UI{
 
 	int transfer_sd;
 	int transfer_client_sd;
-
+	int transfer_port;
 
 	void diy_data();
 	int init_server_socket();
@@ -138,6 +143,8 @@ class UI{
 	int degree;
 
 	bool file_transfer_connected;
+
+	pthread_t thread_id;
 
 	
 };

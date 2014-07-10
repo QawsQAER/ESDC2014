@@ -93,7 +93,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	private int degree=0;
 	private int connected=0;
 	
-	private int file_transfer_connected=1;
+	private int file_transfer_port=12000;
 	
 	private Client user=null;
 //	private EditText ip;
@@ -849,22 +849,22 @@ public class MainActivity extends Activity  implements OnTouchListener{
             long passedlen = 0;  
             long len = 0;  
               
-            Log.d("AndroidClient","@@@savePath"+savePath);  
+            Log.v("Client","savePath"+savePath);  
             DataOutputStream fileOut = new DataOutputStream(  
                     new BufferedOutputStream(new BufferedOutputStream(  
                             new FileOutputStream(savePath))));  
 //            len = inputStream.readLong();  
-            Log.d("AndoridClient","文件的长度为:"+len);  
-            Log.d("AndroidClient","开始接收文件");  
-            while(passedlen<len) {  
+            Log.v("Client","filesize:"+len);  
+            Log.v("Client","start");  
+            while(true) {  
                 int read = 0;  
                 if (inputStream != null) {  
                     read = inputStream.read(buf);  
                 }
-                else
-                {
-                 break;
-                }
+//                else
+//                {
+//                 break;
+//                }
                 passedlen += read;  
                 if (read == -1) {  
                     break;  
@@ -872,7 +872,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //                Log.d("AndroidClient","文件接收了"+(passedlen*100/len)+"%/n");  
                 fileOut.write(buf,0,read);  
             }  
-            Log.d("AndroidClient","@@@文件接收完成"+savePath);  
+            Log.v("AndroidClient","finish"+savePath);  
             fileOut.close();  
         } catch (IOException e) {  
             // TODO Auto-generated catch block  
@@ -884,7 +884,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
     
     private boolean createConnection() {  
     	Log.v("before", "before");  
-        cs = new ClientSocket(board_ip, 12315);  
+        cs = new ClientSocket(board_ip, file_transfer_port);  
         Log.v("new", "new"); 
         
         cs.createConnection();  
@@ -1119,16 +1119,17 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 //							SystemClock.sleep(1);
 							
-							if(file_transfer_connected==1)
-							{	createConnection();
-							file_transfer_connected=0;
-							}
+//							if(file_transfer_connected==1)
+//							{	
+								createConnection();
+//							file_transfer_connected=0;
+//							}
 							
 							
 							
 							 
 						            getMessage();  
-						        
+						            file_transfer_port++;
 							  
 							  
 							Bitmap bitmap = getLoacalBitmap(savePath);

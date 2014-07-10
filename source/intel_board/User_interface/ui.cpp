@@ -101,6 +101,7 @@ UI::UI()
 {
 	pattern=undefined;
 	file_transfer_connected=0;
+	transfer_port=TRANSFER_PORT;
 	connection();
 }
 
@@ -925,8 +926,9 @@ unsigned long get_file_size(const char *path);
  			/*set up server*/
 			printf("set up server for file transfering\n");
 
-			if(file_transfer_connected==0)
-			{
+
+			// if(file_transfer_connected==0)
+			// {
 					 transfer_sd = socket(AF_INET,SOCK_STREAM,0);
 				
 					if(transfer_sd == -1)
@@ -937,19 +939,14 @@ unsigned long get_file_size(const char *path);
 
 					struct sockaddr_in transfer_server_addr;
 
-					unsigned int value = 1;
-					if(setsockopt(transfer_sd,SOL_SOCKET,SO_REUSEADDR,(void *)&value,sizeof(value)))
-					{
-						perror("setsockopt");
-						exit(1);
-					}
+					
 
 					memset(&transfer_server_addr,0,sizeof(transfer_server_addr));
 
 					transfer_server_addr.sin_family=AF_INET;
 					transfer_server_addr.sin_addr.s_addr=htonl(INADDR_ANY);
-					transfer_server_addr.sin_port=htons(TRANSFER_PORT);
-					
+					transfer_server_addr.sin_port=htons(transfer_port);
+					transfer_port++;
 					printf("before bind\n");
 					if(bind(transfer_sd,(struct sockaddr *) &transfer_server_addr,sizeof(transfer_server_addr))<0){
 						printf("bind error: %s (Errno:%d)\n",strerror(errno),errno);
@@ -968,13 +965,13 @@ unsigned long get_file_size(const char *path);
 					
 
 					
-			}
+			// }
 				// printf("before accept client\n");
 			old_send_finished_ack();
 
 
-			if(file_transfer_connected==0)
-			{
+			// if(file_transfer_connected==0)
+			// {
 				struct sockaddr_in transfer_client_addr;
 				socklen_t addr_len=sizeof(struct sockaddr_in);
 				printf("before accept\n");
@@ -984,8 +981,8 @@ unsigned long get_file_size(const char *path);
 					exit(0);
 				}
 				
-				file_transfer_connected=1;
-			}
+			// 	file_transfer_connected=1;
+			// }
 
 			printf("conneted... start transfering\n");
 
@@ -1052,7 +1049,7 @@ unsigned long get_file_size(const char *path);
             printf("File:\t%s Transfer Finished!\n", file_name); 
         } 
 
-        // close(transfer_client_sd);
+        close(transfer_client_sd);
 
       
 
@@ -1075,3 +1072,7 @@ unsigned long get_file_size(const char *path)
 	}  
 return filesize;  
 }  
+
+
+
+

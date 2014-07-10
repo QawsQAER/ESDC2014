@@ -53,6 +53,8 @@ public:
 
 	int count_temp_photo;
 
+	
+
 private:
 	FILE *fp;
 
@@ -71,6 +73,8 @@ private:
 
 
 	void My_popen(std::string cmd);
+
+	pthread_t thread_id;
 	
 };
 

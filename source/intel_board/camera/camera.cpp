@@ -637,3 +637,35 @@ void Camera::My_popen(std::string cmd)
            // return -2;
     }
 }
+
+
+
+
+
+
+void *pthread_prog(void *args) {
+ 
+ 
+ 
+ 
+ }
+
+
+void Camera::start_vedio( )
+
+{
+
+
+
+   int ret_val_err= pthread_create(&thread_id, NULL, pthread_prog, 0);
+  if (ret_val_err != 0)
+    {
+    printf("can't create thread: %s\n", strerror(ret_val_err));
+      exit(0);
+     }
+}
+
+
+
+
+ 
