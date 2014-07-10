@@ -58,7 +58,7 @@ uint8_t glo_num_target = 1;
 uint8_t glo_high_angle_shot = 1;
 uint8_t glo_hand_gesture = 0;
 uint8_t glo_tracking = 0;
-
+uint8_t glo_test_filetransfer = 1;
 command_type glo_pattern;
 int32_t glo_argc;
 /************************/
@@ -105,6 +105,11 @@ int main(int32_t argc, char ** argv)
 			glo_test_mbed = 1;
 		}
 
+		if(mode == 3)
+		{
+			printf("The robot is going to launch as filetransfer debug mode\n");
+			glo_test_filetransfer = 1;
+		}
 		parameter_setting(argc,argv);
 	}
     else // the user has not set the mode
@@ -153,6 +158,7 @@ void print_usage_and_exit()
 	printf("Usage: 3-> ./ESDC 2 [mode] [arguments] for WebCam device /dev/video0 \n");
 	printf("[mode] = 1 or non specified -> normal mode\n");
 	printf("[mode] = 2 -> mbed debugging\n");
+	printf("[mode] = 3 -> file transfer debug mode\n");
 	printf("-dd -> disabled display\n");
 	printf("-em [num] -> enable multi targets, with [num] targets\n");
 	printf("-dm -> disabled motion\n");

@@ -116,6 +116,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	diff_x: the difference between the detected region center and the image center -> cause centering
 	diff_y: the difference between the actual detected region height and the expected region height -> cause backward and forward
 */
+
+	if(glo_test_filetransfer)
+		return EVAL_ADJUSTING;
 	
 	if(glo_tracking)
 	{
