@@ -59,6 +59,7 @@ extern uint8_t glo_test_mbed;
 extern uint8_t glo_high_angle_shot;
 extern char * glo_DIR_NAME;
 extern uint8_t glo_tracking;
+extern uint8_t glo_test_filetransfer;
 extern command_type glo_pattern;
 //------------------------------------------------------//
 
