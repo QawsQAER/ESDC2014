@@ -57,7 +57,7 @@ uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
 uint8_t glo_high_angle_shot = 1;
 uint8_t glo_hand_gesture = 0;
-uint8_t glo_tracking = 1;
+uint8_t glo_tracking = 0;
 
 command_type glo_pattern;
 int32_t glo_argc;
@@ -158,6 +158,7 @@ void print_usage_and_exit()
 	printf("-dm -> disabled motion\n");
 	printf("-help -> for help\n");
 	printf("-hg -> enable hand gesture filtering\n");
+	printf("-t -> tracking only\n");
 	exit_routine(glo_argc);
 }
 
@@ -182,7 +183,8 @@ void parameter_setting(int32_t argc,char **argv)
 			glo_motion_enable = 0;
 		if(strcmp(argv[count],"-hg") == 0)
 			glo_hand_gesture = 1;
-
+		if(strcmp(argv[count],"-t") == 0)
+			glo_tracking = 1;
 		if(strcmp(argv[count],"-help") == 0)
 			print_usage_and_exit();
 	}
@@ -207,4 +209,8 @@ void parameter_setting(int32_t argc,char **argv)
 	else
 		printf("SETTING: disbale hand gesture filtering\n");
 
+	if(glo_tracking)
+		printf("SETTING: enable tracking\n");
+	else
+		printf("SETTING: disable tracking\n");
 }
