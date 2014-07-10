@@ -5,7 +5,7 @@ TARGETS=hello hello_videocapture hello_objectdetect videocapture object_detect
 TARGETS:=$(TARGETS) pedestrain_detect facerec_eigenfaces face_detect
 TARGETS:=$(TARGETS) sub_image
 TARGETS:=$(TARGETS) concat_img SkinDetector
-
+TARGETS:=$(TARGETS) tracking
 
 all: $(TARGETS)
 
@@ -50,6 +50,8 @@ test_SkinDetector.o: test_SkinDetector.cpp
 SkinDetector.o: SkinDetector.h SkinDetector.cpp
 	$(CC) -o SkinDetector.o -c SkinDetector.cpp $(DEBUG_FLAG)
 
+Tracking: tracking.cpp
+	$(CC) -o tracking tracking.cpp $(LDFLAG) $(DEBUG_FLAG)
 clean:
 	rm *.o
 	rm $(TARGETS)

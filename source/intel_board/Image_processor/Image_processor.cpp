@@ -128,6 +128,13 @@ uint8_t Image_processor::get_image_from_webcam()
 {
 	cv::Mat tmp;
 	uint8_t count_frame = 0;
+	uint8_t frame_count = 0;
+	
+	if(glo_tracking)
+		frame_count = 1;
+	else
+		frame_count = 30;
+
 	while(this->cap->grab() && count_frame < 30)
 	{	
 		if(this->cap->retrieve(tmp) == false)
@@ -456,7 +463,10 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		{
 			//imshow does not block the main process any more
 			//but instead it waits for 30 s
-			cv::waitKey(1000);
+			if(glo_tracking == 0)
+				cv::waitKey(1000);
+			else
+				cv::waitKey(30);
 		}
 	}
 	

@@ -300,6 +300,25 @@ uint8_t intel_board::robot_ready()
 				glo_pattern = cmd;
 			break;
 			
+			case(pattern_8):
+			case(pattern_9):
+			case(pattern_10):
+				this->waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 2;
+			break;
+
+			case(pattern_5):
+			case(pattern_6):
+			case(pattern_7):
+				this->waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 3;
+			break;
+
+
 			case(pattern_diy):
 				this->waist_shot = 1;
 				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
@@ -609,7 +628,8 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	printf("intel_board::robot_target_in_scope running\n");
 	uint8_t rv = 0;
-	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+	if(glo_tracking == 0)
+		this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
