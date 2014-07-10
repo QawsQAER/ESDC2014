@@ -84,6 +84,7 @@ private:
 	//this function will run analysis on the current_img
 	void side_filtering(const cv::Rect &prev_face);
 	void size_filtering(const uint8_t &flags, const cv::Rect &prev_face);
+	void rotate_img(const cv::Mat &src,cv::Mat &dst, const double &angle);
 	cv::Rect body_by_face(const cv::Rect &face);
 	uint32_t count_pic;
 public:	

@@ -145,7 +145,7 @@ uint8_t Image_processor::get_image_from_webcam()
 		count_frame++;
 	}
 	
-	this->current_img = tmp;
+	this->rotate_img(tmp,current_img,180);
 	return 1;
 }
 
@@ -1106,4 +1106,13 @@ void Image_processor::flash_off()
 {
 	this->cam->flash_close();
 	return ;
+}
+
+void Image_processor::rotate_img(const cv::Mat &src, cv::Mat &dst,const double &angle)
+{
+    int len = std::max(src.cols, src.rows);
+    cv::Point2f pt(len/2., len/2.);
+    cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
+
+    cv::warpAffine(src, dst, r, cv::Size(len, len));
 }
