@@ -128,22 +128,29 @@ uint8_t Image_processor::get_image_from_webcam()
 {
 	cv::Mat tmp;
 	uint8_t count_frame = 0;
-	uint8_t frame_count = 0;
+	double frame_num = 0;
 	
+	/*
 	if(glo_tracking)
-		frame_count = 1;
+		frame_num = 1;
 	else
-		frame_count = 30;
+		frame_num = this->cap->set(CV_CAP_PROP_FRAME_COUNT);
+	*/
 
-	while(this->cap->grab() && count_frame < 30)
+	frame_num = this->cap->get(CV_CAP_PROP_FRAME_COUNT);
+	frame_num = 1;
+	printf("Image_processor::there are %lf frame in buffer\n",frame_num);
+
+	while(this->cap->grab() && count_frame < frame_num - 1)
 	{	
-		if(this->cap->retrieve(tmp) == false)
-		{
-			printf("Image_processor::get_image_from_webcam(): error when retrieving image\n");
-			return 0;
-		};
 		count_frame++;
 	}
+
+	if(this->cap->retrieve(tmp) == false)
+	{
+		printf("Image_processor::get_image_from_webcam(): error when retrieving image\n");
+		return 0;
+	};
 	
 	this->rotate_img(tmp,current_img,180);
 	return 1;
