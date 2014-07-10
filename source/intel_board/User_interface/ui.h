@@ -144,7 +144,7 @@ class UI{
 
 	bool file_transfer_connected;
 
-	pthread_t thread_id;
+	
 
 	
 };

@@ -14,7 +14,12 @@ All the code with this header are under GPL open source license.
 
 #include "../macro.h"
 
+/*
+To play the mjpeg file
+mplayer -demuxer lavf /home/terry/movie.mjpg
+mplayer  lavf /home/terry/movie.mjpg
 
+*/
 
 class Camera
 {
@@ -53,7 +58,9 @@ public:
 
 	int count_temp_photo;
 
-	
+	void start_video();
+	void close_video();
+
 
 private:
 	FILE *fp;
@@ -74,7 +81,7 @@ private:
 
 	void My_popen(std::string cmd);
 
-	pthread_t thread_id;
+	int pid;
 	
 };
 

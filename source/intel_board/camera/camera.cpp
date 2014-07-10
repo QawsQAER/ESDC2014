@@ -1,4 +1,3 @@
-// http://zhidao.baidu.com/link?url=ZP_yu6SqfLRxltc0nulVHbGPOD3CIXukjxKa1jc4sTvcjgikJPOtDHzN3HaMgJDhAEmWDcE9KFC3wRdDtm-8yA-vA7f8Yir_v0ZxjvRPvsi 
 
 #include "camera.h"
 #include <iostream>
@@ -139,7 +138,8 @@ string Camera::photo_af()
     else if  (mode==CANON)
 
 
-        {  gphoto_cmd="gphoto2 --capture-image-and-download --no-keep --filename "+path_temp_function; //640*480
+        { 
+         gphoto_cmd="gphoto2 --capture-image-and-download --no-keep --filename "+path_temp_function; //640*480
                   My_popen(gphoto_cmd);
         
                 return path_temp_function;}
@@ -187,7 +187,7 @@ string Camera::photo_frame()
      else if(mode==CANON)
 
 
-         { gphoto_cmd="gphoto2 --capture-image-and-download --no-keep --filename "+path_temp_function; //640*480
+         { gphoto_cmd="gphoto2 --capture-preview --no-keep --filename "+path_temp_function; //640*480
                    My_popen(gphoto_cmd);
          
                  return path_temp_function;}
@@ -249,7 +249,7 @@ int Camera::test_connection()
     ret = send(sd,(void *)str1,strlen(str1),0); 
     if (ret < 0) 
     { 
-        printf("send error %d，Error message'%s'\n",errno, strerror(errno)); 
+        printf("send error %d£¬Error message'%s'\n",errno, strerror(errno)); 
          close(sd);
         return -1;
        
@@ -276,16 +276,16 @@ void Camera::zoom(float scaler){
 // (scaler>1 in) (scaler< 1 out)
 
 //conver scaler to index
-	if(mode==PHONE)
-  	{
-  		int index=0;
-  		if(scaler-1<0.1) index=0;  
-		else if(scaler-1.02<0.1) index=1;  
-		else if(scaler-1.04<0.1) index=2;  
-		else if(scaler-1.09<0.1) index=3;
-		else if(scaler-1.11<0.1) index=4;  
-		else if(scaler-1.13<0.1) index=5;
-		else if(scaler-1.19<0.1) index=6;  
+  if(mode==PHONE)
+    {
+      int index=0;
+      if(scaler-1<0.1) index=0;  
+    else if(scaler-1.02<0.1) index=1;  
+    else if(scaler-1.04<0.1) index=2;  
+    else if(scaler-1.09<0.1) index=3;
+    else if(scaler-1.11<0.1) index=4;  
+    else if(scaler-1.13<0.1) index=5;
+    else if(scaler-1.19<0.1) index=6;  
                     else if(scaler-1.21<0.1) index=7;  
                    else if(scaler-1.24<0.1) index=8;  
                    else if(scaler-1.31<0.1) index=9;  
@@ -366,8 +366,8 @@ void Camera::zoom(float scaler){
           Choice: 17 17
           Choice: 18 18
           Choice: 19 19*/
-		gphoto_cmd="gphoto2 --set-config d02a="+temp;
-	}
+    gphoto_cmd="gphoto2 --set-config d02a="+temp;
+  }
 }
 
 
@@ -642,30 +642,72 @@ void Camera::My_popen(std::string cmd)
 
 
 
+void setchildsignal()
+{
+  signal(SIGINT,SIG_DFL); 
+  signal(SIGTERM,SIG_DFL);  
+  signal(SIGQUIT,SIG_DFL);  
+  signal(SIGTSTP,SIG_DFL);  
+  signal(SIGSTOP,SIG_DFL);  
+  signal(SIGKILL,SIG_DFL);      
+}
 
-void *pthread_prog(void *args) {
- 
- 
- 
- 
- }
 
+void signal_hander(int status)  
+{ //wait for child to ternimate
+  int child_status;  
+  wait(&child_status);    
+  printf("child exited.\n");  
+}  
 
-void Camera::start_vedio( )
+void Camera::start_video()
 
 {
 
 
+      if((pid = fork())<0)
+      {
+        printf("--------------------------------\n");
+        printf("fork error \n");
+        printf("--------------------------------\n");
 
-   int ret_val_err= pthread_create(&thread_id, NULL, pthread_prog, 0);
-  if (ret_val_err != 0)
+      }
+      
+      
+     else if( pid != 0 )
     {
-    printf("can't create thread: %s\n", strerror(ret_val_err));
+    //parent
+      signal(SIGCHLD,signal_hander);  
+
+    }
+      
+     else
+     {
+      //child
+      
+      setchildsignal();
+
+
+      /*capture video*/
+      gphoto_cmd="gphoto2 --capture-movie";
+      My_popen(gphoto_cmd);
+      printf("----------------------------------------\n");
+      printf("Error !!!!!!!!!!!!!!!!!!\n");
+      printf("should be capturing movie!!!!!!!\n");
+      printf("----------------------------------------\n");
       exit(0);
-     }
+      }//childprocess
 }
 
+void Camera::close_video()
+{
+  printf("--------------------------------------\n");
+  printf("ready to kill child\n");
+  kill(pid,SIGINT);
+  printf("finished killing child\n");
+  printf("--------------------------------------\n");
 
+}
 
 
  
