@@ -361,7 +361,7 @@ uint8_t intel_board::robot_find_target()
 		this->robot_show_image();
 
 		//this->robot_find_target_strategy1(state,counter);
-		if(rv == 0)
+		if(rv == 0 && glo_tracking == 0)
 		{
 			printf("intel+board::robot_find_target going to execute startegy\n");
 			this->robot_find_target_strategy2(state);
@@ -645,11 +645,12 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 
 	this->image_processor->need_flash(this->image_processor->current_img);
 	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
-	{	
-		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
+	{
+		if(glo_tracking == 0)	
+			this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
 		return 0;
 	}
-	printf("intel_board::robot_target_in_scope returning\n");
+	printf("intel_board::robot_target_in_scope returning %u\n",rv);
 	return rv;
 }
 
