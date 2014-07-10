@@ -58,7 +58,7 @@ uint8_t glo_num_target = 1;
 uint8_t glo_high_angle_shot = 1;
 uint8_t glo_hand_gesture = 0;
 uint8_t glo_tracking = 0;
-uint8_t glo_test_filetransfer = 1;
+uint8_t glo_test_filetransfer = 0;
 command_type glo_pattern;
 int32_t glo_argc;
 /************************/

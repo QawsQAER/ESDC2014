@@ -138,7 +138,7 @@ uint8_t Image_processor::get_image_from_webcam()
 	*/
 
 	frame_num = this->cap->get(CV_CAP_PROP_FRAME_COUNT);
-	frame_num = 1;
+	frame_num = 30;
 	printf("Image_processor::there are %lf frame in buffer\n",frame_num);
 
 	while(this->cap->grab() && count_frame < frame_num - 1)
@@ -152,7 +152,8 @@ uint8_t Image_processor::get_image_from_webcam()
 		return 0;
 	};
 	
-	this->rotate_img(tmp,current_img,180);
+	//this->current_img = tmp;
+	this->rotate_img(tmp,current_img);
 	return 1;
 }
 
@@ -1115,11 +1116,9 @@ void Image_processor::flash_off()
 	return ;
 }
 
-void Image_processor::rotate_img(const cv::Mat &src, cv::Mat &dst,const double &angle)
+void Image_processor::rotate_img(const cv::Mat &src, cv::Mat &dst)
 {
-    int len = std::max(src.cols, src.rows);
-    cv::Point2f pt(len/2., len/2.);
-    cv::Mat r = cv::getRotationMatrix2D(pt, angle, 1.0);
-
-    cv::warpAffine(src, dst, r, cv::Size(len, len));
+	cv::Point2f center(src.cols/2.,src.rows/2.);
+	cv::Mat rot_matrix = cv::getRotationMatrix2D(center,180,1.0);
+	cv::warpAffine(src,dst,rot_matrix,src.size());
 }
