@@ -283,32 +283,51 @@ uint8_t intel_board::robot_ready()
 		{
 			case(pattern_1):
 				this->waist_shot = 0;
+				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(1);
 				glo_pattern = cmd;
 			break;
 
 			case(pattern_2):
 				this->waist_shot = 0;
+				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(2);
 				glo_pattern = cmd;
 			break;
 
 			case(pattern_3):
 				this->waist_shot = 1;
+				glo_high_angle_shot = 1;
 				this->motion_controller->set_pattern(3);
 				glo_pattern = cmd;
 			break;
 			
 			case(pattern_4):
 				this->waist_shot = 1;
+				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(4);
 				glo_pattern = cmd;
 			break;
 			
 			case(pattern_8):
+				this->waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 2;
+				glo_high_angle_shot = 1;
+			break;
+
 			case(pattern_9):
+				this->waist_shot = 1;
+				glo_high_angle_shot = 0;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 2;
+			break;
+
 			case(pattern_10):
 				this->waist_shot = 1;
+				glo_high_angle_shot = 0;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 2;
@@ -321,6 +340,7 @@ uint8_t intel_board::robot_ready()
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 3;
+				glo_high_angle_shot = 0;
 			break;
 
 
