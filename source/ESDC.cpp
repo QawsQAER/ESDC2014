@@ -42,6 +42,7 @@ void generate_dir();
 void print_usage_and_exit();
 void parameter_setting(int32_t argc,char **argv);
 
+/************************/
 char *glo_PATH_TEMP = NULL;
 char *glo_DIR_NAME = NULL;
 cv::Rect glo_prev_face;
@@ -55,9 +56,12 @@ uint8_t glo_display_enable = 1;
 uint8_t glo_multi_target = 0;
 uint8_t glo_num_target = 1;
 uint8_t glo_high_angle_shot = 1;
+uint8_t glo_hand_gesture = 0;
+uint8_t glo_tracking = 0;
+uint8_t glo_test_filetransfer = 1;
 command_type glo_pattern;
 int32_t glo_argc;
-
+/************************/
 intel_board *robot;
 
 int main(int32_t argc, char ** argv) 
@@ -101,6 +105,11 @@ int main(int32_t argc, char ** argv)
 			glo_test_mbed = 1;
 		}
 
+		if(mode == 3)
+		{
+			printf("The robot is going to launch as filetransfer debug mode\n");
+			glo_test_filetransfer = 1;
+		}
 		parameter_setting(argc,argv);
 	}
     else // the user has not set the mode
@@ -144,13 +153,18 @@ void generate_dir()
 
 void print_usage_and_exit()
 {
-	printf("Usage: 1./ESDC 0 [mode]for PHONE\n");
-	printf("Usage: 2./ESDC 1 [mode]for CANON\n");
+	printf("Usage: 1-> ./ESDC 0 [mode] [arguments] for PHONE\n");
+	printf("Usage: 2-> ./ESDC 1 [mode] [arguments] for CANON\n");
+	printf("Usage: 3-> ./ESDC 2 [mode] [arguments] for WebCam device /dev/video0 \n");
 	printf("[mode] = 1 or non specified -> normal mode\n");
 	printf("[mode] = 2 -> mbed debugging\n");
+	printf("[mode] = 3 -> file transfer debug mode\n");
 	printf("-dd -> disabled display\n");
 	printf("-em [num] -> enable multi targets, with [num] targets\n");
 	printf("-dm -> disabled motion\n");
+	printf("-help -> for help\n");
+	printf("-hg -> enable hand gesture filtering\n");
+	printf("-t -> tracking only\n");
 	exit_routine(glo_argc);
 }
 
@@ -162,7 +176,6 @@ void parameter_setting(int32_t argc,char **argv)
 		if(strcmp(argv[count],"-dd") == 0)
 			glo_display_enable = 0;
 			
-
 		if(strcmp(argv[count],"-em") == 0)
 		{
 			glo_multi_target = 1;
@@ -171,8 +184,13 @@ void parameter_setting(int32_t argc,char **argv)
 			else
 				glo_num_target = 2;
 		}
+
 		if(strcmp(argv[count],"-dm") == 0)
 			glo_motion_enable = 0;
+		if(strcmp(argv[count],"-hg") == 0)
+			glo_hand_gesture = 1;
+		if(strcmp(argv[count],"-t") == 0)
+			glo_tracking = 1;
 		if(strcmp(argv[count],"-help") == 0)
 			print_usage_and_exit();
 	}
@@ -192,4 +210,13 @@ void parameter_setting(int32_t argc,char **argv)
 	else
 		printf("SETTING: disable display\n");
 
+	if(glo_hand_gesture)
+		printf("SETTING: enable hand gesture filtering\n");
+	else
+		printf("SETTING: disbale hand gesture filtering\n");
+
+	if(glo_tracking)
+		printf("SETTING: enable tracking\n");
+	else
+		printf("SETTING: disable tracking\n");
 }

@@ -300,6 +300,25 @@ uint8_t intel_board::robot_ready()
 				glo_pattern = cmd;
 			break;
 			
+			case(pattern_8):
+			case(pattern_9):
+			case(pattern_10):
+				this->waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 2;
+			break;
+
+			case(pattern_5):
+			case(pattern_6):
+			case(pattern_7):
+				this->waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 3;
+			break;
+
+
 			case(pattern_diy):
 				this->waist_shot = 1;
 				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
@@ -342,7 +361,7 @@ uint8_t intel_board::robot_find_target()
 		this->robot_show_image();
 
 		//this->robot_find_target_strategy1(state,counter);
-		if(rv == 0)
+		if(rv == 0 && glo_tracking == 0)
 		{
 			printf("intel+board::robot_find_target going to execute startegy\n");
 			this->robot_find_target_strategy2(state);
@@ -609,7 +628,8 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	printf("intel_board::robot_target_in_scope running\n");
 	uint8_t rv = 0;
-	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+	if(glo_tracking == 0)
+		this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
@@ -625,11 +645,12 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 
 	this->image_processor->need_flash(this->image_processor->current_img);
 	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
-	{	
-		this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
+	{
+		if(glo_tracking == 0)	
+			this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);
 		return 0;
 	}
-	printf("intel_board::robot_target_in_scope returning\n");
+	printf("intel_board::robot_target_in_scope returning %u\n",rv);
 	return rv;
 }
 

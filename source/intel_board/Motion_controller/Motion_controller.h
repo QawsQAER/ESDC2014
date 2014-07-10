@@ -51,6 +51,8 @@
 
 extern uint8_t glo_motion_enable;
 extern uint8_t glo_high_angle_shot;
+extern uint8_t glo_tracking;
+extern uint8_t glo_test_filetransfer;
 
 class Motion_controller
 {
@@ -118,7 +120,7 @@ public:
 	//this function will only be called when a target is detected by the Image processor
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &face,const double &distance);
 	uint8_t evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region);
-
+	uint8_t evaluate_image_tracking(const cv::Rect &face,const double &distance);
 
 	void set_pattern(uint8_t pattern);
 	void set_pattern_diy(int32_t ratiox,int32_t ratioy,int32_t ratiowidth);

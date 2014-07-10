@@ -128,6 +128,13 @@ uint8_t Image_processor::get_image_from_webcam()
 {
 	cv::Mat tmp;
 	uint8_t count_frame = 0;
+	uint8_t frame_count = 0;
+	
+	if(glo_tracking)
+		frame_count = 1;
+	else
+		frame_count = 30;
+
 	while(this->cap->grab() && count_frame < 30)
 	{	
 		if(this->cap->retrieve(tmp) == false)
@@ -200,6 +207,11 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
 	//cv::imwrite(filename,this->current_img,compression_params);
+	if(this->img_source == IMG_SOURCE_WEBCAM)
+	{
+		cv::imwrite(filename,this->current_img,compression_params);
+		strcpy(this->current_img_path,filename);
+	}
 	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
 	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
 
@@ -384,6 +396,7 @@ cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 	cv::Scalar value = mean(result);
 	printf("Image_processor::getSkin average %lf\n",value[0]);
 	dest_img = result;
+	printf("Image_processor::getSkin exiting\n");
 	return value;
 }
 
@@ -432,10 +445,6 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		printf("Image_processor::show_analyzed_img() showing analyzed_img and analyzed_img_filtered\n");	
 		cv::imshow(this->winname,concat_image);
 		//cv::imshow(this->winname,this->analyzed_img_filtered);
-		if(this->img_source == IMG_SOURCE_CELLPHONE)
-			this->save_current_image(this->cam->count_temp_photo);
-		else
-			this->save_current_image(this->count_pic);
 		//printf("Image_processor::show_analyzed_img() showing skin_img\n");
 		cv::imshow(this->skinwin,this->skin_img);
 
@@ -454,9 +463,17 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		{
 			//imshow does not block the main process any more
 			//but instead it waits for 30 s
-			cv::waitKey(1000);
+			if(glo_tracking == 0)
+				cv::waitKey(1000);
+			else
+				cv::waitKey(30);
 		}
 	}
+	
+	if(this->img_source == IMG_SOURCE_CELLPHONE)
+		this->save_current_image(this->cam->count_temp_photo);
+	else
+		this->save_current_image(this->count_pic);
 	
 	printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
@@ -475,8 +492,10 @@ uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 {
 	// does not apply filter by compass now
 	//this->basic_filter_with_degree(degree,dir);
-	//return basic_filter_with_gesture();
-	return basic_filter_default();
+	if(glo_hand_gesture)
+		return basic_filter_with_gesture();
+	else
+		return basic_filter_default();
 }
 
 uint8_t Image_processor::basic_filter_with_gesture()
@@ -506,15 +525,26 @@ uint8_t Image_processor::basic_filter_with_gesture()
 				this->face_detect[count_face].width,
 				this->face_detect[count_face].height);
 			cv::Mat subImage = this->current_img(roi);
-			if(this->getSkin(subImage,subImage)[0] > 80)
+			double rv = 0;
+			if((rv = this->getSkin(subImage,subImage)[0]) > HAND_SKIN_THRESHOLD)
 			{
+				printf("()()()()()basic_filter_with_gesture() gesture test has passed\n");
 				cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
 				//if the face is not at the lower half of the picture.
-				if(rect != face_detect[count_face])
+				if(rect != this->face_detect[count_face])
 				{
 					this->final_body_detect.push_back(rect);
 					this->final_face_detect.push_back(this->face_detect[count_face]);
 				}
+				else
+				{
+					printf("()()()()face position test failed!!\n");
+				}
+			}
+			else
+			{
+				printf("\n\n\nThe skin mean is \n");
+				printf("------------>%lf\n\n",rv);
 			}
 		}
 	}
@@ -1014,9 +1044,11 @@ cv::Rect Image_processor::body_by_face(const cv::Rect &face)
 	cv::Rect rect = face;
 	
 	//if the face is at the lower section of the image
-	if(rect.y > IMG_CENTER_Y)
+	if(rect.y - IMG_HEIGHT / 4 > IMG_CENTER_Y )
+	{
+		printf("Image_processor::body_by_face() -> the face is too low\n");
 		return rect;
-	
+	}
 	this->final_face_detect.push_back(rect);
 
 	rect.x = std::max(rect.x - factor * rect.width,0);

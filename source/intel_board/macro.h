@@ -215,5 +215,6 @@ enum Direction{
 
 #define ORIENTATION_THRESHOLD 10
 
+#define HAND_SKIN_THRESHOLD 50
 #endif
 // 27828986

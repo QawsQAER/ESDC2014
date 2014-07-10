@@ -116,7 +116,16 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	diff_x: the difference between the detected region center and the image center -> cause centering
 	diff_y: the difference between the actual detected region height and the expected region height -> cause backward and forward
 */
+
+	if(glo_test_filetransfer)
+		return EVAL_ADJUSTING;
 	
+	if(glo_tracking)
+	{
+		return this->evaluate_image_tracking(face,distance);
+	}
+
+
 	//find out the center of the detected region
 	this->prev_face = face;
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
@@ -205,6 +214,28 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	return EVAL_ADJUSTING;
 }
 
+uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const double &distance)
+{
+	printf("Motion_controller::evaluate_image_tracking running\n");
+
+	double mm_per_pixel = IMG_FACE_ACTUAL_HEIGHT / (double) face.height;
+	printf("Motion_controller::evaluate_image_tracking mm per pixel is %lf\n",mm_per_pixel);
+	int32_t diff_x = face.x + face.width / 2 - IMG_CENTER_X;
+	double diff_x_actual = abs(diff_x) * mm_per_pixel;
+
+	if(abs(diff_x) > threshold_face_x)
+	{
+		printf("Motion_controller::evaluate_image_tracking diff_x_actual is %lf, distance is %lf\n",diff_x_actual,distance);
+		uint16_t degree = (uint16_t) (atan(diff_x_actual / distance) / PI * 180);
+		printf("Motion_controller::evaluate_image_tracking -> degree is %u\n",degree);
+		if(diff_x > 0)
+			this->platform(degree,CAM_YAW_RIGHT);
+		else
+			this->platform(degree,CAM_YAW_LEFT);
+	}
+	printf("Motion_controller::evaluate_image_tracking exiting\n");
+	return EVAL_CENTERING;
+}
 uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region)
 {
 	return multi_face_centering(faces,face_region);

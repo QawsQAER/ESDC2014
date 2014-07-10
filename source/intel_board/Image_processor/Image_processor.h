@@ -24,7 +24,8 @@ extern char *glo_PATH_TEMP;
 extern cv::Rect glo_prev_face;
 extern uint8_t glo_display_enable;
 extern uint8_t glo_high_angle_shot;
-
+extern uint8_t glo_hand_gesture;
+extern uint8_t glo_tracking;
 
 enum IMAGE_PROCESS_STATE
 {
