@@ -133,7 +133,12 @@ uint8_t intel_board::main_function()
 			break;
 
 			case ROBOT_EVALUATE_IMAGE:
-			{	
+			{
+				if(glo_test_filetransfer)
+				{	
+					this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
+					break;
+				}	
 				if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_ADJUSTING)
 				{	
 					//if the image is good enough
@@ -355,10 +360,10 @@ uint8_t intel_board::robot_find_target()
 		rv = this->robot_target_in_scope(ENABLE_BODY_DETECT | ENABLE_FACE_DETECT);
 
 		printf("intel_board::robot_find_target rv is %d\n",rv);
+		if(glo_test_filetransfer)
+			break;
 		if(rv < 0)
 		{
-			if(glo_test_filetransfer)
-				break;
 			continue;
 		}
 
@@ -665,22 +670,23 @@ void intel_board::robot_test_mbed()
 	this->motion_controller->reset_lifter();
 	while(true)
 	{
+		uint16_t degree = 45;
 		switch(state)
 		{
 			case 0:
-				this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
+				//this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
 				state++;
 			break;
 			case 1:
-				this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
+				//this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
 				state++;
 			break;
 			case 2:
-				this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
+				//this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
 				state++;
 			break;
 			case 3:
-				this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
+				//this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
 				state++;
 			break;
 			case 4:
@@ -692,7 +698,22 @@ void intel_board::robot_test_mbed()
 				state++;
 			break;
 			case 6:
-				this->motion_controller->rotate(30,0);
+				//this->motion_controller->rotate(30,0);
+				state++;
+			break;
+			case 7:
+				this->motion_controller->platform(degree,CAM_ROLL_LEFT);
+				this->motion_controller->platform(degree,CAM_ROLL_RIGHT);
+				state++;
+			break;
+			case 8:
+				this->motion_controller->platform(degree,CAM_PITCH_DOWN);
+				this->motion_controller->platform(degree,CAM_PITCH_UP);
+				state++;
+			break;
+			case 9:
+				this->motion_controller->platform(degree,CAM_YAW_LEFT);
+				this->motion_controller->platform(degree,CAM_YAW_RIGHT);
 				state = 0;
 			break;
 		}
