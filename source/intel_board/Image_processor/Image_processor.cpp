@@ -51,7 +51,7 @@ Image_processor::Image_processor(uint8_t img_source)
 			printf("Image_processor Error: Cannot open camera\n");
 			exit(-1);
 		}
-		cap->set(CV_CAP_PROP_POS_AVI_RATIO,1);
+		//cap->set(CV_CAP_PROP_POS_AVI_RATIO,1);
 	}
 	else if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
@@ -137,7 +137,7 @@ uint8_t Image_processor::get_image_from_webcam()
 		frame_num = this->cap->set(CV_CAP_PROP_FRAME_COUNT);
 	*/
 
-	frame_num = this->cap->get(CV_CAP_PROP_FRAME_COUNT);
+	//frame_num = this->cap->get(CV_CAP_PROP_FRAME_COUNT);
 	frame_num = 30;
 	printf("Image_processor::there are %lf frame in buffer\n",frame_num);
 
