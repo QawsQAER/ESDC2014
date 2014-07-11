@@ -84,10 +84,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	private int image_height=0;//绘画结束的纵坐标
 
 	private int cuhk_logo=1;
-	private int flag=0;
 	
 	private int viewcount=1;
-	private int mode=0;
 
 
 	private int degree=0;
@@ -123,6 +121,25 @@ public class MainActivity extends Activity  implements OnTouchListener{
    
 	   private ClientSocket cs = null;  
 	   
+	   
+	   
+	   
+		private final int STATE_NOT_CONNECTED=1;
+		private final int STATE_CONNECTED=2;
+		private final int STATE_COMPASS=3;
+		private final int STATE_MODE=4;
+		private final int STATE_SINGLE=5;
+		private final int STATE_DOUBLE=6;
+		private final int STATE_MULTIPLE=7;
+		private final int STATE_VIDEO=8;
+		private final int STATE_START=9;
+		private final int STATE_WAIT_CONFIRM=10;
+		private final int STATE_CONFIRM=11;
+		private final int STATE_WAIT_FINISH=10;
+		private final int STATE_FINISH=13;
+	
+		private int state=STATE_NOT_CONNECTED;
+		
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -329,6 +346,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 		 imageView = (ImageView)findViewById(R.id.image_view);
 		 
+		 
+		 
 		 if(cuhk_logo==1)
 		 {
 			 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cuhk);
@@ -477,7 +496,6 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		findViewById(R.id.compass).setOnClickListener(listener);
 
 		findViewById(R.id.start).setOnClickListener(listener);
-		findViewById(R.id.comfrim).setVisibility(View.VISIBLE);
 		
 		findViewById(R.id.next).setOnClickListener(listener);
 		findViewById(R.id.pattern1).setOnClickListener(listener);
@@ -488,6 +506,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		findViewById(R.id.single).setOnClickListener(listener);
 		findViewById(R.id.ddouble).setOnClickListener(listener);
 		findViewById(R.id.multiple).setOnClickListener(listener);
+		findViewById(R.id.video).setOnClickListener(listener);
+
 
 		findViewById(R.id.pdiy).setOnClickListener(listener);
 
@@ -501,10 +521,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		findViewById(R.id.pattern10).setOnClickListener(listener);
 		
 //		findViewById(R.id.single).setOnClickListener(listener);
-
-				
-		if(flag==0)
+	
+		switch(state)
 		{
+		case STATE_NOT_CONNECTED:
 			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
 			findViewById(R.id.start).setVisibility(View.INVISIBLE);
 			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
@@ -525,57 +545,57 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.single).setVisibility(View.INVISIBLE);
 			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
 			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
 
-
-			//			findViewById(R.id.single).setVisibility(View.VISIBLE);
-
-		}
+			
+			break;
 		
-		else if(flag==9)
-		{
-		findViewById(R.id.compass).setVisibility(View.VISIBLE);
-		findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
-		findViewById(R.id.start).setVisibility(View.INVISIBLE);
-		
-		findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-		findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-		findViewById(R.id.mback).setVisibility(View.INVISIBLE);
+		case STATE_CONNECTED:
+			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+			break;
+			
+		case STATE_COMPASS:
+			findViewById(R.id.compass).setVisibility(View.VISIBLE);
+			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+			findViewById(R.id.start).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+			findViewById(R.id.mback).setVisibility(View.INVISIBLE);
 
-		findViewById(R.id.single).setVisibility(View.INVISIBLE);
-		findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-		findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-		findViewById(R.id.open).setVisibility(View.INVISIBLE);
-		findViewById(R.id.reset).setVisibility(View.VISIBLE);
-		findViewById(R.id.next).setVisibility(View.INVISIBLE);
+			findViewById(R.id.single).setVisibility(View.INVISIBLE);
+			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
 
-
-
-		//			findViewById(R.id.single).setVisibility(View.VISIBLE);
-
-	}
-		else if(flag==1) //choose pattern
-		{
+			findViewById(R.id.open).setVisibility(View.INVISIBLE);
+			findViewById(R.id.reset).setVisibility(View.VISIBLE);
+			findViewById(R.id.next).setVisibility(View.INVISIBLE);
+			break;
+			
+		case STATE_MODE:
 			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
 
 			findViewById(R.id.single).setVisibility(View.VISIBLE);
 			findViewById(R.id.ddouble).setVisibility(View.VISIBLE);
 			findViewById(R.id.multiple).setVisibility(View.VISIBLE);
+			findViewById(R.id.video).setVisibility(View.VISIBLE);
+
 
 			findViewById(R.id.open).setVisibility(View.INVISIBLE);
 			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
 			findViewById(R.id.start).setVisibility(View.INVISIBLE);
 			
-			if(mode==0)
-			{
+			
 			findViewById(R.id.mback).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
@@ -588,176 +608,118 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-			}
 			
-			else if(mode==1) //single
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern1).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.VISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.VISIBLE);
-
-				
-				findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-			}
 			
-			else if(mode==2) //double
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-
-				
-				findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.VISIBLE);
-			}
+			break;
 			
-			else if(mode==3) //multiple
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				
-				findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+		case STATE_SINGLE:
+			findViewById(R.id.single).setVisibility(View.INVISIBLE);
+			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
 
-				
-				findViewById(R.id.pattern5).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.VISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-			}
-		}
-		else if(flag==2) // START
-		{
-			findViewById(R.id.open).setVisibility(View.INVISIBLE);
-			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.mback).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern1).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern2).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern3).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern4).setVisibility(View.VISIBLE);
+			findViewById(R.id.pdiy).setVisibility(View.VISIBLE);
+
+			
+			findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			
+			break;
+			
+		case STATE_DOUBLE:
+			findViewById(R.id.single).setVisibility(View.INVISIBLE);
+			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.mback).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+
+			
+			findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.pattern8).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern9).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern10).setVisibility(View.VISIBLE);
+			
+			break;
+			
+		case STATE_MULTIPLE:
+			findViewById(R.id.single).setVisibility(View.INVISIBLE);
+			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.mback).setVisibility(View.VISIBLE);
+			
+			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+
+			
+			findViewById(R.id.pattern5).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern6).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern7).setVisibility(View.VISIBLE);
+			
+			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			
+			break;
+			
+		case STATE_VIDEO:
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
+			break;
+			
+		case STATE_START:
 			findViewById(R.id.start).setVisibility(View.VISIBLE);
-			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-			findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
 			
-			if(mode==0)
-			{
+			break;
+			
+		case STATE_WAIT_CONFIRM:
+			findViewById(R.id.single).setVisibility(View.INVISIBLE);
+			findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
+			findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
+			findViewById(R.id.video).setVisibility(View.INVISIBLE);
+			
 			findViewById(R.id.mback).setVisibility(View.INVISIBLE);
+			
 			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+
+			
 			findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
+			
 			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-			}
+			break;
 			
-			else if(mode==1) //single
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern1).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.VISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.VISIBLE);
-
-				
-				findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-			}
-			
-			else if(mode==2) //double
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-
-				
-				findViewById(R.id.pattern5).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.VISIBLE);
-			}
-			
-			else if(mode==3) //multiple
-			{
-				findViewById(R.id.single).setVisibility(View.INVISIBLE);
-				findViewById(R.id.ddouble).setVisibility(View.INVISIBLE);
-				findViewById(R.id.multiple).setVisibility(View.INVISIBLE);
-				
-				findViewById(R.id.mback).setVisibility(View.VISIBLE);
-				
-				findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern3).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern4).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
-
-				
-				findViewById(R.id.pattern5).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern6).setVisibility(View.VISIBLE);
-				findViewById(R.id.pattern7).setVisibility(View.VISIBLE);
-				
-				findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
-				findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
-			}
-		}
-		else if(flag==3) //confrim
-		{
+		case STATE_CONFIRM:
 			findViewById(R.id.open).setVisibility(View.INVISIBLE);
 			findViewById(R.id.comfrim).setVisibility(View.VISIBLE);
 			findViewById(R.id.start).setVisibility(View.INVISIBLE);
@@ -777,7 +739,17 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			break;
+			
+		case STATE_FINISH:
+			
+			break;
 		}
+				
+	
+		
+	
+		
 	
 	}
 	
@@ -903,10 +875,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					Log.v("equals",txt);
 					if(txt.equals("cr"))
 					{
-//						status.setText("connected");
-//						flag=1;
-//						connected=1;
-//						initView();
+						status.setText("connected");
+						state=STATE_CONNECTED;
+						connected=1;
+						initView();
 						
 					
 					}
@@ -915,7 +887,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					{
 						status.setText("start");
 						
-						flag=3;
+						state=STATE_WAIT_CONFIRM;
 						initView();
 		        		findViewById(R.id.webView2).setVisibility(View.VISIBLE);
 		        		findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
@@ -925,9 +897,28 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("fd"))
 					{
 						
-						flag=9;
+						state=STATE_COMPASS;
 						initView();
 						
+					}
+					
+					else if(txt.equals("fc"))
+					{
+						if(degree<10)
+						{
+							packet.pack("00"+degree);
+							user.send(packet);
+						}
+						else if(degree<100)
+						{
+							packet.pack("0"+degree);
+							user.send(packet);
+						}
+						else
+						{
+							packet.pack(""+degree);
+							user.send(packet);
+						}
 					}
 					
 					else if(txt.equals("cp"))
@@ -935,14 +926,14 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("confrim");
 						Log.v("player","play");
 						player.play(soundMap.get(1), 1, 1, 10,0, 1);
-						flag=1;
+						state=STATE_WAIT_FINISH;
 						initView();
 					}
 					
 					else if(txt.equals("p1"))
 					{
 						status.setText("pattern 1");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern1));
 
@@ -951,7 +942,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p2"))
 					{
 						status.setText("pattern 2");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern2));
 
@@ -960,7 +951,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p3"))
 					{
 						status.setText("pattern 3");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern3));
 
@@ -969,7 +960,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p4"))
 					{
 						status.setText("pattern 4");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -978,7 +969,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("pd"))
 					{
 						status.setText("pdiy");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -987,7 +978,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p5"))
 					{
 						status.setText("pattern 5");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -997,7 +988,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p6"))
 					{
 						status.setText("pattern 6");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -1006,7 +997,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p7"))
 					{
 						status.setText("pattern 7");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -1015,7 +1006,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p8"))
 					{
 						status.setText("pattern 8");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -1024,7 +1015,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("p9"))
 					{
 						status.setText("pattern 9");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -1033,7 +1024,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("pa"))
 					{
 						status.setText("pattern 10");
-						flag=2;
+						state=STATE_START;
 						initView();
 						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
 
@@ -1093,8 +1084,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					*/
 					else if(txt.equals("nn"))
 					{
+					state=STATE_CONFIRM;
+					initView();
+
 					player.play(soundMap.get(1), 1, 1, 10,0, 1);
-					findViewById(R.id.comfrim).setVisibility(View.VISIBLE);
+					
 					}
 					
 					
@@ -1105,8 +1099,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						{
 							status.setText("finished_ack");
 							
+							state=STATE_FINISH;
+							initView();
+							
 							findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
-		
+							
 //							
 //							try {
 //								Thread.currentThread();
@@ -1198,6 +1195,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 				case R.id.start:	
 					packet.pack("sm");
 					user.send(packet);
+	        		findViewById(R.id.start).setVisibility(View.INVISIBLE);
+
 					
 					break;
 					
@@ -1220,7 +1219,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						user.send(packet);
 					}
 					
-					flag=1;
+					state=STATE_MODE;
 					initView();
 					break;
 
@@ -1234,7 +1233,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //					player.play(soundMap.get(1), 1, 1, 10,0, 1);
 					packet.pack("cp");
 					user.send(packet);
-					
+	        		findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+
 					break;
 					
 				case R.id.next:	
@@ -1536,26 +1536,33 @@ public class MainActivity extends Activity  implements OnTouchListener{
 								break;
 								
 						case R.id.mback:	
-							mode=0;
-							flag=1;
+							state=STATE_MODE;
 							initView();
 							
 								break;
 								
 						case R.id.single:	
-							mode=1;
+							state=STATE_SINGLE;
 							initView();
 							
 								break;
 					
 						case R.id.ddouble:	
-							mode=2;
+							state=STATE_DOUBLE;
 							initView();
 							
 								break;
 								
 						case R.id.multiple:	
-							mode=3;
+							state=STATE_MULTIPLE;
+							initView();
+							
+								break;
+								
+						case R.id.video:	
+							state=STATE_VIDEO;
+							packet.pack("vi");
+							user.send(packet);
 							initView();
 							
 								break;

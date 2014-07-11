@@ -74,26 +74,26 @@ public final class R {
         public static final int primary_normal=0x7f02000f;
     }
     public static final class id {
-        public static final int Back=0x7f09001c;
-        public static final int Down=0x7f09001f;
+        public static final int Back=0x7f09001d;
+        public static final int Down=0x7f090020;
         public static final int FrameLayout1=0x7f090009;
-        public static final int Left=0x7f090020;
+        public static final int Left=0x7f090021;
         public static final int LinearLayout1=0x7f090000;
-        public static final int Right=0x7f090021;
-        public static final int ScrollView1=0x7f09001a;
-        public static final int ScrollView2=0x7f09001b;
-        public static final int Up=0x7f09001e;
-        public static final int WebView=0x7f09002a;
-        public static final int cDown=0x7f090027;
-        public static final int cLeft=0x7f090028;
-        public static final int cRight=0x7f090029;
-        public static final int cUp=0x7f090026;
+        public static final int Right=0x7f090022;
+        public static final int ScrollView1=0x7f09001b;
+        public static final int ScrollView2=0x7f09001c;
+        public static final int Up=0x7f09001f;
+        public static final int WebView=0x7f09002b;
+        public static final int cDown=0x7f090028;
+        public static final int cLeft=0x7f090029;
+        public static final int cRight=0x7f09002a;
+        public static final int cUp=0x7f090027;
         public static final int comfrim=0x7f090007;
         public static final int compass=0x7f090003;
         public static final int ddouble=0x7f09000f;
-        public static final int image_view=0x7f090018;
-        public static final int liftDown=0x7f090024;
-        public static final int liftUp=0x7f090023;
+        public static final int image_view=0x7f090019;
+        public static final int liftDown=0x7f090025;
+        public static final int liftUp=0x7f090024;
         public static final int mback=0x7f090008;
         public static final int multiple=0x7f090013;
         public static final int next=0x7f090006;
@@ -108,15 +108,16 @@ public final class R {
         public static final int pattern7=0x7f090014;
         public static final int pattern8=0x7f09000d;
         public static final int pattern9=0x7f090011;
-        public static final int pdiy=0x7f090017;
+        public static final int pdiy=0x7f090018;
         public static final int reset=0x7f090005;
         public static final int single=0x7f09000b;
         public static final int start=0x7f090002;
         public static final int status=0x7f090004;
-        public static final int text_camera=0x7f090025;
-        public static final int text_car=0x7f09001d;
-        public static final int text_lift=0x7f090022;
-        public static final int webView2=0x7f090019;
+        public static final int text_camera=0x7f090026;
+        public static final int text_car=0x7f09001e;
+        public static final int text_lift=0x7f090023;
+        public static final int video=0x7f090017;
+        public static final int webView2=0x7f09001a;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;

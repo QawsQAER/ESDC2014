@@ -283,6 +283,11 @@ command_type UI::wait_command()
 			send_patterndiy_ack();
 			return pattern_diy;
 
+			case 25:
+			printf("Command: pattern_diy and waing for diy data\n");
+			send_patternvideo_ack();
+			return pattern_video;
+
 			default:
 			printf("Error: undefined read_type.\n");
 			return undefined;
@@ -347,6 +352,17 @@ void UI::send_fetch_degree_notice()
 	// printf("send content:%s\n",msg_code);
 	send_msg();
 }
+
+void UI::send_fetch_degree_without_confirm()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="fc";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+	 
+	// printf("send content:%s\n",msg_code);
+	send_msg();
+}
+
 
 void UI::send_established()
 {
@@ -484,6 +500,14 @@ void UI::send_patterndiy_ack()
 	send_msg();
 }
 
+void UI::send_patternvideo_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="vi";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
 
 void UI::send_car_forward_ack()
 {
@@ -665,6 +689,8 @@ int UI::read_msg()
 					return 16;
 				else if (strcmp(tempBuffer,"ld")==0)
 					return 17;
+				else if (strcmp(tempBuffer,"vi")==0)
+					return 25;
 				else
 					return -1;
 
@@ -756,6 +782,60 @@ int UI::update_degree()
 	// printf("\n");
 
 	send_fetch_degree_notice();
+
+	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
+	memset(content,0,3);
+	
+	int receiveByte=0;
+	int alreadyReceiveByte=0;
+
+	// receive hello message
+
+
+
+	while(alreadyReceiveByte<3){
+
+
+		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
+		{
+			 printf("Error: Couldn't receive\n");
+			// exit(0);
+		}
+
+		alreadyReceiveByte+=receiveByte;
+
+		
+			if(alreadyReceiveByte>=3)
+			{
+				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
+ 				// strncpy(content,tempBuffer,sizeof(char)*3);
+				// int d=sizeof(char);
+				// printf("%d\n",d );
+				// printf("tempBuffer: %s\n", tempBuffer);
+				// printf("Receive degree : %s\n",tempBuffer);
+				
+			}
+			else{continue;}
+	}
+
+	int degree_temp=0;
+
+	degree_temp=(tempBuffer[0]-'0')*100+(tempBuffer[1]-'0')*10+(tempBuffer[2]-'0');
+	printf("UI::get_degree() calculated compass degree %d\n", degree_temp);
+
+	degree=degree_temp;
+	return degree;
+
+}
+
+
+
+
+int UI::update_degree_without_confirm()
+{
+	// printf("\n");
+
+	send_fetch_degree_without_confirm();
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
 	memset(content,0,3);
