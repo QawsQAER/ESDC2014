@@ -572,7 +572,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	if(glo_high_angle_shot && this->waist_shot)
+	if(glo_high_angle_shot && this->waist_shot && glo_pattern == pattern_3)
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
@@ -589,7 +589,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	else
 		this->image_processor->capture_image();
 
-	if(glo_high_angle_shot && this->waist_shot)
+	if(glo_high_angle_shot && this->waist_shot && glo_pattern == pattern_3)
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();

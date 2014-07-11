@@ -59,6 +59,8 @@ uint8_t glo_high_angle_shot = 0;
 uint8_t glo_hand_gesture = 0;
 uint8_t glo_tracking = 0;
 uint8_t glo_test_filetransfer = 0;
+uint8_t glo_autofocus = 0;
+
 command_type glo_pattern;
 int32_t glo_argc;
 /************************/
@@ -195,6 +197,10 @@ void parameter_setting(int32_t argc,char **argv)
 			glo_hand_gesture = 1;
 		if(strcmp(argv[count],"-t") == 0)
 			glo_tracking = 1;
+
+		if(strcmp(argv[count],"-af") == 0)
+			glo_autofocus = 1;
+
 		if(strcmp(argv[count],"-help") == 0)
 			print_usage_and_exit();
 	}
