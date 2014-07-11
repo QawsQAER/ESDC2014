@@ -10,7 +10,7 @@
 #define MESSAGELENGTH 2
 #define COMPASSLENGTH 
 
-#define BUFFER_SIZE 1024 
+#define BUFFER_SIZE 8192 
 #define MAX_SIZE 512 
 
 #include <pthread.h>

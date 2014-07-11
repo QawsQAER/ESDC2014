@@ -73,6 +73,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	private MyView myView;//绘画选择区域
 	private Button button;
 	
+	
+	private int origin_x=0;//绘画结束的横坐标
+	private int origin_y=0;//绘画结束的纵坐标
+	
 	private int ratiox=0;//绘画开始的横坐标
 	private int ratioy=0;//绘画开始的纵坐标
 	private int ratioheight=0;//绘画开始的横坐标
@@ -211,7 +215,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 				width = 0;
 				height = 0;
 				x = (int) event.getRawX();
+				origin_x=x;
 				y = (int) event.getRawY();
+				origin_y=y;
 			}
 			if(event.getAction() == MotionEvent.ACTION_MOVE){
 //				m = (int) event.getRawX();
@@ -242,16 +248,18 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					y = (int) event.getRawY();
 				}
 				
-				ratiox=(int)(x-image_x)*640/image_width;
-				ratioy=(int)(y-image_y)*480/image_height;
+//				image_width=320;
+//				image_height=240;
+				ratiox=(int)(origin_x-image_x)*640/image_width;
+				ratioy=(int)(origin_y-image_y)*480/image_height;
 				ratiowidth=(int)(width*640/image_width);
 				ratioheight=(int)(height*480/image_height);
 				
-//				if(event.getRawY()>y){
+//				if(event.getY()>y){
 //					height = (int) event.getRawY()-y;
 //					
 //				}else{
-//					height = (int)(y-event.getRawY());
+//					height = (int)(y-event.getY());
 //					
 //					y = (int) event.getRawY();
 //				}
@@ -277,8 +285,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 	if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
 	magneticFieldValues = sensorEvent.values;
+	
 	if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
 		accelerometerValues = sensorEvent.values;
+	
 	calculateOrientation();
 	}
 	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
@@ -390,8 +400,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	            	
 	    			int[] location = new int[2];  
 	    			imageView.getLocationOnScreen(location);  
-	             image_x=  (int) imageView.getX(); //location[0];  
-	             image_y = 	(int) imageView.getY();//location[1];  
+	             image_x=  (int) location[0];  
+	             image_y = 	(int) location[1];  
 	                
 	                
 	    			image_width=cw;
@@ -422,60 +432,60 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		    
 			
 		    
-		    
-		    myWebView2 = (WebView) findViewById(R.id.webView2);
-			
-			WebSettings setting=myWebView2.getSettings();
-			
-              setting.setJavaScriptEnabled(true);     
-              setting.setPluginState(PluginState.ON);
-              setting.setAllowFileAccess(true);
-              setting.setSupportZoom(true); //可以缩放
-              setting.setBuiltInZoomControls(true); //显示放大缩小 controler                //设置出现缩放工具
-              
-              setting.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
-
-              myWebView2.setWebViewClient(new WebViewClient(){  
-                  @Override  
-                  public boolean shouldOverrideUrlLoading(WebView view, String url) {  
-                      view.loadUrl(url);  
-                      return true;  
-                  }  
-              });  
-              
-              
-              myWebView2.addJavascriptInterface(new Object() {         
-                  public void clickOnAndroid() {         
-                      View mHandler = null;
-					mHandler.post(new Runnable() {         
-                          public void run() {         
-                        	  myWebView2.loadUrl("javascript:wave()");         
-                          }         
-                      });         
-                  }         
-              }, "demo"); 
+//		    
+//		    myWebView2 = (WebView) findViewById(R.id.webView2);
 //			
-              
-//            
-//            	  WebView mWebFlash = (WebView) findViewById(R.id.WebView);
-//            	 WebSettings settings = mWebFlash.getSettings();
-//            	 settings.setPluginState(PluginState.ON);
-//            	 settings.setJavaScriptEnabled(true);
-//            	 settings.setAllowFileAccess(true);
-//            	 settings.setDefaultTextEncodingName("GBK");
-//            	  mWebFlash.setBackgroundColor(0);
-            	String urlweb="http://"+camera_ip.toString()+":8080/jsfs.html";
-//            	  mWebFlash.loadUrl(urlweb);
-//            	 
+//			WebSettings setting=myWebView2.getSettings();
+//			
+//              setting.setJavaScriptEnabled(true);     
+//              setting.setPluginState(PluginState.ON);
+//              setting.setAllowFileAccess(true);
+//              setting.setSupportZoom(true); //可以缩放
+//              setting.setBuiltInZoomControls(true); //显示放大缩小 controler                //设置出现缩放工具
 //              
-              
-		
-            	myWebView2.loadUrl(urlweb);
-		    
-		    
-		    
-		    
-		    
+//              setting.setLayoutAlgorithm(LayoutAlgorithm.SINGLE_COLUMN);
+//
+//              myWebView2.setWebViewClient(new WebViewClient(){  
+//                  @Override  
+//                  public boolean shouldOverrideUrlLoading(WebView view, String url) {  
+//                      view.loadUrl(url);  
+//                      return true;  
+//                  }  
+//              });  
+//              
+//              
+//              myWebView2.addJavascriptInterface(new Object() {         
+//                  public void clickOnAndroid() {         
+//                      View mHandler = null;
+//					mHandler.post(new Runnable() {         
+//                          public void run() {         
+//                        	  myWebView2.loadUrl("javascript:wave()");         
+//                          }         
+//                      });         
+//                  }         
+//              }, "demo"); 
+////			
+//              
+////            
+////            	  WebView mWebFlash = (WebView) findViewById(R.id.WebView);
+////            	 WebSettings settings = mWebFlash.getSettings();
+////            	 settings.setPluginState(PluginState.ON);
+////            	 settings.setJavaScriptEnabled(true);
+////            	 settings.setAllowFileAccess(true);
+////            	 settings.setDefaultTextEncodingName("GBK");
+////            	  mWebFlash.setBackgroundColor(0);
+//            	String urlweb="http://"+camera_ip.toString()+":8080/jsfs.html";
+////            	  mWebFlash.loadUrl(urlweb);
+////            	 
+////              
+//              
+//		
+//            	myWebView2.loadUrl(urlweb);
+//		    
+//		    
+//		    
+//		    
+//		    
         		findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
 
 		    
@@ -688,6 +698,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			
 		case STATE_VIDEO:
 			findViewById(R.id.video).setVisibility(View.INVISIBLE);
+		
 			break;
 			
 		case STATE_START:
@@ -904,6 +915,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 					else if(txt.equals("fc"))
 					{
+						calculateOrientation();
 						if(degree<10)
 						{
 							packet.pack("00"+degree);
@@ -1202,7 +1214,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 				
 				case R.id.compass:	
-				
+					calculateOrientation();
 					if(degree<10)
 					{
 						packet.pack("00"+degree);
@@ -1419,6 +1431,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 								
 						case R.id.pdiy:	
 							if(myView.isSign()){
+								
+							
+								 
 								myView.setSeat(0, 0, 0, 0);
 								myView.setSign(false);
 								button.setText("Stop");
@@ -1560,7 +1575,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 								break;
 								
 						case R.id.video:	
-							state=STATE_VIDEO;
+//							state=STATE_VIDEO;
+							state=STATE_START;
 							packet.pack("vi");
 							user.send(packet);
 							initView();
