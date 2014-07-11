@@ -53,6 +53,7 @@ extern uint8_t glo_motion_enable;
 extern uint8_t glo_high_angle_shot;
 extern uint8_t glo_tracking;
 extern uint8_t glo_test_filetransfer;
+extern uint8_t glo_waist_shot;
 
 class Motion_controller
 {
@@ -104,7 +105,6 @@ private:
 	
 public:
 
-	uint8_t *waist_shot;
 	cv::Rect ref;
 	cv::Rect face_ref;
 	cv::Rect prev_face;

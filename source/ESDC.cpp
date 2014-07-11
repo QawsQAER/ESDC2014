@@ -60,6 +60,7 @@ uint8_t glo_hand_gesture = 0;
 uint8_t glo_tracking = 0;
 uint8_t glo_test_filetransfer = 0;
 uint8_t glo_autofocus = 0;
+uint8_t glo_waist_shot = 0;
 
 command_type glo_pattern;
 int32_t glo_argc;

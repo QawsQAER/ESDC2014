@@ -65,7 +65,6 @@ Motion_controller::Motion_controller()
 	this->exp_face_height = IMG_EXP_FACE_HEIGHT;
 	this->exp_face_width = IMG_EXP_FACE_WIDTH;
 
-	this->waist_shot = NULL; //should be pointing to the waist_shot of intel_board class
 	this->Com = new Controller_Com("/dev/ttyUSB0");
 	
 
@@ -142,12 +141,12 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	diff_y = face.height - this->face_ref.height;
 	printf("Motion_controller::evaluate_image the diff_y is %d and the face_ref is %u\n",face.height,this->face_ref.height);
 	printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
-	if(!(*this->waist_shot))
+	if(!(glo_waist_shot))
 	{
 		diff_y = face.height - this->face_ref.height;
 		//if not taking waist shot
 
-		/*
+		
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
 			//doing centering
@@ -156,7 +155,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else
 			flag_done_centering = 1;	
-		*/
+		
 
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
@@ -184,7 +183,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		//if taking waist shot
 		diff_y = face.height - this->face_ref.height;
 
-		/*
+		
 		if(abs(diff_x) > threshold_x && need_to_center)
 		{
 			//this->centering(detect,face);
@@ -193,7 +192,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else
 			flag_done_centering = 1;
-		*/
+		
 
 		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
@@ -244,6 +243,7 @@ uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Re
 {
 	uint8_t centering_done = this->multi_face_centering(faces,face_region);
 	uint8_t zooming_done = this->multi_face_zooming(faces,face_region,distance);
+
 	if(centering_done == EVAL_COMPLETE &&  zooming_done == EVAL_COMPLETE)
 		return EVAL_ADJUSTING;
 	else if(zooming_done != EVAL_COMPLETE)
@@ -488,9 +488,9 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance)
 {
 	uint16_t move_z = DEFAULT_DIS;
-	if(*this->waist_shot)
+	if(glo_waist_shot)
 	{
-		if(abs(faces[0].height - this->face_ref.height) > threshold_face_y)
+		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT) > threshold_face_y)
 		{
 			if(distance > 3000)
 				move_z = DEFAULT_DIS_LARGE * (distance / 3000);
@@ -532,7 +532,7 @@ uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces
 			else
 				move_z = DEFAULT_DIS_TINY * (distance / 1000);
 			
-			int32_t diff_y = faces[0].height - this->face_ref.height;
+			int32_t diff_y = faces[0].height - IMG_EXP_FACE_HEIGHT_FULL;
 			
 			if(diff_y > 0)
 			{
@@ -709,7 +709,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 		break;
 	}
 
-	if(!(*this->waist_shot))
+	if(!(glo_waist_shot))
 		printf("Motion_controller::set_pattern() the img_exp_pos_x is %u, img_exp_pos_y is %u\n",this->img_exp_pos_x,this->img_exp_pos_y);
 	else
 		printf("Motion_controller::set_pattern() the img_exp_face_pos_x is %u,img_exp_face_pos_y is %u\n",this->img_exp_face_pos_x,this->img_exp_face_pos_y);

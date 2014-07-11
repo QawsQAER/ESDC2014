@@ -72,13 +72,11 @@ private:
 		mode: indicates what mode is the robot operating in, auto mode, manual mode or image analysis mode
 		photo_mode: indicates whether to take photo for single, double or more people
 		task_counter: to count the number of task
-		waist_shot: whether it's for waist shot or not.
 	*/
 	ROBOT_STATE state;
 	ROBOT_MODE mode;
 	PHOTO_MODE photo_mode;
 	uint16_t task_counter;
-	uint8_t waist_shot;
 	
 	//SUBMODULE
 	Image_processor *image_processor;

@@ -56,7 +56,7 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	}
 	this->state = ROBOT_INIT;
 	this->photo_mode = SINGLE_PHOTO;
-	this->waist_shot = 0;
+	glo_waist_shot = 0;
 	this->flag_target_found = 0;
 	this->rv_evaluate_image = 0;
 	//SUBMODULE
@@ -69,7 +69,6 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
-	this->motion_controller->waist_shot = &this->waist_shot;
 	printf("notice connection request\n");
 	this->motion_controller->buzzer(BUZZER_STAND_BY);
 	printf("Creating UI()\n");
@@ -263,7 +262,7 @@ uint8_t intel_board::robot_ready()
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	this->robot_orientation_adjust();
-	this->waist_shot = 1;
+	glo_waist_shot = 1;
 	this->flag_target_found = 0;
 	command_type cmd;
 	printf("intel_board::robot_ready() waiting for user command\n");
@@ -282,35 +281,35 @@ uint8_t intel_board::robot_ready()
 		switch(cmd)
 		{
 			case(pattern_1):
-				this->waist_shot = 0;
+				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(1);
 				glo_pattern = cmd;
 			break;
 
 			case(pattern_2):
-				this->waist_shot = 0;
+				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(2);
 				glo_pattern = cmd;
 			break;
 
 			case(pattern_3):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				glo_high_angle_shot = 1;
 				this->motion_controller->set_pattern(3);
 				glo_pattern = cmd;
 			break;
 			
 			case(pattern_4):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				glo_high_angle_shot = 0;
 				this->motion_controller->set_pattern(4);
 				glo_pattern = cmd;
 			break;
 			
 			case(pattern_8):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 2;
@@ -318,7 +317,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_9):
-				this->waist_shot = 0;
+				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
@@ -326,7 +325,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_10):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				glo_high_angle_shot = 0;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
@@ -336,7 +335,7 @@ uint8_t intel_board::robot_ready()
 			case(pattern_5):
 			case(pattern_6):
 			case(pattern_7):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 3;
@@ -345,13 +344,13 @@ uint8_t intel_board::robot_ready()
 
 
 			case(pattern_diy):
-				this->waist_shot = 1;
+				glo_waist_shot = 1;
 				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
 				glo_pattern = cmd;
 			break;
 
 			case(set_waist_shot):
-				this->waist_shot = this->waist_shot ? 0:1;
+				glo_waist_shot = glo_waist_shot ? 0:1;
 			break;
 
 			default:
@@ -504,7 +503,7 @@ uint8_t intel_board::robot_evaluate_movement()
 	printf("intel_board::robot_evaluate_movement() running\n");
 	
 	uint8_t flags;
-	if((*this->motion_controller->waist_shot))
+	if(glo_waist_shot)
 		flags = ENABLE_FACE_DETECT;
 	else
 		flags = ENABLE_FACE_DETECT | ENABLE_BODY_DETECT;
@@ -573,7 +572,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	if(glo_high_angle_shot && this->waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
+	if(glo_high_angle_shot && glo_waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
@@ -595,7 +594,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 
-	if(glo_high_angle_shot && this->waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
+	if(glo_high_angle_shot && glo_waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();
@@ -667,7 +666,7 @@ void intel_board::robot_show_image()
 {
 	if(glo_multi_target)
 		this->image_processor->mark_exp_region(this->image_processor->face_region);
-	else if(this->waist_shot)
+	else if(glo_waist_shot)
 		this->image_processor->mark_exp_region(this->motion_controller->face_ref);
 	else		
 		this->image_processor->mark_exp_region(this->motion_controller->ref);
@@ -702,7 +701,7 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 	}
 
 	this->image_processor->need_flash(this->image_processor->current_img);
-	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv != glo_num_target && glo_multi_target))
+	if((rv == 0 && this->state != ROBOT_WAIT_FOR_ADJUSTMENT) || (rv < glo_num_target && glo_multi_target))
 	{
 		if(glo_tracking == 0)	
 			this->motion_controller->buzzer(BUZZER_TARGET_NOT_FOUND);

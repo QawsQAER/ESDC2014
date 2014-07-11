@@ -446,16 +446,19 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 {
 	printf("\nImage_processor::show_analyzed_img() working\n");
-	//cv::destroyWindow(this->winname);
-	//cv::destroyWindow(this->skinwin);
+	
 	//cv::destroyWindow(this->edgewin);
 
-	//cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
-	//cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+	
 	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
 	if(glo_display_enable)
 	{
+		cv::destroyWindow(this->winname);
+		cv::destroyWindow(this->skinwin);
+		cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
+		cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
+		
 		cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
 		cv::moveWindow(this->winname,0,0);
 		printf("Image_processor::show_analyzed_img() showing analyzed_img and analyzed_img_filtered\n");	
@@ -969,6 +972,8 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	this->face_detect.clear();
 	uint8_t enable_body_detect = ((flags & ENABLE_BODY_DETECT) == ENABLE_BODY_DETECT);
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
+	if(glo_waist_shot)
+		enable_body_detect = 0;
 
 	printf("Image_processor::multi_targets_in_scope() running\n");
 	multi_targets_begin:

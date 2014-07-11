@@ -27,7 +27,7 @@ extern uint8_t glo_high_angle_shot;
 extern uint8_t glo_hand_gesture;
 extern uint8_t glo_tracking;
 extern uint8_t glo_autofocus;
-
+extern uint8_t glo_waist_shot;
 
 enum IMAGE_PROCESS_STATE
 {
