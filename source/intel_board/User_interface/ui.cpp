@@ -283,6 +283,11 @@ command_type UI::wait_command()
 			send_patterndiy_ack();
 			return pattern_diy;
 
+			case 25:
+			printf("Command: pattern_diy and waing for diy data\n");
+			send_patternvideo_ack();
+			return pattern_video;
+
 			default:
 			printf("Error: undefined read_type.\n");
 			return undefined;
@@ -351,7 +356,7 @@ void UI::send_fetch_degree_notice()
 void UI::send_fetch_degree_without_confirm()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	char temp[]="fw";
+	char temp[]="fc";
 	memcpy(&msg_code,&temp,2*sizeof(char));	
 	 
 	// printf("send content:%s\n",msg_code);
@@ -495,6 +500,14 @@ void UI::send_patterndiy_ack()
 	send_msg();
 }
 
+void UI::send_patternvideo_ack()
+{
+	memset(msg_code,0,MESSAGELENGTH);
+	char temp[]="vi";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
+
+	send_msg();
+}
 
 void UI::send_car_forward_ack()
 {
@@ -676,6 +689,8 @@ int UI::read_msg()
 					return 16;
 				else if (strcmp(tempBuffer,"ld")==0)
 					return 17;
+				else if (strcmp(tempBuffer,"vi")==0)
+					return 25;
 				else
 					return -1;
 

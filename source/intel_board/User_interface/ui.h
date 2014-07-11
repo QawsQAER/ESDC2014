@@ -72,7 +72,7 @@ class UI{
 	//use this when the car finish moving by itself
 	void old_send_finished_ack();
 	void send_notification();
-	
+
 
 	
 	command_type pattern;
@@ -127,6 +127,8 @@ class UI{
 	void send_pattern9_ack();
 	void send_pattern10_ack();
 	void send_patterndiy_ack();
+	void send_patternvideo_ack();
+
 
 	void send_car_forward_ack();
 	void send_car_backward_ack();
@@ -137,6 +139,7 @@ class UI{
 	void send_camera_backward_ack();
 	void send_camera_left_ack();
 	void send_camera_right_ack();
+
 
 	void send_lift_up_ack();
 	void send_lift_down_ack();

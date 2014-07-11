@@ -270,14 +270,30 @@
                 android:layout_margin="@dimen/default_margin" />
                 </FrameLayout>
 
-                <Button
-                    android:id="@+id/pattern4"
+                <FrameLayout
                     android:layout_width="match_parent"
-                    android:layout_height="34dp"
-                    android:text="pattern4" 
-                     android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.46" >
+
+                    <Button
+                        android:id="@+id/pattern4"
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_margin="@dimen/default_margin"
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern4"
+                        android:textColor="@android:color/white" />
+
+                    <Button
+                        android:id="@+id/video"
+                        android:layout_width="match_parent"
+                        android:layout_height="34dp"
+                        android:layout_margin="@dimen/default_margin"
+                        android:background="@drawable/button_primary_selector"
+                        android:text="video"
+                        android:textColor="@android:color/white" />
+
+                </FrameLayout>
 
                 <Button
                     android:id="@+id/pdiy"

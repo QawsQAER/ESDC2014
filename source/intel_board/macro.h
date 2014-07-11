@@ -52,7 +52,7 @@ enum command_type{
 	undefined, connect_request, start_movement, confirm_picture,
 	pattern_1, pattern_2, pattern_3, pattern_4, pattern_5,
 	pattern_6, pattern_7, pattern_8, pattern_9, pattern_10,
-	pattern_diy, 
+	pattern_diy, pattern_video,
 	car_forward, car_backward, car_left, car_right,
 	camera_forward, camera_backward, camera_left, camera_right,
 	lift_up, lift_down,
