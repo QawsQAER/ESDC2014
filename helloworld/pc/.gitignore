@@ -9,4 +9,5 @@ face_detect
 sub_image
 concat_img
 SkinDetector
+videowriter
 *~

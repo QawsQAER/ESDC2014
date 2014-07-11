@@ -101,11 +101,11 @@ IMAGE_PROCESS_STATE Image_processor::get_state()
 uint8_t Image_processor::get_image_from_cellphone()
 {
 	//TODO: maybe check the length of the c_str() return value
-#ifdef AUTOFOCUS
-	strcpy(this->current_img_path,this->cam->photo_af().c_str());
-#else
-	strcpy(this->current_img_path,this->cam->photo_frame().c_str());
-#endif
+	if(glo_autofocus)
+		strcpy(this->current_img_path,this->cam->photo_af().c_str());
+	else
+		strcpy(this->current_img_path,this->cam->photo_frame().c_str());
+
 	
 	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);

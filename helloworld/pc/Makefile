@@ -6,6 +6,7 @@ TARGETS:=$(TARGETS) pedestrain_detect facerec_eigenfaces face_detect
 TARGETS:=$(TARGETS) sub_image
 TARGETS:=$(TARGETS) concat_img SkinDetector
 TARGETS:=$(TARGETS) tracking
+TARGETS:=$(TARGETS) videowriter
 
 all: $(TARGETS)
 
@@ -52,6 +53,8 @@ SkinDetector.o: SkinDetector.h SkinDetector.cpp
 
 Tracking: tracking.cpp
 	$(CC) -o tracking tracking.cpp $(LDFLAG) $(DEBUG_FLAG)
+videowriter: videowriter.cpp
+	$(CC) -o videowriter videowriter.cpp $(LDFLAG) $(DEBUG_FLAG)
 clean:
 	rm *.o
 	rm $(TARGETS)
