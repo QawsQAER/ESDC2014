@@ -930,6 +930,25 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						
 					}
 					
+					else if(txt.equals("fw"))
+					{
+						if(degree<10)
+						{
+							packet.pack("00"+degree);
+							user.send(packet);
+						}
+						else if(degree<100)
+						{
+							packet.pack("0"+degree);
+							user.send(packet);
+						}
+						else
+						{
+							packet.pack(""+degree);
+							user.send(packet);
+						}
+					}
+					
 					else if(txt.equals("cp"))
 					{
 						status.setText("confrim");

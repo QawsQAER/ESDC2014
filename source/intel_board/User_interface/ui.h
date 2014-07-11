@@ -31,6 +31,8 @@ class UI{
 
 	int update_degree();
 	
+	int update_degree_without_confirm();
+
 	
 	//use this when 
 	command_type wait_command();
@@ -70,6 +72,7 @@ class UI{
 	//use this when the car finish moving by itself
 	void old_send_finished_ack();
 	void send_notification();
+	
 
 	
 	command_type pattern;
@@ -138,7 +141,7 @@ class UI{
 	void send_lift_up_ack();
 	void send_lift_down_ack();
 	void send_fetch_degree_notice();
-
+	void send_fetch_degree_without_confirm();
 
 	int degree;
 
