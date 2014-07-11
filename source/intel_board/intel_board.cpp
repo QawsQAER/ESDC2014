@@ -602,7 +602,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	if(glo_source_mode == 3)
 		this->ui->send_finished_ack(filename);
 	else
-		this->ui->send_finished_ack(this->image_processor->current_img_path);
+		this->ui->send_finished_ack(this->image_processor->analyzed_filtered_img_path);
 	
 	free(filename);
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
