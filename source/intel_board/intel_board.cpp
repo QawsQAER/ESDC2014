@@ -318,7 +318,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_9):
-				this->waist_shot = 1;
+				this->waist_shot = 0;
 				glo_high_angle_shot = 0;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
@@ -482,7 +482,8 @@ uint8_t intel_board::robot_evaluate_image()
 	else if(glo_multi_target && this->image_processor->final_face_detect.size() != 0)
 		return this->motion_controller->evaluate_image_multi_targets(
 			this->image_processor->final_face_detect,
-			this->image_processor->face_region);
+			this->image_processor->face_region,
+			this->distance);
 	else
 		printf("intel_board::robot_evaluate_image() error: evaluating an image without detection result!\n");
 		return 0;
@@ -572,7 +573,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	if(glo_high_angle_shot && this->waist_shot && glo_pattern == pattern_3)
+	if(glo_high_angle_shot && this->waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
@@ -581,15 +582,20 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	char *filename = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	memset(filename,0,sizeof(char) * FILENAME_LENGTH);
 
+	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+
+	uint8_t flag = ENABLE_FACE_DETECT | ENABLE_CURRENT_FRAME;
 	if(glo_source_mode == 3)
 	{
 		this->image_processor->camera_take_photo();
 		strcpy(filename,this->image_processor->current_img_path);
 	}
-	else
-		this->image_processor->capture_image();
+	
+	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 
-	if(glo_high_angle_shot && this->waist_shot && glo_pattern == pattern_3)
+	if(glo_high_angle_shot && this->waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 
 	this->robot_show_image();
@@ -678,7 +684,13 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 		this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
+	{
 		rv = this->image_processor->multi_targets_in_scope(flags,glo_num_target);
+		if(rv > 0)
+		{
+			this->distance = this->image_processor->get_distance(this->image_processor->get_face_detection_result());
+		}
+	}
 	else
 	{
 		rv = this->image_processor->one_target_in_scope(flags); //does not apply compass filtering now

@@ -201,6 +201,9 @@ void parameter_setting(int32_t argc,char **argv)
 		if(strcmp(argv[count],"-af") == 0)
 			glo_autofocus = 1;
 
+		if(strcmp(argv[count],"-pause") == 0)
+			continuity = 0;
+
 		if(strcmp(argv[count],"-help") == 0)
 			print_usage_and_exit();
 	}
@@ -229,4 +232,8 @@ void parameter_setting(int32_t argc,char **argv)
 		printf("SETTING: enable tracking\n");
 	else
 		printf("SETTING: disable tracking\n");
+
+	if(continuity == 0)
+		printf("SETTING: not continuous\n");
+
 }

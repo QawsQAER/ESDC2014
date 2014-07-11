@@ -784,16 +784,18 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	uint8_t enable_side_filtering = ((flags & ENABLE_SIDE_FILTERING) == ENABLE_SIDE_FILTERING);
 	uint8_t enable_size_filtering_small = ((flags & ENABLE_SIZE_FILTERING_SMALL) == ENABLE_SIZE_FILTERING_SMALL);
 	uint8_t enable_size_filtering_large = ((flags & ENABLE_SIZE_FILTERING_LARGE) == ENABLE_SIZE_FILTERING_LARGE);
+	uint8_t enable_current_frame = ((flags & ENABLE_CURRENT_FRAME) == ENABLE_CURRENT_FRAME);
 
 	this->body_detect.clear();
 	this->face_detect.clear();
 
 	printf("Image_processor::one_target_in_scope() running\n");
-	if(!this->capture_image())
-	{
-		printf("Image_processor Error: cannot capture valid image\n");
-		return -1;
-	}
+	if(!enable_current_frame)
+		if(!this->capture_image())
+		{
+			printf("Image_processor Error: cannot capture valid image\n");
+			return -1;
+		}
 	
 	//if an image is captured, run basic analysis
 	//this->analyzed_img is the initial detection result image
@@ -1027,7 +1029,7 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	{
 		//delete the current image if no faces is found in the scope
 		printf("Image_processor::multi_targets_in_scope() returning without any found\n");
-		remove(this->current_img_path);
+		//remove(this->current_img_path);
 		return 0;
 	}
 	

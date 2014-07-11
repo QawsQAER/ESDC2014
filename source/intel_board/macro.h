@@ -93,6 +93,7 @@ enum Direction{
 #define ENABLE_SIDE_FILTERING 0x04
 #define ENABLE_SIZE_FILTERING_SMALL 0x08
 #define ENABLE_SIZE_FILTERING_LARGE 0x10
+#define ENABLE_CURRENT_FRAME 0x20
 
 #define PIXEL_HEIGHT 127/480 //127mm for a 480 pixel height
 #define PIXEL_WIDTH PIXEL_HEIGHT //consider PIXEL as a square

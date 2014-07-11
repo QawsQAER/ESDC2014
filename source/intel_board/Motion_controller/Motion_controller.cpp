@@ -137,7 +137,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
 	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
 	
-	uint8_t flag_done_centering = 0;
+	uint8_t flag_done_centering = 1;
 	uint8_t flag_done_zooming = 0;
 	diff_y = face.height - this->face_ref.height;
 	printf("Motion_controller::evaluate_image the diff_y is %d and the face_ref is %u\n",face.height,this->face_ref.height);
@@ -146,6 +146,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	{
 		diff_y = face.height - this->face_ref.height;
 		//if not taking waist shot
+
+		/*
 		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
 		{
 			//doing centering
@@ -154,7 +156,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else
 			flag_done_centering = 1;	
-		
+		*/
 
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
@@ -177,11 +179,12 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	}
 	else
 	{
-		uint8_t flag_done_centering = 0;
+		uint8_t flag_done_centering = 1;
 		uint8_t flag_done_zooming = 0;
 		//if taking waist shot
 		diff_y = face.height - this->face_ref.height;
 
+		/*
 		if(abs(diff_x) > threshold_x && need_to_center)
 		{
 			//this->centering(detect,face);
@@ -190,7 +193,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else
 			flag_done_centering = 1;
-		
+		*/
+
 		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
@@ -236,9 +240,17 @@ uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const do
 	printf("Motion_controller::evaluate_image_tracking exiting\n");
 	return EVAL_CENTERING;
 }
-uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region)
+uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region, const double &distance)
 {
-	return multi_face_centering(faces,face_region);
+	uint8_t centering_done = this->multi_face_centering(faces,face_region);
+	uint8_t zooming_done = this->multi_face_zooming(faces,face_region,distance);
+	if(centering_done == EVAL_COMPLETE &&  zooming_done == EVAL_COMPLETE)
+		return EVAL_ADJUSTING;
+	else if(zooming_done != EVAL_COMPLETE)
+		return zooming_done;
+	else if(centering_done != EVAL_COMPLETE)
+		return centering_done;
+
 }
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
@@ -266,9 +278,9 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 			printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
 			this->move(move_x,CAR_RIGHT);
 		}
-		return 0;
+		return EVAL_CENTERING;
 	}
-	return EVAL_ADJUSTING;
+	return EVAL_COMPLETE;
 }
 uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
@@ -471,6 +483,76 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 		printf("Motion_controller::zoom_in_out_by_face exiting\n");
 		return EVAL_ZOOM_OUT;
 	}
+}
+
+uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance)
+{
+	uint16_t move_z = DEFAULT_DIS;
+	if(*this->waist_shot)
+	{
+		if(abs(faces[0].height - this->face_ref.height) > threshold_face_y)
+		{
+			if(distance > 3000)
+				move_z = DEFAULT_DIS_LARGE * (distance / 3000);
+			else if(distance > 1500)
+				move_z = DEFAULT_DIS;
+			else if(distance > 1000)
+				move_z = DEFAULT_DIS_SMALL * (distance / 1500);
+			else
+				move_z = DEFAULT_DIS_TINY * (distance / 1000);
+			
+			int32_t diff_y = faces[0].height - this->face_ref.height;
+			
+			if(diff_y > 0)
+			{
+				printf("Motion_controller::multi_face_zooming: moving backward %u mm\n",move_z);
+				this->move(move_z,CAR_BACKWARD);
+				return EVAL_ZOOM_OUT;
+			}
+			else
+			{
+				printf("Motion_controller::multi_face_zooming: moving forward %u mm\n",move_z);
+				this->move(move_z,CAR_FORWARD);
+				return EVAL_ZOOM_IN;
+			}
+		}
+		else
+			return EVAL_COMPLETE;
+	}
+	else
+	{
+		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT_FULL) > threshold_face_y)
+		{
+			if(distance > 3000)
+				move_z = DEFAULT_DIS_LARGE * (distance / 3000);
+			else if(distance > 1500)
+				move_z = DEFAULT_DIS;
+			else if(distance > 1000)
+				move_z = DEFAULT_DIS_SMALL * (distance / 1500);
+			else
+				move_z = DEFAULT_DIS_TINY * (distance / 1000);
+			
+			int32_t diff_y = faces[0].height - this->face_ref.height;
+			
+			if(diff_y > 0)
+			{
+				printf("Motion_controller::multi_face_zooming: moving backward %u mm\n",move_z);
+				this->move(move_z,CAR_BACKWARD);
+				return EVAL_ZOOM_OUT;
+			}
+			else
+			{
+				printf("Motion_controller::multi_face_zooming: moving forward %u mm\n",move_z);
+				this->move(move_z,CAR_FORWARD);
+				return EVAL_ZOOM_IN;
+			}
+
+		}
+		else
+			return EVAL_COMPLETE;
+	}
+
+	return EVAL_COMPLETE;
 }
 /*ZOOM IN OUT FUNCTION IMPLEMENTATION END*/
 /*ZOOM IN OUT FUNCTION IMPLEMENTATION END*/

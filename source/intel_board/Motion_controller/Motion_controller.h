@@ -100,7 +100,7 @@ private:
 	uint8_t zoom_in_out_by_distance(const cv::Rect &detect,const double &distance);
 	uint8_t zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
 	uint8_t zoom_in_out_by_face(const cv::Rect &face,const double &distance);
-
+	uint8_t multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance);
 	
 public:
 
@@ -119,7 +119,7 @@ public:
 	uint8_t init();
 	//this function will only be called when a target is detected by the Image processor
 	uint8_t evaluate_image(const cv::Rect &detect,const cv::Rect &face,const double &distance);
-	uint8_t evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region);
+	uint8_t evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region, const double &distance);
 	uint8_t evaluate_image_tracking(const cv::Rect &face,const double &distance);
 
 	void set_pattern(uint8_t pattern);
