@@ -96,6 +96,8 @@ public:
 	//cam is useful when img_source == IMG_SOURCE_CELLPHONE
 	Camera *cam;
 	char* current_img_path;
+	char* analyzed_img_path;
+	char* analyzed_filtered_img_path;
 	//these variables stores the detection results
 	std::vector<cv::Rect> body_detect;
 	std::vector<cv::Rect> face_detect;

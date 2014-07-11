@@ -67,13 +67,19 @@ Image_processor::Image_processor(uint8_t img_source)
 	}
 	//check the existence of the directory for storing the capture image
 	this->current_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	this->analyzed_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
+	this->analyzed_filtered_img_path = (char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	memset(this->current_img_path,0,sizeof(char) * FILENAME_LENGTH);
+	memset(this->analyzed_img_path,0,sizeof(char) * FILENAME_LENGTH);
+	memset(this->analyzed_filtered_img_path,0,sizeof(char) * FILENAME_LENGTH);
 }
 
 Image_processor::~Image_processor()
 {
 	printf("Destructing Image processor\n");
-	free(current_img_path);
+	free(this->current_img_path);
+	free(this->analyzed_img_path);
+	free(this->analyzed_filtered_img_path);
 	delete this->cam;
 }
 
@@ -229,7 +235,10 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 		strcpy(this->current_img_path,filename);
 	}
 	cv::imwrite(analyzed_filename,this->analyzed_img,compression_params);
+	strcpy(this->analyzed_img_path,analyzed_filename);
+	
 	cv::imwrite(analyzed_filtered_filename,this->analyzed_img_filtered,compression_params);
+	strcpy(this->analyzed_filtered_img_path,analyzed_filtered_filename);
 
 	free(filename);
 	free(analyzed_filename);
