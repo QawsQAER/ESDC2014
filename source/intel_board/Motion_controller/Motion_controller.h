@@ -54,7 +54,8 @@ extern uint8_t glo_high_angle_shot;
 extern uint8_t glo_tracking;
 extern uint8_t glo_test_filetransfer;
 extern uint8_t glo_waist_shot;
-extern uint8_t glo_num_targets;
+extern uint8_t glo_num_target;
+
 class Motion_controller
 {
 private:
@@ -143,6 +144,19 @@ public:
 
 	int8_t orientation_adjust(const uint16_t &phone_ori);
 	void set_initial_car_orientation(const uint16_t &car_ori);
+};
+
+
+class PIDcontroller
+{
+	double error_I;
+	double error_D;
+	double P,I,D;
+
+public:
+	PIDcontroller();
+	double run(const double &current_error);
+
 };
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);

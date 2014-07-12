@@ -263,9 +263,9 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 	uint16_t move_x = 0;
 	double factor;
 
-	if(glo_num_targets == 2)
+	if(glo_num_target == 2)
 		factor = 1.4;
-	else if(glo_num_targets == 3)
+	else if(glo_num_target == 3)
 		factor = 1.8;
 
 	if(abs(diff_x) > threshold_face_x * factor)
@@ -495,7 +495,7 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance)
 {
 	uint16_t move_z = DEFAULT_DIS;
-	
+
 	if(glo_waist_shot)
 	{
 		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT) > threshold_face_y)
@@ -1229,3 +1229,23 @@ void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *directio
 */
 
 }//end void
+
+
+
+PIDcontroller::PIDcontroller()
+{
+	this->P = 1;
+	this->I = 0;
+	this->D = 0;
+
+	this->error_I = 0;
+	this->error_D = 0;
+
+}
+
+
+double PIDcontroller::run(const double &current_error)
+{
+	double result = 0;
+	return result;
+}
