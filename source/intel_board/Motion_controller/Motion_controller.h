@@ -41,6 +41,7 @@
 #include <opencv2/opencv.hpp>
 #include "../lib/message.h"
 #include "../macro.h"
+#include "PIDcontroller.h"
 
 
 #define EVAL_CENTERING 1
@@ -110,6 +111,7 @@ public:
 	cv::Rect face_ref;
 	cv::Rect prev_face;
 	Controller_Com *Com;
+	PIDcontroller controller;
 	uint8_t need_to_center;
 	uint8_t need_to_zoom;
 	uint8_t need_to_adjust;
@@ -146,18 +148,6 @@ public:
 	void set_initial_car_orientation(const uint16_t &car_ori);
 };
 
-
-class PIDcontroller
-{
-	double error_I;
-	double error_D;
-	double P,I,D;
-
-public:
-	PIDcontroller();
-	double run(const double &current_error);
-
-};
 
 void degree_rotation(int32_t car,int32_t phone,int32_t *degree, int32_t *direction);
 #endif
