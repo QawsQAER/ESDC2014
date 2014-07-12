@@ -455,7 +455,7 @@ int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS)
 	setCarStat(STAT_ROTATELEFT);
     
 	float pi = 3.1415926;
-	int d = 355; //mm
+	int d = 500; //mm
     int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
     
 	wheelULSetSpeedMMPS(-speedMMPS);
@@ -471,7 +471,7 @@ int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
 	setCarStat(STAT_ROTATERIGHT);
     
 	float pi = 3.1415926;
-	int d = 355; //mm
+	int d = 500; //mm
     int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
     
 	wheelULSetSpeedMMPS(speedMMPS);
@@ -500,25 +500,29 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 		switch(move_dir)
 		{
 			case 0: //up
-			Omni->setCarAdvance(moveSpeedMMPS);
+			//Omni->setCarAdvance(moveSpeedMMPS);
+			Omni->setCarUpperRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
 			Omni->setCarStop();
 			break;
 
 			case 1: //right
-			Omni->setCarRight(moveSpeedMMPS);
+			//Omni->setCarRight(moveSpeedMMPS);
+			Omni->setCarLowerRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
 			Omni->setCarStop();
 			break;
 			
 			case 2: //down
-			Omni->setCarBackoff(moveSpeedMMPS);
+			//Omni->setCarBackoff(moveSpeedMMPS);
+			Omni->setCarLowerLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
 			Omni->setCarStop();
 			break;
 			
 			case 3: //left
-			Omni->setCarLeft(moveSpeedMMPS);
+			//Omni->setCarLeft(moveSpeedMMPS);
+			Omni->setCarUpperLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
 			Omni->setCarStop();
 			break;
@@ -549,7 +553,16 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 	}
 	
 	Omni->setCarStop();
-	Omni->delayMS(500); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->setCarStop();
+	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->setCarStop();
+	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->setCarStop();
+	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->setCarStop();
+	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	Omni->setCarStop();
 }
 /*********************************************************/
 
