@@ -61,6 +61,7 @@ uint8_t glo_tracking = 0;
 uint8_t glo_test_filetransfer = 0;
 uint8_t glo_autofocus = 0;
 uint8_t glo_waist_shot = 0;
+uint8_t glo_pid = 0;
 
 command_type glo_pattern;
 int32_t glo_argc;
@@ -205,6 +206,9 @@ void parameter_setting(int32_t argc,char **argv)
 		if(strcmp(argv[count],"-pause") == 0)
 			continuity = 0;
 
+		if(strcmp(argv[count],"-pid") == 0)
+			glo_pid = 1;
+
 		if(strcmp(argv[count],"-help") == 0)
 			print_usage_and_exit();
 	}
@@ -236,5 +240,8 @@ void parameter_setting(int32_t argc,char **argv)
 
 	if(continuity == 0)
 		printf("SETTING: not continuous\n");
+	
+	if(glo_pid == 1)
+		printf("SETTING: enable PID\n");
 
 }

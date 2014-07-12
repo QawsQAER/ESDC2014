@@ -267,28 +267,46 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 		factor = 1.4;
 	else if(glo_num_target == 3)
 		factor = 1.8;
+	double current_error_x = diff_x * mm_per_pixel;
+	double action = controller_x.run(current_error_x);
+	printf("Motion_controller::multi_face_centering() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
 
 	if(abs(diff_x) > threshold_face_x * factor)
 	{
 		printf("Motion_controller multi_face_centering(): diff_x is %d\n",diff_x);
-		if(diff_x < 0)
-		{	
-			//should move left
-			move_x = this->bound_dis(ceil(abs(diff_x) * mm_per_pixel));
-			printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
-			this->move(move_x,CAR_LEFT);
+		if(glo_pid)
+		{
+			move_x = (uint16_t) abs(action);
+			if(action < 0)
+			{
+				printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
+				this->move(move_x,CAR_LEFT);
+			}
+			else
+			{
+				printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
+				this->move(move_x,CAR_RIGHT);
+			}
 		}
 		else
 		{
-			//should move right
 			move_x = this->bound_dis(ceil(abs(diff_x) * mm_per_pixel));
-			printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
-			this->move(move_x,CAR_RIGHT);
+			if(diff_x < 0)
+			{	
+				printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
+				this->move(move_x,CAR_LEFT);
+			}
+			else
+			{
+				printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
+				this->move(move_x,CAR_RIGHT);
+			}
 		}
 		return EVAL_CENTERING;
 	}
 	return EVAL_COMPLETE;
 }
+
 uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
 
@@ -315,20 +333,46 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 		okay_image = 0;
 		//movement to right or left
 		printf("Motion_controller centering(): diff_x is %d\n",diff_x);
-		if(diff_x < 0)
-		{	
-			//should move left
-			move_x = this->bound_dis(ceil(abs(diff_x) * p));
-			printf("\n\n\nMotion_controller centering(): moving left %d mm\n\n\n",move_x);
-			this->move(move_x,CAR_LEFT);
+		double current_error_x = diff_x * p;
+		double action = controller_x.run(current_error_x);
+		printf("Motion_controller centering(): raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
+		
+		if(glo_pid)
+		{
+			move_x = (uint16_t) abs(action);
+			//using pid 
+			if(action < 0)
+			{
+				printf("\n\n\nMotion_controller centering(): moving left %u mm\n\n\n",move_x);
+				this->move(move_x,CAR_LEFT);
+			}
+			else
+			{
+				printf("\n\n\nMotion_controller centering(): moving right %u mm\n\n\n",move_x);
+				this->move(move_x,CAR_RIGHT);
+			}
 		}
 		else
 		{
-			//should move right
-			move_x = this->bound_dis(ceil(abs(diff_x) * p));
-			printf("\n\n\nMotion_controller centering(): moving right %d mm\n\n\n",move_x);
-			this->move(move_x,CAR_RIGHT);
+			//not using pid
+			if(diff_x < 0)
+			{	
+				//should move left
+				move_x = this->bound_dis(ceil(abs(diff_x) * p));
+				//move_x = (uint16_t) action;
+				printf("\n\n\nMotion_controller centering(): moving left %u mm\n\n\n",move_x);
+				this->move(move_x,CAR_LEFT);
+			}
+			else
+			{
+				//should move right
+				move_x = this->bound_dis(ceil(abs(diff_x) * p));
+				//move_x = (uint16_t) action;
+				printf("\n\n\nMotion_controller centering(): moving right %u mm\n\n\n",move_x);
+				this->move(move_x,CAR_RIGHT);
+			}
 		}
+
 	}
 
 	diff_y = detect.y - img_exp_pos_y;
@@ -356,25 +400,44 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double) face.height;// mm per pixel
 
 	int32_t diff_x = (face.x - face.width / 2) - this->center_x;
-	uint16_t move_x = abs(ceil(p * diff_x)); 
+	uint16_t move_x = abs(ceil(p * diff_x));
+
+	double current_error_x = diff_x * p;
+	double action = controller_x.run(current_error_x);
+	printf("Motion_controller::centering_by_face() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
 	printf("Motion_controller::centering_by_face(): diff_x is %d\n",diff_x);
 	printf("Motion_controller::centering_by_face(): mm per pixel is %f\n",p);
-	if(diff_x > 0)
+	
+	if(glo_pid)
 	{
-		//the face is on the right hand side
-		//move right
-		printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
-		this->move(move_x,CAR_RIGHT);
+		move_x = (uint16_t) abs(action);
+		if(action > 0)
+		{
+			printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
+			this->move(move_x,CAR_RIGHT);
+		}
+		else
+		{
+			printf("Motion_controller::centering_by_face(): moving left by %u mm\n",move_x);
+			this->move(move_x,CAR_LEFT);
+		}
 	}
 	else
 	{
-		//the face is on the left hand side
-		//move left
-		printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
-		this->move(move_x,CAR_LEFT);
+		if(diff_x > 0)
+		{
+			printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
+			this->move(move_x,CAR_RIGHT);
+		}
+		else
+		{
+			printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
+			this->move(move_x,CAR_LEFT);
+		}
 	}
 	return EVAL_CENTERING;
 }
+
 /*CENTERING FUNCTION END*/
 /*CENTERING FUNCTION END*/
 /*CENTERING FUNCTION END*/
@@ -1231,37 +1294,3 @@ void degree_rotation(int32_t car,int32_t phone,int32_t *degree,int32_t *directio
 }//end void
 
 
-
-PIDcontroller::PIDcontroller()
-{
-	this->P = 1;
-	this->I = 0;
-	this->D = 0;
-
-	this->error_I = 0;
-	this->error_D = 0;
-	this->prev_error = 0;
-}
-
-
-double PIDcontroller::run(const double &current_error)
-{
-	double result = 0;
-	//current_error > 0 -> target on the right side
-	//else -> target on the left side
-
-	result += current_error * this-> P;
-	this->error_I += current_error;
-	this->error_D = this->prev_error - current_error;
-
-	result += this->error_I * this->I;
-	result += this->error_D * this->D;
-	
-	return result;
-}
-
-void PIDcontroller::reset()
-{
-	this->error_I = 0;
-	this->error_D = 0;
-}

@@ -56,6 +56,7 @@ extern uint8_t glo_tracking;
 extern uint8_t glo_test_filetransfer;
 extern uint8_t glo_waist_shot;
 extern uint8_t glo_num_target;
+extern uint8_t glo_pid;
 
 class Motion_controller
 {
@@ -111,7 +112,7 @@ public:
 	cv::Rect face_ref;
 	cv::Rect prev_face;
 	Controller_Com *Com;
-	PIDcontroller controller;
+	PIDcontroller controller_x;
 	uint8_t need_to_center;
 	uint8_t need_to_zoom;
 	uint8_t need_to_adjust;
