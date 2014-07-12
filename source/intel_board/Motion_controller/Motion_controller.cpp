@@ -261,7 +261,14 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 	int32_t diff_x = face_region.x + face_region.width / 2 - IMG_CENTER_X;
 	printf("Motion_controller::multi_face_centering() length per pixel is %f\n",mm_per_pixel);
 	uint16_t move_x = 0;
-	if(abs(diff_x) > threshold_x)
+	double factor;
+
+	if(glo_num_targets == 2)
+		factor = 1.4;
+	else if(glo_num_targets == 3)
+		factor = 1.8;
+
+	if(abs(diff_x) > threshold_face_x * factor)
 	{
 		printf("Motion_controller multi_face_centering(): diff_x is %d\n",diff_x);
 		if(diff_x < 0)
@@ -488,6 +495,7 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance)
 {
 	uint16_t move_z = DEFAULT_DIS;
+	
 	if(glo_waist_shot)
 	{
 		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT) > threshold_face_y)

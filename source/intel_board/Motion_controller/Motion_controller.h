@@ -54,7 +54,7 @@ extern uint8_t glo_high_angle_shot;
 extern uint8_t glo_tracking;
 extern uint8_t glo_test_filetransfer;
 extern uint8_t glo_waist_shot;
-
+extern uint8_t glo_num_targets;
 class Motion_controller
 {
 private:
