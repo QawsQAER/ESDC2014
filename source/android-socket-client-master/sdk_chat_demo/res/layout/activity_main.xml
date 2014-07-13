@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/LinearLayout1"
@@ -7,8 +6,8 @@
     android:layout_height="match_parent"
     android:background="@android:color/darker_gray"
     android:orientation="vertical"
-    android:scrollbars="none"
-    >
+    android:scrollbars="none" >
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,20 +18,16 @@
             android:layout_height="wrap_content"
             android:orientation="horizontal" >
 
-            
-            
-    
-            
             <Button
                 android:id="@+id/open"
                 android:layout_width="75dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.25"
-                android:text="CONN"
                 android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin" />
+                android:text="CONN"
+                android:textColor="@android:color/white" />
 
             <FrameLayout
                 android:layout_width="wrap_content"
@@ -43,23 +38,23 @@
                     android:id="@+id/start"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/default_margin"
                     android:layout_marginTop="5.0dp"
                     android:layout_weight="0.89"
-                    android:text="start" 
-                     android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                    android:background="@drawable/button_primary_selector"
+                    android:text="start"
+                    android:textColor="@android:color/white" />
 
                 <Button
                     android:id="@+id/compass"
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
+                    android:layout_margin="@dimen/default_margin"
                     android:layout_marginTop="5.0dp"
                     android:layout_weight="0.89"
-                    android:text="compass" 
                     android:background="@drawable/button_danger_selector"
-                    android:textColor="@android:color/white"
-                    android:layout_margin="@dimen/default_margin"/>
+                    android:text="compass"
+                    android:textColor="@android:color/white" />
             </FrameLayout>
 
             <TextView
@@ -76,23 +71,23 @@
                 android:id="@+id/reset"
                 android:layout_width="77dp"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.36"
-                android:text="reset" 
-                 android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                android:background="@drawable/button_primary_selector"
+                android:text="reset"
+                android:textColor="@android:color/white" />
 
             <Button
                 android:id="@+id/next"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_margin="@dimen/default_margin"
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.93"
-                android:text="Next" 
-                 android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                android:background="@drawable/button_primary_selector"
+                android:text="Next"
+                android:textColor="@android:color/white" />
         </LinearLayout>
 
         <LinearLayout
@@ -116,9 +111,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5.0dp"
                         android:layout_weight="0.46"
+                        android:background="@drawable/button_primary_selector"
                         android:text="comfrim"
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white" />
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/mback"
@@ -126,9 +121,9 @@
                         android:layout_height="wrap_content"
                         android:layout_marginTop="5.0dp"
                         android:layout_weight="0.46"
+                        android:background="@drawable/button_primary_selector"
                         android:text="mback"
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white" />
+                        android:textColor="@android:color/white" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -141,41 +136,41 @@
                         android:id="@+id/pattern1"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern1" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern1"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/single"
                         android:layout_width="85dp"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="single" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="single"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern5"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern5" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern5"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern8"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern8" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern8"
+                        android:textColor="@android:color/white" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -187,40 +182,40 @@
                         android:id="@+id/pattern2"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern2" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern2"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/ddouble"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="double" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:layout_margin="@dimen/default_margin"
+                        android:background="@drawable/button_primary_selector"
+                        android:text="double"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern6"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern6" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern6"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern9"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
-                        android:text="pattern9" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="pattern9"
+                        android:textColor="@android:color/white" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -232,41 +227,41 @@
                         android:id="@+id/pattern3"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
+                        android:background="@drawable/button_primary_selector"
                         android:text="pattern3"
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white" 
-                android:layout_margin="@dimen/default_margin"/>
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/multiple"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.46"
-                        android:text="multiple" 
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                        android:background="@drawable/button_primary_selector"
+                        android:text="multiple"
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern7"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
+                        android:background="@drawable/button_primary_selector"
                         android:text="pattern7"
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white" 
-                android:layout_margin="@dimen/default_margin"/>
+                        android:textColor="@android:color/white" />
 
                     <Button
                         android:id="@+id/pattern10"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
+                        android:background="@drawable/button_primary_selector"
                         android:text="pattern10"
-                         android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin" />
+                        android:textColor="@android:color/white" />
                 </FrameLayout>
 
                 <FrameLayout
@@ -291,40 +286,86 @@
                         android:background="@drawable/button_primary_selector"
                         android:text="video"
                         android:textColor="@android:color/white" />
-
                 </FrameLayout>
 
                 <Button
                     android:id="@+id/pdiy"
                     android:layout_width="match_parent"
                     android:layout_height="32dp"
-                    android:text="DIY" 
-                     android:background="@drawable/button_primary_selector"
-                android:textColor="@android:color/white"
-                android:layout_margin="@dimen/default_margin"/>
+                    android:layout_margin="@dimen/default_margin"
+                    android:background="@drawable/button_primary_selector"
+                    android:text="DIY"
+                    android:textColor="@android:color/white" />
 
             </LinearLayout>
 
             <FrameLayout
-                android:layout_width="480dp"
-                android:layout_height="360dp" >
-	
+                android:layout_width="432dp"
+                android:layout_height="324dp" >
+
                 <ImageView
                     android:id="@+id/image_view"
-                    android:layout_width="480dp"
-                    android:layout_height="360dp"
+                    android:layout_width="432dp"
+                    android:layout_height="324dp"
                     android:background="#ABCDEF"
                     android:scaleType="centerCrop"
                     android:src="@drawable/cuhk" />
 
                 <WebView
                     android:id="@+id/webView2"
-                    android:layout_width="480dp"
-                    android:layout_height="360dp" />
+                    android:layout_width="432dp"
+                    android:layout_height="324dp" />
+            </FrameLayout>
+
+            <FrameLayout
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent" >
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:orientation="vertical" >
+
+                    <RadioGroup
+                        android:id="@+id/styleGroup"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content" >
+
+                        <RadioButton
+                            android:id="@+id/s1"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="true"
+                            android:text="s1" />
+
+                        <RadioButton
+                            android:id="@+id/s2"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="s2" />
+
+                        <RadioButton
+                            android:id="@+id/s3"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="s3" />
+                    </RadioGroup>
+
+                    <TextView
+                        android:id="@+id/description"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.89"
+                        android:text="S1:
+                        				
+                        			  S2:
+                        			  
+                        			  S3:" />
+                </LinearLayout>
 
             </FrameLayout>
-        </LinearLayout>
 
+        </LinearLayout>
     </LinearLayout>
 
 </LinearLayout>

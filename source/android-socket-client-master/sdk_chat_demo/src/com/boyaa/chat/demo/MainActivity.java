@@ -56,6 +56,8 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -76,7 +78,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	
 	
 
-
+	  private RadioGroup styleGroup=null; 
+	    private RadioButton s1RadioButton=null; 
+	    private RadioButton s2RadioButton=null; 
+	    private RadioButton s3RadioButton=null; 
+	    private int style_choice=0; 
 
 
 	
@@ -509,6 +515,32 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //		    
 //		    
 //		    
+		    
+		    
+		    
+		    //通过控件的ID来得到代表控件的对象 
+	        styleGroup=(RadioGroup)findViewById(R.id.styleGroup); 
+	        s1RadioButton=(RadioButton)findViewById(R.id.s1); 
+	        s2RadioButton=(RadioButton)findViewById(R.id.s2); 
+	        s3RadioButton=(RadioButton)findViewById(R.id.s3); 
+
+	        //给RadioGroup设置事件监听 
+	        styleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
+	            @Override 
+	            public void onCheckedChanged(RadioGroup group, int checkedId) { 
+	                // TODO Auto-generated method stub 
+	                if(checkedId==s1RadioButton.getId()){ 
+	                  style_choice=1;
+	                }else if(checkedId==s2RadioButton.getId()){ 
+	                	 style_choice=2;
+	                } else if(checkedId==s3RadioButton.getId()){ 
+	                	 style_choice=3;
+	                } 
+	            } 
+	        }); 
+	        
+	        
+	        
         		findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
 
 		    
@@ -581,6 +613,15 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.video).setVisibility(View.INVISIBLE);
 
 			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.description).setVisibility(View.INVISIBLE);
+
+		   
+	        
+	        
 			break;
 		
 		case STATE_CONNECTED:
@@ -641,6 +682,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.VISIBLE);
+			findViewById(R.id.s1).setVisibility(View.VISIBLE);
+			findViewById(R.id.s2).setVisibility(View.VISIBLE);
+			findViewById(R.id.s3).setVisibility(View.VISIBLE);
+			findViewById(R.id.description).setVisibility(View.VISIBLE);
 			
 			
 			break;
@@ -726,6 +773,13 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			
 		case STATE_START:
 			findViewById(R.id.start).setVisibility(View.VISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.description).setVisibility(View.INVISIBLE);
+
 			
 			break;
 			
@@ -920,6 +974,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("sm"))
 					{
 						status.setText("start");
+						
+						packet.pack("0"+style_choice);
+						user.send(packet);
+						
 						
 						state=STATE_WAIT_CONFIRM;
 						initView();

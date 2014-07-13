@@ -382,6 +382,52 @@ void UI::send_start_ack()
 	memcpy(&msg_code,&temp,2*sizeof(char));	
 
 	send_msg();
+
+
+
+	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
+	memset(content,0,2);
+	
+	int receiveByte=0;
+	int alreadyReceiveByte=0;
+
+	// receive hello message
+
+
+
+	while(alreadyReceiveByte<2){
+
+
+		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
+		{
+			 printf("Error: Couldn't receive\n");
+			// exit(0);
+		}
+
+		alreadyReceiveByte+=receiveByte;
+
+		
+			if(alreadyReceiveByte>=2)
+			{
+				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
+ 				// strncpy(content,tempBuffer,sizeof(char)*3);
+				// int d=sizeof(char);
+				// printf("%d\n",d );
+				// printf("tempBuffer: %s\n", tempBuffer);
+				// printf("Receive degree : %s\n",tempBuffer);
+				
+			}
+			else{continue;}
+	}
+
+	style_choice=0;
+
+	if((tempBuffer[0]-'0')==0)
+	{
+	style_choice=(tempBuffer[1]-'0');
+	printf("UI::style_choice is %d\n", style_choice);
+	}
+	
 }
 
 

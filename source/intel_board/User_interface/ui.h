@@ -89,7 +89,8 @@ class UI{
 	char buffer[BUFFER_SIZE]; 
 	
 
-
+	int style_choice;
+	
 	private:
 
 
