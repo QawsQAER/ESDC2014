@@ -11,10 +11,15 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
@@ -52,6 +57,7 @@ import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.test.ClientSocket;
 import com.boyaa.chat.R;
@@ -64,8 +70,15 @@ import com.view.MyView;
 
 
 
+
 @SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
 public class MainActivity extends Activity  implements OnTouchListener{
+	
+	
+
+
+
+
 	
 	private int x=0;//绘画开始的横坐标
 	private int y=0;//绘画开始的纵坐标
@@ -147,8 +160,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		private final int STATE_FINISH=13;
 	
 		private int state=STATE_NOT_CONNECTED;
-		
-		
+
+			
    
         
 	@Override
@@ -228,7 +241,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	      
 	}
 		
-		
+
+	
+	
 		
 		public boolean onTouch(View v, MotionEvent event) {
 			if(event.getAction() == MotionEvent.ACTION_DOWN){
@@ -298,8 +313,6 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 		
 		
-		
-	
 	
 	
 
@@ -1597,17 +1610,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		}
 	};
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		 	if(keyCode==KeyEvent.KEYCODE_BACK)
-		{
-			android.os.Process.killProcess(android.os.Process.myPid());
-		}
-		      
-		
-		return super.onKeyDown(keyCode, event);
-	}
+
 	
 	
 	   public static Bitmap getLoacalBitmap(String url) {
@@ -1642,8 +1645,42 @@ public class MainActivity extends Activity  implements OnTouchListener{
 
 		 }
 
-		 
 	
 	
+	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+         // TODO Auto-generated method stub
+         if (((keyCode == KeyEvent.KEYCODE_BACK) ||
+(keyCode == KeyEvent.KEYCODE_HOME))
+&& event.getRepeatCount() == 0) {
+                dialog_Exit(MainActivity.this);
+         }
+         return false;
+        
+         //end onKeyDown
+  }
+
+  public static void dialog_Exit(Context context) {
+   AlertDialog.Builder builder = new Builder(context);
+   builder.setMessage("Leaving the app?");
+   builder.setTitle("Reminder");
+   builder.setIcon(android.R.drawable.ic_dialog_alert);
+   builder.setPositiveButton("Confirm",
+           new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int which) {
+                   dialog.dismiss();
+                   android.os.Process.killProcess(android.os.Process
+                           .myPid());
+               }
+           });
+  
+   builder.setNegativeButton("Cancel",
+           new android.content.DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int which) {
+                   dialog.dismiss();
+               }
+           });
+  
+   builder.create().show();
+}
 	
 }
