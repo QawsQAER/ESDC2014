@@ -15,12 +15,14 @@ import java.util.HashMap;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -32,6 +34,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -56,6 +59,7 @@ import com.boyaa.push.lib.service.Client;
 import com.boyaa.push.lib.service.ISocketResponse;
 import com.boyaa.push.lib.service.Packet;
 import com.view.MyView;
+
 
 
 
@@ -106,7 +110,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	 private String savePath = "/mnt/sdcard/intelcup.jpg";  
 	
 	private String camera_ip="192.168.1.101";
-	private String board_ip="192.168.1.100";
+	private String board_ip="192.168.43.186";
 	SoundPool player,play;
 	HashMap<Integer,Integer> soundMap;
 	
@@ -144,12 +148,16 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	
 		private int state=STATE_NOT_CONNECTED;
 		
-    
+		
+   
+        
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		
 		
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -184,6 +192,20 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		user=new Client(this.getApplicationContext(),socketListener);
 		
 		
+		final SensorEventListener myListener = new SensorEventListener() {
+			public void onSensorChanged(SensorEvent sensorEvent) {
+				
+			if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+			magneticFieldValues = sensorEvent.values;
+			
+			if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+				accelerometerValues = sensorEvent.values;
+			
+			calculateOrientation();
+			}
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+			};
+			
 		sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -280,24 +302,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	
 	
 	
-	final SensorEventListener myListener = new SensorEventListener() {
-	public void onSensorChanged(SensorEvent sensorEvent) {
-		
-	if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-	magneticFieldValues = sensorEvent.values;
-	
-	if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-		accelerometerValues = sensorEvent.values;
-	
-	calculateOrientation();
-	}
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-	};
+
 
 	
 	
 	public void onPause(){
-		sm.unregisterListener(myListener);
+//		sm.unregisterListener(myListener);
 		super.onPause();
 	}	
 	
@@ -315,7 +325,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	      if(degree <0)
 	    	  degree = 360+degree;
 	      
-	      if(connected==0)
+//	      if(connected==0)
 	    	  status.setText(degree+"");
 	    	  
 
