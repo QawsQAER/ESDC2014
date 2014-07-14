@@ -170,9 +170,9 @@ int Message::receiveACK(int fd)
 	{
 		uint16_t temp_degree;
 		printf("****************************************\n");
-		memcpy((void *)&temp_degree,buff+1,1);
+		memcpy((void *)&temp_degree,buff + 1,1);
 		printf("temp_degree :%d   _ACK->O :%d \n",temp_degree,buff[1]);
-		memcpy(((void *)&temp_degree)+1,buff+2,1);
+		memcpy(((void *)(((char *)&temp_degree) + 1)),buff+2,1);
 		printf("temp_degree+1 :%d   _ACK->K :%d \n",temp_degree,buff[2]);
 
 		this->car_degree= temp_degree;
