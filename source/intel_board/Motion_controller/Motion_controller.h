@@ -103,7 +103,7 @@ private:
 
 	uint16_t bound_dis(const uint32_t &dis);
 
-	uint8_t zoom_in_out_by_distance(const double &distance);
+	uint8_t zoom_in_out_by_distance(const double &exp_distance, const double &distance);
 	uint8_t zoom_in_out_by_default(const cv::Rect &detect,const double &distance);
 	uint8_t zoom_in_out_by_face(const cv::Rect &face,const double &distance);
 	uint8_t multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance);
@@ -114,6 +114,7 @@ public:
 	cv::Rect ref;
 	cv::Rect face_ref;
 	cv::Rect prev_face;
+
 	Controller_Com *Com;
 	PIDcontroller controller_x;
 	uint8_t need_to_center;

@@ -140,7 +140,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	uint8_t flag_done_centering = 1;
 	uint8_t flag_done_zooming = 0;
 	diff_y = face.height - this->face_ref.height;
-	printf("Motion_controller::evaluate_image the diff_y is %d and the face_ref is %u\n",face.height,this->face_ref.height);
+	printf("Motion_controller::evaluate_image the face_height is %d and the face_ref is %u\n",face.height,this->face_ref.height);
 	printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
 	if(!(glo_waist_shot))
 	{
@@ -159,9 +159,9 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
-			//doing zooming
-
-			return (this->state = this->zoom_in_out_by_distance(distance));
+			//doing zooming 
+			this->img_exp_dis = runCAMShift(this->face_ref);
+			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}
 		else if(flag_done_centering == 0)
@@ -172,13 +172,16 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		else
 			flag_done_zooming = 1;
 
-		if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y || (flag_done_centering && flag_done_zooming))
+		printf("Motion_controller::evaluate_image() center.x %d (this->ref.x + this->ref.width / 2) %d, detect.y %d this->ref.y %u\n",center.x,this->ref.x + this->ref.width / 2,detect.y,this->ref.y);
+		printf("Motion_controller::evaluate_image() threshold_x %u, threshold_y %u\n",this->threshold_x,this->threshold_y);
+		printf("Motion_controller::flag_done_centering %u, flag_done_zooming %u\n",flag_done_centering,flag_done_zooming);
+		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
 			this->adjusting(detect);
 			this->state = EVAL_ADJUSTING;
 			return EVAL_ADJUSTING;
 		}
-		else if(abs(center.x - img_exp_pos_x) < threshold_x && abs(detect.y - img_exp_pos_y) < threshold_y)
+		else if(abs(center.x - (this->ref.x + this->ref.width / 2)) < threshold_x && abs(detect.y - this->ref.y) < threshold_y && (flag_done_centering && flag_done_zooming))
 		{
 			this->state = EVAL_INIT;
 			return EVAL_COMPLETE;
@@ -205,7 +208,8 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
-			return (this->state = this->zoom_in_out_by_distance(distance));
+			this->img_exp_dis = runCAMShift(this->face_ref);
+			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}else if(flag_done_centering == 0)
 		{
@@ -217,14 +221,14 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		diff_x = (face.x + face.width / 2) - (this->face_ref.x + this->face_ref.width / 2); 
 		diff_y = (face.y) - this->face_ref.y;
-		if(flag_done_centering && flag_done_zooming && abs(diff_x) > threshold_face_x && abs(diff_y) > threshold_face_y)
+		if((abs(diff_x) > threshold_face_x || abs(diff_y) > threshold_face_y))
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
 			this->state = EVAL_ADJUSTING;
 			return EVAL_ADJUSTING;
 		}
-		else if(abs(diff_x) < threshold_face_x && abs(diff_y) < threshold_face_y)
+		else if(abs(diff_x) < threshold_face_x && abs(diff_y) < threshold_face_y && flag_done_centering && flag_done_zooming)
 		{
 			this->state = EVAL_INIT;
 			return EVAL_COMPLETE;
@@ -477,7 +481,8 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
 	//return this->zoom_in_out_by_default(detect,distance);
-	this->zoom_in_out_by_distance(distance);
+	this->img_exp_dis = runCAMShift(this->face_ref);
+	return this->zoom_in_out_by_distance(this->img_exp_dis,distance);
 }
 
 uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const double &distance)
@@ -512,20 +517,17 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 	}
 }
 
-uint8_t Motion_controller::zoom_in_out_by_distance(const double &distance)
+uint8_t Motion_controller::zoom_in_out_by_distance(const double &exp_distance,const double &distance)
 {
 	printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
-
-	this->img_exp_dis = runCAMShift(this->face_ref);
-	printf("Motion_controller::zoom_in_out_by_distance() the face ref is (%u,%u,%u,%u)\n",this->face_ref.x,this->face_ref.y,this->face_ref.width,this->face_ref.height);
-	printf("Motion_controller::zoom_in_out_by_distance() the img_exp_dis is %lf\n",this->img_exp_dis);
+	printf("Motion_controller::zoom_in_out_by_distance() the exp_distance is %lf\n",exp_distance);
 	printf("Motion_controller::zoom_in_out_by_distance() the diff is %lf\n",distance - img_exp_dis);
 	printf("Motion_controller::zoom_in_out_by_distance() the abs diff is %lf\n", abs(distance - img_exp_dis));
 	printf("Motion_controller::zoom_in_out_by_distance() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
-	if(distance > this->img_exp_dis)
+	if(distance > exp_distance)
 	{
 		//the target too far away from the camera
-		uint16_t move_z = ceil(abs(distance - this->img_exp_dis));
+		uint16_t move_z = ceil(abs(distance - exp_distance));
 		printf("Motion_controller::zoom_in_out() moving forward %u\n",move_z);
 		this->move(move_z,CAR_FORWARD);
 		return EVAL_ZOOM_IN;
@@ -533,7 +535,7 @@ uint8_t Motion_controller::zoom_in_out_by_distance(const double &distance)
 	else
 	{
 		//the target too close to the camera
-		uint16_t move_z = ceil(abs(distance - this->img_exp_dis));
+		uint16_t move_z = ceil(abs(distance - exp_distance));
 		printf("Motion_controller::zoom_in_out() moving backward %u\n",move_z);
 		this->move(move_z,CAR_BACKWARD);
 		return EVAL_ZOOM_OUT;
@@ -576,66 +578,24 @@ uint8_t Motion_controller::zoom_in_out_by_face(const cv::Rect &face,const double
 uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance)
 {
 	uint16_t move_z = DEFAULT_DIS;
-
 	if(glo_waist_shot)
 	{
-		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT) > threshold_face_y)
+		cv::Rect standard(faces[0].x,faces[0].y,IMG_EXP_FACE_WIDTH,IMG_EXP_FACE_HEIGHT);	
+		if(abs(faces[0].height - standard.height) > threshold_face_y)
 		{
-			if(distance > 3000)
-				move_z = DEFAULT_DIS_LARGE * (distance / 3000);
-			else if(distance > 1500)
-				move_z = DEFAULT_DIS;
-			else if(distance > 1000)
-				move_z = DEFAULT_DIS_SMALL * (distance / 1500);
-			else
-				move_z = DEFAULT_DIS_TINY * (distance / 1000);
-			
-			int32_t diff_y = faces[0].height - this->face_ref.height;
-			
-			if(diff_y > 0)
-			{
-				printf("Motion_controller::multi_face_zooming: moving backward %u mm\n",move_z);
-				this->move(move_z,CAR_BACKWARD);
-				return EVAL_ZOOM_OUT;
-			}
-			else
-			{
-				printf("Motion_controller::multi_face_zooming: moving forward %u mm\n",move_z);
-				this->move(move_z,CAR_FORWARD);
-				return EVAL_ZOOM_IN;
-			}
+			this->img_exp_dis = runCAMShift(standard);
+			return this->zoom_in_out_by_distance(this->img_exp_dis,distance);
 		}
 		else
 			return EVAL_COMPLETE;
 	}
 	else
 	{
+		cv::Rect standard(faces[0].x,faces[0].y,IMG_EXP_FACE_WIDTH_FULL,IMG_EXP_FACE_HEIGHT_FULL);
 		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT_FULL) > threshold_face_y)
 		{
-			if(distance > 3000)
-				move_z = DEFAULT_DIS_LARGE * (distance / 3000);
-			else if(distance > 1500)
-				move_z = DEFAULT_DIS;
-			else if(distance > 1000)
-				move_z = DEFAULT_DIS_SMALL * (distance / 1500);
-			else
-				move_z = DEFAULT_DIS_TINY * (distance / 1000);
-			
-			int32_t diff_y = faces[0].height - IMG_EXP_FACE_HEIGHT_FULL;
-			
-			if(diff_y > 0)
-			{
-				printf("Motion_controller::multi_face_zooming: moving backward %u mm\n",move_z);
-				this->move(move_z,CAR_BACKWARD);
-				return EVAL_ZOOM_OUT;
-			}
-			else
-			{
-				printf("Motion_controller::multi_face_zooming: moving forward %u mm\n",move_z);
-				this->move(move_z,CAR_FORWARD);
-				return EVAL_ZOOM_IN;
-			}
-
+			this->img_exp_dis = runCAMShift(standard);
+			return this->zoom_in_out_by_distance(this->img_exp_dis,distance);
 		}
 		else
 			return EVAL_COMPLETE;

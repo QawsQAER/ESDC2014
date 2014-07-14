@@ -300,7 +300,7 @@ uint8_t intel_board::robot_ready()
 
 			case(pattern_3):
 				glo_waist_shot = 1;
-				glo_high_angle_shot = 1;
+				glo_high_angle_shot = 0;
 				glo_multi_target = 0;
 				this->motion_controller->set_pattern(3);
 				glo_pattern = cmd;
@@ -319,7 +319,7 @@ uint8_t intel_board::robot_ready()
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 2;
-				glo_high_angle_shot = 1;
+				glo_high_angle_shot = 0;
 			break;
 
 			case(pattern_9):
