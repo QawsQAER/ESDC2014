@@ -577,9 +577,29 @@ uint8_t intel_board::robot_wait_for_adjustment()
 		this->robot_act_by_cmd(cmd);
 	}
 
-	if(glo_high_angle_shot && glo_waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
-		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
+	uint16_t roll_degree = 0,pitch_degree = 0;;
+	uint8_t roll_dir = CAM_ROLL_LEFT, pitch_dir = CAM_PITCH_DOWN;
 	
+	if(this->ui->roll_degree > 0)
+		roll_dir = CAM_ROLL_RIGHT;
+	else
+		roll_dir = CAM_ROLL_LEFT;
+	roll_degree = (uint16_t) abs(this->ui->roll_degree);
+
+	if(this->ui->pitch_degree > 0)
+		pitch_dir = CAM_PITCH_DOWN;
+	else
+		pitch_dir = CAM_PITCH_UP;
+	pitch_degree = (uint16_t) abs(this->ui->pitch_degree);
+
+	//if(glo_high_angle_shot && glo_waist_shot)
+	this->motion_controller->platform(pitch_degree,pitch_dir);
+	this->motion_controller->platform(roll_degree,roll_dir);
+	
+	//reverse the direction for the recovery of the shot angle
+	roll_dir = CAM_ROLL_LEFT ? CAM_ROLL_RIGHT : CAM_ROLL_LEFT;
+	pitch_dir = CAM_PITCH_DOWN ? CAM_PITCH_UP : CAM_PITCH_DOWN;
+
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	printf("\n\n\n!!!!!!TAKING THE OFFICIAL PHOTO!!!\n");
 
@@ -599,8 +619,9 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 
-	if(glo_high_angle_shot && glo_waist_shot && (glo_pattern == pattern_3 || glo_pattern == pattern_8))
-		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
+	//if(glo_high_angle_shot && glo_waist_shot)
+	this->motion_controller->platform(pitch_degree,pitch_dir);
+	this->motion_controller->platform(roll_degree,roll_dir);
 
 	this->robot_show_image();
 	

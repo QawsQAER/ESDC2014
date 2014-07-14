@@ -91,6 +91,7 @@ private:
 	uint16_t threshold_face_y, threshold_face_x;
 	uint16_t exp_face_height, exp_face_width;
 	uint16_t img_exp_face_pos_x, img_exp_face_pos_y;
+	uint8_t adjusting_counter;
 	//-------------------------------------------------------------------------------------------------//
 	//-------------------------------------------------------------------------------------------------//
 

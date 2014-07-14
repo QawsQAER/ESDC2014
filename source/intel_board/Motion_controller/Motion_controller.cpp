@@ -72,7 +72,7 @@ Motion_controller::Motion_controller()
 	this->need_to_center = 1;
 	this->need_to_zoom = 1;
 	this->need_to_adjust = 1;
-
+	this->adjusting_counter = 0;
 	//TODO: initilized the reference rectangle
 
 	this->ref = cv::Rect(
@@ -177,12 +177,21 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		printf("Motion_controller::flag_done_centering %u, flag_done_zooming %u\n",flag_done_centering,flag_done_zooming);
 		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
+			if(this->adjusting_counter > 5)
+			{
+				this->adjusting_counter = 0;
+				this->state = EVAL_INIT;
+				return EVAL_COMPLETE;
+			}
+
+			this->adjusting_counter++;
 			this->adjusting(detect);
 			this->state = EVAL_ADJUSTING;
 			return EVAL_ADJUSTING;
 		}
 		else if(abs(center.x - (this->ref.x + this->ref.width / 2)) < threshold_x && abs(detect.y - this->ref.y) < threshold_y && (flag_done_centering && flag_done_zooming))
 		{
+			this->adjusting_counter = 0;
 			this->state = EVAL_INIT;
 			return EVAL_COMPLETE;
 		}
@@ -223,6 +232,12 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = (face.y) - this->face_ref.y;
 		if((abs(diff_x) > threshold_face_x || abs(diff_y) > threshold_face_y))
 		{
+			if(this->adjusting_counter > 5)
+			{
+				this->adjusting_counter = 0;
+				this->state = EVAL_INIT;
+				return EVAL_COMPLETE;
+			}
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
 			this->state = EVAL_ADJUSTING;
@@ -230,6 +245,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else if(abs(diff_x) < threshold_face_x && abs(diff_y) < threshold_face_y && flag_done_centering && flag_done_zooming)
 		{
+			this->adjusting_counter = 0;
 			this->state = EVAL_INIT;
 			return EVAL_COMPLETE;
 		}
