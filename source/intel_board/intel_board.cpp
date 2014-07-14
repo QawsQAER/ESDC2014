@@ -283,6 +283,7 @@ uint8_t intel_board::robot_ready()
 		switch(cmd)
 		{
 			case(pattern_1):
+				glo_tracking = 0;
 				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				glo_multi_target = 0;
@@ -291,6 +292,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_2):
+				glo_tracking = 0;
 				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				glo_multi_target = 0;
@@ -299,6 +301,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_3):
+				glo_tracking = 0;
 				glo_waist_shot = 1;
 				glo_high_angle_shot = 0;
 				glo_multi_target = 0;
@@ -307,6 +310,7 @@ uint8_t intel_board::robot_ready()
 			break;
 			
 			case(pattern_4):
+				glo_tracking = 0;
 				glo_waist_shot = 1;
 				glo_high_angle_shot = 0;
 				glo_multi_target = 0;
@@ -315,6 +319,7 @@ uint8_t intel_board::robot_ready()
 			break;
 			
 			case(pattern_8):
+				glo_tracking = 0;
 				glo_waist_shot = 1;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
@@ -323,6 +328,7 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_9):
+				glo_tracking = 0;
 				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
 				glo_pattern = cmd;
@@ -336,6 +342,7 @@ uint8_t intel_board::robot_ready()
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 2;
+				glo_tracking = 0;
 			break;
 
 			case(pattern_5):
@@ -346,15 +353,20 @@ uint8_t intel_board::robot_ready()
 				glo_multi_target = 1;
 				glo_num_target = 3;
 				glo_high_angle_shot = 0;
+				glo_tracking = 0;
 			break;
 
 
 			case(pattern_diy):
 				glo_waist_shot = 1;
+				glo_tracking = 0;
 				this->motion_controller->set_pattern_diy(this->ui->ratiox,this->ui->ratioy,this->ui->ratiowidth);
 				glo_pattern = cmd;
 			break;
 
+			case(pattern_video):
+				glo_tracking = 1;
+			break;
 			case(set_waist_shot):
 				glo_waist_shot = glo_waist_shot ? 0:1;
 			break;
