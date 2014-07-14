@@ -399,7 +399,7 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 {
 	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double) face.height;// mm per pixel
 
-	int32_t diff_x = (face.x - face.width / 2) - this->center_x;
+	int32_t diff_x = (face.x + face.width / 2) - this->center_x;
 	uint16_t move_x = abs(ceil(p * diff_x));
 
 	double current_error_x = diff_x * p;
@@ -499,15 +499,14 @@ uint8_t Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const 
 {
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
-	double img_exp_dis = IMG_EXP_DIS;
-	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",img_exp_dis);
+	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",this->img_exp_dis);
 	printf("Motion_controller::zoom_in_out() the diff is %lf\n",distance - img_exp_dis);
-	printf("Motion_controller::zoom_in_out() the abs diff is %u\n",abs(distance - img_exp_dis));
+	printf("Motion_controller::zoom_in_out() the abs diff is %lf\n", abs(distance - img_exp_dis));
 	printf("Motion_controller::zoom_in_out() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
-	if(distance > img_exp_dis)
+	if(distance > this->img_exp_dis)
 	{
 		//the target too far away from the camera
-		uint16_t move_z = ceil(abs(distance - img_exp_dis));
+		uint16_t move_z = ceil(abs(distance - this->img_exp_dis));
 		printf("Motion_controller::zoom_in_out() moving forward %u\n",move_z);
 		this->move(move_z,CAR_FORWARD);
 		return EVAL_ZOOM_IN;
@@ -515,7 +514,7 @@ uint8_t Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const 
 	else
 	{
 		//the target too close to the camera
-		uint16_t move_z = ceil(abs(distance - img_exp_dis));
+		uint16_t move_z = ceil(abs(distance - this->img_exp_dis));
 		printf("Motion_controller::zoom_in_out() moving backward %u\n",move_z);
 		this->move(move_z,CAR_BACKWARD);
 		return EVAL_ZOOM_OUT;
@@ -796,6 +795,8 @@ void Motion_controller::set_pattern(uint8_t pattern)
 			this->exp_face_width,
 			this->exp_face_height);
 
+	this->img_exp_dis = runCAMShift(this->face_ref);
+	printf("Motion_controller::set_pattern() -> img exp dis %lf\n",this->img_exp_dis);
 	printf("Motion_controller::set_pattern() exiting\n");
 	return ;
 }
@@ -878,6 +879,11 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	uint16_t dis = 0;
 	uint8_t count = mm / segment;
 	uint8_t count_msg = 0;
+	if(mm < 50)
+	{
+		printf("Motion_controller::move() -> the distance is too small\n");
+		return ;
+	}
 	switch(dir)
 	{
 		case CAR_FORWARD://forward

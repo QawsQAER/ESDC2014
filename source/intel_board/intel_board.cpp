@@ -355,7 +355,6 @@ uint8_t intel_board::robot_ready()
 
 			default:
 				printf("intel_board::robot_ready() undefined reaction for command %d\n",cmd);
-			break;
 		}
 	}
 	return 0;

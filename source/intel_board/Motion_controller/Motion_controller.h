@@ -42,7 +42,8 @@
 #include "../lib/message.h"
 #include "../macro.h"
 #include "PIDcontroller.h"
-
+#include "../Image_processor/fourPointAlgo.h"
+#include "../Image_processor/camshiftdemo.h"
 
 #define EVAL_CENTERING 1
 #define EVAL_ZOOM_IN 2
@@ -117,6 +118,8 @@ public:
 	uint8_t need_to_zoom;
 	uint8_t need_to_adjust;
 	
+	double img_exp_dis;
+
 	Motion_controller();
 	~Motion_controller();
 
