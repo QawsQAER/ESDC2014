@@ -11,16 +11,23 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.Config;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.Paint;
+import android.graphics.PixelFormat;
 import android.graphics.PorterDuff.Mode;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
@@ -32,6 +39,7 @@ import android.hardware.SensorManager;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
+import android.os.Handler;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
@@ -48,7 +56,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.android.test.ClientSocket;
 import com.boyaa.chat.R;
@@ -60,8 +71,20 @@ import com.view.MyView;
 
 
 
+
+
 @SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
 public class MainActivity extends Activity  implements OnTouchListener{
+	
+	
+
+	  private RadioGroup styleGroup=null; 
+	    private RadioButton s1RadioButton=null; 
+	    private RadioButton s2RadioButton=null; 
+	    private RadioButton s3RadioButton=null; 
+	    private int style_choice=0; 
+
+
 	
 	private int x=0;//绘画开始的横坐标
 	private int y=0;//绘画开始的纵坐标
@@ -106,7 +129,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	 private String savePath = "/mnt/sdcard/intelcup.jpg";  
 	
 	private String camera_ip="192.168.1.101";
-	private String board_ip="192.168.1.100";
+	private String board_ip="192.168.43.186";
 	SoundPool player,play;
 	HashMap<Integer,Integer> soundMap;
 	
@@ -143,13 +166,17 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		private final int STATE_FINISH=13;
 	
 		private int state=STATE_NOT_CONNECTED;
-		
-    
+
+			
+   
+        
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
 		getWindow().setFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON, WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+		
+		
 		
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -184,6 +211,20 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		user=new Client(this.getApplicationContext(),socketListener);
 		
 		
+		final SensorEventListener myListener = new SensorEventListener() {
+			public void onSensorChanged(SensorEvent sensorEvent) {
+				
+			if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+			magneticFieldValues = sensorEvent.values;
+			
+			if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+				accelerometerValues = sensorEvent.values;
+			
+			calculateOrientation();
+			}
+			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+			};
+			
 		sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
 		aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 		mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
@@ -206,7 +247,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	      
 	}
 		
-		
+
+	
+	
 		
 		public boolean onTouch(View v, MotionEvent event) {
 			if(event.getAction() == MotionEvent.ACTION_DOWN){
@@ -276,28 +319,14 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 		
 		
-		
 	
 	
-	
-	final SensorEventListener myListener = new SensorEventListener() {
-	public void onSensorChanged(SensorEvent sensorEvent) {
-		
-	if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-	magneticFieldValues = sensorEvent.values;
-	
-	if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-		accelerometerValues = sensorEvent.values;
-	
-	calculateOrientation();
-	}
-	public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-	};
+
 
 	
 	
 	public void onPause(){
-		sm.unregisterListener(myListener);
+//		sm.unregisterListener(myListener);
 		super.onPause();
 	}	
 	
@@ -315,7 +344,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	      if(degree <0)
 	    	  degree = 360+degree;
 	      
-	      if(connected==0)
+//	      if(connected==0)
 	    	  status.setText(degree+"");
 	    	  
 
@@ -486,6 +515,32 @@ public class MainActivity extends Activity  implements OnTouchListener{
 //		    
 //		    
 //		    
+		    
+		    
+		    
+		    //通过控件的ID来得到代表控件的对象 
+	        styleGroup=(RadioGroup)findViewById(R.id.styleGroup); 
+	        s1RadioButton=(RadioButton)findViewById(R.id.s1); 
+	        s2RadioButton=(RadioButton)findViewById(R.id.s2); 
+	        s3RadioButton=(RadioButton)findViewById(R.id.s3); 
+
+	        //给RadioGroup设置事件监听 
+	        styleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
+	            @Override 
+	            public void onCheckedChanged(RadioGroup group, int checkedId) { 
+	                // TODO Auto-generated method stub 
+	                if(checkedId==s1RadioButton.getId()){ 
+	                  style_choice=1;
+	                }else if(checkedId==s2RadioButton.getId()){ 
+	                	 style_choice=2;
+	                } else if(checkedId==s3RadioButton.getId()){ 
+	                	 style_choice=3;
+	                } 
+	            } 
+	        }); 
+	        
+	        
+	        
         		findViewById(R.id.webView2).setVisibility(View.INVISIBLE);
 
 		    
@@ -558,6 +613,15 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.video).setVisibility(View.INVISIBLE);
 
 			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.description).setVisibility(View.INVISIBLE);
+
+		   
+	        
+	        
 			break;
 		
 		case STATE_CONNECTED:
@@ -618,6 +682,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pdiy).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.VISIBLE);
+			findViewById(R.id.s1).setVisibility(View.VISIBLE);
+			findViewById(R.id.s2).setVisibility(View.VISIBLE);
+			findViewById(R.id.s3).setVisibility(View.VISIBLE);
+			findViewById(R.id.description).setVisibility(View.VISIBLE);
 			
 			
 			break;
@@ -703,6 +773,13 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			
 		case STATE_START:
 			findViewById(R.id.start).setVisibility(View.VISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+			findViewById(R.id.description).setVisibility(View.INVISIBLE);
+
 			
 			break;
 			
@@ -897,6 +974,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					else if(txt.equals("sm"))
 					{
 						status.setText("start");
+						
+						packet.pack("0"+style_choice);
+						user.send(packet);
+						
 						
 						state=STATE_WAIT_CONFIRM;
 						initView();
@@ -1587,17 +1668,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		}
 	};
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-		
-		 	if(keyCode==KeyEvent.KEYCODE_BACK)
-		{
-			android.os.Process.killProcess(android.os.Process.myPid());
-		}
-		      
-		
-		return super.onKeyDown(keyCode, event);
-	}
+
 	
 	
 	   public static Bitmap getLoacalBitmap(String url) {
@@ -1632,8 +1703,42 @@ public class MainActivity extends Activity  implements OnTouchListener{
 
 		 }
 
-		 
 	
 	
+	 public boolean onKeyDown(int keyCode, KeyEvent event) {
+         // TODO Auto-generated method stub
+         if (((keyCode == KeyEvent.KEYCODE_BACK) ||
+(keyCode == KeyEvent.KEYCODE_HOME))
+&& event.getRepeatCount() == 0) {
+                dialog_Exit(MainActivity.this);
+         }
+         return false;
+        
+         //end onKeyDown
+  }
+
+  public static void dialog_Exit(Context context) {
+   AlertDialog.Builder builder = new Builder(context);
+   builder.setMessage("Leaving the app?");
+   builder.setTitle("Reminder");
+   builder.setIcon(android.R.drawable.ic_dialog_alert);
+   builder.setPositiveButton("Confirm",
+           new DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int which) {
+                   dialog.dismiss();
+                   android.os.Process.killProcess(android.os.Process
+                           .myPid());
+               }
+           });
+  
+   builder.setNegativeButton("Cancel",
+           new android.content.DialogInterface.OnClickListener() {
+               public void onClick(DialogInterface dialog, int which) {
+                   dialog.dismiss();
+               }
+           });
+  
+   builder.create().show();
+}
 	
 }
