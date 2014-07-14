@@ -476,8 +476,8 @@ uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &dist
 	printf("\nMotion_controller::zoom_in_out() running\n");
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
-	return this->zoom_in_out_by_default(detect,distance);
-	//this->zoom_in_out_by_distance(detect,distance);
+	//return this->zoom_in_out_by_default(detect,distance);
+	this->zoom_in_out_by_distance(distance);
 }
 
 uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const double &distance)
@@ -514,12 +514,14 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 
 uint8_t Motion_controller::zoom_in_out_by_distance(const double &distance)
 {
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
 
-	printf("Motion_controller::zoom_in_out() the img_exp_dis is %lf\n",this->img_exp_dis);
-	printf("Motion_controller::zoom_in_out() the diff is %lf\n",distance - img_exp_dis);
-	printf("Motion_controller::zoom_in_out() the abs diff is %lf\n", abs(distance - img_exp_dis));
-	printf("Motion_controller::zoom_in_out() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
+	this->img_exp_dis = runCAMShift(this->face_ref);
+	printf("Motion_controller::zoom_in_out_by_distance() the face ref is (%u,%u,%u,%u)\n",this->face_ref.x,this->face_ref.y,this->face_ref.width,this->face_ref.height);
+	printf("Motion_controller::zoom_in_out_by_distance() the img_exp_dis is %lf\n",this->img_exp_dis);
+	printf("Motion_controller::zoom_in_out_by_distance() the diff is %lf\n",distance - img_exp_dis);
+	printf("Motion_controller::zoom_in_out_by_distance() the abs diff is %lf\n", abs(distance - img_exp_dis));
+	printf("Motion_controller::zoom_in_out_by_distance() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
 	if(distance > this->img_exp_dis)
 	{
 		//the target too far away from the camera
@@ -887,7 +889,7 @@ void Motion_controller::set_lifter(const uint16_t &mm)
 
 void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 {
-	uint16_t segment = 3000;
+	uint16_t segment = 1500;
 	Message msg;
 	uint16_t dis = 0;
 	uint8_t count = mm / segment;

@@ -262,6 +262,7 @@ uint8_t intel_board::robot_ready()
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree_without_confirm());
 	//this->robot_orientation_adjust();
+	
 	glo_waist_shot = 1;
 	this->flag_target_found = 0;
 	command_type cmd;
@@ -272,6 +273,7 @@ uint8_t intel_board::robot_ready()
 		{
 			this->task_counter++;
 			printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+			printf("INTEL BOARD RECEIVE ROLL %d and PITCH %d\n",this->ui->roll_degree,this->ui->pitch_degree);
 			printf("INTEL BOARD STARTING A NEW TASK\n!!");
 			printf("intel_board: the robot is going to find target\n");
 			this->state = ROBOT_FIND_TARGET;
