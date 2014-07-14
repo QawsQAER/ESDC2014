@@ -430,10 +430,12 @@ void UI::send_start_ack()
 
 
 	roll_degree=(tempBuffer[2]-'0')*10+(tempBuffer[3]-'0');
+	roll_degree-=45;
 	printf("UI::roll_degree is %d\n", roll_degree);
 	
 
 	pitch_degree=(tempBuffer[4]-'0')*10+(tempBuffer[5]-'0');
+	pitch_degree-=45;
 	printf("UI::roll_degree is %d\n", pitch_degree);
 	
 }
