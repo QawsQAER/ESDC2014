@@ -249,6 +249,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		  rollBar=(SeekBar)findViewById(R.id.rollBar);
 		  pitchBar=(SeekBar)findViewById(R.id.pitchBar);
 		  rollBar.setMax(90);
+		  rollBar.setProgress(45);
+		  pitchBar.setProgress(45);
 		  pitchBar.setMax(90);
 		  roll=(TextView)findViewById(R.id.roll);
 	        rollBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -700,6 +702,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 		case STATE_CONNECTED:
 			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
+			
 			break;
 			
 		case STATE_COMPASS:
@@ -1057,7 +1060,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					if(txt.equals("cr"))
 					{
 						status.setText("connected");
-						state=STATE_CONNECTED;
+//						state=STATE_CONNECTED;
+						state=STATE_MODE;
+//						initView();
 						connected=1;
 						initView();
 						
