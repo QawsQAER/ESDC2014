@@ -4,7 +4,7 @@
     android:id="@+id/LinearLayout1"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/darker_gray"
+    android:background="@drawable/background"
     android:orientation="vertical"
     android:scrollbars="none" >
 
@@ -301,20 +301,24 @@
 
             <FrameLayout
                 android:layout_width="432dp"
-                android:layout_height="324dp" >
+                android:layout_height="324dp" 
+                android:topLeftRadius="10dp"   
+            	 android:topRightRadius="10dp"    
+            	 android:bottomRightRadius="10dp"   
+             	android:bottomLeftRadius="10dp"
+                android:layout_margin="@dimen/no_margin">
 
                 <ImageView
                     android:id="@+id/image_view"
                     android:layout_width="432dp"
                     android:layout_height="324dp"
-                    android:background="#ABCDEF"
-                    android:scaleType="centerCrop"
                     android:src="@drawable/cuhk" />
 
                 <WebView
                     android:id="@+id/webView2"
                     android:layout_width="432dp"
-                    android:layout_height="324dp" />
+                    android:layout_height="324dp"
+                   />
             </FrameLayout>
 
             <FrameLayout

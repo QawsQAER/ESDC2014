@@ -257,25 +257,28 @@ containing a value of this type.
          */
         public static final int default_gap=0x7f060000;
         public static final int default_margin=0x7f060001;
+        public static final int no_margin=0x7f060002;
     }
     public static final class drawable {
-        public static final int button_danger_selector=0x7f020000;
-        public static final int button_default_selector=0x7f020001;
-        public static final int button_info_selector=0x7f020002;
-        public static final int button_inverse_selector=0x7f020003;
-        public static final int button_primary_selector=0x7f020004;
-        public static final int button_success_selector=0x7f020005;
-        public static final int button_warning_selector=0x7f020006;
-        public static final int corners_bg=0x7f020007;
-        public static final int cuhk=0x7f020008;
-        public static final int ic_cu=0x7f020009;
-        public static final int ic_launcher=0x7f02000a;
-        public static final int opening=0x7f02000b;
-        public static final int pattern1=0x7f02000c;
-        public static final int pattern2=0x7f02000d;
-        public static final int pattern3=0x7f02000e;
-        public static final int pattern4=0x7f02000f;
-        public static final int primary_normal=0x7f020010;
+        public static final int background=0x7f020000;
+        public static final int button_danger_selector=0x7f020001;
+        public static final int button_default_selector=0x7f020002;
+        public static final int button_info_selector=0x7f020003;
+        public static final int button_inverse_selector=0x7f020004;
+        public static final int button_primary_selector=0x7f020005;
+        public static final int button_success_selector=0x7f020006;
+        public static final int button_warning_selector=0x7f020007;
+        public static final int corners_bg=0x7f020008;
+        public static final int cuhk=0x7f020009;
+        public static final int ic_cu=0x7f02000a;
+        public static final int ic_launcher=0x7f02000b;
+        public static final int opening=0x7f02000c;
+        public static final int pattern1=0x7f02000d;
+        public static final int pattern2=0x7f02000e;
+        public static final int pattern3=0x7f02000f;
+        public static final int pattern4=0x7f020010;
+        public static final int primary_normal=0x7f020011;
+        public static final int round=0x7f020012;
     }
     public static final class id {
         public static final int Back=0x7f050035;

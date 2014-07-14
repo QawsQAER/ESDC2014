@@ -2,7 +2,8 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/ScrollView1"
     android:layout_width="match_parent"
-    android:layout_height="match_parent" >
+    android:layout_height="match_parent" 
+     android:background="@drawable/background">
 
     <ScrollView
         android:id="@+id/ScrollView2"
@@ -165,9 +166,15 @@
 
                 <WebView
                     android:id="@+id/WebView"
-                    android:layout_width="match_parent"
-                    android:layout_height="275dp"
-                    android:src="@drawable/ic_cu" />
+                    android:src="@drawable/ic_cu" 
+                      android:layout_width="432dp"
+                android:layout_height="324dp" 
+                android:topLeftRadius="10dp"   
+            	 android:topRightRadius="10dp"    
+            	 android:bottomRightRadius="10dp"   
+             	android:bottomLeftRadius="10dp"
+                android:layout_margin="@dimen/no_margin"
+                />
             </LinearLayout>
         </LinearLayout>
     </ScrollView>
