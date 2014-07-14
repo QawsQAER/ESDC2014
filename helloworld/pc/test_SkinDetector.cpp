@@ -7,7 +7,7 @@
 using namespace std;
 using namespace cv;
 
-VideoCapture capture(1);
+//VideoCapture capture(1);
 void detectAndDisplay( Mat frame );
 int faceDetectInit();
 /** Global variables */
@@ -21,7 +21,6 @@ std::vector<Rect> faces;
 void exit_routine(int args)
 {
 	printf("Executing exit_routine()\n");
-	capture.release(); 
 	exit(0);
 	return ;
 }
@@ -39,15 +38,8 @@ int main(int argc, char **argv)
 		return -1;
 	}
 
-	if(argc == 2)
-	{
-		Mat img = imread(argv[1],CV_LOAD_IMAGE_COLOR);
-		detectAndDisplay(img);
-		Mat skinMat = mySkinDetector.getSkin(img);
-		imshow("Skin detection",skinMat);
-		waitKey(0);
-		return 0;
-	}
+	VideoCapture capture(atoi(argv[1]));
+
 	if(!capture.isOpened())
 	{
 		printf("failed to open the device\n");
@@ -69,12 +61,10 @@ int main(int argc, char **argv)
 	while(1){
 		//store image to matrix
 		capture.read(cameraFeed);
-		detectAndDisplay(cameraFeed);
-		cv::Mat roi = 
+	   imshow("Orig Image",cameraFeed);
+		//detectAndDisplay(cameraFeed);
 		skinMat = mySkinDetector.getSkin(cameraFeed);
-
-		
-		//imshow("Skin Image",skinMat);
+		imshow("Skin Image",skinMat);
 		waitKey(30);
 	}
 return 0;
@@ -107,8 +97,9 @@ void detectAndDisplay( Mat frame )
     {
         Mat faceROI = frame_gray( faces[i] );
         std::vector<Rect> eyes;
-        Mat roi = frame(faces[i]);
+        Mat roi = frame;
         cv::Mat skinMat = mySkinDetector.getSkin(roi);
+
         imshow("Skin Image",skinMat);
         Scalar value = mean(skinMat);
 		  printf("v0 %lf\n",value[0]);

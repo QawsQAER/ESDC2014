@@ -7,10 +7,10 @@ SkinDetector::SkinDetector(void)
 // You can change the values and see what happens
 Y_MIN  = 0;
 Y_MAX  = 255;
-Cr_MIN = 133;
-Cr_MAX = 170;
-Cb_MIN = 77;
-Cb_MAX = 140;
+Cr_MIN = 133;//133
+Cr_MAX = 170;//170
+Cb_MIN = 77;//77
+Cb_MAX = 140;//140
 }
 
 SkinDetector::~SkinDetector(void)
