@@ -90,6 +90,8 @@ class UI{
 	
 
 	int style_choice;
+	int roll_degree;
+	int pitch_degree;
 	
 	private:
 
