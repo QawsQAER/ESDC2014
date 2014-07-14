@@ -138,7 +138,7 @@ uint8_t intel_board::main_function()
 					this->state = ROBOT_WAIT_FOR_ADJUSTMENT;
 					break;
 				}	
-				if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_ADJUSTING)
+				if((rv_evaluate_image = this->robot_evaluate_image()) == EVAL_COMPLETE)
 				{	
 					//if the image is good enough
 					//store the image and go back wait for the next command
@@ -212,7 +212,7 @@ void intel_board::robot_get_degree(int32_t *degree,int32_t *dir)
 	printf("intel_board::robot_get_degree() getting degree from car\n");
 	msg.safe_sendMessage(this->motion_controller->Com->fd);
 	printf("intel_board::robot_get_degree() getting degree from phone\n");
-	int32_t phone_degree = ui->update_degree();
+	int32_t phone_degree = ui->update_degree_without_confirm();
 	printf("intel_board::robot_get_degree() get degree from phone %d\n",phone_degree);
 	printf("intel_board::robot_get_degree() get degree from compass %d\n",msg.car_degree);
 	degree_rotation(msg.car_degree,phone_degree,degree,dir);
@@ -226,7 +226,7 @@ void intel_board::robot_orientation_adjust()
 	
 	while(true)
 	{
-		uint16_t phone_ori = (uint16_t) this->ui->update_degree();
+		uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
 		if(!this->motion_controller->orientation_adjust(phone_ori))
 			break;
 		//original implementation of robot_orientation_adjust
@@ -260,8 +260,8 @@ uint8_t intel_board::robot_ready()
 	/*test camera platform*/
 
 	//fetch degree
-	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
-	this->robot_orientation_adjust();
+	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree_without_confirm());
+	//this->robot_orientation_adjust();
 	glo_waist_shot = 1;
 	this->flag_target_found = 0;
 	command_type cmd;
@@ -283,6 +283,7 @@ uint8_t intel_board::robot_ready()
 			case(pattern_1):
 				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
+				glo_multi_target = 0;
 				this->motion_controller->set_pattern(1);
 				glo_pattern = cmd;
 			break;
@@ -290,6 +291,7 @@ uint8_t intel_board::robot_ready()
 			case(pattern_2):
 				glo_waist_shot = 0;
 				glo_high_angle_shot = 0;
+				glo_multi_target = 0;
 				this->motion_controller->set_pattern(2);
 				glo_pattern = cmd;
 			break;
@@ -297,6 +299,7 @@ uint8_t intel_board::robot_ready()
 			case(pattern_3):
 				glo_waist_shot = 1;
 				glo_high_angle_shot = 1;
+				glo_multi_target = 0;
 				this->motion_controller->set_pattern(3);
 				glo_pattern = cmd;
 			break;
@@ -304,6 +307,7 @@ uint8_t intel_board::robot_ready()
 			case(pattern_4):
 				glo_waist_shot = 1;
 				glo_high_angle_shot = 0;
+				glo_multi_target = 0;
 				this->motion_controller->set_pattern(4);
 				glo_pattern = cmd;
 			break;

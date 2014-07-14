@@ -45,6 +45,7 @@
 #include "../Image_processor/fourPointAlgo.h"
 #include "../Image_processor/camshiftdemo.h"
 
+#define EVAL_INIT 0
 #define EVAL_CENTERING 1
 #define EVAL_ZOOM_IN 2
 #define EVAL_ZOOM_OUT 3
@@ -107,6 +108,7 @@ private:
 	uint8_t zoom_in_out_by_face(const cv::Rect &face,const double &distance);
 	uint8_t multi_face_zooming(const std::vector<cv::Rect> &faces,const cv::Rect &face_region,const double &distance);
 	
+	uint8_t state;
 public:
 
 	cv::Rect ref;

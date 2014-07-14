@@ -41,6 +41,7 @@ Motion_controller::Motion_controller()
 	this->car_orientation = 0;
 	this->car_original_orientation = 0;
 	this->phone_orientation = 0;
+	this->state = EVAL_INIT;
 	//initialize threshold value
 	this->threshold_x = IMG_HORI_THRESHOLD;
 	this->threshold_y = IMG_VERT_THRESHOLD;
@@ -117,7 +118,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 */
 
 	if(glo_test_filetransfer)
-		return EVAL_ADJUSTING;
+		return EVAL_COMPLETE;
 	
 	if(glo_tracking)
 	{
@@ -146,8 +147,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = face.height - this->face_ref.height;
 		//if not taking waist shot
 
-		
-		if(abs(diff_x) > threshold_x)//need to adjust horizontally to the center
+		if(abs(diff_x) > threshold_x && this->state < EVAL_ADJUSTING)//need to adjust horizontally to the center
 		{
 			//doing centering
 			this->centering(detect,face);
@@ -160,22 +160,29 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming
-			return this->zoom_in_out_by_distance(distance);
-			return this->zoom_in_out_by_face(face,distance);
+
+			return (this->state = this->zoom_in_out_by_distance(distance));
+			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}
 		else if(flag_done_centering == 0)
+		{
+			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
+		}
 		else
 			flag_done_zooming = 1;
 
 		if(abs(center.x - img_exp_pos_x) > threshold_x || abs(detect.y - img_exp_pos_y) > threshold_y || (flag_done_centering && flag_done_zooming))
 		{
 			this->adjusting(detect);
+			this->state = EVAL_ADJUSTING;
 			return EVAL_ADJUSTING;
 		}
 		else if(abs(center.x - img_exp_pos_x) < threshold_x && abs(detect.y - img_exp_pos_y) < threshold_y)
-			return EVAL_ADJUSTING;
-
+		{
+			this->state = EVAL_INIT;
+			return EVAL_COMPLETE;
+		}
 	}
 	else
 	{
@@ -185,7 +192,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = face.height - this->face_ref.height;
 
 		
-		if(abs(diff_x) > threshold_x && need_to_center)
+		if(abs(diff_x) > threshold_x && need_to_center && this->state < EVAL_ADJUSTING)
 		{
 			//this->centering(detect,face);
 			this->centering_by_face(face);
@@ -198,25 +205,33 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
-			return this->zoom_in_out_by_distance(distance);
-			return this->zoom_in_out_by_face(face,distance);
+			return (this->state = this->zoom_in_out_by_distance(distance));
+			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}else if(flag_done_centering == 0)
+		{
+			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
+		}
 		else
 			flag_done_zooming = 1;
 
 		diff_x = (face.x + face.width / 2) - (this->face_ref.x + this->face_ref.width / 2); 
 		diff_y = (face.y) - this->face_ref.y;
-		if(flag_done_centering && flag_done_zooming)
+		if(flag_done_centering && flag_done_zooming && abs(diff_x) > threshold_face_x && abs(diff_y) > threshold_face_y)
 		{
 			this->need_to_center = 1;
 			this->adjusting_by_face(face);
+			this->state = EVAL_ADJUSTING;
 			return EVAL_ADJUSTING;
 		}
 		else if(abs(diff_x) < threshold_face_x && abs(diff_y) < threshold_face_y)
-			return EVAL_ADJUSTING;
+		{
+			this->state = EVAL_INIT;
+			return EVAL_COMPLETE;
+		}
 	}
-	return EVAL_ADJUSTING;
+	this->state = EVAL_INIT;
+	return EVAL_COMPLETE;
 }
 
 uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const double &distance)
@@ -247,7 +262,7 @@ uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Re
 	uint8_t zooming_done = this->multi_face_zooming(faces,face_region,distance);
 
 	if(centering_done == EVAL_COMPLETE &&  zooming_done == EVAL_COMPLETE)
-		return EVAL_ADJUSTING;
+		return EVAL_COMPLETE;
 	else if(zooming_done != EVAL_COMPLETE)
 		return zooming_done;
 	else if(centering_done != EVAL_COMPLETE)
@@ -749,17 +764,13 @@ void Motion_controller::set_pattern(uint8_t pattern)
 	switch(pattern)
 	{
 		case(1):
-			this->img_exp_pos_x = IMG_EXP_POS1_X;
-			this->img_exp_pos_y = IMG_EXP_POS1_Y;
-			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
-			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
+			this->img_exp_pos_x = this->img_exp_face_pos_x = IMG_EXP_POS1_X;
+			this->img_exp_pos_y = this->img_exp_face_pos_y = IMG_EXP_POS1_Y;
 			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH_FULL;
 		break;
 		case(2):
-			this->img_exp_pos_x = IMG_EXP_POS2_X;
-			this->img_exp_pos_y = IMG_EXP_POS2_Y;
-			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
-			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
+			this->img_exp_pos_x = this->img_exp_face_pos_x = IMG_EXP_POS2_X;
+			this->img_exp_pos_y = this->img_exp_face_pos_y = IMG_EXP_POS2_Y;
 			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH_FULL;
 		break;
 		case(3):
@@ -876,12 +887,12 @@ void Motion_controller::set_lifter(const uint16_t &mm)
 
 void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 {
-	uint16_t segment = 500;
+	uint16_t segment = 3000;
 	Message msg;
 	uint16_t dis = 0;
 	uint8_t count = mm / segment;
 	uint8_t count_msg = 0;
-	if(mm < 50)
+	if(mm < 30)
 	{
 		printf("Motion_controller::move() -> the distance is too small\n");
 		return ;
