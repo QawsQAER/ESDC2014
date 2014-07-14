@@ -160,6 +160,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming
+			return this->zoom_in_out_by_distance(distance);
 			return this->zoom_in_out_by_face(face,distance);
 		}
 		else if(flag_done_centering == 0)
@@ -197,6 +198,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
+			return this->zoom_in_out_by_distance(distance);
 			return this->zoom_in_out_by_face(face,distance);
 		}else if(flag_done_centering == 0)
 			return EVAL_CENTERING;
@@ -495,7 +497,7 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 	}
 }
 
-uint8_t Motion_controller::zoom_in_out_by_distance(const cv::Rect &detect,const double &distance)
+uint8_t Motion_controller::zoom_in_out_by_distance(const double &distance)
 {
 	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
 
