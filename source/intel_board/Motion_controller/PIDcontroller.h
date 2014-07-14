@@ -10,6 +10,7 @@ class PIDcontroller
 
 public:
 	PIDcontroller();
+	void setPID(double P,double I,double D);
 	double run(const double &current_error);
 	void reset();
 };

@@ -99,6 +99,7 @@ uint8_t Motion_controller::init()
 	printf("Motion_controller::init() running\n");
 	this->reset_lifter();
 	printf("Motion_controller::init() returning\n");
+	this->controller_degree.setPID(CONTROLLER_DEGREE_P,CONTROLLER_DEGREE_I,CONTROLLER_DEGREE_D);
 	return 1;
 }
 
@@ -266,7 +267,12 @@ uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const do
 	if(abs(diff_x) > threshold_face_x)
 	{
 		printf("Motion_controller::evaluate_image_tracking diff_x_actual is %lf, distance is %lf\n",diff_x_actual,distance);
+		int16_t degree_error = atan(diff_x_actual / distance) / PI * 180);
 		uint16_t degree = (uint16_t) (atan(diff_x_actual / distance) / PI * 180);
+		if(glo_pid)
+		{
+			this->controller_degree.run(degree_error);
+		}
 		printf("Motion_controller::evaluate_image_tracking -> degree is %u\n",degree);
 		if(diff_x > 0)
 			this->platform(degree,CAM_YAW_RIGHT);
@@ -276,6 +282,7 @@ uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const do
 	printf("Motion_controller::evaluate_image_tracking exiting\n");
 	return EVAL_CENTERING;
 }
+
 uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Rect> &faces,const cv::Rect &face_region, const double &distance)
 {
 	uint8_t centering_done = this->multi_face_centering(faces,face_region);

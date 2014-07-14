@@ -11,6 +11,12 @@ PIDcontroller::PIDcontroller()
 	this->prev_error = 0;
 }
 
+void PIDcontroller::setPID(double P,double I,double D)
+{
+	this->P = P;
+	this->I = I;
+	this->D = D;
+}
 
 double PIDcontroller::run(const double &current_error)
 {

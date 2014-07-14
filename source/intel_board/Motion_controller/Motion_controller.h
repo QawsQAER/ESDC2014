@@ -118,6 +118,7 @@ public:
 
 	Controller_Com *Com;
 	PIDcontroller controller_x;
+	PIDcontroller controller_degree;
 	uint8_t need_to_center;
 	uint8_t need_to_zoom;
 	uint8_t need_to_adjust;
