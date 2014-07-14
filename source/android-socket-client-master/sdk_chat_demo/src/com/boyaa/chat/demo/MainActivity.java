@@ -58,6 +58,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -148,9 +149,17 @@ public class MainActivity extends Activity  implements OnTouchListener{
    
 	   private ClientSocket cs = null;  
 	   
-	   
-	   
-	   
+	   private SeekBar rollBar;
+	   	private SeekBar pitchBar;
+	   	
+	   	private TextView roll;
+	   	private TextView pitch;
+	   	
+         private int roll_lastProgress = 0;
+         private int roll_newProgress = 0;
+         private int pitch_lastProgress = 0;
+         private int pitch_newProgress = 0;
+         
 		private final int STATE_NOT_CONNECTED=1;
 		private final int STATE_CONNECTED=2;
 		private final int STATE_COMPASS=3;
@@ -237,7 +246,68 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		
 		
 		
-		
+		  rollBar=(SeekBar)findViewById(R.id.rollBar);
+		  pitchBar=(SeekBar)findViewById(R.id.pitchBar);
+		  rollBar.setMax(90);
+		  pitchBar.setMax(90);
+		  roll=(TextView)findViewById(R.id.roll);
+	        rollBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+	            /**
+	             * 拖动条停止拖动的时候调用
+	             */
+	            @Override
+	            public void onStopTrackingTouch(SeekBar seekBar) {
+	            	roll.setText("roll："+(roll_newProgress-45)+"%");
+	            }
+	            /**
+	             * 拖动条开始拖动的时候调用
+	             */
+	            @Override
+	            public void onStartTrackingTouch(SeekBar seekBar) {
+	            	roll.setText("start darg");
+	            }
+	            /**
+	             * 拖动条进度改变的时候调用
+	             */
+	            @Override
+	            public void onProgressChanged(SeekBar seekBar, int progress,
+	                    boolean fromUser) {
+	            	roll_newProgress=progress;
+
+	            	roll.setText("roll："+(roll_newProgress-45)+"'");
+	            }
+	        });
+	        
+	        
+	        
+	        pitch=(TextView)findViewById(R.id.pitch);
+	        pitchBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+	            /**
+	             * 拖动条停止拖动的时候调用
+	             */
+	            @Override
+	            public void onStopTrackingTouch(SeekBar seekBar) {
+	            	pitch.setText("pitch："+(pitch_newProgress-45)+"'");
+	            }
+	            /**
+	             * 拖动条开始拖动的时候调用
+	             */
+	            @Override
+	            public void onStartTrackingTouch(SeekBar seekBar) {
+	            	pitch.setText("start darg");
+	            }
+	            /**
+	             * 拖动条进度改变的时候调用
+	             */
+	            @Override
+	            public void onProgressChanged(SeekBar seekBar, int progress,
+	                    boolean fromUser) {
+	            	pitch_newProgress=progress;
+	            	pitch.setText("pitch："+(pitch_newProgress-45)+"'");
+	            }
+	        });
+	 
+
 		
 		
 		
@@ -523,6 +593,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	        s1RadioButton=(RadioButton)findViewById(R.id.s1); 
 	        s2RadioButton=(RadioButton)findViewById(R.id.s2); 
 	        s3RadioButton=(RadioButton)findViewById(R.id.s3); 
+	        rollBar = (SeekBar) findViewById(R.id.rollBar);
+	        pitchBar = (SeekBar) findViewById(R.id.pitchBar);
 
 	        //给RadioGroup设置事件监听 
 	        styleGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
@@ -617,9 +689,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
 			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
 			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
-			findViewById(R.id.description).setVisibility(View.INVISIBLE);
 
-		   
+			findViewById(R.id.roll).setVisibility(View.INVISIBLE);
+			findViewById(R.id.rollBar).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitch).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitchBar).setVisibility(View.INVISIBLE);
 	        
 	        
 			break;
@@ -687,8 +761,11 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.s1).setVisibility(View.VISIBLE);
 			findViewById(R.id.s2).setVisibility(View.VISIBLE);
 			findViewById(R.id.s3).setVisibility(View.VISIBLE);
-			findViewById(R.id.description).setVisibility(View.VISIBLE);
 			
+			findViewById(R.id.roll).setVisibility(View.VISIBLE);
+			findViewById(R.id.rollBar).setVisibility(View.VISIBLE);
+			findViewById(R.id.pitch).setVisibility(View.VISIBLE);
+			findViewById(R.id.pitchBar).setVisibility(View.VISIBLE);
 			
 			break;
 			
@@ -774,12 +851,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		case STATE_START:
 			findViewById(R.id.start).setVisibility(View.VISIBLE);
 			
-			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
-			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
-			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
-			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
-			findViewById(R.id.description).setVisibility(View.INVISIBLE);
-
+	
 			
 			break;
 			
@@ -805,6 +877,17 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+
+			findViewById(R.id.roll).setVisibility(View.INVISIBLE);
+			findViewById(R.id.rollBar).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitch).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitchBar).setVisibility(View.INVISIBLE);
+			
 			break;
 			
 		case STATE_CONFIRM:
@@ -827,6 +910,16 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
+			
+			findViewById(R.id.styleGroup).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s1).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s2).setVisibility(View.INVISIBLE);
+			findViewById(R.id.s3).setVisibility(View.INVISIBLE);
+
+			findViewById(R.id.roll).setVisibility(View.INVISIBLE);
+			findViewById(R.id.rollBar).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitch).setVisibility(View.INVISIBLE);
+			findViewById(R.id.pitchBar).setVisibility(View.INVISIBLE);
 			break;
 			
 		case STATE_FINISH:
@@ -979,6 +1072,28 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						user.send(packet);
 						
 						
+						if(roll_newProgress<10)
+						{
+							packet.pack("0"+roll_newProgress);
+							user.send(packet);
+						}
+						else 
+						{
+							packet.pack(""+roll_newProgress);
+							user.send(packet);
+						}
+						
+						if(pitch_newProgress<10)
+						{
+							packet.pack("0"+pitch_newProgress);
+							user.send(packet);
+						}
+						else 
+						{
+							packet.pack(""+pitch_newProgress);
+							user.send(packet);
+						}
+						
 						state=STATE_WAIT_CONFIRM;
 						initView();
 		        		findViewById(R.id.webView2).setVisibility(View.VISIBLE);
@@ -1012,6 +1127,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 							packet.pack(""+degree);
 							user.send(packet);
 						}
+						state=STATE_MODE;
+						initView();
 					}
 					
 					else if(txt.equals("cp"))

@@ -386,7 +386,6 @@ void UI::send_start_ack()
 
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
-	memset(content,0,2);
 	
 	int receiveByte=0;
 	int alreadyReceiveByte=0;
@@ -395,7 +394,7 @@ void UI::send_start_ack()
 
 
 
-	while(alreadyReceiveByte<2){
+	while(alreadyReceiveByte<6){
 
 
 		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
@@ -407,7 +406,7 @@ void UI::send_start_ack()
 		alreadyReceiveByte+=receiveByte;
 
 		
-			if(alreadyReceiveByte>=2)
+			if(alreadyReceiveByte>=6)
 			{
 				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
  				// strncpy(content,tempBuffer,sizeof(char)*3);
@@ -427,6 +426,15 @@ void UI::send_start_ack()
 	style_choice=(tempBuffer[1]-'0');
 	printf("UI::style_choice is %d\n", style_choice);
 	}
+
+
+
+	roll_degree=(tempBuffer[2]-'0')*10+(tempBuffer[3]-'0');
+	printf("UI::roll_degree is %d\n", roll_degree);
+	
+
+	pitch_degree=(tempBuffer[4]-'0')*10+(tempBuffer[5]-'0');
+	printf("UI::roll_degree is %d\n", pitch_degree);
 	
 }
 
@@ -830,7 +838,6 @@ int UI::update_degree()
 	send_fetch_degree_notice();
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
-	memset(content,0,3);
 	
 	int receiveByte=0;
 	int alreadyReceiveByte=0;
@@ -884,7 +891,6 @@ int UI::update_degree_without_confirm()
 	send_fetch_degree_without_confirm();
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
-	memset(content,0,3);
 	
 	int receiveByte=0;
 	int alreadyReceiveByte=0;
@@ -986,7 +992,6 @@ int UI::init_server_socket(){
 
 
 	memset(tempBuffer,0,MAX_MESSAGE_SIZE);
-	memset(content,0,12);
 	
 	int receiveByte=0;
 	int alreadyReceiveByte=0;
