@@ -212,7 +212,7 @@ enum Direction{
 #define CAM_YAW_LEFT 4
 #define CAM_YAW_RIGHT 5
 
-#define CAM_HIGH_ANGLE 33
+#define CAM_HIGH_ANGLE 45
 
 #define ORIENTATION_THRESHOLD 10
 

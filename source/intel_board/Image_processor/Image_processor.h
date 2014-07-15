@@ -174,7 +174,7 @@ public:
 	uint8_t find_body_in_roi(const cv::Mat &source_img,const cv::Rect roi,std::vector<cv::Rect> &body_detect);
 	uint8_t face_body_related(const cv::Rect &body,const cv::Rect &face);
 	/**/
-	uint8_t show_analyzed_img(uint16_t task_counter);
+	uint8_t show_analyzed_img(const uint16_t &task_counter);
 	uint8_t get_image_and_show();
 	IMAGE_PROCESS_STATE get_state();
 

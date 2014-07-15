@@ -608,6 +608,11 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	roll_dir = CAM_ROLL_LEFT ? CAM_ROLL_RIGHT : CAM_ROLL_LEFT;
 	pitch_dir = CAM_PITCH_DOWN ? CAM_PITCH_UP : CAM_PITCH_DOWN;
 
+	if(glo_pattern == pattern_3)
+	{
+		this->motion_controller->set_lifter(LIFTER_MAX);
+		this->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
+	}
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	printf("\n\n\n!!!!!!TAKING THE OFFICIAL PHOTO!!!\n");
 
@@ -638,6 +643,11 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	else
 		this->ui->send_finished_ack(this->image_processor->analyzed_filtered_img_path);
 	
+	if(glo_pattern == pattern_3)
+	{
+		this->motion_controller->set_lifter(LIFTER_MIN);
+		this->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
+	}
 	free(filename);
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);
 	printf("intel_board:: task %d finished\n\n\n",this->task_counter);
