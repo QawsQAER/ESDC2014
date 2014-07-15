@@ -23,8 +23,9 @@ public class MyView extends View {
 	protected void onDraw(Canvas canvas) {
 		if(sign){
 			paint.setColor(Color.TRANSPARENT);
+			
 		}else{
-			paint.setColor(Color.RED);
+			paint.setColor(Color.BLUE);
 			paint.setAlpha(80);
 			canvas.drawRect(new Rect(x, y, m, n), paint);
 		}
