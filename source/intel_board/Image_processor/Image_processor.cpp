@@ -261,6 +261,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	free(filename);
 	free(analyzed_filename);
 	free(analyzed_filtered_filename);
+	return 1;
 }
 
 /*
@@ -622,6 +623,7 @@ uint8_t Image_processor::basic_filter_with_gesture()
 	}
 	if(glo_debug_msg)
 		printf("Image_processor::basic_filter_with_gesture() exiting\n");
+	return 1;
 }
 /*
 	@param: degree is the angle detected between the user and the robot 
@@ -718,6 +720,7 @@ uint8_t Image_processor::basic_filter_default()
 	}
 	if(glo_debug_msg)
 		printf("Image_processor::basic_filter_default() exiting\n");
+	return 1;
 }
 
 /* IMPLEMENTATION OF BASIC FILTER END*/
