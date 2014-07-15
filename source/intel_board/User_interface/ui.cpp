@@ -394,7 +394,7 @@ void UI::send_start_ack()
 
 
 
-	while(alreadyReceiveByte<6){
+	while(alreadyReceiveByte<8){
 
 
 		if((receiveByte = recv(client_sd,tempBuffer+alreadyReceiveByte,MAX_MESSAGE_SIZE-alreadyReceiveByte,0))<0)
@@ -406,7 +406,7 @@ void UI::send_start_ack()
 		alreadyReceiveByte+=receiveByte;
 
 		
-			if(alreadyReceiveByte>=6)
+			if(alreadyReceiveByte>=8)
 			{
 				// memcpy(&content,&tempBuffer,sizeof(char)*MESSAGELENGTH);
  				// strncpy(content,tempBuffer,sizeof(char)*3);
@@ -429,12 +429,23 @@ void UI::send_start_ack()
 
 
 
-	roll_degree=(tempBuffer[2]-'0')*10+(tempBuffer[3]-'0');
+	hand_choice=0;
+
+	if((tempBuffer[2]-'0')==0)
+	{
+	hand_choice=(tempBuffer[3]-'0');
+	printf("UI::style_choice is %d\n", hand_choice);
+	}
+
+	
+
+
+	roll_degree=(tempBuffer[4]-'0')*10+(tempBuffer[5]-'0');
 	roll_degree-=45;
 	printf("UI::roll_degree is %d\n", roll_degree);
 	
 
-	pitch_degree=(tempBuffer[4]-'0')*10+(tempBuffer[5]-'0');
+	pitch_degree=(tempBuffer[6]-'0')*10+(tempBuffer[7]-'0');
 	pitch_degree-=45;
 	printf("UI::roll_degree is %d\n", pitch_degree);
 	

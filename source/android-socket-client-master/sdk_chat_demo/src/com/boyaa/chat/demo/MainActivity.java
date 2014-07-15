@@ -83,7 +83,14 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	    private RadioButton s1RadioButton=null; 
 	    private RadioButton s2RadioButton=null; 
 	    private RadioButton s3RadioButton=null; 
-	    private int style_choice=0; 
+	    
+	    private RadioGroup handGroup=null; 
+	    private RadioButton h1RadioButton=null; 
+	    private RadioButton h2RadioButton=null; 
+	    
+	    
+	    private int style_choice=1; 
+	    private int hand_choice=1; 
 
 
 	
@@ -155,10 +162,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	   	private TextView roll;
 	   	private TextView pitch;
 	   	
-         private int roll_lastProgress = 0;
-         private int roll_newProgress = 0;
-         private int pitch_lastProgress = 0;
-         private int pitch_newProgress = 0;
+         private int roll_lastProgress = 45;
+         private int roll_newProgress = 45;
+         private int pitch_lastProgress = 45;
+         private int pitch_newProgress = 45;
          
 		private final int STATE_NOT_CONNECTED=1;
 		private final int STATE_CONNECTED=2;
@@ -259,7 +266,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	             */
 	            @Override
 	            public void onStopTrackingTouch(SeekBar seekBar) {
-	            	roll.setText("roll："+(roll_newProgress-45)+"%");
+	            	roll.setText("roll："+(roll_newProgress-45)+"'");
 	            }
 	            /**
 	             * 拖动条开始拖动的时候调用
@@ -348,6 +355,20 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					y = (int) event.getRawY();
 				}
 //				n = (int) event.getRawY();
+				
+				
+				ratiox=(int)(origin_x-image_x)*640/image_width;
+				ratioy=(int)(origin_y-image_y)*480/image_height;
+				ratiowidth=(int)(width*640/image_width);
+				ratioheight=(int)(height*480/image_height);
+				
+				if(ratiowidth>120)
+					ratiowidth=120;
+				else if(ratiowidth<45)
+					ratiowidth=45;
+				
+				
+				
 				myView.setSeat(x, y, x+width, y+height);
 				myView.postInvalidate();
 			}
@@ -365,10 +386,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 				
 //				image_width=320;
 //				image_height=240;
-				ratiox=(int)(origin_x-image_x)*640/image_width;
-				ratioy=(int)(origin_y-image_y)*480/image_height;
-				ratiowidth=(int)(width*640/image_width);
-				ratioheight=(int)(height*480/image_height);
+			
 				
 //				if(event.getY()>y){
 //					height = (int) event.getRawY()-y;
@@ -595,6 +613,13 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	        s1RadioButton=(RadioButton)findViewById(R.id.s1); 
 	        s2RadioButton=(RadioButton)findViewById(R.id.s2); 
 	        s3RadioButton=(RadioButton)findViewById(R.id.s3); 
+	        
+	        handGroup=(RadioGroup)findViewById(R.id.handGroup); 
+	        h1RadioButton=(RadioButton)findViewById(R.id.nohand); 
+	        h2RadioButton=(RadioButton)findViewById(R.id.hand); 
+	        
+	        
+	        
 	        rollBar = (SeekBar) findViewById(R.id.rollBar);
 	        pitchBar = (SeekBar) findViewById(R.id.pitchBar);
 
@@ -609,6 +634,18 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	                	 style_choice=2;
 	                } else if(checkedId==s3RadioButton.getId()){ 
 	                	 style_choice=3;
+	                } 
+	            } 
+	        }); 
+	        
+	        handGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() { 
+	            @Override 
+	            public void onCheckedChanged(RadioGroup group, int checkedId) { 
+	                // TODO Auto-generated method stub 
+	                if(checkedId==h1RadioButton.getId()){ 
+	                	hand_choice=1;
+	                }else if(checkedId==h2RadioButton.getId()){ 
+	                	hand_choice=2;
 	                } 
 	            } 
 	        }); 
@@ -734,6 +771,8 @@ public class MainActivity extends Activity  implements OnTouchListener{
 			break;
 			
 		case STATE_MODE:
+			myView.setSeat(0, 0, 0, 0);
+
 			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
 
 			findViewById(R.id.single).setVisibility(View.VISIBLE);
@@ -1074,6 +1113,9 @@ public class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("start");
 						
 						packet.pack("0"+style_choice);
+						user.send(packet);
+						
+						packet.pack("0"+hand_choice);
 						user.send(packet);
 						
 						
