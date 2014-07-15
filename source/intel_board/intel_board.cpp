@@ -611,7 +611,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	if(glo_pattern == pattern_3)
 	{
 		this->motion_controller->set_lifter(LIFTER_MAX);
-		this->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
+		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_DOWN);
 	}
 	//this->robot_target_in_scope(ENABLE_FACE_DETECT);
 	printf("\n\n\n!!!!!!TAKING THE OFFICIAL PHOTO!!!\n");
@@ -635,8 +635,14 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	//if(glo_high_angle_shot && glo_waist_shot)
 	//this->motion_controller->platform(pitch_degree,pitch_dir);
 	//this->motion_controller->platform(roll_degree,roll_dir);
-
-	this->robot_show_image();
+	if(glo_display_enable == 0)
+	{	
+		glo_display_enable = 1;
+		this->robot_show_image();
+		glo_display_enable = 0;
+	}
+	else
+		this->robot_show_image();
 	
 	if(glo_source_mode == 3)
 		this->ui->send_finished_ack(filename);
@@ -646,7 +652,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	if(glo_pattern == pattern_3)
 	{
 		this->motion_controller->set_lifter(LIFTER_MIN);
-		this->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
+		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 	}
 	free(filename);
 	this->motion_controller->set_lifter(LIFTER_INIT_POS);

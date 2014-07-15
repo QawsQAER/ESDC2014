@@ -483,7 +483,7 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 /*
  *
  */
-uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
+uint8_t Image_processor::show_analyzed_img(const uint16_t &task_counter,uint8_t enable_display)
 {
 	if(glo_debug_msg)
 		printf("\nImage_processor::show_analyzed_img() working\n");
@@ -493,7 +493,7 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 	
 	//cv::namedWindow(this->skinwin,CV_WINDOW_AUTOSIZE);
 
-	if(glo_display_enable)
+	if(glo_display_enable || enable_display)
 	{
 		//cv::destroyWindow(this->winname);
 		//cv::destroyWindow(this->skinwin);
