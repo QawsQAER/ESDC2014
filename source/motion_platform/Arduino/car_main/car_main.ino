@@ -87,7 +87,7 @@ void setup()
   TCCR2B=TCCR2B&0xf8|0x01;    // Pin3,Pin11 PWM 31250Hz
     
   //Omni.PIDEnable(0.31,0.01,0,10);
-  Omni.PIDEnable(0.21,0.01,0,10);
+  Omni.PIDEnable(0.26,0.01,0,10);
   Serial.begin(9600);
 }
 
