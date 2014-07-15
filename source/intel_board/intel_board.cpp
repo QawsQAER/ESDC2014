@@ -274,6 +274,17 @@ uint8_t intel_board::robot_ready()
 			this->task_counter++;
 			printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 			printf("INTEL BOARD RECEIVE ROLL %d and PITCH %d\n",this->ui->roll_degree,this->ui->pitch_degree);
+			printf("INTEL BOARD RECEIVE HANDGESTURE %d\n",this->ui->hand_choice);
+			
+			if(this->ui->hand_choice == 2)
+			{
+				glo_hand_gesture = 1;
+			}
+			else
+			{
+				glo_hand_gesture = 0;
+			}
+
 			printf("INTEL BOARD STARTING A NEW TASK\n!!");
 			printf("intel_board: the robot is going to find target\n");
 			this->state = ROBOT_FIND_TARGET;
@@ -643,7 +654,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	}
 	else
 		this->robot_show_image();
-	
+
 	if(glo_source_mode == 3)
 		this->ui->send_finished_ack(filename);
 	else

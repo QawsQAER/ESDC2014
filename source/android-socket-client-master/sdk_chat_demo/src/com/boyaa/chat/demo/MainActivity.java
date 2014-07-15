@@ -369,7 +369,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 				
 				
 				
-				myView.setSeat(x, y, x+width, y+height);
+				myView.setSeat(x, y, x+(ratiowidth*image_width/640), y+(ratiowidth*image_width/640));
 				myView.postInvalidate();
 			}
 			if(event.getAction() == MotionEvent.ACTION_UP){
