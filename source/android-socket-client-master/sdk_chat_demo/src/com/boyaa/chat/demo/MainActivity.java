@@ -1726,6 +1726,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 								myView.setSign(true);
 								button.setText("DIY");
 								
+								myView.setSeat(x, y, x+(ratiowidth*image_width/640), y+(ratiowidth*image_width/640));
+								myView.postInvalidate();
 								
 								packet.pack("pd");
 								user.send(packet);
@@ -1948,8 +1950,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 		public void onSensorChanged(SensorEvent event) {
 			if(event.sensor.getType()==Sensor.TYPE_ORIENTATION){
 				float x = event.values[SensorManager.DATA_X];
-				float y = event.values[SensorManager.DATA_Y];
-				float z = event.values[SensorManager.DATA_Z];
+//				float y = event.values[SensorManager.DATA_Y];
+//				float z = event.values[SensorManager.DATA_Z];
 				degree=(int) x;
 				degree+=90;
 				if(degree>360)
