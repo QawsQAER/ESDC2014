@@ -6,15 +6,7 @@
 #include "stdint.h"
 #include "math.h"
 #define PI 3.14159265359
-#define MAX_COUNT	4			// max. no. of points being tracked
-#define PixelWidth	0.0005		// in mm
-#define MMtoP		1/PixelWidth	// no. of pixel per mm, each pixel is 5 um, so 1 mm has 200 pixel
-#define GUESS		3000*MMtoP		// initial value of l[0], l[1], l[2], l[3]
-#define ERROR		0.1			// lower bound of the errors' value
-#define Focal		460		// focal length of webcam
-#define MaxIter		50	 		// upper bound of number of iteration of the algorithm
-#define A(i, j)		A.at<double>(i, j)
-#define a(i, j)		a.at<double>(i, j)
+
 #define DEG_TO_RAD(degree) (degree) * PI / 180  
 
 #define WINNAME_LENGTH 32
