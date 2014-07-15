@@ -552,17 +552,11 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 		}
 	}
 	
-	Omni->setCarStop();
-	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
-	Omni->setCarStop();
-	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
-	Omni->setCarStop();
-	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
-	Omni->setCarStop();
-	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
-	Omni->setCarStop();
-	Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
-	Omni->setCarStop();
+	for(int i = 0; i < 10; i++)
+	{
+		Omni->setCarStop();
+		Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+	}
 }
 /*********************************************************/
 
