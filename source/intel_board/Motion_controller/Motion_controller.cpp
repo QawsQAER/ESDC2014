@@ -267,17 +267,30 @@ uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const do
 	if(abs(diff_x) > threshold_face_x)
 	{
 		printf("Motion_controller::evaluate_image_tracking diff_x_actual is %lf, distance is %lf\n",diff_x_actual,distance);
-		int16_t degree_error = atan(diff_x_actual / distance) / PI * 180);
-		uint16_t degree = (uint16_t) (atan(diff_x_actual / distance) / PI * 180);
+		int16_t degree_error = atan(diff_x_actual / distance) / PI * 180;
+		uint16_t degree = 0;
+		int16_t move_degree = this->controller_degree.run(degree_error);
+
+		printf("Motion_controller::evaluate_image_tracking() original degree_error is %d, calculated degree is %d\n",degree_error,move_degree);
+		uint8_t dir = CAM_YAW_RIGHT;
 		if(glo_pid)
 		{
-			this->controller_degree.run(degree_error);
+			if(move_degree > 0)
+				dir = CAM_YAW_RIGHT;
+			else
+				dir = CAM_YAW_LEFT;
+			degree = (uint16_t) abs(move_degree);
+		}
+		else
+		{
+			if(degree_error > 0)
+				dir = CAM_YAW_RIGHT;
+			else
+				dir = CAM_YAW_LEFT;
+			degree = (uint16_t) abs(degree_error);
 		}
 		printf("Motion_controller::evaluate_image_tracking -> degree is %u\n",degree);
-		if(diff_x > 0)
-			this->platform(degree,CAM_YAW_RIGHT);
-		else
-			this->platform(degree,CAM_YAW_LEFT);
+		this->platform(degree,dir);
 	}
 	printf("Motion_controller::evaluate_image_tracking exiting\n");
 	return EVAL_CENTERING;
