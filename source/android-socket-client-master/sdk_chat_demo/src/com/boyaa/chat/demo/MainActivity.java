@@ -520,7 +520,7 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 			 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.cuhk);
 			 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70));  
 		 
-		 cuhk_logo=0;
+			 cuhk_logo=0;
 		 }
 
 		 																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																											
@@ -742,6 +742,7 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 			findViewById(R.id.comfrim).setVisibility(View.INVISIBLE);
 			findViewById(R.id.start).setVisibility(View.INVISIBLE);
 			findViewById(R.id.compass).setVisibility(View.INVISIBLE);
+//			findViewById(R.id.next).setVisibility(View.INVISIBLE);
 
 			findViewById(R.id.pattern1).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern2).setVisibility(View.INVISIBLE);
@@ -1230,7 +1231,9 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 1");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern1));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern1);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
+						
 
 					}
 					
@@ -1239,8 +1242,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 2");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern2));
-
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern2);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 					}
 					
 					else if(txt.equals("p3"))
@@ -1248,7 +1251,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 3");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern3));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern3);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1257,7 +1261,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 4");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1266,7 +1271,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pdiy");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1275,7 +1281,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 5");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1285,7 +1292,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 6");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1294,7 +1302,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 7");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1303,7 +1312,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 8");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1312,7 +1322,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 9");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1321,7 +1332,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 						status.setText("pattern 10");
 						state=STATE_START;
 						initView();
-						 imageView.setImageDrawable(getResources().getDrawable(R.drawable.pattern4));
+						 Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.pattern4);
+						 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70)); 
 
 					}
 					
@@ -1444,7 +1456,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 //									 bitmap = getHttpBitmap(urlStr);
 //								 }
 								 
-									 imageView.setImageBitmap(bitmap);
+							 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70));  
+								
 									 
 									 
 //									 SystemClock.sleep(4);		 

@@ -313,12 +313,20 @@
                     android:id="@+id/image_view"
                     android:layout_width="432dp"
                     android:layout_height="324dp"
+                    android:topLeftRadius="10dp"   
+            	 android:topRightRadius="10dp"    
+            	 android:bottomRightRadius="10dp"   
+             	android:bottomLeftRadius="10dp"
                     android:src="@drawable/cuhk" />
 
                 <WebView
                     android:id="@+id/webView2"
                     android:layout_width="432dp"
                     android:layout_height="324dp"
+                    android:topLeftRadius="10dp"   
+            	 android:topRightRadius="10dp"    
+            	 android:bottomRightRadius="10dp"   
+             	android:bottomLeftRadius="10dp"
                    />
             </FrameLayout>
 
