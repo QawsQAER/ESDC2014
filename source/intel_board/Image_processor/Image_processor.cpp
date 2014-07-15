@@ -112,8 +112,6 @@ uint8_t Image_processor::get_image_from_cellphone()
 	else
 		strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 
-	
-	
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
 	if(glo_debug_msg)
 	{
@@ -189,6 +187,10 @@ uint8_t Image_processor::get_image_from_webcam()
 uint8_t Image_processor::capture_image()
 {
 	this->count_pic++;
+	if(glo_source_mode == 3 && glo_multi_target)
+	{
+		return this->get_image_from_cellphone();
+	}
 	if(this->img_source == IMG_SOURCE_CELLPHONE)
 	{
 		return this->get_image_from_cellphone();
@@ -227,8 +229,12 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	char *filename =(char *) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
+	
+	if(glo_source_mode == 3 && glo_multi_target)
+		strcpy(filename,this->current_img_path);
+	else if(this->img_source == IMG_SOURCE_WEBCAM)
+		sprintf(filename,"%swebcam_%u",glo_PATH_TEMP,task_counter);
 
-	sprintf(filename,"%swebcam_%u",glo_PATH_TEMP,task_counter);
 	strcpy(analyzed_filename,filename);
 	strcat(analyzed_filename,"_ana.jpg");
 
@@ -241,7 +247,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	compression_params.push_back(CV_IMWRITE_JPEG_QUALITY);
 	//write the data into the file
 	//cv::imwrite(filename,this->current_img,compression_params);
-	if(this->img_source == IMG_SOURCE_WEBCAM)
+	if(this->img_source == IMG_SOURCE_WEBCAM && !(glo_source_mode == 3 && glo_multi_target))
 	{
 		cv::imwrite(filename,this->current_img,compression_params);
 		strcpy(this->current_img_path,filename);

@@ -198,6 +198,7 @@ enum Direction{
 #define CAR_ROTATE_RIGHT 0
 #define CAR_ROTATE_LEFT 1
 
+#define CAR_MOVEMENT_THRESHOLD 75
 #define LIFTER_UP 0
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm

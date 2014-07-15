@@ -117,6 +117,30 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	diff_x: the difference between the detected region center and the image center -> cause centering
 	diff_y: the difference between the actual detected region height and the expected region height -> cause backward and forward
 */
+	char line[256];
+	strcpy(line,"Motion_controller::evaluate_image() state ");
+	switch(this->state)
+	{
+		case(EVAL_INIT):
+			strcat(line,"EVAL_INIT");
+		break;
+		case(EVAL_CENTERING):
+			strcat(line,"EVAL_CENTERING");
+		break;
+		case(EVAL_ZOOM_IN):
+		case(EVAL_ZOOM_OUT):
+			strcat(line,"EVAL_ZOOMING");
+		break;
+		case(EVAL_ADJUSTING):
+			strcat(line,"EVAL_ADJUSTING");
+		break;
+		case(EVAL_COMPLETE):
+			strcat(line,"EVAK_COMPLETE");
+		break;
+		default:
+		break;
+	}
+	printf("%s\n",line);
 
 	if(glo_test_filetransfer)
 		return EVAL_COMPLETE;
@@ -141,6 +165,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		printf("Motion_controller::evaluate_image the face_height is %d and the face_ref is %u\n",face.height,this->face_ref.height);
 		printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
 	}
+
 	uint8_t flag_done_centering = 1;
 	uint8_t flag_done_zooming = 0;
 	diff_y = face.height - this->face_ref.height;
@@ -389,12 +414,6 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 {
 	if(glo_debug_msg)
 		printf("\nMotion_controller::centering() running\n");
-	if(face.height > IMG_EXP_HEIGHT / IMG_BODY_FACE_RATIO + this->threshold_face_y)
-	{
-		printf("Motion_controller::centering() face too large\n");
-		this->move(DEFAULT_DIS,CAR_BACKWARD);
-		return 0;
-	}
 	uint8_t okay_image = 1;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
@@ -960,7 +979,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	uint16_t dis = 0;
 	uint8_t count = mm / segment;
 	uint8_t count_msg = 0;
-	if(mm < 30)
+	if(mm < CAR_MOVEMENT_THRESHOLD)
 	{
 		if(glo_debug_msg)
 		printf("Motion_controller::move() -> the distance is too small\n");
