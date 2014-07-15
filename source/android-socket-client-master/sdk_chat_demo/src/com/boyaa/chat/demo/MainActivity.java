@@ -71,13 +71,12 @@ import com.view.MyView;
 
 
 
-
-
-
-@SuppressLint({ "SimpleDateFormat", "SetJavaScriptEnabled", "UseSparseArrays" })
-public class MainActivity extends Activity  implements OnTouchListener{
+public  class MainActivity extends Activity  implements OnTouchListener{
 	
 	
+	private SensorManager sensorManager;
+	private MySensorEventListener mySensorEventListener;
+
 
 	  private RadioGroup styleGroup=null; 
 	    private RadioButton s1RadioButton=null; 
@@ -182,6 +181,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		private final int STATE_FINISH=13;
 	
 		private int state=STATE_NOT_CONNECTED;
+		private float currentDegree = 0f;
 
 			
    
@@ -199,7 +199,10 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		setContentView(R.layout.activity_main);
 		
 
-		 
+		  mySensorEventListener= new MySensorEventListener();
+	      
+	        //��ȡ��Ӧ��������
+	        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
 		  
 		
 		
@@ -210,11 +213,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 		status.setText("off");
 		
 	
-		
 	
 		initView();
 		
-		
+
+
+	
 		
 		 soundMap=new HashMap<Integer,Integer>();
 	        player=new SoundPool(1,AudioManager.STREAM_MUSIC,10);
@@ -225,29 +229,18 @@ public class MainActivity extends Activity  implements OnTouchListener{
         //显示
 		
 		user=new Client(this.getApplicationContext(),socketListener);
-		
-		
-		final SensorEventListener myListener = new SensorEventListener() {
-			public void onSensorChanged(SensorEvent sensorEvent) {
-				
-			if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
-			magneticFieldValues = sensorEvent.values;
-			
-			if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
-				accelerometerValues = sensorEvent.values;
-			
-			calculateOrientation();
-			}
-			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
-			};
-			
-		sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
-		aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-		mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
-		
-		sm.registerListener(myListener, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
-		sm.registerListener(myListener, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
-		calculateOrientation();
+//		
+//		sm = (SensorManager)getSystemService(Context.SENSOR_SERVICE);
+//		aSensor = sm.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+//		mSensor = sm.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+//		
+//		
+//			
+//		
+//		
+//		sm.registerListener(myListener, aSensor, SensorManager.SENSOR_DELAY_NORMAL);
+//		sm.registerListener(myListener, mSensor,SensorManager.SENSOR_DELAY_NORMAL);
+//		calculateOrientation();
 		
 		
 		
@@ -325,8 +318,72 @@ public class MainActivity extends Activity  implements OnTouchListener{
 	        
 	      
 	}
+	
+	
+//	final SensorEventListener myListener = new SensorEventListener() {
+//		public void onSensorChanged(SensorEvent sensorEvent) {
+//			
+//		if (sensorEvent.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD)
+//		magneticFieldValues = sensorEvent.values;
+//		
+//		if (sensorEvent.sensor.getType() == Sensor.TYPE_ACCELEROMETER)
+//			accelerometerValues = sensorEvent.values;
+//		
+//		calculateOrientation();
+//		}
 		
+		
+//			//可以得到传感器实时测量出来的变化值
+//			public void onSensorChanged(SensorEvent event) {
+//			//方向传感器
+//			if(event.sensor.getType()==Sensor.TYPE_ORIENTATION){
+//			//x表示手机指向的方位，0表示北,90表示东，180表示南，270表示西
+//			float x = event.values[SensorManager.DATA_X];
+//			float y = event.values[SensorManager.DATA_Y];
+//			float z = event.values[SensorManager.DATA_Z];
+//			
+//			  status.setText(x+"");
+//			//tv_orientation是界面上的一个TextView标签，不再赘述
+//			}
+//			}
+//	
+//			
+//			public void onAccuracyChanged(Sensor sensor, int accuracy) {}
+//		
+//		
+//		
+//		
+//		
+//		
+//		};
+//		
+//		protected void onResume() {
+//		    Sensor sensor_orientation=sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+//		    sensorManager.registerListener(mySensorEventListener,sensor_orientation, SensorManager.SENSOR_DELAY_UI);
+//		super.onResume();
+//		}
+//		
 
+//		private  void calculateOrientation() {
+//		      float[] values = new float[3];
+//		      float[] R = new float[9];
+//		      SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);	      
+//		      SensorManager.getOrientation(R, values);
+//
+//		      // 要经过一次数据格式的转换，转换为度
+//		     
+//		      values[0] = (float) Math.toDegrees(values[0]);
+//		      degree=(int)values[0];
+//		      degree+=90;
+//		      if(degree <0)
+//		    	  degree = 360+degree;
+//		      
+////		      if(connected==0)
+////		    	  status.setText(degree+"");
+//		    	  
+//
+//		    }
+		
 	
 	
 		
@@ -414,31 +471,12 @@ public class MainActivity extends Activity  implements OnTouchListener{
 
 
 	
+//	
+//	public void onPause(){
+////		sm.unregisterListener(myListener);
+//		super.onPause();
+//	}	
 	
-	public void onPause(){
-//		sm.unregisterListener(myListener);
-		super.onPause();
-	}	
-	
-	private  void calculateOrientation() {
-	      float[] values = new float[3];
-	      float[] R = new float[9];
-	      SensorManager.getRotationMatrix(R, null, accelerometerValues, magneticFieldValues);	      
-	      SensorManager.getOrientation(R, values);
-
-	      // 要经过一次数据格式的转换，转换为度
-	     
-	      values[0] = (float) Math.toDegrees(values[0]);
-	      degree=(int)values[0];
-	      degree+=90;
-	      if(degree <0)
-	    	  degree = 360+degree;
-	      
-//	      if(connected==0)
-	    	  status.setText(degree+"");
-	    	  
-
-	    }
 	
 	   public static Bitmap getRoundCornerImage(Bitmap bitmap, int roundPixels)
 	    {
@@ -1158,7 +1196,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 					else if(txt.equals("fc"))
 					{
-						calculateOrientation();
+//						calculateOrientation();
 						if(degree<10)
 						{
 							packet.pack("00"+degree);
@@ -1459,7 +1497,7 @@ public class MainActivity extends Activity  implements OnTouchListener{
 					
 				
 				case R.id.compass:	
-					calculateOrientation();
+//					calculateOrientation();
 					if(degree<10)
 					{
 						packet.pack("00"+degree);
@@ -1904,5 +1942,60 @@ public class MainActivity extends Activity  implements OnTouchListener{
   
    builder.create().show();
 }
-	
+  private final class MySensorEventListener implements  SensorEventListener{
+
+  	@Override
+		public void onSensorChanged(SensorEvent event) {
+			if(event.sensor.getType()==Sensor.TYPE_ORIENTATION){
+				float x = event.values[SensorManager.DATA_X];
+				float y = event.values[SensorManager.DATA_Y];
+				float z = event.values[SensorManager.DATA_Z];
+				degree=(int) x;
+				degree+=90;
+				if(degree>360)
+					degree-=360;
+				
+				status.setText(degree+"'");
+
+			}
+			else{
+//				float x = event.values[SensorManager.DATA_X];
+//				float y = event.values[SensorManager.DATA_Y];
+//				float z = event.values[SensorManager.DATA_Z];
+//				degree=(int) x;
+////				degree+=90;
+//				if(degree>360)
+//					degree-=360;
+//				
+//				status.setText(degree+"'");
+
+			}
+			
+		}
+
+		@Override
+		public void onAccuracyChanged(Sensor sensor, int accuracy) {
+			// TODO Auto-generated method stub
+			
+		}
+  	
+  }
+  
+  @Override
+	protected void onResume() {
+  	Sensor sensor_orientation=sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
+  	sensorManager.registerListener(mySensorEventListener,sensor_orientation, SensorManager.SENSOR_DELAY_UI);
+  	
+  	Sensor sensor_accelerometer=sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+  	sensorManager.registerListener(mySensorEventListener,sensor_accelerometer, SensorManager.SENSOR_DELAY_UI);
+		super.onResume();
+	}
+
+  @Override
+	protected void onPause() {
+  	sensorManager.unregisterListener(mySensorEventListener);
+		super.onPause();
+	}
+  
+  
 }
