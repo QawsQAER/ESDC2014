@@ -132,17 +132,19 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
 	int32_t diff_x = center.x - this->center_x;
 	int32_t diff_y = detect.height - this->ref.height;
-	
-	printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
-	printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->ref.height);
-	printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
-	printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
-	
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller::evaluate_image center.x %d center_x %d\n",center.x,this->center_x);
+		printf("Motion_controller::evaluate_image detect.height %d, exp_height%d\n",detect.height,this->ref.height);
+		printf("Motion_controller::evaluate_image the distance is %lf\n",distance);
+		printf("Motion_controller::evaluate_image the final exp pos_x is %u\n",this->img_exp_pos_x);
+		printf("Motion_controller::evaluate_image the face_height is %d and the face_ref is %u\n",face.height,this->face_ref.height);
+		printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
+	}
 	uint8_t flag_done_centering = 1;
 	uint8_t flag_done_zooming = 0;
 	diff_y = face.height - this->face_ref.height;
-	printf("Motion_controller::evaluate_image the face_height is %d and the face_ref is %u\n",face.height,this->face_ref.height);
-	printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
+
 	if(!(glo_waist_shot))
 	{
 		diff_y = face.height - this->face_ref.height;
@@ -172,10 +174,14 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		}
 		else
 			flag_done_zooming = 1;
+		
+		if(glo_debug_msg)
+		{
+			printf("Motion_controller::evaluate_image() center.x %d (this->ref.x + this->ref.width / 2) %d, detect.y %d this->ref.y %u\n",center.x,this->ref.x + this->ref.width / 2,detect.y,this->ref.y);
+			printf("Motion_controller::evaluate_image() threshold_x %u, threshold_y %u\n",this->threshold_x,this->threshold_y);
+			printf("Motion_controller::flag_done_centering %u, flag_done_zooming %u\n",flag_done_centering,flag_done_zooming);
+		}
 
-		printf("Motion_controller::evaluate_image() center.x %d (this->ref.x + this->ref.width / 2) %d, detect.y %d this->ref.y %u\n",center.x,this->ref.x + this->ref.width / 2,detect.y,this->ref.y);
-		printf("Motion_controller::evaluate_image() threshold_x %u, threshold_y %u\n",this->threshold_x,this->threshold_y);
-		printf("Motion_controller::flag_done_centering %u, flag_done_zooming %u\n",flag_done_centering,flag_done_zooming);
 		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
 			if(this->adjusting_counter > 5)
@@ -257,22 +263,30 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const double &distance)
 {
-	printf("Motion_controller::evaluate_image_tracking running\n");
-
-	double mm_per_pixel = IMG_FACE_ACTUAL_HEIGHT / (double) face.height;
-	printf("Motion_controller::evaluate_image_tracking mm per pixel is %lf\n",mm_per_pixel);
-	int32_t diff_x = face.x + face.width / 2 - IMG_CENTER_X;
-	double diff_x_actual = abs(diff_x) * mm_per_pixel;
-
-	if(abs(diff_x) > threshold_face_x)
+	double mm_per_pixel = abs(IMG_FACE_ACTUAL_HEIGHT / (double) face.height);
+	int32_t diff_x = (face.x + face.width / 2) - IMG_CENTER_X;
+	double diff_x_actual = diff_x * mm_per_pixel;
+	if(glo_debug_msg)
 	{
-		printf("Motion_controller::evaluate_image_tracking diff_x_actual is %lf, distance is %lf\n",diff_x_actual,distance);
-		int16_t degree_error = atan(diff_x_actual / distance) / PI * 180;
-		uint16_t degree = 0;
-		int16_t move_degree = this->controller_degree.run(degree_error);
+		printf("Motion_controller::evaluate_image_tracking running\n");
+		printf("Motion_controller::evaluate_image_tracking mm per pixel is %lf\n",mm_per_pixel);
+		printf("Motion_controller::evaluate_image_tracking() detected faces at (%u), IMG_CENTER_X is %u\n",face.x,IMG_CENTER_X);
+		printf("Motion_controller::evaluate_image_tracking() diff_x ix %d \n",diff_x);
+	}
 
-		printf("Motion_controller::evaluate_image_tracking() original degree_error is %d, calculated degree is %d\n",degree_error,move_degree);
-		uint8_t dir = CAM_YAW_RIGHT;
+	if(abs(diff_x) > IMG_TRACKING_THRESHOLD)
+	{
+
+		uint16_t degree = 0;
+		int16_t degree_error = atan(diff_x_actual / distance) / PI * 180;
+		int16_t move_degree = (int16_t) this->controller_degree.run(degree_error);
+
+		if(glo_debug_msg)
+		{
+			printf("Motion_controller::evaluate_image_tracking diff_x_actual is %lf, distance is %lf\n",diff_x_actual,distance);
+			printf("Motion_controller::evaluate_image_tracking() original degree_error is %d, calculated degree is %d\n",degree_error,move_degree);
+		}
+		uint8_t dir = CAM_YAW_LEFT;
 		if(glo_pid)
 		{
 			if(move_degree > 0)
@@ -316,7 +330,8 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 {
 	double mm_per_pixel = IMG_FACE_ACTUAL_HEIGHT/(double)faces[0].height;
 	int32_t diff_x = face_region.x + face_region.width / 2 - IMG_CENTER_X;
-	printf("Motion_controller::multi_face_centering() length per pixel is %f\n",mm_per_pixel);
+	if(glo_debug_msg)
+		printf("Motion_controller::multi_face_centering() length per pixel is %f\n",mm_per_pixel);
 	uint16_t move_x = 0;
 	double factor;
 
@@ -326,22 +341,26 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 		factor = 1.8;
 	double current_error_x = diff_x * mm_per_pixel;
 	double action = controller_x.run(current_error_x);
-	printf("Motion_controller::multi_face_centering() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
+	if(glo_debug_msg)
+		printf("Motion_controller::multi_face_centering() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
 
 	if(abs(diff_x) > threshold_face_x * factor)
 	{
-		printf("Motion_controller multi_face_centering(): diff_x is %d\n",diff_x);
+		if(glo_debug_msg)
+			printf("Motion_controller multi_face_centering(): diff_x is %d\n",diff_x);
 		if(glo_pid)
 		{
 			move_x = (uint16_t) abs(action);
 			if(action < 0)
 			{
-				printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
 				this->move(move_x,CAR_LEFT);
 			}
 			else
 			{
-				printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
 				this->move(move_x,CAR_RIGHT);
 			}
 		}
@@ -350,12 +369,14 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 			move_x = this->bound_dis(ceil(abs(diff_x) * mm_per_pixel));
 			if(diff_x < 0)
 			{	
-				printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller multi_face_centering(): moving left %d mm\n\n\n",move_x);
 				this->move(move_x,CAR_LEFT);
 			}
 			else
 			{
-				printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller multi_face_centering(): moving right %d mm\n\n\n",move_x);
 				this->move(move_x,CAR_RIGHT);
 			}
 		}
@@ -366,8 +387,8 @@ uint8_t Motion_controller::multi_face_centering(const std::vector<cv::Rect> &fac
 
 uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face)
 {
-
-	printf("\nMotion_controller::centering() running\n");
+	if(glo_debug_msg)
+		printf("\nMotion_controller::centering() running\n");
 	if(face.height > IMG_EXP_HEIGHT / IMG_BODY_FACE_RATIO + this->threshold_face_y)
 	{
 		printf("Motion_controller::centering() face too large\n");
@@ -382,18 +403,23 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 	int32_t diff_y = center.y - this->center_y;
 	//compute length per pixel 
 	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
-	printf("\n\nMotion_controller::centering() length per pixel is %f.\n",p);
+	if(glo_debug_msg)
+		printf("\n\nMotion_controller::centering() length per pixel is %f.\n",p);
 	uint16_t move_x = 0;
 
 	if(abs(diff_x) > threshold_x)
 	{
 		okay_image = 0;
 		//movement to right or left
-		printf("Motion_controller centering(): diff_x is %d\n",diff_x);
+		
 		double current_error_x = diff_x * p;
 		double action = controller_x.run(current_error_x);
-		printf("Motion_controller centering(): raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
-		
+		if(glo_debug_msg)
+		{
+			printf("Motion_controller centering(): diff_x is %d\n",diff_x);
+			printf("Motion_controller centering(): raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
+		}
+
 		if(glo_pid)
 		{
 			move_x = (uint16_t) abs(action);
@@ -417,7 +443,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 				//should move left
 				move_x = this->bound_dis(ceil(abs(diff_x) * p));
 				//move_x = (uint16_t) action;
-				printf("\n\n\nMotion_controller centering(): moving left %u mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller centering(): moving left %u mm\n\n\n",move_x);
 				this->move(move_x,CAR_LEFT);
 			}
 			else
@@ -425,7 +452,8 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 				//should move right
 				move_x = this->bound_dis(ceil(abs(diff_x) * p));
 				//move_x = (uint16_t) action;
-				printf("\n\n\nMotion_controller centering(): moving right %u mm\n\n\n",move_x);
+				if(glo_debug_msg)
+					printf("\n\n\nMotion_controller centering(): moving right %u mm\n\n\n",move_x);
 				this->move(move_x,CAR_RIGHT);
 			}
 		}
@@ -433,20 +461,26 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 	}
 
 	diff_y = detect.y - img_exp_pos_y;
-	printf("Motion_controller centering(): detect.y is %d\n",detect.y);
-	printf("Motion_controller centering(): img_exp_pos_y is %d\n",img_exp_pos_y);
+
 	uint16_t move_y = ceil(abs(diff_y) * p);
-	printf("Motion_controller centering(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller centering(): detect.y is %d\n",detect.y);
+		printf("Motion_controller centering(): img_exp_pos_y is %d\n",img_exp_pos_y);
+		printf("Motion_controller centering(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	}
 	if(diff_y > 0)
 	{
 		//moving down
-		printf("\n\n\nMotion_controller centering(): moving down %d mm\n\n\n",move_y);
+		if(glo_debug_msg)
+			printf("\n\n\nMotion_controller centering(): moving down %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_DOWN);
 	}
 	else
 	{
 		//moving up
-		printf("\n\n\nMotion_controller centering(): moving up %d mm\n\n\n",move_y);
+		if(glo_debug_msg)
+			printf("\n\n\nMotion_controller centering(): moving up %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_UP);
 	}
 	return okay_image;
@@ -461,20 +495,25 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 
 	double current_error_x = diff_x * p;
 	double action = controller_x.run(current_error_x);
-	printf("Motion_controller::centering_by_face() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
-	printf("Motion_controller::centering_by_face(): diff_x is %d\n",diff_x);
-	printf("Motion_controller::centering_by_face(): mm per pixel is %f\n",p);
-	
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller::centering_by_face() raw error is %lf, PID calculated error is %lf\n",current_error_x,action);
+		printf("Motion_controller::centering_by_face(): diff_x is %d\n",diff_x);
+		printf("Motion_controller::centering_by_face(): mm per pixel is %f\n",p);
+	}
+
 	if(glo_pid)
 	{
 		move_x = (uint16_t) abs(action);
 		if(action > 0)
 		{
+			if(glo_debug_msg)
 			printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
 			this->move(move_x,CAR_RIGHT);
 		}
 		else
 		{
+			if(glo_debug_msg)
 			printf("Motion_controller::centering_by_face(): moving left by %u mm\n",move_x);
 			this->move(move_x,CAR_LEFT);
 		}
@@ -483,11 +522,13 @@ uint8_t Motion_controller::centering_by_face(const cv::Rect &face)
 	{
 		if(diff_x > 0)
 		{
+			if(glo_debug_msg)
 			printf("Motion_controller::centering_by_face(): moving right by %u mm\n",move_x);
 			this->move(move_x,CAR_RIGHT);
 		}
 		else
 		{
+			if(glo_debug_msg)
 			printf("Motion_controller::centering_by_face() : moving left by %u mm\n",move_x);
 			this->move(move_x,CAR_LEFT);
 		}
@@ -513,9 +554,11 @@ uint16_t Motion_controller::bound_dis(const uint32_t &dis)
 
 uint8_t Motion_controller::zoom_in_out(const cv::Rect &detect,const double &distance)
 {
-	printf("\nMotion_controller::zoom_in_out() running\n");
-	printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
-
+	if(glo_debug_msg)
+	{
+		printf("\nMotion_controller::zoom_in_out() running\n");
+		printf("Motion_controller::zoom_in_out() the target distance is %lf\n",distance);
+	}
 	//return this->zoom_in_out_by_default(detect,distance);
 	this->img_exp_dis = runCAMShift(this->face_ref);
 	return this->zoom_in_out_by_distance(this->img_exp_dis,distance);
@@ -555,15 +598,19 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 
 uint8_t Motion_controller::zoom_in_out_by_distance(const double &exp_distance,const double &distance)
 {
-	printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
-	printf("Motion_controller::zoom_in_out_by_distance() the exp_distance is %lf\n",exp_distance);
-	printf("Motion_controller::zoom_in_out_by_distance() the diff is %lf\n",distance - img_exp_dis);
-	printf("Motion_controller::zoom_in_out_by_distance() the abs diff is %lf\n", abs(distance - img_exp_dis));
-	printf("Motion_controller::zoom_in_out_by_distance() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
+		printf("Motion_controller::zoom_in_out_by_distance() the exp_distance is %lf\n",exp_distance);
+		printf("Motion_controller::zoom_in_out_by_distance() the diff is %lf\n",distance - img_exp_dis);
+		printf("Motion_controller::zoom_in_out_by_distance() the abs diff is %lf\n", abs(distance - img_exp_dis));
+		printf("Motion_controller::zoom_in_out_by_distance() the ceil abs diff is %lf\n",ceil(abs(distance - img_exp_dis)));
+	}
 	if(distance > exp_distance)
 	{
 		//the target too far away from the camera
 		uint16_t move_z = ceil(abs(distance - exp_distance));
+		if(glo_debug_msg)
 		printf("Motion_controller::zoom_in_out() moving forward %u\n",move_z);
 		this->move(move_z,CAR_FORWARD);
 		return EVAL_ZOOM_IN;
@@ -572,6 +619,7 @@ uint8_t Motion_controller::zoom_in_out_by_distance(const double &exp_distance,co
 	{
 		//the target too close to the camera
 		uint16_t move_z = ceil(abs(distance - exp_distance));
+		if(glo_debug_msg)
 		printf("Motion_controller::zoom_in_out() moving backward %u\n",move_z);
 		this->move(move_z,CAR_BACKWARD);
 		return EVAL_ZOOM_OUT;
@@ -653,6 +701,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	diff_y is the difference between the detected body region's top left y coordinate, and the expected position's y coordinate
 	p is the length per pixel, assuming that every detected region's height is IMG_BODY_ACTUAL_HEIGHT mm 
 */
+	if(glo_debug_msg)
 	printf("Motion_controller::adjusting() running\n");
 	int32_t diff_x = (detect.x + detect.width/2) - img_exp_pos_x;
 	double p = (double) IMG_BODY_ACTUAL_HEIGHT / (double) detect.height;
@@ -660,6 +709,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	{
 		//move right
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
+		if(glo_debug_msg)
 		printf("\n\n\nMotion_controller adjusting(): moving right %d mm\n\n\n",move_x);
 		this->move(move_x,CAR_RIGHT);
 	}
@@ -667,24 +717,30 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 	{
 		//move left
 		uint16_t move_x = this->bound_dis(ceil(abs(diff_x) * p));
+		if(glo_debug_msg)
 		printf("\n\n\nMotion_controller adjusting(): moving left %d mm\n\n\n",move_x);
 		this->move(move_x,CAR_LEFT);
 	}
 
 	int32_t diff_y = detect.y - img_exp_pos_y;
-	printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
-	printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
 	uint16_t move_y = ceil(abs(diff_y) * p);
-	printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller adjusting(): detect.y is %d\n",detect.y);
+		printf("Motion_controller adjusting(): img_exp_pos_y is %d\n",img_exp_pos_y);
+		printf("Motion_controller adjusting(): length per pixel is %f, diff_y is %d\n",p,diff_y);
+	}
 	if(diff_y > 0 && glo_high_angle_shot == 0)
 	{
 		//moving down
+		if(glo_debug_msg)
 		printf("\n\n\nMotion_controller adjusting(): moving down %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_DOWN);
 	}
 	else if(glo_high_angle_shot == 0 && diff_y <= 0)
 	{
 		//moving up
+		if(glo_debug_msg)
 		printf("\n\n\nMotion_controller adjusting(): moving up %d mm\n\n\n",move_y);
 		this->lift(move_y,LIFTER_UP);
 	}
@@ -693,16 +749,21 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 
 uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 {
-	printf("Motion_controller::adjusting_by_face() running\n");
+	
 	cv::Point face_top(face.x + face.width / 2, face.y);
 	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double)face.height; // mm per pixel
-	printf("Motion_controller::adjusting_by_face() face.height is %u mm per pixel is %lf\n",face.height,p);
+
 
 	//move horizontally
 	//diff_x is the difference between the center of the face and the center of the ref region
 	int32_t diff_x = face_top.x - (this->face_ref.x + this->face_ref.width / 2);
-	printf("Motion_controller::adjusting_by_face() face_top x is %u\n",face_top.x);
-	printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller::adjusting_by_face() running\n");
+		printf("Motion_controller::adjusting_by_face() face.height is %u mm per pixel is %lf\n",face.height,p);
+		printf("Motion_controller::adjusting_by_face() face_top x is %u\n",face_top.x);
+		printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
+	}
 	uint16_t move_x , move_y;
 	
 	move_x = abs(ceil(p * diff_x)) * 0.8;
@@ -710,6 +771,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	{
 		//the target is on the right w.r.t the expected region
 		//move right
+		if(glo_debug_msg)
 		printf("Motion_controller::adjusting_by_face() moving right %u mm\n",move_x);
 		this->move(move_x,CAR_RIGHT);
 	}
@@ -717,20 +779,24 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	{
 		//the target is on the left w.r.t the expected region
 		//move left
+		if(glo_debug_msg)
 		printf("Motion_controller::adjusting_by_face() moving left %u mm\n",move_x);
 		this->move(move_x,CAR_LEFT);
 	}
 	
 	//move vertically
 	int32_t diff_y = face_top.y - this->face_ref.y;
-	printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
-	printf("Motion_controller::adjusting_by_face() face_ref y is %u\n",this->face_ref.y);
-	
+	if(glo_debug_msg)
+	{
+		printf("Motion_controller::adjusting_by_face() face_top y is %u\n",face_top.y);
+		printf("Motion_controller::adjusting_by_face() face_ref y is %u\n",this->face_ref.y);
+	}
 	move_y = abs(ceil(p* diff_y)) * 0.8;
 	if(diff_y > 0 && abs(diff_y) > this->threshold_face_y && glo_high_angle_shot == 0)
 	{
 		//the target is too low w.r.t the expected region
 		//lower camera
+		if(glo_debug_msg)
 		printf("Motion_controller::adjusting_by_face() lowering lifter\n");
 		this->lift(move_y,LIFTER_DOWN);
 	}
@@ -738,6 +804,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	{
 		//the target is too high w.r.t the expected region
 		//raising camera
+		if(glo_debug_msg)
 		printf("Motion_controller::adjusting_by_face() raising lifter\n");
 		this->lift(move_y,LIFTER_UP);
 	}
@@ -746,7 +813,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	{
 		this->lift((uint16_t) LIFTER_MAX,LIFTER_UP);
 	}	
-
+	if(glo_debug_msg)
 	printf("Motion_controller::adjusting_by_face() exiting\n");
 	return 1;
 }
@@ -848,6 +915,7 @@ void Motion_controller::reset_lifter()
 void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 {
 	Message msg;
+	if(glo_debug_msg)
 	printf("Motion_controller::lift current at %u\n",this->lifter_pos);
 	if(dir == LIFTER_UP)
 	{
@@ -855,6 +923,7 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 			this->lifter_pos = LIFTER_MAX;
 		else
 			this->lifter_pos += mm;
+		if(glo_debug_msg)
 		printf("Motion_controller::lift moving up to %u\n",this->lifter_pos);
 		msg.LifterMoveUpMM(mm);
 	}
@@ -864,6 +933,7 @@ void Motion_controller::lift(const uint16_t &mm, const uint8_t &dir)
 			this->lifter_pos = LIFTER_MIN;
 		else
 			this->lifter_pos -= mm;
+		if(glo_debug_msg)
 		printf("Motion_controller::lift down up to %u\n",this->lifter_pos);
 		msg.LifterMoveDownMM(mm);
 	}
@@ -892,6 +962,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	uint8_t count_msg = 0;
 	if(mm < 30)
 	{
+		if(glo_debug_msg)
 		printf("Motion_controller::move() -> the distance is too small\n");
 		return ;
 	}
@@ -1033,6 +1104,7 @@ void Motion_controller::set_initial_car_orientation(const uint16_t &car_ori)
 void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 {
 	int16_t target_degree = dir ? this->car_orientation - degree : this->car_orientation + degree;
+	if(glo_debug_msg)
 	printf("Motion_controller::rotate start with degree %u, rotate %u, ",this->car_orientation,degree);
 
 	if(target_degree >= 360)

@@ -157,7 +157,7 @@ enum Direction{
 
 #define IMG_HORI_THRESHOLD_FACE 15
 #define IMG_VERT_THRESHOLD_FACE 15
-
+#define IMG_TRACKING_THRESHOLD 7
 #define IMG_Y_MIN 0
 #define IMG_Y_MAX 255
 #define IMG_Cr_MIN 133
@@ -202,7 +202,7 @@ enum Direction{
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
 #define LIFTER_MAX 700 //the maximun height of the lifter in mm
-#define LIFTER_INIT_POS 200
+#define LIFTER_INIT_POS 300
 #define LIFTER_SEG 50
 
 #define CAM_ROLL_LEFT 0
@@ -219,8 +219,8 @@ enum Direction{
 #define HAND_SKIN_THRESHOLD 50
 
 
-#define CONTROLLER_DEGREE_P 1
+#define CONTROLLER_DEGREE_P 0.75
 #define CONTROLLER_DEGREE_I 0
-#define CONTROLLER_DEGREE_D 0
+#define CONTROLLER_DEGREE_D 0.01
 #endif
 // 27828986

@@ -566,10 +566,6 @@ uint8_t intel_board::robot_evaluate_movement()
 	}
 	
 	this->robot_show_image();
-	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-	printf("Intel_board: GOING TO EVALUATE THE NEW IMAGE\n");
-
 	//whether go back to find target
 	return find_target_again;
 }
@@ -605,8 +601,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	pitch_degree = (uint16_t) abs(this->ui->pitch_degree);
 
 	//if(glo_high_angle_shot && glo_waist_shot)
-	this->motion_controller->platform(pitch_degree,pitch_dir);
-	this->motion_controller->platform(roll_degree,roll_dir);
+	//this->motion_controller->platform(pitch_degree,pitch_dir);
+	//this->motion_controller->platform(roll_degree,roll_dir);
 	
 	//reverse the direction for the recovery of the shot angle
 	roll_dir = CAM_ROLL_LEFT ? CAM_ROLL_RIGHT : CAM_ROLL_LEFT;
@@ -632,8 +628,8 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	this->robot_target_in_scope(ENABLE_FACE_DETECT);
 
 	//if(glo_high_angle_shot && glo_waist_shot)
-	this->motion_controller->platform(pitch_degree,pitch_dir);
-	this->motion_controller->platform(roll_degree,roll_dir);
+	//this->motion_controller->platform(pitch_degree,pitch_dir);
+	//this->motion_controller->platform(roll_degree,roll_dir);
 
 	this->robot_show_image();
 	

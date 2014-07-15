@@ -62,6 +62,8 @@ uint8_t glo_test_filetransfer = 0;
 uint8_t glo_autofocus = 0;
 uint8_t glo_waist_shot = 0;
 uint8_t glo_pid = 0;
+uint8_t glo_debug_msg = 0;
+
 double glo_exp_dis = 0;
 
 command_type glo_pattern;
@@ -194,6 +196,9 @@ void parameter_setting(int32_t argc,char **argv)
 				glo_num_target = 2;
 		}
 
+		if(strcmp(argv[count],"-debug") == 0)
+			glo_debug_msg = 1;
+
 		if(strcmp(argv[count],"-dm") == 0)
 			glo_motion_enable = 0;
 		if(strcmp(argv[count],"-hg") == 0)
@@ -244,5 +249,8 @@ void parameter_setting(int32_t argc,char **argv)
 	
 	if(glo_pid == 1)
 		printf("SETTING: enable PID\n");
+
+	if(glo_debug_msg)
+		printf("SETTING: enable debug msg\n");
 
 }

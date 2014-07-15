@@ -59,6 +59,7 @@ extern uint8_t glo_test_filetransfer;
 extern uint8_t glo_waist_shot;
 extern uint8_t glo_num_target;
 extern uint8_t glo_pid;
+extern uint8_t glo_debug_msg;
 
 class Motion_controller
 {

@@ -113,19 +113,29 @@ uint8_t Image_processor::get_image_from_cellphone()
 		strcpy(this->current_img_path,this->cam->photo_frame().c_str());
 
 	
-	printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
+	
 	this->current_img = cv::imread(this->current_img_path,CV_LOAD_IMAGE_COLOR);
-	printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+	if(glo_debug_msg)
+	{
+		printf("Image_processor::get_image_from_cellphone: Reading from %s\n",this->current_img_path);
+		printf("Image_processor::get_image_from_cellphone: original size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+	}
+
 	if(this->current_img.cols  == 0 && this->current_img.rows == 0)
 	{
-		printf("Image_processor::get_image_from_cellphone: open an empty image\n");
+		if(glo_debug_msg)
+			printf("Image_processor::get_image_from_cellphone: open an empty image\n");
 		return 0;
 	}
 	cv::resize(this->current_img,this->current_img,cv::Size(IMG_WIDTH,IMG_HEIGHT));
-	printf("Image_processor::get_image_from_cellphone: current size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+
+	if(glo_debug_msg)
+		printf("Image_processor::get_image_from_cellphone: current size (%d,%d)\n",this->current_img.cols,this->current_img.rows);
+	
 	if(!this->current_img.data)
 	{
-		printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");
+		if(glo_debug_msg)
+			printf("Image_processor::get_image_from_cellphone: No data is loaded from the cellphone\n");
 		exit(-1);
 	}
 
@@ -153,7 +163,9 @@ uint8_t Image_processor::get_image_from_webcam()
 
 	//frame_num = this->cap->get(CV_CAP_PROP_FRAME_COUNT);
 	frame_num = 30;
-	printf("Image_processor::there are %lf frame in buffer\n",frame_num);
+
+	if(glo_debug_msg)
+		printf("Image_processor::there are %lf frame in buffer\n",frame_num);
 
 	while(this->cap->grab() && count_frame < frame_num - 1)
 	{	
@@ -250,7 +262,8 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
  */
 cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,uint8_t dir = 0)
 {
-	printf("Image_processor::concat_image working\n");
+	if(glo_debug_msg)
+		printf("Image_processor::concat_image working\n");
 	cv::Mat result(img1.rows,img1.cols + img2.cols,CV_8UC3);
 	if(dir == 0)
 	{
@@ -264,7 +277,8 @@ cv::Mat Image_processor::concat_image(const cv::Mat &img1, const cv::Mat &img2,u
 	{
 
 	}
-	printf("Image_processor::concat_image exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::concat_image exiting\n");
 	return result;
 }
 
@@ -300,7 +314,9 @@ cv::Mat Image_processor::edge_detection(const cv::Mat &img)
  //TODO: understand this function
  uint8_t Image_processor::run_body_detection(const cv::Mat &source_img,std::vector<cv::Rect> &body_detect)
  {
- 	printf("Image_processor::run_body_detection() running\n");
+ 	if(glo_debug_msg)
+ 		printf("Image_processor::run_body_detection() running\n");
+
  	body_detect.clear();
  	std::vector<cv::Rect> found;
  	this->hog.detectMultiScale(source_img,found,0,cv::Size(8,8),cv::Size(32,32),1.05,2);
@@ -327,7 +343,9 @@ cv::Mat Image_processor::edge_detection(const cv::Mat &img)
  			body_detect.push_back(r);
  		}
  	}
- 	printf("Image_processor::run_body_detection() exiting\n");
+
+ 	if(glo_debug_msg)
+ 		printf("Image_processor::run_body_detection() exiting\n");
  	return 1;
  }
 
@@ -336,20 +354,24 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 {
 	//note that the body_detect is the parameter of the function, not the body_detect of the instance
 	cv::Mat marked_img = source_img.clone();
-	printf("mark_detected_body(): source_img (%d,%d)\n",source_img.cols,source_img.rows);
+	if(glo_debug_msg)
+		printf("mark_detected_body(): source_img (%d,%d)\n",source_img.cols,source_img.rows);
 	//for every detected face
 	for(size_t count = 0;count < body_detect.size();count++)
 	{
-		printf("mark_detected_body() [%lu] body: (%u,%u,%u,%u)\n",
-			count + 1,
-			body_detect[count].x,
-			body_detect[count].y,
-			body_detect[count].width,
-			body_detect[count].height);
+		if(glo_debug_msg)
+			printf("mark_detected_body() [%lu] body: (%u,%u,%u,%u)\n",
+				count + 1,
+				body_detect[count].x,
+				body_detect[count].y,
+				body_detect[count].width,
+				body_detect[count].height);
 		cv::Rect r = body_detect[count];
 		cv::rectangle(marked_img,r.tl(),r.br(),cv::Scalar(0,255,0),2);
 	}
-	printf("mark_detected_body(): exiting\n");
+
+	if(glo_debug_msg)
+		printf("mark_detected_body(): exiting\n");
 	return marked_img;
 }
 
@@ -361,7 +383,8 @@ cv::Mat Image_processor::mark_detected_body(const cv::Mat &source_img, const std
 
 uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vector<cv::Rect> &face_detect)
 {
-	printf("Image_processor::run_face_detection() running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::run_face_detection() running\n");
 	face_detect.clear();
 	
 	//this->eyes_detect.clear();
@@ -384,11 +407,13 @@ uint8_t Image_processor::run_face_detection(const cv::Mat &source_img,std::vecto
 		1.1, 4, 0,
 		cv::Size(IMG_FACE_WIDTH_MIN,IMG_FACE_HEIGHT_MIN),
 		cv::Size(IMG_FACE_WIDTH_MAX,IMG_FACE_HEIGHT_MAX));
-	printf("Image_processor::run_face_detection: detect %lu faces\n",face_detect.size());
+	if(glo_debug_msg)
+		printf("Image_processor::run_face_detection: detect %lu faces\n",face_detect.size());
 
 	this->skin_filter(source_img);
 
-	printf("Image_processor::run_face_detection: detect %lu faces after skin filter\n",face_detect.size());
+	if(glo_debug_msg)
+		printf("Image_processor::run_face_detection: detect %lu faces after skin filter\n",face_detect.size());
 	//TODO: use color detection to filtered out the non-human color face
 	return 1;
 }
@@ -419,24 +444,29 @@ cv::Scalar Image_processor::getSkin(const cv::Mat &source_img,cv::Mat &dest_img)
 	cv::cvtColor(source_img,result,cv::COLOR_BGR2YCrCb);
 	cv::inRange(result,cv::Scalar(Y_MIN,Cr_MIN,Cb_MIN),cv::Scalar(Y_MAX,Cr_MAX,Cb_MAX),result);
 	cv::Scalar value = mean(result);
-	printf("Image_processor::getSkin average %lf\n",value[0]);
+	if(glo_debug_msg)
+	{
+		printf("Image_processor::getSkin average %lf\n",value[0]);
+		printf("Image_processor::getSkin exiting\n");
+	}
 	dest_img = result;
-	printf("Image_processor::getSkin exiting\n");
 	return value;
 }
 
 cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std::vector<cv::Rect> &face_detect)
 {
 	cv::Mat marked_img = source_img.clone();
-	printf("Image_processor::mark_detected_face working\n");
+	if(glo_debug_msg)
+		printf("Image_processor::mark_detected_face working\n");
 	//for evert detected face
 	for(size_t count = 0;count < face_detect.size();count++)
 	{
-		printf("Image_processor::mark_detected_face (%d,%d,%d,%d)\n",
-			face_detect[count].x,
-			face_detect[count].y,
-			face_detect[count].width,
-			face_detect[count].height);
+		if(glo_debug_msg)
+			printf("Image_processor::mark_detected_face (%d,%d,%d,%d)\n",
+				face_detect[count].x,
+				face_detect[count].y,
+				face_detect[count].width,
+				face_detect[count].height);
 		//create a point noting the center of the region where a face is detected
 		cv::Point center(face_detect[count].x + face_detect[count].width/2,
 						face_detect[count].y + face_detect[count].height/2);
@@ -445,7 +475,8 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
 				cv::Size(face_detect[count].width/2,face_detect[count].height/2),
 				0,0,360, cv::Scalar(255,0,0),2,8,0);
 	}
-	printf("Image_processor::mark_detected_face exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::mark_detected_face exiting\n");
 	return marked_img;
 }
 
@@ -454,7 +485,8 @@ cv::Mat Image_processor::mark_detected_face(const cv::Mat &source_img,const std:
  */
 uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 {
-	printf("\nImage_processor::show_analyzed_img() working\n");
+	if(glo_debug_msg)
+		printf("\nImage_processor::show_analyzed_img() working\n");
 	
 	//cv::destroyWindow(this->edgewin);
 
@@ -463,9 +495,9 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 
 	if(glo_display_enable)
 	{
-		cv::destroyWindow(this->winname);
-		cv::destroyWindow(this->skinwin);
-		cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
+		//cv::destroyWindow(this->winname);
+		//cv::destroyWindow(this->skinwin);
+		////cv::namedWindow(this->edgewin,CV_WINDOW_AUTOSIZE);
 		cv::namedWindow(this->winname,CV_WINDOW_AUTOSIZE);
 		
 		cv::Mat concat_image = this->concat_image(this->analyzed_img,this->analyzed_img_filtered);
@@ -502,8 +534,8 @@ uint8_t Image_processor::show_analyzed_img(uint16_t task_counter)
 		this->save_current_image(this->cam->count_temp_photo);
 	else
 		this->save_current_image(this->count_pic);
-	
-	printf("Image_processor::show_analyzed_img() exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::show_analyzed_img() exiting\n");
 	return 1;
 }
 
@@ -528,7 +560,8 @@ uint8_t Image_processor::basic_filter(const int32_t &degree,const int32_t &dir)
 
 uint8_t Image_processor::basic_filter_with_gesture()
 {
-	printf("Image_processor::basic_filter_with_gesture() running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_with_gesture() running\n");
 	this->final_face_detect.clear();
 	this->final_body_detect.clear();
 
@@ -556,7 +589,8 @@ uint8_t Image_processor::basic_filter_with_gesture()
 			double rv = 0;
 			if((rv = this->getSkin(subImage,subImage)[0]) > HAND_SKIN_THRESHOLD)
 			{
-				printf("()()()()()basic_filter_with_gesture() gesture test has passed\n");
+				if(glo_debug_msg)
+					printf("()()()()()basic_filter_with_gesture() gesture test has passed\n");
 				cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
 				//if the face is not at the lower half of the picture.
 				if(rect != this->face_detect[count_face])
@@ -566,27 +600,34 @@ uint8_t Image_processor::basic_filter_with_gesture()
 				}
 				else
 				{
-					printf("()()()()face position test failed!!\n");
+					if(glo_debug_msg)
+						printf("()()()()face position test failed!!\n");
 				}
 			}
 			else
 			{
-				printf("\n\n\nThe skin mean is \n");
-				printf("------------>%lf\n\n",rv);
+				if(glo_debug_msg)
+				{
+					printf("\n\n\nThe skin mean is \n");
+					printf("------------>%lf\n\n",rv);
+				}
 			}
 		}
 	}
-	printf("Image_processor::basic_filter_with_gesture() exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_with_gesture() exiting\n");
 }
 /*
 	@param: degree is the angle detected between the user and the robot 
 */
 uint8_t Image_processor::basic_filter_with_degree(const int32_t &degree,const int32_t &dir)
 {
-	printf("Image_processor::basic_filter_with_degree running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_with_degree running\n");
 	this->final_face_detect.clear();
 	this->final_body_detect.clear();
-	printf("Image_processor::basic_filter_with_degree degree is %d, dir is %d\n",degree,dir);
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_with_degree degree is %d, dir is %d\n",degree,dir);
 
 	if(degree > 45)
 	{
@@ -612,13 +653,17 @@ uint8_t Image_processor::basic_filter_with_degree(const int32_t &degree,const in
 
 		x_begin = dir ? (uint16_t) ceil(IMG_CENTER_X + x_begin_actual / mm_per_pixel):(uint16_t) ceil(IMG_CENTER_X - x_begin_actual / mm_per_pixel);
 		x_end = dir ? (uint16_t) ceil(IMG_CENTER_X + x_end_actual / mm_per_pixel) : (uint16_t) ceil(IMG_CENTER_X - x_end_actual / mm_per_pixel);
-		printf("Image_processor::basic_filter_with_degree() face (%u,%u,%u,%u)\n",tmp[count_face].x,tmp[count_face].y,tmp[count_face].width,tmp[count_face].height);
-		printf("Image_processor::basic_filter_with_degree() x_begin_actual %lf, x_end_actual %lf\n",x_begin_actual,x_end_actual);
-		printf("Image_processor::basic_filter_with_degree begin %u, end %u \n",x_begin,x_end);
+		if(glo_debug_msg)
+		{
+			printf("Image_processor::basic_filter_with_degree() face (%u,%u,%u,%u)\n",tmp[count_face].x,tmp[count_face].y,tmp[count_face].width,tmp[count_face].height);
+			printf("Image_processor::basic_filter_with_degree() x_begin_actual %lf, x_end_actual %lf\n",x_begin_actual,x_end_actual);
+			printf("Image_processor::basic_filter_with_degree begin %u, end %u \n",x_begin,x_end);	
+		}
 
 		if((tmp[count_face].x + tmp[count_face].width / 2) > x_begin && (tmp[count_face].x + tmp[count_face].width / 2) < x_end)
 		{
-			printf("Image_processor::basic_filter_with_degree() this face is possily the true one\n");
+			if(glo_debug_msg)
+				printf("Image_processor::basic_filter_with_degree() this face is possily the true one\n");
 			this->face_detect.push_back(tmp[count_face]);
 		}
 	}
@@ -627,7 +672,8 @@ uint8_t Image_processor::basic_filter_with_degree(const int32_t &degree,const in
 
 uint8_t Image_processor::basic_filter_default()
 {
-	printf("Image_processor::basic_filter_default() working\n");
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_default() working\n");
 	this->final_body_detect.clear();
 	this->final_face_detect.clear();
 	//for each body deteced, try to find a face detected in the body region
@@ -638,7 +684,8 @@ uint8_t Image_processor::basic_filter_default()
 		{
 			if(this->face_body_related(body_detect[count_body],face_detect[count_face]))
 			{
-				printf("Image_processor basic_filter_default():a person is detected\n");
+				if(glo_debug_msg)
+					printf("Image_processor basic_filter_default():a person is detected\n");
 				//adjust the body_detect to better match the face
 				body_detect[count_body].height+=body_detect[count_body].y - face_detect[count_face].y;
 				body_detect[count_body].y = face_detect[count_face].y;
@@ -663,7 +710,8 @@ uint8_t Image_processor::basic_filter_default()
 			}
 		}
 	}
-	printf("Image_processor::basic_filter_default() exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::basic_filter_default() exiting\n");
 }
 
 /* IMPLEMENTATION OF BASIC FILTER END*/
@@ -800,8 +848,8 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 
 	this->body_detect.clear();
 	this->face_detect.clear();
-
-	printf("Image_processor::one_target_in_scope() running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::one_target_in_scope() running\n");
 	if(!enable_current_frame)
 		if(!this->capture_image())
 		{
@@ -844,13 +892,15 @@ int8_t Image_processor::one_target_in_scope(const uint8_t &flags,int32_t degree,
 	this->analyzed_img_filtered = this->mark_detected_face(this->analyzed_img_filtered,this->final_face_detect);
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::one_target_in_scope() returning %lu\n",this->final_face_detect.size());
+		if(glo_debug_msg)
+			printf("Image_processor::one_target_in_scope() returning %lu\n",this->final_face_detect.size());
 		return this->final_face_detect.size();			
 	}
 	else if(this->final_face_detect.size() == 0)
 	{
+		if(glo_debug_msg)
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::one_target_in_scope() returning without any found\n");
+			printf("Image_processor::one_target_in_scope() returning without any found\n");
 		//remove(this->current_img_path);
 		return 0;
 	}
@@ -884,7 +934,8 @@ double Image_processor::get_distance(const cv::Rect &face)
 
 void Image_processor::side_filtering(const cv::Rect &prev_face)
 {
-	printf("Image_processor::side_filtering running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::side_filtering running\n");
 	uint8_t face_width_threshold = 5;
 	uint8_t face_pox_x_threshold = 50;
 	//filter out faces that are not roughly the size of prev_face and located about at the center
@@ -892,31 +943,35 @@ void Image_processor::side_filtering(const cv::Rect &prev_face)
 	{
 		if(abs(this->face_detect[count_face].width - prev_face.width) > face_width_threshold)
 		{
-			printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to size\n",
-				this->face_detect[count_face].x,
-				this->face_detect[count_face].y,
-				this->face_detect[count_face].width,
-				this->face_detect[count_face].height);
+			if(glo_debug_msg)
+				printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to size\n",
+					this->face_detect[count_face].x,
+					this->face_detect[count_face].y,
+					this->face_detect[count_face].width,
+					this->face_detect[count_face].height);
 			this->face_detect.erase(this->face_detect.begin() + count_face);
 		}
 		else if(abs(this->face_detect[count_face].x + this->face_detect[count_face].width / 2 - IMG_CENTER_X) > face_pox_x_threshold)
 		{
-			printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to position\n",
-				this->face_detect[count_face].x,
-				this->face_detect[count_face].y,
-				this->face_detect[count_face].width,
-				this->face_detect[count_face].height);
+			if(glo_debug_msg)
+				printf("Image_processor::side_filtering (%u,%u,%u,%u) erased due to position\n",
+					this->face_detect[count_face].x,
+					this->face_detect[count_face].y,
+					this->face_detect[count_face].width,
+					this->face_detect[count_face].height);
 			this->face_detect.erase(this->face_detect.begin() + count_face);
 		}
 		else
 			count_face++;
 	}
-	printf("Image_processor::side_filtering exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::side_filtering exiting\n");
 }
 
 void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_face)
 {
-	printf("Image_processor::SIZE_filtering running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::SIZE_filtering running\n");
 	if(flags)
 	{
 		//filter out faces that are larger than prev_face
@@ -925,12 +980,13 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 		{
 			if(this->face_detect[count_face].width > prev_face.width + face_width_threshold)
 			{
-				printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because larger than %d\n",
-				this->face_detect[count_face].x,
-				this->face_detect[count_face].y,
-				this->face_detect[count_face].width,
-				this->face_detect[count_face].height,
-				prev_face.width + face_width_threshold);
+				if(glo_debug_msg)
+					printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because larger than %d\n",
+					this->face_detect[count_face].x,
+					this->face_detect[count_face].y,
+					this->face_detect[count_face].width,
+					this->face_detect[count_face].height,
+					prev_face.width + face_width_threshold);
 				this->face_detect.erase(this->face_detect.begin() + count_face);
 			}
 			else
@@ -945,19 +1001,21 @@ void Image_processor::size_filtering(const uint8_t &flags, const cv::Rect &prev_
 		{
 			if(this->face_detect[count_face].width < prev_face.width - (face_width_threshold))
 			{
-				printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because smaller than %d\n",
-				this->face_detect[count_face].x,
-				this->face_detect[count_face].y,
-				this->face_detect[count_face].width,
-				this->face_detect[count_face].height,
-				prev_face.width - (face_width_threshold));
+				if(glo_debug_msg)
+					printf("Image_processor::SIZE_filtering (%u,%u,%u,%u) erased because smaller than %d\n",
+					this->face_detect[count_face].x,
+					this->face_detect[count_face].y,
+					this->face_detect[count_face].width,
+					this->face_detect[count_face].height,
+					prev_face.width - (face_width_threshold));
 				this->face_detect.erase(this->face_detect.begin() + count_face);
 			}
 			else
 				count_face++;
 		}
 	}
-	printf("Image_processor::SIZE_filtering exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::SIZE_filtering exiting\n");
 }
 
 bool compare_face_x(const cv::Rect &face1, const cv::Rect &face2)
@@ -983,8 +1041,8 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	uint8_t enable_face_detect = ((flags & ENABLE_FACE_DETECT) == ENABLE_FACE_DETECT);
 	if(glo_waist_shot)
 		enable_body_detect = 0;
-
-	printf("Image_processor::multi_targets_in_scope() running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::multi_targets_in_scope() running\n");
 	multi_targets_begin:
 	if(!this->capture_image())
 	{
@@ -1036,13 +1094,15 @@ int8_t Image_processor::multi_targets_in_scope(const uint8_t &flags,const uint8_
 	
 	if(this->final_body_detect.size() >= 1)
 	{	
-		printf("Image_processor::multi_targets_in_scope() returning\n");
+		if(glo_debug_msg)
+			printf("Image_processor::multi_targets_in_scope() returning\n");
 		return this->final_body_detect.size();			
 	}
 	else if(this->final_face_detect.size() == 0)
 	{
 		//delete the current image if no faces is found in the scope
-		printf("Image_processor::multi_targets_in_scope() returning without any found\n");
+		if(glo_debug_msg)
+			printf("Image_processor::multi_targets_in_scope() returning without any found\n");
 		//remove(this->current_img_path);
 		return 0;
 	}
@@ -1055,7 +1115,8 @@ uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 {
 	this->final_face_detect.clear();
 	this->final_body_detect.clear();
-	printf("Image_processor::multi_targets_filter running\n");
+	if(glo_debug_msg)
+		printf("Image_processor::multi_targets_filter running\n");
 	for(size_t count_face = 0;count_face < this->face_detect.size();count_face++)
 	{
 		cv::Rect rect = this->body_by_face(this->face_detect[count_face]);
@@ -1065,7 +1126,8 @@ uint8_t Image_processor::multi_targets_filter(const uint8_t &num)
 			this->final_body_detect.push_back(rect);
 		}
 	}
-	printf("Image_processor::multi_targets_filter exiting\n");
+	if(glo_debug_msg)
+		printf("Image_processor::multi_targets_filter exiting\n");
 	return 0;
 }
 
@@ -1078,7 +1140,8 @@ cv::Rect Image_processor::body_by_face(const cv::Rect &face)
 	//if the face is at the lower section of the image
 	if(rect.y - IMG_HEIGHT / 4 > IMG_CENTER_Y )
 	{
-		printf("Image_processor::body_by_face() -> the face is too low\n");
+		if(glo_debug_msg)
+			printf("Image_processor::body_by_face() -> the face is too low\n");
 		return rect;
 	}
 	this->final_face_detect.push_back(rect);
@@ -1115,7 +1178,8 @@ bool Image_processor::need_flash(const cv::Mat &source_img)
 	cv::meanStdDev(source_img,mean,stddev);
 
 	double mean_all = (mean.val[0] + mean.val[1] + mean.val[2]) / 3;
-	printf("Image_processor::need_flash mean_all is %lf\n",mean_all);
+	if(glo_debug_msg)
+		printf("Image_processor::need_flash mean_all is %lf\n",mean_all);
 	if(mean_all < 50)
 	{
 		this->cam->flash_open();

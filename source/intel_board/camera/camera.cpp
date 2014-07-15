@@ -586,7 +586,7 @@ void Camera::init_canon()
             My_popen(gphoto_cmd);
 
             /*1.set imagesize=5M*/
-            gphoto_cmd="gphoto2 --set-config d008=0"; //5M
+            gphoto_cmd="gphoto2 --set-config d008=2"; //2M
             My_popen(gphoto_cmd);
 
             /*2.set zoom=normal*/
@@ -602,11 +602,11 @@ void Camera::init_canon()
 
 
             /*5.set imagequality=normal*/
-            gphoto_cmd="gphoto2 --set-config imagequality=0";
+            gphoto_cmd="gphoto2 --set-config imagequality=1";
             My_popen(gphoto_cmd);
             
             /*6.set imagesize=large*/
-            gphoto_cmd="gphoto2 --set-config imagesize=0";
+            gphoto_cmd="gphoto2 --set-config imagesize=2";
             My_popen(gphoto_cmd);
 
 
