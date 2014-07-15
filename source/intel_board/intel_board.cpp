@@ -201,6 +201,7 @@ uint8_t intel_board::robot_init()
 		return 0;
 
 	make_dir();
+	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
 	printf("intel_board: initilization done\n");
 	return 1;
 }
@@ -260,8 +261,7 @@ uint8_t intel_board::robot_ready()
 	/*test camera platform*/
 
 	//fetch degree
-	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree_without_confirm());
-	//this->robot_orientation_adjust();
+	this->robot_orientation_adjust();
 	
 	glo_waist_shot = 1;
 	this->flag_target_found = 0;

@@ -331,7 +331,7 @@ void Camera::zoom(float scaler){
               
     }
 
-  else if(mode=CANON)
+  else if(mode==CANON)
   {
 
         int canon_scaler=(int)scaler;

@@ -1140,7 +1140,7 @@ unsigned long get_file_size(const char *path);
 		uint64_t filesize=(uint64_t)get_file_size(file_name);
 
 		printf("-------------------------------\n");
-		printf("filesize: %lu\n", filesize);
+		printf("filesize: %llu\n", filesize);
 		printf("-------------------------------\n");
 		memset(buffer,0, BUFFER_SIZE); 
 		memcpy(buffer,&filesize,sizeof(filesize));
