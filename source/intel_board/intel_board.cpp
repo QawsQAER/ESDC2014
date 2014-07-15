@@ -635,7 +635,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	uint8_t flag = ENABLE_FACE_DETECT | ENABLE_CURRENT_FRAME;
-	if(glo_source_mode == 3)
+	if(glo_source_mode == 3 && glo_multi_target != 0)
 	{
 		this->image_processor->camera_take_photo();
 		strcpy(filename,this->image_processor->current_img_path);
@@ -783,19 +783,19 @@ void intel_board::robot_test_mbed()
 		switch(state)
 		{
 			case 0:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
+				this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
 				state++;
 			break;
 			case 1:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
+				this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
 				state++;
 			break;
 			case 2:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
+				this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
 				state++;
 			break;
 			case 3:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
+				this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
 				state++;
 			break;
 			case 4:
@@ -807,22 +807,23 @@ void intel_board::robot_test_mbed()
 				state++;
 			break;
 			case 6:
-				//this->motion_controller->rotate(30,0);
+				this->motion_controller->rotate(30,CAR_ROTATE_LEFT);
+				this->motion_controller->rotate(30,CAR_ROTATE_RIGHT);
 				state++;
 			break;
 			case 7:
-				this->motion_controller->platform(degree,CAM_ROLL_LEFT);
-				this->motion_controller->platform(degree,CAM_ROLL_RIGHT);
+				//this->motion_controller->platform(degree,CAM_ROLL_LEFT);
+				//this->motion_controller->platform(degree,CAM_ROLL_RIGHT);
 				state++;
 			break;
 			case 8:
-				this->motion_controller->platform(degree,CAM_PITCH_DOWN);
-				this->motion_controller->platform(degree,CAM_PITCH_UP);
+				//this->motion_controller->platform(degree,CAM_PITCH_DOWN);
+				//this->motion_controller->platform(degree,CAM_PITCH_UP);
 				state++;
 			break;
 			case 9:
-				this->motion_controller->platform(degree,CAM_YAW_LEFT);
-				this->motion_controller->platform(degree,CAM_YAW_RIGHT);
+				//this->motion_controller->platform(degree,CAM_YAW_LEFT);
+				//this->motion_controller->platform(degree,CAM_YAW_RIGHT);
 				state = 0;
 			break;
 		}
