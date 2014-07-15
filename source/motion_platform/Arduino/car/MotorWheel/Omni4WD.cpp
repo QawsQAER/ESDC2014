@@ -503,28 +503,28 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 			//Omni->setCarAdvance(moveSpeedMMPS);
 			Omni->setCarUpperRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarStop();
+			Omni->setCarUpperRight(0);
 			break;
 
 			case 1: //right
 			//Omni->setCarRight(moveSpeedMMPS);
 			Omni->setCarLowerRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarStop();
+			Omni->setCarLowerRight(0);
 			break;
 			
 			case 2: //down
 			//Omni->setCarBackoff(moveSpeedMMPS);
 			Omni->setCarLowerLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarStop();
+			Omni->setCarLowerLeft(0);
 			break;
 			
 			case 3: //left
 			//Omni->setCarLeft(moveSpeedMMPS);
 			Omni->setCarUpperLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarStop();
+			Omni->setCarUpperLeft(0);
 			break;
 			
 			default:
@@ -552,10 +552,10 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 		}
 	}
 	
-	for(int i = 0; i < 10; i++)
+	for(int i = 0; i < 5; i++)
 	{
 		Omni->setCarStop();
-		Omni->delayMS(100); //i don't know why we need this. Otherwise, the car will not stop
+		Omni->delayMS(200); //i don't know why we need this. Otherwise, the car will not stop
 	}
 }
 /*********************************************************/
