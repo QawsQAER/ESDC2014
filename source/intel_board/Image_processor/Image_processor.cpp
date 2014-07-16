@@ -176,8 +176,8 @@ uint8_t Image_processor::get_image_from_webcam()
 		return 0;
 	};
 	
-	//this->current_img = tmp;
-	this->rotate_img(tmp,current_img);
+	this->current_img = tmp;
+	//this->rotate_img(tmp,current_img);
 	return 1;
 }
 

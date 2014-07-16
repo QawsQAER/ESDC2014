@@ -229,24 +229,6 @@ void intel_board::robot_orientation_adjust()
 		uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
 		if(!this->motion_controller->orientation_adjust(phone_ori))
 			break;
-		//original implementation of robot_orientation_adjust
-		/*
-		printf("intel_board::robot_orientation_adjust() sending compass request\n");
-		this->robot_get_degree(&degree,&dir);
-		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
-		if(degree > ORIENTATION_THRESHOLD)
-		{
-			if(dir > 0)
-				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
-			else
-				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
-		}
-		else
-		{
-			printf("intel_board::robot_orientation_adjust() exiting\n");
-			break;
-			return ;
-		}*/
 	}
 }
 uint8_t intel_board::robot_ready()
@@ -261,7 +243,7 @@ uint8_t intel_board::robot_ready()
 
 	//fetch degree
 	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
-	this->robot_orientation_adjust();
+	
 	
 	glo_waist_shot = 1;
 	this->flag_target_found = 0;
@@ -270,6 +252,7 @@ uint8_t intel_board::robot_ready()
 	while(true)
 	{
 		cmd = ui->wait_command();
+		this->robot_orientation_adjust();
 		if(cmd == start_movement)
 		{
 			this->task_counter++;
@@ -636,7 +619,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	uint8_t flag = ENABLE_FACE_DETECT | ENABLE_CURRENT_FRAME;
-	if(glo_source_mode == 3 && glo_multi_target != 0)
+	if(glo_source_mode == 3)
 	{
 		this->image_processor->camera_take_photo();
 		strcpy(filename,this->image_processor->current_img_path);

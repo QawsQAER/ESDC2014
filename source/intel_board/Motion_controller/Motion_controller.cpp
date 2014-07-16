@@ -185,14 +185,14 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;	
 		
 
-		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
+		if(abs(diff_y) > threshold_face_y && this->state < EVAL_ADJUSTING)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming 
 			this->img_exp_dis = runCAMShift(this->face_ref);
 			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}
-		else if(flag_done_centering == 0)
+		else if(flag_done_centering == 0 && this->state < EVAL_ADJUSTING)
 		{
 			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
@@ -209,7 +209,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
-			if(this->adjusting_counter > 5)
+			if(this->adjusting_counter > MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -246,13 +246,13 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;
 		
 
-		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
+		if(abs(diff_y) > this->threshold_face_y && this->state < EVAL_ADJUSTING)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			this->img_exp_dis = runCAMShift(this->face_ref);
 			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
-		}else if(flag_done_centering == 0)
+		}else if(flag_done_centering == 0&& this->state < EVAL_ADJUSTING )
 		{
 			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
@@ -264,7 +264,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = (face.y) - this->face_ref.y;
 		if((abs(diff_x) > threshold_face_x || abs(diff_y) > threshold_face_y))
 		{
-			if(this->adjusting_counter > 5)
+			if(this->adjusting_counter > MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -618,6 +618,7 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 
 uint8_t Motion_controller::zoom_in_out_by_distance(const double &exp_distance,const double &distance)
 {
+	printf("Motion_controller::zoom_in_out_by_distance() running\n");
 	if(glo_debug_msg)
 	{
 		printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
@@ -1124,7 +1125,6 @@ void Motion_controller::set_initial_car_orientation(const uint16_t &car_ori)
 void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 {
 	int16_t target_degree = dir ? this->car_orientation - degree : this->car_orientation + degree;
-	if(glo_debug_msg)
 	printf("Motion_controller::rotate start with degree %u, rotate %u, ",this->car_orientation,degree);
 
 	if(target_degree >= 360)
