@@ -346,7 +346,8 @@ uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Re
 		return zooming_done;
 	else if(centering_done != EVAL_COMPLETE)
 		return centering_done;
-
+	else
+		return EVAL_INIT;//case should not happen
 }
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
