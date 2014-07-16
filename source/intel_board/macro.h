@@ -6,15 +6,7 @@
 #include "stdint.h"
 #include "math.h"
 #define PI 3.14159265359
-#define MAX_COUNT	4			// max. no. of points being tracked
-#define PixelWidth	0.0005		// in mm
-#define MMtoP		1/PixelWidth	// no. of pixel per mm, each pixel is 5 um, so 1 mm has 200 pixel
-#define GUESS		3000*MMtoP		// initial value of l[0], l[1], l[2], l[3]
-#define ERROR		0.1			// lower bound of the errors' value
-#define Focal		460		// focal length of webcam
-#define MaxIter		50	 		// upper bound of number of iteration of the algorithm
-#define A(i, j)		A.at<double>(i, j)
-#define a(i, j)		a.at<double>(i, j)
+
 #define DEG_TO_RAD(degree) (degree) * PI / 180  
 
 #define WINNAME_LENGTH 32
@@ -116,7 +108,7 @@ enum Direction{
 #define IMG_CENTER_X IMG_WIDTH/2
 #define IMG_CENTER_Y IMG_HEIGHT/2
 
-#define IMG_HORI_THRESHOLD 20
+#define IMG_HORI_THRESHOLD 30
 #define IMG_VERT_THRESHOLD 20
 #define IMG_BODY_FACE_RATIO 7.5
 
@@ -131,7 +123,7 @@ enum Direction{
 #define IMG_fACE_ACTUAL_WIDTH IMG_FACE_ACTUAL_HEIGHT //mm
 
 
-#define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 6)
+#define IMG_EXP_FACE_HEIGHT (IMG_HEIGHT / 5)
 #define IMG_EXP_FACE_WIDTH IMG_EXP_FACE_HEIGHT
 
 #define IMG_EXP_FACE_HEIGHT_FULL 40 
@@ -155,7 +147,7 @@ enum Direction{
 #define IMG_EXP_FACE_POS4_X IMG_EXP_FACE_POS2_X
 #define IMG_EXP_FACE_POS4_Y IMG_EXP_FACE_POS3_Y
 
-#define IMG_HORI_THRESHOLD_FACE 15
+#define IMG_HORI_THRESHOLD_FACE 18
 #define IMG_VERT_THRESHOLD_FACE 15
 #define IMG_TRACKING_THRESHOLD 7
 #define IMG_Y_MIN 0
@@ -170,10 +162,10 @@ enum Direction{
 
 
 
-#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS1_X ((uint16_t) IMG_WIDTH * (GOLDEN_RATIO + 0.07))
 #define IMG_EXP_POS1_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
-#define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO)
+#define IMG_EXP_POS2_X IMG_WIDTH - ((uint16_t) IMG_WIDTH * (GOLDEN_RATIO + 0.07))
 #define IMG_EXP_POS2_Y IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15)))
 
 #define IMG_EXP_POS3_X IMG_CENTER_X
@@ -198,6 +190,7 @@ enum Direction{
 #define CAR_ROTATE_RIGHT 0
 #define CAR_ROTATE_LEFT 1
 
+#define CAR_MOVEMENT_THRESHOLD 75
 #define LIFTER_UP 0
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
@@ -222,5 +215,7 @@ enum Direction{
 #define CONTROLLER_DEGREE_P 0.75
 #define CONTROLLER_DEGREE_I 0
 #define CONTROLLER_DEGREE_D 0.01
+
+#define MAX_ADJUST_NUM 3
 #endif
 // 27828986

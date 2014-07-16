@@ -117,6 +117,30 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 	diff_x: the difference between the detected region center and the image center -> cause centering
 	diff_y: the difference between the actual detected region height and the expected region height -> cause backward and forward
 */
+	char line[256];
+	strcpy(line,"Motion_controller::evaluate_image() state ");
+	switch(this->state)
+	{
+		case(EVAL_INIT):
+			strcat(line,"EVAL_INIT");
+		break;
+		case(EVAL_CENTERING):
+			strcat(line,"EVAL_CENTERING");
+		break;
+		case(EVAL_ZOOM_IN):
+		case(EVAL_ZOOM_OUT):
+			strcat(line,"EVAL_ZOOMING");
+		break;
+		case(EVAL_ADJUSTING):
+			strcat(line,"EVAL_ADJUSTING");
+		break;
+		case(EVAL_COMPLETE):
+			strcat(line,"EVAK_COMPLETE");
+		break;
+		default:
+		break;
+	}
+	printf("%s\n",line);
 
 	if(glo_test_filetransfer)
 		return EVAL_COMPLETE;
@@ -141,6 +165,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		printf("Motion_controller::evaluate_image the face_height is %d and the face_ref is %u\n",face.height,this->face_ref.height);
 		printf("Motion_controller::evaluate_image the y threshold_face_y is %u\n",threshold_face_y);
 	}
+
 	uint8_t flag_done_centering = 1;
 	uint8_t flag_done_zooming = 0;
 	diff_y = face.height - this->face_ref.height;
@@ -160,14 +185,14 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;	
 		
 
-		if(abs(diff_y) > threshold_face_y)//the body is too small or too large need to zoom in or zoom out
+		if(abs(diff_y) > threshold_face_y && this->state < EVAL_ADJUSTING)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming 
 			this->img_exp_dis = runCAMShift(this->face_ref);
 			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
 		}
-		else if(flag_done_centering == 0)
+		else if(flag_done_centering == 0 && this->state < EVAL_ADJUSTING)
 		{
 			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
@@ -184,7 +209,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
-			if(this->adjusting_counter > 5)
+			if(this->adjusting_counter > MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -221,13 +246,13 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;
 		
 
-		if(abs(diff_y) > this->threshold_face_y)//the face is too small or too large, need to zoom in or zoom out
+		if(abs(diff_y) > this->threshold_face_y && this->state < EVAL_ADJUSTING)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			this->img_exp_dis = runCAMShift(this->face_ref);
 			return (this->state = this->zoom_in_out_by_distance(this->img_exp_dis,distance));
 			return (this->state = this->zoom_in_out_by_face(face,distance));
-		}else if(flag_done_centering == 0)
+		}else if(flag_done_centering == 0&& this->state < EVAL_ADJUSTING )
 		{
 			this->state = EVAL_CENTERING;
 			return EVAL_CENTERING;
@@ -239,7 +264,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = (face.y) - this->face_ref.y;
 		if((abs(diff_x) > threshold_face_x || abs(diff_y) > threshold_face_y))
 		{
-			if(this->adjusting_counter > 5)
+			if(this->adjusting_counter > MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -321,7 +346,8 @@ uint8_t Motion_controller::evaluate_image_multi_targets(const std::vector<cv::Re
 		return zooming_done;
 	else if(centering_done != EVAL_COMPLETE)
 		return centering_done;
-
+	else
+		return EVAL_INIT;//case should not happen
 }
 /*CENTERING FUNCTION BEGIN*/
 /*CENTERING FUNCTION BEGIN*/
@@ -389,12 +415,6 @@ uint8_t Motion_controller::centering(const cv::Rect &detect,const cv::Rect &face
 {
 	if(glo_debug_msg)
 		printf("\nMotion_controller::centering() running\n");
-	if(face.height > IMG_EXP_HEIGHT / IMG_BODY_FACE_RATIO + this->threshold_face_y)
-	{
-		printf("Motion_controller::centering() face too large\n");
-		this->move(DEFAULT_DIS,CAR_BACKWARD);
-		return 0;
-	}
 	uint8_t okay_image = 1;
 
 	cv::Point center(detect.x + detect.width / 2,detect.y + detect.height / 2);
@@ -598,6 +618,7 @@ uint8_t Motion_controller::zoom_in_out_by_default(const cv::Rect &detect,const d
 
 uint8_t Motion_controller::zoom_in_out_by_distance(const double &exp_distance,const double &distance)
 {
+	printf("Motion_controller::zoom_in_out_by_distance() running\n");
 	if(glo_debug_msg)
 	{
 		printf("Motion_controller::zoom_in_out_by_distance() the target distance is %lf\n",distance);
@@ -960,7 +981,7 @@ void Motion_controller::move(const uint16_t &mm,const uint8_t &dir)
 	uint16_t dis = 0;
 	uint8_t count = mm / segment;
 	uint8_t count_msg = 0;
-	if(mm < 30)
+	if(mm < CAR_MOVEMENT_THRESHOLD)
 	{
 		if(glo_debug_msg)
 		printf("Motion_controller::move() -> the distance is too small\n");
@@ -1104,7 +1125,6 @@ void Motion_controller::set_initial_car_orientation(const uint16_t &car_ori)
 void Motion_controller::rotate(const uint16_t &degree,const uint8_t &dir)
 {
 	int16_t target_degree = dir ? this->car_orientation - degree : this->car_orientation + degree;
-	if(glo_debug_msg)
 	printf("Motion_controller::rotate start with degree %u, rotate %u, ",this->car_orientation,degree);
 
 	if(target_degree >= 360)

@@ -29,6 +29,7 @@ extern uint8_t glo_tracking;
 extern uint8_t glo_autofocus;
 extern uint8_t glo_waist_shot;
 extern uint8_t glo_debug_msg;
+extern uint8_t glo_multi_target;
 
 enum IMAGE_PROCESS_STATE
 {

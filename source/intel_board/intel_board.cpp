@@ -229,24 +229,6 @@ void intel_board::robot_orientation_adjust()
 		uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
 		if(!this->motion_controller->orientation_adjust(phone_ori))
 			break;
-		//original implementation of robot_orientation_adjust
-		/*
-		printf("intel_board::robot_orientation_adjust() sending compass request\n");
-		this->robot_get_degree(&degree,&dir);
-		printf("intel_board::robot_orientation_adjust() dir is %d, degree is %u after uint16_t conversion\n",dir,(uint16_t) degree);
-		if(degree > ORIENTATION_THRESHOLD)
-		{
-			if(dir > 0)
-				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_RIGHT);
-			else
-				this->motion_controller->rotate((uint16_t) degree,(uint8_t) CAR_ROTATE_LEFT);
-		}
-		else
-		{
-			printf("intel_board::robot_orientation_adjust() exiting\n");
-			break;
-			return ;
-		}*/
 	}
 }
 uint8_t intel_board::robot_ready()
@@ -260,15 +242,17 @@ uint8_t intel_board::robot_ready()
 	/*test camera platform*/
 
 	//fetch degree
-	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree_without_confirm());
-	//this->robot_orientation_adjust();
+	this->motion_controller->set_initial_car_orientation((uint16_t) this->ui->update_degree());
+	
 	
 	glo_waist_shot = 1;
 	this->flag_target_found = 0;
 	command_type cmd;
 	printf("intel_board::robot_ready() waiting for user command\n");
-	while(cmd = ui->wait_command())
+	while(true)
 	{
+		cmd = ui->wait_command();
+		this->robot_orientation_adjust();
 		if(cmd == start_movement)
 		{
 			this->task_counter++;
@@ -783,19 +767,19 @@ void intel_board::robot_test_mbed()
 		switch(state)
 		{
 			case 0:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
+				this->motion_controller->move(DEFAULT_DIS,CAR_FORWARD);
 				state++;
 			break;
 			case 1:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
+				this->motion_controller->move(DEFAULT_DIS,CAR_BACKWARD);
 				state++;
 			break;
 			case 2:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
+				this->motion_controller->move(DEFAULT_DIS,CAR_RIGHT);
 				state++;
 			break;
 			case 3:
-				//this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
+				this->motion_controller->move(DEFAULT_DIS,CAR_LEFT);
 				state++;
 			break;
 			case 4:
@@ -807,22 +791,23 @@ void intel_board::robot_test_mbed()
 				state++;
 			break;
 			case 6:
-				//this->motion_controller->rotate(30,0);
+				this->motion_controller->rotate(30,CAR_ROTATE_LEFT);
+				this->motion_controller->rotate(30,CAR_ROTATE_RIGHT);
 				state++;
 			break;
 			case 7:
-				this->motion_controller->platform(degree,CAM_ROLL_LEFT);
-				this->motion_controller->platform(degree,CAM_ROLL_RIGHT);
+				//this->motion_controller->platform(degree,CAM_ROLL_LEFT);
+				//this->motion_controller->platform(degree,CAM_ROLL_RIGHT);
 				state++;
 			break;
 			case 8:
-				this->motion_controller->platform(degree,CAM_PITCH_DOWN);
-				this->motion_controller->platform(degree,CAM_PITCH_UP);
+				//this->motion_controller->platform(degree,CAM_PITCH_DOWN);
+				//this->motion_controller->platform(degree,CAM_PITCH_UP);
 				state++;
 			break;
 			case 9:
-				this->motion_controller->platform(degree,CAM_YAW_LEFT);
-				this->motion_controller->platform(degree,CAM_YAW_RIGHT);
+				//this->motion_controller->platform(degree,CAM_YAW_LEFT);
+				//this->motion_controller->platform(degree,CAM_YAW_RIGHT);
 				state = 0;
 			break;
 		}
