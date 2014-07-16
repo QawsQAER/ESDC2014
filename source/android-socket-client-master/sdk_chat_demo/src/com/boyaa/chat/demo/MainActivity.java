@@ -1213,8 +1213,6 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 							packet.pack(""+degree);
 							user.send(packet);
 						}
-						state=STATE_MODE;
-						initView();
 					}
 					
 					else if(txt.equals("cp"))
@@ -1974,6 +1972,7 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 
 			}
 			else{
+				
 //				float x = event.values[SensorManager.DATA_X];
 //				float y = event.values[SensorManager.DATA_Y];
 //				float z = event.values[SensorManager.DATA_Z];
