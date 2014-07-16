@@ -115,6 +115,8 @@ public:
 	};
 	unsigned char getSwitchMotorsStat() const;
 	unsigned int getWheelspan() const;
+
+	unsigned char setCarStat(unsigned char carStat);
 	
 private:
 	MotorWheel* _wheelUL;	// UpperLeft
@@ -125,7 +127,7 @@ private:
 	unsigned int _wheelspan;	// 201208
 
 	unsigned char _carStat;
-	unsigned char setCarStat(unsigned char carStat);
+	
 
 	unsigned char _switchMotorsStat;
 	unsigned char setSwitchMotorsStat(unsigned char switchMotorsStat);
