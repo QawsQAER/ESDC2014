@@ -230,7 +230,7 @@ uint8_t Image_processor::save_current_image(uint16_t task_counter)
 	char *analyzed_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	char *analyzed_filtered_filename = (char*) malloc(sizeof(char) * FILENAME_LENGTH);
 	
-	if(glo_source_mode == 3 && glo_multi_target || (glo_source_mode == 1))
+	if((glo_source_mode == 3 && glo_multi_target) || (glo_source_mode == 1))
 		strcpy(filename,this->current_img_path);
 	else if(this->img_source == IMG_SOURCE_WEBCAM)
 		sprintf(filename,"%swebcam_%u",glo_PATH_TEMP,task_counter);
