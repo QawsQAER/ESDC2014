@@ -223,13 +223,8 @@ void intel_board::robot_orientation_adjust()
 {
 	printf("intel_board::robot_orientation_adjust() entering\n");
 	int32_t degree = 0,dir = 0;
-	
-	while(true)
-	{
-		uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
-		if(!this->motion_controller->orientation_adjust(phone_ori))
-			break;
-	}
+	uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
+	this->motion_controller->orientation_adjust(phone_ori);
 }
 uint8_t intel_board::robot_ready()
 {
@@ -341,9 +336,15 @@ uint8_t intel_board::robot_ready()
 			break;
 
 			case(pattern_5):
+				glo_waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 1;
+				glo_num_target = 3;
+				glo_high_angle_shot = 0;
+				glo_tracking = 0;
 			case(pattern_6):
 			case(pattern_7):
-				glo_waist_shot = 1;
+				glo_waist_shot = 0;
 				glo_pattern = cmd;
 				glo_multi_target = 1;
 				glo_num_target = 3;
