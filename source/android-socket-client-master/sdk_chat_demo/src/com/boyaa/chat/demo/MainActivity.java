@@ -895,7 +895,7 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 			
 			findViewById(R.id.pattern8).setVisibility(View.VISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.VISIBLE);
-			findViewById(R.id.pattern10).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern10).setVisibility(View.INVISIBLE);
 			
 			break;
 			
@@ -916,7 +916,7 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 			
 			findViewById(R.id.pattern5).setVisibility(View.VISIBLE);
 			findViewById(R.id.pattern6).setVisibility(View.VISIBLE);
-			findViewById(R.id.pattern7).setVisibility(View.VISIBLE);
+			findViewById(R.id.pattern7).setVisibility(View.INVISIBLE);
 			
 			findViewById(R.id.pattern8).setVisibility(View.INVISIBLE);
 			findViewById(R.id.pattern9).setVisibility(View.INVISIBLE);

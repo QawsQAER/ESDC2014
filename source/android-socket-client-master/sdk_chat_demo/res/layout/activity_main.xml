@@ -26,7 +26,7 @@
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.25"
                 android:background="@drawable/button_primary_selector"
-                android:text="Connect"
+                android:text="连接"
                 android:textColor="@android:color/white" />
 
             <FrameLayout
@@ -53,7 +53,7 @@
                     android:layout_marginTop="5.0dp"
                     android:layout_weight="0.89"
                     android:background="@drawable/button_danger_selector"
-                    android:text="compass"
+                    android:text="方向校准"
                     android:textColor="@android:color/white" />
             </FrameLayout>
 
@@ -75,7 +75,7 @@
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.36"
                 android:background="@drawable/button_primary_selector"
-                android:text="reset"
+                android:text="重置"
                 android:textColor="@android:color/white" />
 
             <Button
@@ -86,7 +86,7 @@
                 android:layout_marginTop="5.0dp"
                 android:layout_weight="0.93"
                 android:background="@drawable/button_primary_selector"
-                android:text="Next"
+                android:text="下一页"
                 android:textColor="@android:color/white" />
         </LinearLayout>
 
@@ -112,7 +112,7 @@
                         android:layout_marginTop="5.0dp"
                         android:layout_weight="0.46"
                         android:background="@drawable/button_primary_selector"
-                        android:text="comfrim"
+                        android:text="确定"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -122,7 +122,7 @@
                         android:layout_marginTop="5.0dp"
                         android:layout_weight="0.46"
                         android:background="@drawable/button_primary_selector"
-                        android:text="back"
+                        android:text="退后"
                         android:textColor="@android:color/white" />
                 </FrameLayout>
 
@@ -139,7 +139,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern1"
+                        android:text="远景－右"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -149,7 +149,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="single"
+                        android:text="单人"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -159,7 +159,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern5"
+                        android:text="近景"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -169,7 +169,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern8"
+                        android:text="近景"
                         android:textColor="@android:color/white" />
                 </FrameLayout>
 
@@ -185,7 +185,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern2"
+                        android:text="远景－左"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -194,7 +194,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/default_margin"
                         android:background="@drawable/button_primary_selector"
-                        android:text="double"
+                        android:text="双人"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -204,7 +204,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern6"
+                        android:text="远景"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -214,7 +214,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern9"
+                        android:text="远景"
                         android:textColor="@android:color/white" />
                 </FrameLayout>
 
@@ -230,7 +230,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.03"
                         android:background="@drawable/button_primary_selector"
-                        android:text="xiaoqingxin"
+                        android:text="对角线构图"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -240,7 +240,7 @@
                         android:layout_margin="@dimen/default_margin"
                         android:layout_weight="0.46"
                         android:background="@drawable/button_primary_selector"
-                        android:text="multiple"
+                        android:text="多人"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -275,7 +275,7 @@
                         android:layout_height="34dp"
                         android:layout_margin="@dimen/default_margin"
                         android:background="@drawable/button_primary_selector"
-                        android:text="pattern4"
+                        android:text="近景－左"
                         android:textColor="@android:color/white" />
 
                     <Button
@@ -284,7 +284,7 @@
                         android:layout_height="48dp"
                         android:layout_margin="@dimen/default_margin"
                         android:background="@drawable/button_primary_selector"
-                        android:text="video"
+                        android:text="录像"
                         android:textColor="@android:color/white" />
                 </FrameLayout>
 
@@ -295,7 +295,7 @@
                     android:layout_margin="@dimen/default_margin"
                     android:layout_weight="3300.79"
                     android:background="@drawable/button_primary_selector"
-                    android:text="DIY"
+                    android:text="自定义"
                     android:textColor="@android:color/white" />
 
             </LinearLayout>
@@ -350,19 +350,19 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:checked="true"
-                                android:text="normal" />
+                                android:text="普通" />
 
                             <RadioButton
                                 android:id="@+id/s2"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="qx" />
+                                android:text="清新" />
 
                             <RadioButton
                                 android:id="@+id/s3"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:text="fg" />
+                                android:text="复古" />
                         </RadioGroup>
                  
 
@@ -398,13 +398,13 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:checked="true"
-                        android:text="no gesture" />
+                        android:text="无手势" />
 
                     <RadioButton
                         android:id="@+id/hand"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="gesture" />
+                        android:text="有手势" />
                     
                        </RadioGroup>
 
