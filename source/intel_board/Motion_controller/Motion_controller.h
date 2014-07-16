@@ -60,6 +60,7 @@ extern uint8_t glo_waist_shot;
 extern uint8_t glo_num_target;
 extern uint8_t glo_pid;
 extern uint8_t glo_debug_msg;
+extern uint8_t glo_tracking_by_rotate;
 
 class Motion_controller
 {

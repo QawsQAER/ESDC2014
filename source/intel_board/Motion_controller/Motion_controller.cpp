@@ -314,22 +314,46 @@ uint8_t Motion_controller::evaluate_image_tracking(const cv::Rect &face,const do
 		uint8_t dir = CAM_YAW_LEFT;
 		if(glo_pid)
 		{
-			if(move_degree > 0)
-				dir = CAM_YAW_RIGHT;
+			if(glo_tracking_by_rotate)
+			{
+				if(move_degree > 0)
+					dir = CAR_ROTATE_RIGHT;
+				else
+					dir = CAR_ROTATE_LEFT;
+			}
 			else
-				dir = CAM_YAW_LEFT;
+			{
+				if(move_degree > 0)
+					dir = CAM_YAW_RIGHT;
+				else
+					dir = CAM_YAW_LEFT;
+			}
 			degree = (uint16_t) abs(move_degree);
 		}
 		else
 		{
-			if(degree_error > 0)
-				dir = CAM_YAW_RIGHT;
+			if(glo_tracking_by_rotate)
+			{
+				if(degree_error > 0)
+					dir = CAR_ROTATE_RIGHT;
+				else
+					dir = CAR_ROTATE_LEFT;
+			}
 			else
-				dir = CAM_YAW_LEFT;
+			{
+				if(degree_error > 0)
+					dir = CAM_YAW_RIGHT;
+				else
+					dir = CAM_YAW_LEFT;
+			}
 			degree = (uint16_t) abs(degree_error);
 		}
 		printf("Motion_controller::evaluate_image_tracking -> degree is %u\n",degree);
-		this->platform(degree,dir);
+		
+		if(glo_tracking_by_rotate && degree > CAR_ROTATE_THRESHOLD)
+			this->rotate(degree,dir);
+		else
+			this->platform(degree,dir);
 	}
 	printf("Motion_controller::evaluate_image_tracking exiting\n");
 	return EVAL_CENTERING;
@@ -770,7 +794,7 @@ uint8_t Motion_controller::adjusting(const cv::Rect &detect)
 
 uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 {
-	
+	printf("Motion_controller::adjusting_by_face() running\n");
 	cv::Point face_top(face.x + face.width / 2, face.y);
 	double p = (double) IMG_FACE_ACTUAL_HEIGHT / (double)face.height; // mm per pixel
 
@@ -780,7 +804,7 @@ uint8_t Motion_controller::adjusting_by_face(const cv::Rect &face)
 	int32_t diff_x = face_top.x - (this->face_ref.x + this->face_ref.width / 2);
 	if(glo_debug_msg)
 	{
-		printf("Motion_controller::adjusting_by_face() running\n");
+		//printf("Motion_controller::adjusting_by_face() running\n");
 		printf("Motion_controller::adjusting_by_face() face.height is %u mm per pixel is %lf\n",face.height,p);
 		printf("Motion_controller::adjusting_by_face() face_top x is %u\n",face_top.x);
 		printf("Motion_controller::adjusting_by_face() face_ref center x is %u\n",this->face_ref.x + this->face_ref.width / 2);
@@ -864,7 +888,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 			this->img_exp_pos_y = IMG_EXP_POS3_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
-			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH;
+			this->exp_face_width = this->exp_face_height = (IMG_EXP_FACE_WIDTH + 10);
 		break;
 		case(4):
 			this->img_exp_pos_x = IMG_EXP_POS4_X;

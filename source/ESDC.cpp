@@ -64,6 +64,8 @@ uint8_t glo_waist_shot = 0;
 uint8_t glo_pid = 0;
 uint8_t glo_debug_msg = 0;
 
+uint8_t glo_tracking_by_rotate = 0;
+
 double glo_exp_dis = 0;
 
 command_type glo_pattern;

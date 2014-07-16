@@ -224,7 +224,15 @@ void intel_board::robot_orientation_adjust()
 	printf("intel_board::robot_orientation_adjust() entering\n");
 	int32_t degree = 0,dir = 0;
 	uint16_t phone_ori = (uint16_t) this->ui->update_degree_without_confirm();
-	this->motion_controller->orientation_adjust(phone_ori);
+	if(this->motion_controller->orientation_adjust(phone_ori) && glo_tracking == 0)
+	{
+		this->robot_target_in_scope(ENABLE_FACE_DETECT);
+		glo_tracking = 1;
+		glo_tracking_by_rotate = 1;
+		this->robot_evaluate_image();
+		glo_tracking_by_rotate = 0;
+		glo_tracking = 0;
+	}
 }
 uint8_t intel_board::robot_ready()
 {
@@ -647,7 +655,7 @@ uint8_t intel_board::robot_wait_for_adjustment()
 	
 	if(glo_pattern == pattern_3)
 	{
-		this->motion_controller->set_lifter(LIFTER_MIN);
+		this->motion_controller->set_lifter(LIFTER_INIT_POS);
 		this->motion_controller->platform(CAM_HIGH_ANGLE,CAM_PITCH_UP);
 	}
 	free(filename);
@@ -725,8 +733,8 @@ uint8_t intel_board::robot_target_in_scope(const uint8_t &flags)
 {
 	printf("intel_board::robot_target_in_scope running\n");
 	uint8_t rv = 0;
-	if(glo_tracking == 0)
-		this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
+	//if(glo_tracking == 0)
+	//	this->motion_controller->buzzer(BUZZER_TAKE_PHOTO);
 
 	if(glo_multi_target)
 	{
