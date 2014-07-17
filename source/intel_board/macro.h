@@ -108,8 +108,8 @@ enum Direction{
 #define IMG_CENTER_X IMG_WIDTH/2
 #define IMG_CENTER_Y IMG_HEIGHT/2
 
-#define IMG_HORI_THRESHOLD 30
-#define IMG_VERT_THRESHOLD 20
+#define IMG_HORI_THRESHOLD 40
+#define IMG_VERT_THRESHOLD 40
 #define IMG_BODY_FACE_RATIO 7.5
 
 #define IMG_BODY_ACTUAL_HEIGHT 1700 //mm -> 170cm
@@ -138,7 +138,7 @@ enum Direction{
 #define IMG_EXP_FACE_POS_X ((uint16_t) IMG_WIDTH * (GOLDEN_RATIO + 0.20))
 #define IMG_EXP_FACE_POS_Y (IMG_HEIGHT - ((uint16_t) (IMG_HEIGHT * (GOLDEN_RATIO + 0.15))))
 
-#define IMG_EXP_FACE_POS2_X (IMG_WIDTH - ((uint16_t) IMG_WIDTH * GOLDEN_RATIO))
+#define IMG_EXP_FACE_POS2_X (IMG_WIDTH - ((uint16_t) IMG_WIDTH * (GOLDEN_RATIO + 0.1)))
 #define IMG_EXP_FACE_POS2_Y IMG_EXP_FACE_POS_Y
 
 #define IMG_EXP_FACE_POS3_X IMG_EXP_FACE_POS_X
@@ -147,8 +147,8 @@ enum Direction{
 #define IMG_EXP_FACE_POS4_X IMG_EXP_FACE_POS2_X
 #define IMG_EXP_FACE_POS4_Y IMG_EXP_FACE_POS3_Y
 
-#define IMG_HORI_THRESHOLD_FACE 18
-#define IMG_VERT_THRESHOLD_FACE 15
+#define IMG_HORI_THRESHOLD_FACE 30
+#define IMG_VERT_THRESHOLD_FACE 25
 #define IMG_TRACKING_THRESHOLD 7
 #define IMG_Y_MIN 0
 #define IMG_Y_MAX 255
@@ -195,7 +195,7 @@ enum Direction{
 #define LIFTER_DOWN 1
 #define LIFTER_MIN 0 //the minimum height of the lifter in mm
 #define LIFTER_MAX 700 //the maximun height of the lifter in mm
-#define LIFTER_INIT_POS 300
+#define LIFTER_INIT_POS 320
 #define LIFTER_SEG 50
 
 #define CAM_ROLL_LEFT 0
@@ -217,5 +217,7 @@ enum Direction{
 #define CONTROLLER_DEGREE_D 0.01
 
 #define MAX_ADJUST_NUM 3
+
+#define CAR_ROTATE_THRESHOLD 10
 #endif
 // 27828986

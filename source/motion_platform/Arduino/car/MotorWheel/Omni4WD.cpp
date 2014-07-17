@@ -50,8 +50,8 @@ unsigned char Omni4WD::setCarStat(unsigned char carStat) {
 
 unsigned int Omni4WD::setMotorAll(unsigned int speedMMPS,bool dir) {
 	wheelULSetSpeedMMPS(speedMMPS,dir);
-	wheelLLSetSpeedMMPS(speedMMPS,dir);
 	wheelLRSetSpeedMMPS(speedMMPS,dir);
+	wheelLLSetSpeedMMPS(speedMMPS,dir);
 	wheelURSetSpeedMMPS(speedMMPS,dir);
 	return wheelULGetSpeedMMPS();
 }
@@ -459,11 +459,12 @@ int Omni4WD::setCarRotateLeftDegree(float degree, int speedMMPS)
     int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
     
 	wheelULSetSpeedMMPS(-speedMMPS);
-	wheelLLSetSpeedMMPS(-speedMMPS);
 	wheelLRSetSpeedMMPS(-speedMMPS);
+	wheelLLSetSpeedMMPS(-speedMMPS);
 	wheelURSetSpeedMMPS(-speedMMPS);
     
 	delayMS(ms);
+
 	setCarStop();
 }
 int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
@@ -475,11 +476,12 @@ int Omni4WD::setCarRotateRightDegree(float degree, int speedMMPS)
     int ms = round(((degree * pi * d / 360) / speedMMPS) * 1000);
     
 	wheelULSetSpeedMMPS(speedMMPS);
-	wheelLLSetSpeedMMPS(speedMMPS);
 	wheelLRSetSpeedMMPS(speedMMPS);
+	wheelLLSetSpeedMMPS(speedMMPS);
 	wheelURSetSpeedMMPS(speedMMPS);
     
 	delayMS(ms);
+
 	setCarStop();
 }
 
@@ -503,32 +505,32 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 			//Omni->setCarAdvance(moveSpeedMMPS);
 			Omni->setCarUpperRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarUpperRight(0);
+			Omni->setCarAdvance(0);
 			break;
 
 			case 1: //right
 			//Omni->setCarRight(moveSpeedMMPS);
 			Omni->setCarLowerRight(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarLowerRight(0);
+			Omni->setCarAdvance(0);
 			break;
 			
 			case 2: //down
 			//Omni->setCarBackoff(moveSpeedMMPS);
 			Omni->setCarLowerLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarLowerLeft(0);
+			Omni->setCarAdvance(0);
 			break;
 			
 			case 3: //left
 			//Omni->setCarLeft(moveSpeedMMPS);
 			Omni->setCarUpperLeft(moveSpeedMMPS);
 			Omni->delayMS(ms);
-			Omni->setCarUpperLeft(0);
+			Omni->setCarAdvance(0);
 			break;
 			
 			default:
-			Omni->setCarStop();
+			Omni->setCarStop(0);
 			break;
 		}
 	}
@@ -540,18 +542,24 @@ void Car::carMove(uint16_t move_dis, uint8_t move_dir, uint16_t rotate_dis, uint
 		{
 			case 0xc2: //1000 left
 			Omni->setCarRotateLeftDegree(degree, rotateSpeedMMPS);
+			//Omni->setCarStop(0);
+			Omni->setCarAdvance(0);
 			break;
 
 			case 0xc3: //1001 right
 			Omni->setCarRotateRightDegree(degree, rotateSpeedMMPS);
+			//Omni->setCarStop(0);
+			Omni->setCarAdvance(0);
 			break;
 
 			default:
-			Omni->setCarStop();
+			Omni->setCarStop(0);
 			break;
 		}
 	}
-	
+
+	Omni->setCarStop();
+	Omni->PIDRegulate();
 	for(int i = 0; i < 5; i++)
 	{
 		Omni->setCarStop();
