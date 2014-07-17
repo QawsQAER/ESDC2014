@@ -279,7 +279,6 @@ uint8_t intel_board::robot_ready()
 			return 1;
 		}
 
-		this->robot_orientation_adjust();
 		switch(cmd)
 		{
 			case(pattern_1):
@@ -385,6 +384,7 @@ uint8_t intel_board::robot_ready()
 			default:
 				printf("intel_board::robot_ready() undefined reaction for command %d\n",cmd);
 		}
+		this->robot_orientation_adjust();
 	}
 	return 0;
 }
