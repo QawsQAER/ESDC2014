@@ -83,14 +83,20 @@ void detectAndDisplay( Mat frame )
     equalizeHist( frame_gray, frame_gray );
 
     //-- Detect faces
+    struct timespec tstart={0,0}, tend={0,0};
+    clock_gettime(CLOCK_MONOTONIC, &tstart);
     face_cascade.detectMultiScale( frame_gray, faces, 1.1, 2, 0, Size(10, 10) );
-
+    clock_gettime(CLOCK_MONOTONIC, &tend);
+	printf("some_long_computation took about %.5f seconds\n",
+		((double)tend.tv_sec + 1.0e-9*tend.tv_nsec) - 
+		((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec));
     for( size_t i = 0; i < faces.size(); i++ )
     {
         Mat faceROI = frame_gray( faces[i] );
         std::vector<Rect> eyes;
 	
         //-- In each face, detect eyes
+
         eyes_cascade.detectMultiScale( faceROI, eyes, 1.1, 2, 0 |CASCADE_SCALE_IMAGE, Size(5, 5) );
         if( eyes.size() == 2)
         {
