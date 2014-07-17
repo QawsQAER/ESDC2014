@@ -335,15 +335,18 @@ void UI::old_send_finished_ack()
 void UI::send_notification()
 {
 	memset(msg_code,0,MESSAGELENGTH);
-	if(glo_pattern==pattern3)
+	if(glo_pattern==pattern_3)
 	{
 	char temp[]="nx";
+	memcpy(&msg_code,&temp,2*sizeof(char));	
 	}
 	else
-	char temp[]="nn";
+	{
+		char temp[]="nn";
+		memcpy(&msg_code,&temp,2*sizeof(char));	
+	}
 
-
-	memcpy(&msg_code,&temp,2*sizeof(char));	
+	
 	printf("send_notification\n");
 	send_msg();
 }
