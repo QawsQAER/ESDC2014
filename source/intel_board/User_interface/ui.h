@@ -15,6 +15,7 @@
 
 #include <pthread.h>
 
+extern uint8_t glo_pattern; 
 
 class UI{
 

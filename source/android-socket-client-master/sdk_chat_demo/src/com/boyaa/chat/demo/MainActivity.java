@@ -225,7 +225,11 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 	        play=new SoundPool(1,AudioManager.STREAM_MUSIC,10);
 	        play.load(this, R.raw.test, 10);
 	        soundMap.put(1,player.load(this, R.raw.test, 10));
+	        play.load(this, R.raw.sitdown, 10);
+	        soundMap.put(2,player.load(this, R.raw.sitdown, 10));
 	
+	        play.load(this, R.raw.wancheng, 10);
+	        soundMap.put(3,player.load(this, R.raw.wancheng, 10));
         //显示
 		
 		user=new Client(this.getApplicationContext(),socketListener);
@@ -1396,6 +1400,14 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 					
 					}
 					
+					else if(txt.equals("nx"))
+					{
+					state=STATE_CONFIRM;
+					initView();
+
+					player.play(soundMap.get(2), 1, 1, 10,0, 1);
+					
+					}
 					
 					else if(txt.equals("fa"))
 					{
@@ -1456,7 +1468,8 @@ public  class MainActivity extends Activity  implements OnTouchListener{
 								 
 							 imageView.setImageBitmap(getRoundCornerImage(bitmap, 70));  
 								
-									 
+								player.play(soundMap.get(3), 1, 1, 10,0, 1);
+
 									 
 //									 SystemClock.sleep(4);		 
 				//					 saveBitmap(bitmap);
