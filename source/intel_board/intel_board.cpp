@@ -66,7 +66,9 @@ intel_board::intel_board(uint8_t mode,uint8_t img_source)
 	//img_source 1 for WEBCAM MODE, 0 for cellphone mode
 	printf("Creating Image_processor()\n");
 	this->image_processor = new Image_processor(img_source);
-
+	printf("!!!try capturing image()\n");
+	this->image_processor->capture_image();
+	printf("!!!capturing image trail done\n");
 	printf("Creating Motion_controller()\n");
 	this->motion_controller = new Motion_controller();
 	printf("notice connection request\n");
@@ -106,7 +108,6 @@ uint8_t intel_board::main_function()
 				if(this->robot_init())
 				{
 					this->state = ROBOT_READY;
-					
 				}
 				else
 				{	
@@ -255,14 +256,14 @@ uint8_t intel_board::robot_ready()
 	while(true)
 	{
 		cmd = ui->wait_command();
-		this->robot_orientation_adjust();
+		
 		if(cmd == start_movement)
 		{
 			this->task_counter++;
 			printf("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
 			printf("INTEL BOARD RECEIVE ROLL %d and PITCH %d\n",this->ui->roll_degree,this->ui->pitch_degree);
 			printf("INTEL BOARD RECEIVE HANDGESTURE %d\n",this->ui->hand_choice);
-			
+			printf("INTEL BOARD TRACKING VALUE %u\n",glo_tracking);
 			if(this->ui->hand_choice == 2)
 			{
 				glo_hand_gesture = 1;
@@ -277,7 +278,8 @@ uint8_t intel_board::robot_ready()
 			this->state = ROBOT_FIND_TARGET;
 			return 1;
 		}
-		
+
+		this->robot_orientation_adjust();
 		switch(cmd)
 		{
 			case(pattern_1):
@@ -370,6 +372,11 @@ uint8_t intel_board::robot_ready()
 
 			case(pattern_video):
 				glo_tracking = 1;
+				glo_waist_shot = 1;
+				glo_pattern = cmd;
+				glo_multi_target = 0;
+				glo_num_target = 1;
+				glo_high_angle_shot = 0;
 			break;
 			case(set_waist_shot):
 				glo_waist_shot = glo_waist_shot ? 0:1;
@@ -413,8 +420,8 @@ uint8_t intel_board::robot_find_target()
 		if(rv == 0 && glo_tracking == 0)
 		{
 			printf("intel+board::robot_find_target going to execute startegy\n");
-			this->robot_find_target_strategy2(state);
-			this->robot_countdown(sec);
+			//this->robot_find_target_strategy2(state);
+			//this->robot_countdown(sec);
 		}
 		else 
 			break;
@@ -486,7 +493,7 @@ uint8_t intel_board::robot_find_target_strategy2(uint8_t &state)
 	}
 	else
 	{
-		this->motion_controller->rotate(DEFAULT_DEGREE,CAR_ROTATE_RIGHT);
+		//this->motion_controller->rotate(DEFAULT_DEGREE,CAR_ROTATE_RIGHT);
 		state = 0;
 	}
 	return 0;

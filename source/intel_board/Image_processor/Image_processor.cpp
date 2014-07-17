@@ -77,6 +77,8 @@ Image_processor::Image_processor(uint8_t img_source)
 Image_processor::~Image_processor()
 {
 	printf("Destructing Image processor\n");
+	if(this->img_source == IMG_SOURCE_WEBCAM || glo_source_mode == 3)
+		this->cap->release();
 	free(this->current_img_path);
 	free(this->analyzed_img_path);
 	free(this->analyzed_filtered_img_path);

@@ -76,9 +76,15 @@ int main(int argc, char ** argv)
 		 *						double scale0, double finalThreshold, bool useMeanshiftGrouping) const
 		 *
 		 */
-
-		hog.detectMultiScale(people_detect_img,found,0,Size(8,8),Size(32,32),1.05,2);
-
+		
+		struct timespec tstart={0,0}, tend={0,0};
+    	clock_gettime(CLOCK_MONOTONIC, &tstart);
+    
+    	hog.detectMultiScale(people_detect_img,found,0,Size(8,8),Size(32,32),1.05,2);
+		clock_gettime(CLOCK_MONOTONIC, &tend);
+    	printf("some_long_computation took about %.5f seconds\n",
+    		((double)tend.tv_sec + 1.0e-9*tend.tv_nsec) - 
+    		((double)tstart.tv_sec + 1.0e-9*tstart.tv_nsec));
 		size_t i,j;
 		//first for loop
 

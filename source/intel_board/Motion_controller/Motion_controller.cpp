@@ -185,7 +185,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;	
 		
 
-		if(abs(diff_y) > threshold_face_y && this->state < EVAL_ADJUSTING)//the body is too small or too large need to zoom in or zoom out
+		if(abs(diff_y) > FACE_HEIGHT_DIFF_THRESHOLD_SMALL && this->state < EVAL_ADJUSTING)//the body is too small or too large need to zoom in or zoom out
 		{
 			//doing zooming 
 			this->img_exp_dis = runCAMShift(this->face_ref);
@@ -209,7 +209,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 
 		if((abs(center.x - (this->ref.x + this->ref.width / 2)) > this->threshold_x || abs(detect.y - this->ref.y) > this->threshold_y))
 		{
-			if(this->adjusting_counter > MAX_ADJUST_NUM)
+			if(this->adjusting_counter >= MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -246,7 +246,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 			flag_done_centering = 1;
 		
 
-		if(abs(diff_y) > this->threshold_face_y && this->state < EVAL_ADJUSTING)//the face is too small or too large, need to zoom in or zoom out
+		if(abs(diff_y) > FACE_HEIGHT_DIFF_THRESHOLD_LARGE && this->state < EVAL_ADJUSTING)//the face is too small or too large, need to zoom in or zoom out
 		{
 			//this->need_to_center = 0;
 			this->img_exp_dis = runCAMShift(this->face_ref);
@@ -264,7 +264,7 @@ uint8_t Motion_controller::evaluate_image(const cv::Rect &detect,const cv::Rect 
 		diff_y = (face.y) - this->face_ref.y;
 		if((abs(diff_x) > threshold_face_x || abs(diff_y) > threshold_face_y))
 		{
-			if(this->adjusting_counter > MAX_ADJUST_NUM)
+			if(this->adjusting_counter >= MAX_ADJUST_NUM)
 			{
 				this->adjusting_counter = 0;
 				this->state = EVAL_INIT;
@@ -721,7 +721,7 @@ uint8_t Motion_controller::multi_face_zooming(const std::vector<cv::Rect> &faces
 	else
 	{
 		cv::Rect standard(faces[0].x,faces[0].y,IMG_EXP_FACE_WIDTH_FULL,IMG_EXP_FACE_HEIGHT_FULL);
-		if(abs(faces[0].height - IMG_EXP_FACE_HEIGHT_FULL) > threshold_face_y)
+		if(abs(faces[0].height - standard.height) > threshold_face_y)
 		{
 			this->img_exp_dis = runCAMShift(standard);
 			return this->zoom_in_out_by_distance(this->img_exp_dis,distance);
@@ -886,7 +886,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 		case(3):
 			this->img_exp_pos_x = IMG_EXP_POS3_X;
 			this->img_exp_pos_y = IMG_EXP_POS3_Y;
-			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X;
+			this->img_exp_face_pos_x = IMG_EXP_FACE_POS_X + 10;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS_Y;
 			this->exp_face_width = this->exp_face_height = (IMG_EXP_FACE_WIDTH + 10);
 		break;
@@ -895,7 +895,7 @@ void Motion_controller::set_pattern(uint8_t pattern)
 			this->img_exp_pos_y = IMG_EXP_POS4_Y;
 			this->img_exp_face_pos_x = IMG_EXP_FACE_POS2_X;
 			this->img_exp_face_pos_y = IMG_EXP_FACE_POS2_Y;
-			this->exp_face_width = this->exp_face_height = IMG_EXP_FACE_WIDTH;
+			this->exp_face_width = this->exp_face_height = (IMG_EXP_FACE_WIDTH + 20);
 		break;
 		default:
 			printf("Motion_controller::set_pattern() pattern undefined\n");
