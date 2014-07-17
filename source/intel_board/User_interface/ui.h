@@ -15,6 +15,7 @@
 
 #include <pthread.h>
 
+extern command_type glo_pattern; 
 
 class UI{
 
